@@ -35,7 +35,7 @@ this sheet starts with the 0.13.84 test and adds two launches.
 What CI showed, and what it could not:
 
 - **Shown in CI with both options on, the fast server, the spare server and
-  the database server the app ships** (run 45677583511):
+  the database server the app ships** (run 45720659785, at the release commit):
   - The zone server compiled its class list with the Primalist in it; the 39
     content files were in place; the database took the new class name (number
     56412) and the next session found it there.
@@ -45,10 +45,10 @@ What CI showed, and what it could not:
     valkyrie, martial arts, animal and wedding packs, Going Rogue set,
     collector's capes and emblems, preorder helmets.
   - A Blaster was created, played, travelled to a second zone through the
-    spare server (ready 9.7 s after the request) and was saved; the saved hero
+    spare server (ready 9.3 s after the request) and was saved; the saved hero
     was reopened with the saved zone data taken again (no file compiled a
-    second time, zone server ready in 23.3 s, as without the options).
-- **Found and fixed on the way** (four builds): with the Primalist on, every
+    second time, zone server ready in 23.4 s; 23.8 s without the options).
+- **Found and fixed on the way** (five builds): with the Primalist on, every
   launch prepared the zone data from scratch (zone server 167-206 s in CI
   instead of 23 s). Two causes, both fixed and covered by a test now.
 - **Not shown in CI:** CI's creation clicks a Blaster, so **no Primalist has
@@ -184,4 +184,4 @@ Say so if you want them opened too; it is a one-line setting.
 
 Details: `HANDOFF-X86.md`, section "0.13.85 (100)".
 
-CI: CI85_EVIDENCE_PLACEHOLDER
+CI: build 45701470085 at `6bb8db37e`; trusted 45715767338 (zone server 387.0 s new, 23.8 s reopened); both new options with the spare server 45720659785 (172.8 s new, 23.4 s reopened, trip's zone ready 9.3 s); APK 45724776095 (93,934,082 bytes, sha256 `b2dae94d0502a65087481ed4991120989ec537252dd410e9009dde1e038524af`, same signer, 53 runtime modules equal the commit). With the options off, one commit earlier (`6bbb472c3`; only the app's file inventory limit changed since): zone change 45683248678, spare 45694752114.

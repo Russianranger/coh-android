@@ -633,7 +633,29 @@ both off the session takes none of the new paths.
 - **Known gaps.** No archetype icon or selection screenshots (the icon in the
   zip is not installed: the client's data view takes bins only), no ancillary
   pools for the class, balance untested.
-- **Chain.** CHAIN85_PLACEHOLDER
+- **The APK packer's inventory bound.** The first APK run (45700074655, after
+  a full passing chain at `6bbb472c3`) stopped in `stage_app_assets`: 97 client
+  inventory entries for a bound of 96 that the device checks too
+  (`client_startup_diagnostic.verify_assets`). The archive is staged outside
+  that inventory (like the zone graphs); the bound is 128 on both sides
+  (`CLIENT_INVENTORY_LIMIT`), and `client_startup_diagnostic.py` is in
+  `CHANGED_RUNTIME`. The published APK has 96 entries and 106 runtime files.
+- **Chain.** Release commit `6bb8db37e`: build 45701470085; trusted
+  45715767338 (zone server 387.0 s new, 23.8 s reopened, 0 files compiled on
+  reopen); both options with the spare server and the app's DbServer
+  45720659785 (172.8 s new, 23.4 s reopened, kept tree reused, 0 files
+  compiled on reopen, trip's zone ready 9.3 s, 2 arrivals, save verified);
+  APK 45724776095 (93,934,082 bytes, sha256
+  `b2dae94d0502a65087481ed4991120989ec537252dd410e9009dde1e038524af`, same
+  signer, 53 guest modules equal the commit, content archive members equal
+  the repository's, client `classes.bin` holds `Class_Primalist`, both
+  switches in the client and the fast server). With the options off, one
+  commit earlier (`6bbb472c3`, build 45659793098; the two commits differ in
+  the inventory bound, the staging of the archive, tests and notes): zone
+  change 45683248678 (trip's zone ready 81.3 s on the 0.13.36 server), trusted
+  45689127387, spare 45694752114 (22.9 s reopened, trip's zone 9.3 s), both
+  options 45677583511. Earlier builds: 45568455266 (`66fc30b61`), 45612110480
+  (`b8bb32c6a`), 45635506344 (`01fa7953e`).
 
 ## 0.13.84 (99): mission maps as a test option
 
