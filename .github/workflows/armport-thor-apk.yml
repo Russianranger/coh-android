@@ -330,9 +330,12 @@ jobs:
             mission the game sends you into) starts the mission's map like a zone: the zone you
             came from stays loaded for the way out, and a loaded spare zone server takes the
             mission if one is waiting. Without it a mission map is refused as before.
-            What to expect: the map, its enemies and objectives load; enemies have no
-            navigation data yet, so they fight where they stand and do not chase; the first
-            session with the option prepares the shared zone data once more (a few minutes).
+            Shown in CI: the game asked for a level 1 office mission's map, the map was started,
+            the game loaded it, and the hero left it for the zone and saved. Not known before
+            the Thor: enemies and objectives, a mission entered by its door, and the mission
+            files in the shared zone data (CI has no zone asset pack). Mission maps have no
+            navigation data yet, so enemies may stand still. The first session with the option
+            prepares the shared zone data once more (a few minutes).
             Leave the mission before you save. A hero saved inside a mission is kept and
             reopens in the zone it entered from, but that launch is reported as failed.
           - A hero whose last session ended inside a mission can be reopened (it could not
