@@ -558,10 +558,13 @@ public final class ClientActivity extends Activity {
         run.setEnabled(profileIdle(next)&&next.profileState==ClientRuntime.ProfileState.READY);
         createFresh.setVisibility(next.profileState==ClientRuntime.ProfileState.ABSENT?View.VISIBLE:View.GONE);
         createFresh.setEnabled(canCreateFreshProfile(next));
-        if(switchHero!=null)switchHero.setEnabled(profileIdle(next)&&next.profileState!=ClientRuntime.ProfileState.PRESERVE);
         resumeCreation.setVisibility(next.profileState==ClientRuntime.ProfileState.READY?View.VISIBLE:View.GONE);
         resumeCreation.setEnabled(canResumeFirstCreation(next));
         setTextIfChanged(profileStatus,next.profileNote);
+    }
+    /** 0.13.85: the second hero slot can be used whenever nothing runs and the saved hero's data is complete or absent. */
+    private void refreshHeroSlotControl(ClientService.State next){
+        if(switchHero!=null)switchHero.setEnabled(profileIdle(next)&&next.profileState!=ClientRuntime.ProfileState.PRESERVE);
     }
     private void confirmSwitchHero(){
         if(!profileIdle(state))return;
@@ -605,7 +608,7 @@ public final class ClientActivity extends Activity {
         state=next;refreshTestControls();setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
         recoverReports.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&!ClientRuntime.operationInProgress());
         boolean diagnostics=diagnosticControlsReady(next,service!=null,exporting,ClientRuntime.operationInProgress());
-        boolean idle=diagnostics&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);prootFastMode.setEnabled(idle);prestartNextZone.setEnabled(idle);trustedBins.setEnabled(idle);gameplay60.setEnabled(idle);idleResidentMaps.setEnabled(idle);sharedServerData.setEnabled(idle);clientSkipServerFolders.setEnabled(idle);clientFolderIndex.setEnabled(idle);clientAudio.setEnabled(idle);sharedHeap.setEnabled(idle);stockTravel.setEnabled(idle);earlyZone.setEnabled(idle);spareZone.setEnabled(idle);glDirect.setEnabled(idle);gpuProfile.setEnabled(idle);clientArchitecture.setEnabled(idle);storage.setEnabled(diagnostics);refreshAbortControl(next);export.setEnabled(diagnostics);
+        boolean idle=diagnostics&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);refreshHeroSlotControl(next);performanceGraphics.setEnabled(idle);prootFastMode.setEnabled(idle);prestartNextZone.setEnabled(idle);trustedBins.setEnabled(idle);gameplay60.setEnabled(idle);idleResidentMaps.setEnabled(idle);sharedServerData.setEnabled(idle);clientSkipServerFolders.setEnabled(idle);clientFolderIndex.setEnabled(idle);clientAudio.setEnabled(idle);sharedHeap.setEnabled(idle);stockTravel.setEnabled(idle);earlyZone.setEnabled(idle);spareZone.setEnabled(idle);glDirect.setEnabled(idle);gpuProfile.setEnabled(idle);clientArchitecture.setEnabled(idle);storage.setEnabled(diagnostics);refreshAbortControl(next);export.setEnabled(diagnostics);
         if(next.storageBusy){setTextIfChanged(status,"Storage");setTextIfChanged(detail,next.storageStatus);}
         if(storageDialogRequested&&diagnostics){storageDialogRequested=false;showStorage();}
         if(!next.session.isEmpty()&&!next.session.equals(shownSession)){releaseControls();shownSession=next.session;movementSuppressed=false;deadlineMovementSuppressed=false;display.setSession(shownSession);}
