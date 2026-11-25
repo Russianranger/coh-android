@@ -38,10 +38,10 @@ public final class ClientActivity extends Activity {
     private TextView status,detail,counter,logs,profileStatus;
     private Button travelZone, recoverReports;
     private TextView zoningStatus;
-    private Button setup,importAssets,run,createFresh,resumeCreation,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
+    private Button setup,importAssets,run,createFresh,resumeCreation,switchHero,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30,fps60;
     private TextView recommendedStatus,optionsNotice;
-    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache,serverX87,deferZoneLoads,clientGroupBins,keepPreviousZone,missionMaps;
+    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache,serverX87,deferZoneLoads,clientGroupBins,keepPreviousZone,missionMaps,unlockAll,primalist;
     private Spinner gpuProfile,clientArchitecture;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
@@ -296,6 +296,16 @@ public final class ClientActivity extends Activity {
         missionMaps.setChecked(ClientRuntime.missionMapsEnabled(this));
         missionMaps.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setMissionMapsEnabled(this,checked);recommendedChanged();});
         controls.addView(missionMaps);
+        unlockAll=new CheckBox(this);unlockAll.setText("Unlock all content (test; store, veteran and pack rewards, locked power sets and archetypes; needs Fast server)");
+        unlockAll.setTextColor(Color.rgb(221,234,245));unlockAll.setTextSize(13);
+        unlockAll.setChecked(ClientRuntime.unlockAllEnabled(this));
+        unlockAll.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setUnlockAllEnabled(this,checked);recommendedChanged();});
+        controls.addView(unlockAll);
+        primalist=new CheckBox(this);primalist.setText("Primalist archetype (test; adds its name to the saved game once and stays on; older app versions will not open that saved game; needs Fast server)");
+        primalist.setTextColor(Color.rgb(221,234,245));primalist.setTextSize(13);
+        primalist.setChecked(ClientRuntime.primalistEnabled(this));
+        primalist.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setPrimalistEnabled(this,checked);recommendedChanged();});
+        controls.addView(primalist);
         category(controls,"Experimental","Tried and showed no clear benefit on the Thor. Kept for comparison; leave unticked.");
         prestartNextZone=new CheckBox(this);prestartNextZone.setText("Start King's Row in the background (zoning)");
         prestartNextZone.setTextColor(Color.rgb(221,234,245));prestartNextZone.setTextSize(13);
@@ -361,6 +371,9 @@ public final class ClientActivity extends Activity {
         // Owner, 2026-11-09: every zone's navigation map, imported with the same button (optional).
         navigationMapStatus=text("Checking navigation maps…",12,false);controls.addView(navigationMapStatus);
         controls.addView(text("Fresh install: import every ZIP part from the compatible versioned Assets release, then Set up / update runtime. Each completed part is retained; the app shows any missing parts. Keep these ZIPs for reinstalling. Future APK updates reuse compatible imported assets.",12,false));
+        controls.addView(text("Saved hero",15,true));
+        controls.addView(text("The app keeps one saved hero, plus one more in a second slot. Switching swaps them; nothing is deleted. With an empty second slot the saved hero is set aside and Create fresh character appears on the Play tab, for example to make a Primalist.",12,false));
+        switchHero=button("Switch hero slot",this::confirmSwitchHero);controls.addView(switchHero);
         controls.addView(text("Controller and options button",15,true));
         controls.addView(button("Controller mappings",this::controllerDialog));
         controls.addView(text("Default controller: Left stick: WASD · X: jump · Right stick: cursor · A: click/talk · B: Esc · Shoulders: right click / turn view · D-pad: arrows · L3: text · Start: Enter. Triggers are unbound. The COH power trays preset adds hold LT for 1–0 and Select for this menu; Back or the gear also opens it.",12,false));
@@ -394,7 +407,7 @@ public final class ClientActivity extends Activity {
     }
     /** The options as a new install has them: ticked, then unticked (ClientRuntime's defaults). */
     private CheckBox[] recommendedTicked(){return new CheckBox[]{performanceGraphics,prootFastMode,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,stockTravel,earlyZone,trustedBins,gameplay60,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache,spareZone,serverX87,deferZoneLoads};}
-    private CheckBox[] recommendedUnticked(){return new CheckBox[]{prestartNextZone,idleResidentMaps,sharedHeap,glDirect,clientGroupBins,keepPreviousZone,missionMaps};}
+    private CheckBox[] recommendedUnticked(){return new CheckBox[]{prestartNextZone,idleResidentMaps,sharedHeap,glDirect,clientGroupBins,keepPreviousZone,missionMaps,unlockAll,primalist};}
     private static String optionName(CheckBox box){String name=String.valueOf(box.getText());int cut=name.indexOf(" (");return cut>0?name.substring(0,cut):name;}
     /** The Optional category (owner, 2026-11-24): the owner's choice either way, so never "off recommended" on the screen. */
     private CheckBox[] optionalOptions(){return new CheckBox[]{keepPreviousZone};}
@@ -545,9 +558,24 @@ public final class ClientActivity extends Activity {
         run.setEnabled(profileIdle(next)&&next.profileState==ClientRuntime.ProfileState.READY);
         createFresh.setVisibility(next.profileState==ClientRuntime.ProfileState.ABSENT?View.VISIBLE:View.GONE);
         createFresh.setEnabled(canCreateFreshProfile(next));
+        if(switchHero!=null)switchHero.setEnabled(profileIdle(next)&&next.profileState!=ClientRuntime.ProfileState.PRESERVE);
         resumeCreation.setVisibility(next.profileState==ClientRuntime.ProfileState.READY?View.VISIBLE:View.GONE);
         resumeCreation.setEnabled(canResumeFirstCreation(next));
         setTextIfChanged(profileStatus,next.profileNote);
+    }
+    private void confirmSwitchHero(){
+        if(!profileIdle(state))return;
+        boolean other=ClientRuntime.otherHeroPresent(this);
+        boolean saved=state.profileState==ClientRuntime.ProfileState.READY;
+        String message=saved&&other?"Swap the saved hero with the hero in the other slot? Both are kept."
+                :saved?"Set the saved hero aside in the other slot? It is kept exactly as it is. You can then create a new hero with Create fresh character, and swap back here at any time."
+                :other?"Bring the hero in the other slot back as the saved hero?"
+                :"There is no saved hero in either slot.";
+        AlertDialog.Builder dialog=new AlertDialog.Builder(this).setTitle("Switch hero slot").setMessage(message).setNegativeButton("Cancel",null);
+        if(saved||other)dialog.setPositiveButton("Switch",(d,which)->{
+            if(profileIdle(state)&&service!=null)Toast.makeText(this,service.switchHero(),Toast.LENGTH_LONG).show();
+        });
+        dialog.show();
     }
     private void confirmFreshProfile(){
         if(!canCreateFreshProfile(state))return;

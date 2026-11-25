@@ -244,6 +244,18 @@ def drop_stale_bins(content, data_root, installed=()):
             'dropped': dropped}
 
 
+def class_compiled(data_root):
+    """Whether this tree's compiled class list (server/bin/classes.bin) holds the Primalist; None if absent."""
+    path = Path(data_root) / 'server/bin/classes.bin'
+    try:
+        info = path.lstat()
+        if not stat.S_ISREG(info.st_mode) or info.st_size > 64 * 1024 * 1024:
+            return None
+        return CLASS_ATTRIBUTE.encode() in path.read_bytes()
+    except OSError:
+        return None
+
+
 def attribute_line(number):
     return ('%d "%s"\r\n' % (number, CLASS_ATTRIBUTE)).encode()
 

@@ -230,6 +230,13 @@ public final class ClientService extends Service {
     }
     private void lifecycle(String event){ClientRuntime r=runtime;if(r!=null&&busy)r.recordLifecycle(event);}
     private void refreshProfileState(){profileState=ClientRuntime.characterProfileState(this);profileNote=ClientRuntime.profileRecoveryMessage(profileState);}
+    /** 0.13.85: swap the saved hero with the other hero slot (folder renames only), then show the new state. */
+    public String switchHero(){
+        if(busy||storageBusy||reportExporting||blocked)return "Finish the current operation first.";
+        String message;
+        try{message=ClientRuntime.switchHero(this);}catch(IOException failure){message=String.valueOf(failure.getMessage());}
+        refreshProfileState();publish();return message;
+    }
     private State snapshot(){return new State(busy,blocked,stage,detail,session,logs.toString(),report,certified,inputReady,finishing,characterSaved,canReturnGround,canSaveLogout,inputSent,inputFailed,readyDeadlineUptimeMillis,sessionPhase,saveDeadlineUptimeMillis,movementDeadlineUptimeMillis,storageBusy,reportExporting,storagePlan,storageStatus,storageReport,profileState,profileNote);}
     private void publish(){if(destroyed)return;State s=snapshot();for(Listener l:new ArrayList<>(listeners))l.onState(s);}
     private void deliverFrame(Listener l){Frame value=frame;if(value!=null)l.onFrame(value.pixels,value.width,value.height,value.sequence);}

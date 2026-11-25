@@ -28,6 +28,35 @@ public final class ClientZoning {
     public synchronized boolean canPrepare(){return !monorail&&!stockTravel&&"idle".equals(phase)&&epoch<4;}
     public synchronized boolean canTravel(){return !monorail&&!stockTravel&&"ready".equals(phase);}
     public static boolean supported(int map){return map==1||map==5||map==101;}
+    /**
+     * 0.13.85, the second hero slot: swap the saved hero's folder with the other slot's by renaming.
+     * `saved`: the saved hero's folder is complete; `readable`: it is complete or absent (never
+     * touch an incomplete one). No folder is opened, copied or deleted. Kept here (plain Java) so
+     * the shipped code is the code the tests run.
+     */
+    public static String switchHeroFolders(java.io.File current,java.io.File other,java.io.File pending,boolean saved,boolean readable) throws java.io.IOException {
+        if(!readable)throw new java.io.IOException("The saved hero's data is incomplete or unreadable. Nothing was changed.");
+        if(pending.exists())throw new java.io.IOException("An earlier hero switch did not finish. Nothing was changed; export a report.");
+        boolean hasOther=other.isDirectory();
+        if(other.exists()&&!hasOther)throw new java.io.IOException("The other hero slot is not a folder. Nothing was changed.");
+        if(!saved){
+            if(current.exists())throw new java.io.IOException("The saved hero's folder is not empty. Nothing was changed.");
+            if(!hasOther)throw new java.io.IOException("There is no saved hero in either slot.");
+            if(!other.renameTo(current))throw new java.io.IOException("The other hero could not be brought back. Nothing was changed.");
+            return "The hero from the other slot is now the saved hero.";
+        }
+        if(!hasOther){
+            if(!current.renameTo(other))throw new java.io.IOException("The saved hero could not be set aside. Nothing was changed.");
+            return "The saved hero is in the other slot. Use Create fresh character for a new hero; Switch hero slot brings this one back.";
+        }
+        if(!current.renameTo(pending))throw new java.io.IOException("The saved hero could not be moved. Nothing was changed.");
+        if(!other.renameTo(current)){
+            if(!pending.renameTo(current))throw new java.io.IOException("The switch stopped half way; the saved hero is in "+pending.getName()+". Export a report.");
+            throw new java.io.IOException("The other hero could not be brought back. Nothing was changed.");
+        }
+        if(!pending.renameTo(other))throw new java.io.IOException("The other hero is now the saved hero, but the first one stayed in "+pending.getName()+". Export a report.");
+        return "Switched to the hero from the other slot.";
+    }
     /** maps.db static zones (ids 1-999, Atlas Park instance 2 is 101). */
     public static boolean staticZone(long map){return map>=1&&map<=999;}
     /**

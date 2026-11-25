@@ -1,7 +1,7 @@
 name: ArmPort Thor APK (M5 candidate)
 
 # User-authorized M5 development: build and sign COH Atlas
-# Gameplay 0.13.84, the 0.13.36 app plus the ARM64 client option, for the M5
+# Gameplay 0.13.85, the 0.13.36 app plus the ARM64 client option, for the M5
 # Thor play test. Uploads a workflow artifact; publish_release=true (only for a
 # user-approved candidate) also publishes it as a GitHub pre-release.
 on:
@@ -238,7 +238,7 @@ jobs:
               'target', 'status', 'source_commit', 'ndk_version', 'compiler', 'files', 'patches',
               'ioctl_command_filter_patch', 'corresponding_sources')}))
           EOF
-      - name: Build and sign COH Atlas Gameplay 0.13.84
+      - name: Build and sign COH Atlas Gameplay 0.13.85
         env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
         run: |
           mkdir -p out/thor
@@ -265,7 +265,7 @@ jobs:
             --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
             --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
             --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks" \
-            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.84.apk "${server_args[@]}"
+            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.85.apk "${server_args[@]}"
       - name: Remove retained signing material
         if: always()
         run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
@@ -293,7 +293,7 @@ jobs:
           EOF
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.84-apk
+          name: coh-atlas-gameplay-0.13.85-apk
           path: out/thor/
           retention-days: 30
           if-no-files-found: error
@@ -308,24 +308,44 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.84-apk
+          name: coh-atlas-gameplay-0.13.85-apk
           path: apk
-      - name: Publish the 0.13.84 pre-release
+      - name: Publish the 0.13.85 pre-release
         env: {GH_TOKEN: '${{ github.token }}'}
         run: |
           set -euo pipefail
           cd apk
-          test -f COH-Atlas-Gameplay-0.13.84.apk
-          sha256sum COH-Atlas-Gameplay-0.13.84.apk > COH-Atlas-Gameplay-0.13.84.apk.sha256
+          test -f COH-Atlas-Gameplay-0.13.85.apk
+          sha256sum COH-Atlas-Gameplay-0.13.85.apk > COH-Atlas-Gameplay-0.13.85.apk.sha256
           # The pack this APK pins (its build report's record names the pack's release).
           pack=$(python3 -c "import json, sys; r = json.load(open('thor-apk-build-report.json')).get('navigation_map_pack'); print('https://github.com/' + sys.argv[1] + '/releases/tag/' + r['release_tag'] if r else 'its release (see the test sheet)')" "$GITHUB_REPOSITORY")
           cat > notes.md <<EOF
-          COH Atlas Gameplay 0.13.84 (x86 track performance candidate) for the Thor play test.
+          COH Atlas Gameplay 0.13.85 (x86 track performance candidate) for the Thor play test.
 
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
-          New in 0.13.84 (missions, the next step on the roadmap after start and zoning):
+          New in 0.13.85 (owner's request, 2026-11-25): the Primalist archetype and unlocked content.
+          Both are test options, off by default; with both unticked this version plays as 0.13.84.
+          - Test option "Unlock all content": the one local account owns every store product and
+            every veteran (loyalty) reward, is a VIP, and has every pack and archetype access bit.
+            Locked power sets (for example Beast Mastery or Nature Affinity), Kheldians and Arachnos
+            archetypes, costume sets and pieces, auras, extra costume slots, the invention and
+            auction licences, and the store and veteran badges with their powers become available.
+            Counts of consumable items are not changed. Developer-only debug powers stay locked.
+            Untick it and the locks return; what a hero already took stays.
+          - Test option "Primalist archetype": the unfinished shapeshifting melee archetype, from
+            the definition files the owner supplied (class file, Feral Might and Primal Gifts with
+            their own animation bindings, the three forms). Its name is added to the saved game's
+            database on the first launch with the option, at the end of the list, so no existing
+            name changes. From then on the archetype stays on whatever the box says, and versions
+            before 0.13.85 no longer open that saved game. The first launch prepares the server
+            data again and rebuilds two compiled files (several minutes, once per data tree).
+            Known gaps: no archetype icon or selection screenshots (the art is not in this build),
+            no ancillary power pools, and the balance was never shipped by the original developers.
+          Both options need "Fast server". Not shown in CI: creating or playing a Primalist, and
+          what the unlocks look like in the menus.
+          From 0.13.84 (not yet on the Thor when this was built; missions):
           - Test option, off by default: "Start mission maps". With it a mission door (or a
             mission the game sends you into) starts the mission's map like a zone: the zone you
             came from stays loaded for the way out, and a loaded spare zone server takes the
@@ -412,7 +432,7 @@ jobs:
           Unchanged: any character name the game accepts, one character per install; every zone can
           start; at most two zone servers (three with the optional one); supergroup bases are not served; the full-window view, gear button
           and controller.
-          Test sheet: THOR-TEST-0.13.84.md.
+          Test sheet: THOR-TEST-0.13.85.md.
           EOF
           if [ "$SERVER_OPTION" = true ]; then
             echo "Servers: the CI-built MapServer with trusted prepared data by default (device-run in 0.13.69); unticking Fast server runs the 0.13.36 MapServer." >> notes.md
@@ -421,7 +441,7 @@ jobs:
           else
             echo "Servers: shipping MapServer, so the prepared server caches still load. The Fast server option has no effect in this build." >> notes.md
           fi
-          gh release create "coh-atlas-gameplay-v0.13.84" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-            --prerelease --title "COH Atlas Gameplay 0.13.84 (performance candidate)" --notes-file notes.md \
-            COH-Atlas-Gameplay-0.13.84.apk COH-Atlas-Gameplay-0.13.84.apk.sha256
-          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.84"
+          gh release create "coh-atlas-gameplay-v0.13.85" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "COH Atlas Gameplay 0.13.85 (performance candidate)" --notes-file notes.md \
+            COH-Atlas-Gameplay-0.13.85.apk COH-Atlas-Gameplay-0.13.85.apk.sha256
+          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.85"

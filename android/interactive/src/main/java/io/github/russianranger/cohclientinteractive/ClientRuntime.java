@@ -229,7 +229,7 @@ public final class ClientRuntime {
     private boolean glDirectRequested=false;
     private boolean prootIoctlFilterRequested=false,prootIoctlFilterUsed=false;
     private boolean prootSocketFilterRequested=false,prootSocketFilterUsed=false;
-    private boolean serverQuickStartRequested=false,wineserverPathCacheRequested=false,physxCacheRequested=false,serverX87Requested=false,deferZoneLoadsRequested=false,clientGroupBinsRequested=false,keepPreviousZoneRequested=false,missionMapsRequested=false;
+    private boolean serverQuickStartRequested=false,wineserverPathCacheRequested=false,physxCacheRequested=false,serverX87Requested=false,deferZoneLoadsRequested=false,clientGroupBinsRequested=false,keepPreviousZoneRequested=false,missionMapsRequested=false,unlockAllRequested=false,primalistRequested=false;
     private String optionsOffRecommended="";
     private boolean prootCasefoldRequested=false,prootCasefoldUsed=false;
     /** 0.13.70: where the second PRoot build writes its stop counts (patch 0005); null without it. */
@@ -307,7 +307,7 @@ public final class ClientRuntime {
             {"proot-casefold",prootCasefoldEnabled(context),true},{"server-quick-start",serverQuickStartEnabled(context),true},
             {"wineserver-path-cache",wineserverPathCacheEnabled(context),true},{"physx-cooked-cache",physxCacheEnabled(context),true},
             {"spare-zone-server",spareZoneEnabled(context),true},{"server-x87-64bit",serverX87Enabled(context),true},
-            {"zone-load-after-ready",deferZoneLoadsEnabled(context),true},{"keep-previous-zone",keepPreviousZoneEnabled(context),false},{"mission-maps",missionMapsEnabled(context),false},
+            {"zone-load-after-ready",deferZoneLoadsEnabled(context),true},{"keep-previous-zone",keepPreviousZoneEnabled(context),false},{"mission-maps",missionMapsEnabled(context),false},{"unlock-all",unlockAllEnabled(context),false},{"primalist",primalistEnabled(context),false},
             {"prestart-next-zone",prestartNextZoneEnabled(context),false},{"idle-resident-maps",idleResidentMapsEnabled(context),false},
             {"shared-server-memory",sharedHeapEnabled(context),false},
             {"client-group-bins",clientGroupBinsEnabled(context),false},
@@ -611,6 +611,35 @@ public final class ClientRuntime {
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("mission-maps", enabled).apply();
     }
+    /**
+     * Test option (0.13.85), off by default: the one local account owns every store product and
+     * loyalty (veteran) reward, is a VIP, and has every pack and archetype access bit. Read by the
+     * game client and the fast server (COH_UNLOCK_ALL). Reversible: untick and nothing stays unlocked
+     * except what a hero already took (powers, costume pieces, badges).
+     */
+    public static boolean unlockAllEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("unlock-all", false);
+    }
+    public static synchronized void setUnlockAllEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("unlock-all", enabled).apply();
+    }
+    /**
+     * Test option (0.13.85), off by default: the Primalist archetype (COH_PRIMALIST). The first launch
+     * with it adds the class name to the saved game's database; from then on the guest keeps the
+     * archetype on whatever this box says, and versions before 0.13.85 no longer open that saved game.
+     */
+    public static boolean primalistEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("primalist", false);
+    }
+    public static synchronized void setPrimalistEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("primalist", enabled).apply();
+    }
     public static boolean keepPreviousZoneEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .getBoolean("keep-previous-zone", false);
@@ -768,6 +797,25 @@ public final class ClientRuntime {
                 throw new IllegalStateException("Runtime setup reservation changed");
             setupReservation = owner;
         }
+    }
+    /**
+     * 0.13.85: a second hero slot. The saved hero is one folder (its database and identity files);
+     * the other slot is the same folder under another name. Switching renames folders and never
+     * opens, copies or deletes one. With nothing in the other slot the saved hero is set aside
+     * and "Create fresh character" becomes available.
+     */
+    static final String PROFILE_PATH = "client/state/diagnostic/android-local-login";
+    static final String OTHER_HERO_PATH = PROFILE_PATH + ".other-hero";
+    static final String SWITCHING_PATH = PROFILE_PATH + ".switching";
+    public static boolean otherHeroPresent(Context context) {
+        return new File(context.getApplicationContext().getFilesDir(), OTHER_HERO_PATH).isDirectory();
+    }
+    public static synchronized String switchHero(Context context) throws IOException {
+        if (operationInProgress()) throw new IOException("Wait for the current operation to finish.");
+        File root = context.getApplicationContext().getFilesDir();
+        ProfileState state = characterProfileState(context);
+        return ClientZoning.switchHeroFolders(new File(root, PROFILE_PATH), new File(root, OTHER_HERO_PATH),
+                new File(root, SWITCHING_PATH), state == ProfileState.READY, state != ProfileState.PRESERVE);
     }
     /** Read at most two small identity files; never walk imported assets or a database. */
     public static ProfileState characterProfileState(Context context) {
@@ -1219,7 +1267,7 @@ public final class ClientRuntime {
         glDirectRequested=glDirectEnabled(context);
         prootIoctlFilterRequested=prootIoctlFilterEnabled(context);prootIoctlFilterUsed=false;
         prootSocketFilterRequested=prootSocketFilterEnabled(context);prootSocketFilterUsed=false;
-        serverQuickStartRequested=serverQuickStartEnabled(context);wineserverPathCacheRequested=wineserverPathCacheEnabled(context);physxCacheRequested=physxCacheEnabled(context);serverX87Requested=serverX87Enabled(context);deferZoneLoadsRequested=deferZoneLoadsEnabled(context);clientGroupBinsRequested=clientGroupBinsEnabled(context);keepPreviousZoneRequested=keepPreviousZoneEnabled(context);missionMapsRequested=missionMapsEnabled(context);
+        serverQuickStartRequested=serverQuickStartEnabled(context);wineserverPathCacheRequested=wineserverPathCacheEnabled(context);physxCacheRequested=physxCacheEnabled(context);serverX87Requested=serverX87Enabled(context);deferZoneLoadsRequested=deferZoneLoadsEnabled(context);clientGroupBinsRequested=clientGroupBinsEnabled(context);keepPreviousZoneRequested=keepPreviousZoneEnabled(context);missionMapsRequested=missionMapsEnabled(context);unlockAllRequested=unlockAllEnabled(context);primalistRequested=primalistEnabled(context);
         prootCasefoldRequested=prootCasefoldEnabled(context);prootCasefoldUsed=false;
         optionsOffRecommended=optionsOffRecommended(context);
         spareZoneRequested=spareZoneEnabled(context);
@@ -1336,6 +1384,8 @@ public final class ClientRuntime {
                     // 0.13.82: the zone the hero just left stays loaded (one more zone server; needs the spare).
                     "COH_KEEP_PREVIOUS_ZONE="+(keepPreviousZoneRequested&&spareZoneRequested?"1":"0"),
                     "COH_MISSION_MAPS="+(missionMapsRequested&&stockTravelRequested?"1":"0"),
+                    // 0.13.85: account unlocks and the Primalist archetype (both need the Fast server to be honoured there).
+                    "COH_UNLOCK_ALL="+(unlockAllRequested?"1":"0"), "COH_PRIMALIST="+(primalistRequested?"1":"0"),
                     "COH_EXTERNAL_MAPS="+(stockTravelRequested?"1":"0"), "COH_STOCK_TRAVEL="+(stockTravelRequested?"1":"0"),
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
@@ -3214,7 +3264,7 @@ public final class ClientRuntime {
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
                     .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
                     .put("navigation_map_pack", navigationMapReport == null ? JSONObject.NULL : navigationMapReport)
-                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_socket_filter_requested", prootSocketFilterRequested).put("proot_socket_filter_used", prootSocketFilterUsed).put("proot_casefold_requested", prootCasefoldRequested).put("proot_casefold_used", prootCasefoldUsed).put("server_quick_start_requested", serverQuickStartRequested).put("wineserver_path_cache_requested", wineserverPathCacheRequested).put("physx_cache_requested", physxCacheRequested).put("server_x87_requested", serverX87Requested).put("defer_zone_loads_requested", deferZoneLoadsRequested).put("keep_previous_zone_requested", keepPreviousZoneRequested).put("mission_maps_requested", missionMapsRequested).put("client_group_bins_requested", clientGroupBinsRequested).put("options_off_recommended", optionsOffRecommended).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
+                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_socket_filter_requested", prootSocketFilterRequested).put("proot_socket_filter_used", prootSocketFilterUsed).put("proot_casefold_requested", prootCasefoldRequested).put("proot_casefold_used", prootCasefoldUsed).put("server_quick_start_requested", serverQuickStartRequested).put("wineserver_path_cache_requested", wineserverPathCacheRequested).put("physx_cache_requested", physxCacheRequested).put("server_x87_requested", serverX87Requested).put("defer_zone_loads_requested", deferZoneLoadsRequested).put("keep_previous_zone_requested", keepPreviousZoneRequested).put("mission_maps_requested", missionMapsRequested).put("unlock_all_requested", unlockAllRequested).put("primalist_requested", primalistRequested).put("client_group_bins_requested", clientGroupBinsRequested).put("options_off_recommended", optionsOffRecommended).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)

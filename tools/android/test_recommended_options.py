@@ -26,7 +26,8 @@ GETTERS = {
     'idleResidentMaps': 'idleResidentMapsEnabled', 'spareZone': 'spareZoneEnabled',
     'sharedHeap': 'sharedHeapEnabled', 'glDirect': 'glDirectEnabled', 'serverX87': 'serverX87Enabled',
     'deferZoneLoads': 'deferZoneLoadsEnabled', 'clientGroupBins': 'clientGroupBinsEnabled',
-    'keepPreviousZone': 'keepPreviousZoneEnabled', 'missionMaps': 'missionMapsEnabled'}
+    'keepPreviousZone': 'keepPreviousZoneEnabled', 'missionMaps': 'missionMapsEnabled',
+    'unlockAll': 'unlockAllEnabled', 'primalist': 'primalistEnabled'}
 
 
 class RecommendedOptions(unittest.TestCase):
@@ -59,24 +60,24 @@ class RecommendedOptions(unittest.TestCase):
         boxes = re.findall(r'(\w+)\.setOnCheckedChangeListener\(\(button,checked\)->\{ClientRuntime\.set\w+Enabled\(this,checked\);'
                            r'recommendedChanged\(\);\}\);', self.activity)
         ticked, unticked = self.screen_lists()
-        self.assertEqual(len(boxes), 26)
+        self.assertEqual(len(boxes), 28)
         self.assertEqual(sorted(boxes), sorted(ticked + unticked))
         self.assertEqual(sorted(boxes), sorted(GETTERS))
-        self.assertEqual(len(set(ticked + unticked)), 26)
+        self.assertEqual(len(set(ticked + unticked)), 28)
         # No option box changes without the line being read again.
         self.assertNotRegex(self.activity, r'->ClientRuntime\.set\w+Enabled\(this,checked\)\);')
 
     def test_the_lists_are_the_stored_defaults(self):
         stored, table = self.stored_defaults(), self.report_table()
         ticked, unticked = self.screen_lists()
-        self.assertEqual(len(table), 26)
+        self.assertEqual(len(table), 28)
         for box, getter in GETTERS.items():
             with self.subTest(box):
                 self.assertIn(getter, stored)
                 self.assertEqual(table[getter], stored[getter])
                 self.assertEqual(box in ticked, stored[getter][1])
                 self.assertEqual(box in unticked, not stored[getter][1])
-        self.assertEqual((len(ticked), len(unticked)), (19, 7))
+        self.assertEqual((len(ticked), len(unticked)), (19, 9))
         # 0.13.79: the spare zone server is recommended (owner's policy, the current zone and one
         # spare; Thor 0.13.78 launch B: trips 33.9 s and 27.7 s against 65.8 s, 60 FPS).
         self.assertIn('spareZone', ticked)
@@ -144,7 +145,7 @@ class OptionCategories(unittest.TestCase):
                          'gameplay60', 'prootIoctlFilter', 'prootSocketFilter', 'prootCasefold', 'serverQuickStart',
                          'wineserverPathCache', 'physxCache', 'serverX87', 'deferZoneLoads']),
         ('Optional', ['keepPreviousZone']),
-        ('Test', ['missionMaps']),
+        ('Test', ['missionMaps', 'unlockAll', 'primalist']),
         ('Experimental', ['prestartNextZone', 'idleResidentMaps', 'sharedHeap', 'glDirect', 'clientGroupBins']))
 
     @classmethod
@@ -174,7 +175,7 @@ class OptionCategories(unittest.TestCase):
         self.assertEqual(sorted(groups['Recommended']), sorted(ticked))
         self.assertEqual(sorted(groups['Optional'] + groups['Test'] + groups['Experimental']), sorted(unticked))
         # 0.13.84: mission maps are under test (off by default, restored to off like the experiments).
-        self.assertEqual(groups['Test'], ['missionMaps'])
+        self.assertEqual(groups['Test'], ['missionMaps', 'unlockAll', 'primalist'])
         self.assertNotIn('Nothing is under test in this version.', self.page)
         # The third zone server (Thor 0.13.82 launch B: lowest free memory 3.5 GB for 4.9 GB) is the owner's choice.
         self.assertEqual(groups['Optional'], ['keepPreviousZone'])

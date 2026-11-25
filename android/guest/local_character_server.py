@@ -2717,6 +2717,11 @@ class LocalCharacterServer(login.LocalLoginServer):
                     native_ready_time_scope='sampled_upper_bound_after_owned_existing_protocol_tick_gate; observer_delay_not_bounded')
                 row['owned_launch_memory_at_first_native_ready'] = observe_owned_launch_memory(child)
                 row['native_bin_writes'] = native_bin_writes(runtime, row.get('launch_utc_ms'))
+                if getattr(self, 'single_player_content', None) is not None:
+                    # The server has loaded its definitions: the class list it used (rebuilt when
+                    # the stale one was dropped) must hold the Primalist.
+                    import single_player_content
+                    row['single_player_class_compiled'] = single_player_content.class_compiled(Path(runtime) / 'data')
                 row['server_fx_provider']['post_native_ready'] = observe_ready_fx_provider(
                     runtime, row['private_runtime_identity'], row['server_fx_provider']['actual_payload'])
                 changed = True

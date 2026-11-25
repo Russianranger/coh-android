@@ -3,6 +3,7 @@
 import argparse
 import ast
 import hashlib
+import io
 import json
 from pathlib import Path
 import re
@@ -51,7 +52,40 @@ GUEST_DEPENDENCIES = (
     # 0.13.67: an unchanged install step is skipped by its launch receipt; imported
     # by character_creation_diagnostic.
     'launch_receipts.py',
+    # 0.13.85: the Primalist's definition files (used only with COH_PRIMALIST=1 or once the
+    # saved game knows the class); imported by local_login_server and local_character_server.
+    'single_player_content.py',
 )
+
+# 0.13.85: armport/content/single-player packed for the guest (single_player_content.py).
+SINGLE_PLAYER_CONTENT = ROOT / 'armport/content/single-player'
+SINGLE_PLAYER_ARCHIVE = 'single-player-content.zip'
+
+
+def single_player_content(root=SINGLE_PLAYER_CONTENT):
+    """The content folder as one deterministic archive: its manifest and every listed file."""
+    raw = (root / 'manifest.json').read_bytes()
+    manifest = json.loads(raw)
+    listed = manifest['files']
+    package.require(manifest.get('format') == 1 and manifest.get('name') == 'single-player-content'
+                    and isinstance(listed, dict) and 0 < len(listed) <= 256, 'Invalid single-player content manifest')
+    package.require(hashlib.sha256(json.dumps(listed, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+                    == manifest.get('files_sha256'), 'Single-player content identity differs')
+    on_disk = {path.relative_to(root / 'data').as_posix() for path in (root / 'data').rglob('*') if path.is_file()}
+    package.require(on_disk == set(listed), 'Single-player content folder differs from its manifest')
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as archive:
+        for name, data in [('manifest.json', raw)] + [('data/' + name, (root / 'data' / name).read_bytes())
+                                                      for name in sorted(listed)]:
+            if name != 'manifest.json':
+                record = listed[name[5:]]
+                package.require(len(data) == record['bytes'] and hashlib.sha256(data).hexdigest() == record['sha256'],
+                                'Single-player content file differs from its manifest: ' + name)
+            info = zipfile.ZipInfo(name, (2026, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.external_attr = 0o100644 << 16
+            archive.writestr(info, data)
+    return {SINGLE_PLAYER_ARCHIVE: buffer.getvalue()}
 
 # The device's reopen runs the zoning flow (the Thor APK's runtime manifest sets
 # character_zoning_enabled). The CI guest's retained 0.10.0 donor predates it,
@@ -353,6 +387,10 @@ def stage(source, armport, output, repository_commit, external=None, *,
                         'The donor already carries a navigation map descriptor')
         generated.update(descriptor_payload)
         zone_payloads = zone_payloads + tuple(descriptor_payload)
+    content_payload = single_player_content()
+    package.require(not set(content_payload) & (set(runtime['files']) | set(generated)),
+                    'The donor already carries single-player content')
+    generated.update(content_payload)
     replacements = {'armport-client.zip': armport,
                     'armport_client_package.py': Path(__file__).with_name('armport_client_package.py'),
                     'armport_interactive.py': Path(__file__).with_name('armport_interactive.py'),

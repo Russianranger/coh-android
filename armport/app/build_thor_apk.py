@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build COH Atlas Gameplay 0.13.84 with the ARM64 client option.
+"""Build COH Atlas Gameplay 0.13.85 with the ARM64 client option.
 
 User approval (2026-10-26, Claude lead session): build and sign this APK for the
 M5 Thor play test. It is an in-place update of the installed 0.13.36 app: same
@@ -16,7 +16,7 @@ Inputs are pinned:
 Changes against the donor:
 - classes.dex is recompiled from this repository's app sources (0.13.36
   sources plus the reviewed M4 ARM64-option diff);
-- version metadata becomes 0.13.84 / 99, and the binary manifest is checked
+- version metadata becomes 0.13.85 / 100, and the binary manifest is checked
   to differ only in its version fields;
 - stage_app_assets adds the ARM64 client, its guest helpers and the manifest
   entries and the explicitly listed guest helpers;
@@ -46,8 +46,8 @@ import server_pipeline
 ROOT = Path(__file__).resolve().parents[2]
 APP_ID = 'io.github.russianranger.cohclientinteractive'
 ANDROID = '{http://schemas.android.com/apk/res/android}'
-VERSION_NAME, VERSION_CODE = '0.13.84', 99
-APK_NAME = 'COH-Atlas-Gameplay-0.13.84.apk'
+VERSION_NAME, VERSION_CODE = '0.13.85', 100
+APK_NAME = 'COH-Atlas-Gameplay-0.13.85.apk'
 DONOR_NAME = 'COH-Atlas-Gameplay-0.13.36.apk'
 DONOR_RELEASE = 'coh-atlas-gameplay-v0.13.36'
 DONOR_ASSET_ID = 635975286
@@ -71,6 +71,9 @@ ADDED_RUNTIME = frozenset({'armport-client.zip', 'armport_client_package.py', 'a
                            'zone_travel.py', 'zone_index.py',
                            # 0.13.84: mission maps' collision leaves (inert unless COH_MISSION_MAPS=1).
                            'mission_index.py',
+                           # 0.13.85: the Primalist's definition files and their installer (used only
+                           # with COH_PRIMALIST=1 or once the saved game knows the class).
+                           'single_player_content.py', 'single-player-content.zip',
                            # 0.13.65: zone beacon graphs for the shared zone tree (inert without them).
                            'zone_beacon_package.py',
                            # 0.13.67: launch receipts (an unchanged install step is not re-checked leaf by leaf).

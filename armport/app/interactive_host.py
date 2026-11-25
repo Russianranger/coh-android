@@ -834,6 +834,36 @@ def mission_probe_requested():
     return value == '1'
 
 
+def single_player_probe_requested():
+    """0.13.85: both CI sessions run with the Primalist archetype and "Unlock all content" on."""
+    value = os.environ.get('COH_SINGLE_PLAYER_PROBE', '')
+    require(value in ('', '0', '1'), 'COH_SINGLE_PLAYER_PROBE must be empty, 0 or 1')
+    return value == '1'
+
+
+def single_player_summary(report):
+    """Bounded view of the Primalist content and the account unlock in a session report."""
+    result = {key: report.get(key) for key in ('primalist', 'unlock_all', 'client_account_unlock')
+              if isinstance(report.get(key), dict)}
+    content = report.get('single_player_content')
+    if isinstance(content, dict):
+        result['content'] = {key: content.get(key) for key in ('identity', 'files', 'replaced', 'added')}
+    for key in ('character_creation', 'character_reopen'):
+        section = report.get(key)
+        if not isinstance(section, dict):
+            continue
+        for name in ('single_player_stale_bins', 'account_unlock'):
+            if isinstance(section.get(name), dict):
+                result[name] = section[name]
+        observation = section.get('map_startup_observation') or report.get('map_startup_observation')
+        if isinstance(observation, dict):
+            compiled = {str(map_id): row.get('single_player_class_compiled') for map_id, row in observation.items()
+                        if isinstance(row, dict) and 'single_player_class_compiled' in row}
+            if compiled:
+                result['class_compiled'] = compiled
+    return result or None
+
+
 def serverdata_probe_requested():
     """CI-only probe level: 1 serves scripts.loc, 2 every folder no guest proof reads,
     through a linked shared read-only runtime/serverdata tree. 0 is off."""
@@ -993,6 +1023,7 @@ def guest_timing_summary(evidence):
                 (report.get('character_creation'), report.get('character_reopen'))
                 if isinstance(section, dict) and section.get('external_maps') is not None), None)
             result['stock_travel'] = stock_travel_summary(report)
+            result['single_player'] = single_player_summary(report)
             for key in ('character_creation', 'character_reopen'):
                 section = report.get(key)
                 if not isinstance(section, dict):
@@ -1045,7 +1076,7 @@ def timing_notices(timings, proot_seccomp, trusted_bins):
         summary, writes = {}, {}
         detail = {key: original[key] for key in ('stage_timeline', 'client_folder_cache', 'client_sound_scripts',
                                                  'client_logout_keys') if original.get(key)}
-        servers = {key: original[key] for key in ('shared_heap', 'external_maps', 'stock_travel')
+        servers = {key: original[key] for key in ('shared_heap', 'external_maps', 'stock_travel', 'single_player')
                    if original.get(key)}
         loads = original.get('client_zone_loads')
         zone_loads = original.get('zone_server_loads')
@@ -1294,6 +1325,9 @@ def main():
             require(stock_travel_requested(), "The mission probe needs the game's own zone travel")
             command.insert(command.index('/usr/bin/python3'), 'COH_MISSION_MAPS=1')
             command.insert(command.index('/usr/bin/python3'), 'COH_MISSION_MAPS_TREE=atlas')
+        if single_player_probe_requested():
+            command.insert(command.index('/usr/bin/python3'), 'COH_PRIMALIST=1')
+            command.insert(command.index('/usr/bin/python3'), 'COH_UNLOCK_ALL=1')
         if shared_server_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_SHARED_SERVER_DATA=1')
         if serverdata_probe_requested():
