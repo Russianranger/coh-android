@@ -98,6 +98,37 @@ class PrimalistProbe(unittest.TestCase):
                     host.armport_validate_observer(self.observer(host.PrimalistCharacterInteraction, buttons), {},
                                                    host.PrimalistCharacterInteraction)
 
+    def test_the_archetype_list_of_the_frame_goes_to_the_log(self):
+        import base64, io, tempfile
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as folder:
+            evidence = Path(folder)
+            frame = Image.new('RGB', (800, 600), (10, 20, 30))
+            frame.paste((250, 200, 40), (80, 300, 120, 340))        # an icon inside the list
+            frame.paste((0, 255, 0), (500, 300, 540, 340))          # something outside it
+            frame.save(evidence / 'preposition_select_primalist-ocr-02.png')
+            observer = {'interaction_script': {'ocr_buttons': [
+                {'label': 'Next', 'evidence': 'x-ocr-01'},
+                {'label': 'Primalist', 'evidence': 'preposition_select_primalist-ocr-02'}]}}
+            lines = host.primalist_frame_lines(evidence, observer)
+            self.assertTrue(lines and all(line.startswith(
+                host.PRIMALIST_FRAME_MARK + 'name=preposition_select_primalist-ocr-02 part=') for line in lines))
+            self.assertEqual([line.split(' ')[2] for line in lines],
+                             ['part=%d/%d' % (i, len(lines)) for i in range(1, len(lines) + 1)])
+            with Image.open(io.BytesIO(base64.b64decode(''.join(line.split(' ')[3] for line in lines)))) as cut:
+                left, top, right, bottom = host.PRIMALIST_FRAME_REGION
+                self.assertEqual(cut.size, (right - left, bottom - top))
+                colours = cut.convert('RGB')
+                self.assertEqual(colours.getpixel((100 - left, 320 - top)), (250, 200, 40))
+                self.assertNotIn((0, 255, 0), [colour for _, colour in colours.getcolors()])
+            # Nothing without a found bar, a retained frame or a plain name.
+            self.assertEqual(host.primalist_frame_lines(evidence, {'interaction_script': {'ocr_buttons': []}}), [])
+            self.assertEqual(host.primalist_frame_lines(evidence, None), [])
+            for stem in ('missing-ocr-01', '../x', 7):
+                self.assertEqual(host.primalist_frame_lines(evidence, {'interaction_script': {'ocr_buttons': [
+                    {'label': 'Primalist', 'evidence': stem}]}}), [])
+            self.assertEqual(host.primalist_frame_lines(evidence, observer, limit=10), [])
+
     def check(self, report, key):
         with contextlib.redirect_stdout(io.StringIO()) as out:
             name = host.hero_class_check(report, key)

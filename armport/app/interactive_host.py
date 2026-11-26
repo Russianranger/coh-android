@@ -549,6 +549,46 @@ def failure_frame_lines(evidence, limit=160000):
         return [FAILURE_FRAME_MARK + 'error=' + str(error)[:160].replace('\n', ' ')]
 
 
+PRIMALIST_FRAME_MARK = 'ARMPORT_PRIMALIST_FRAME_V1 '
+PRIMALIST_FRAME_REGION = (0, 50, 420, 410)
+
+
+def primalist_frame_lines(evidence, observer, limit=120000):
+    """The creator's archetype list in the frame in which the Primalist bar was found, as log lines.
+
+    The owner twice saw the bar without its icon (Thor 0.13.85 and 0.13.87) and the evidence
+    archive cannot always be fetched: the list, cut from the retained frame at full size
+    (64-colour PNG, base64, in parts), shows what the client drew. Empty when no bar was found.
+    """
+    import base64, io
+    script = observer.get('interaction_script') if isinstance(observer, dict) else None
+    buttons = script.get('ocr_buttons') if isinstance(script, dict) else None
+    stems = [item.get('evidence') for item in buttons or [] if isinstance(item, dict) and item.get('label') == 'Primalist']
+    if not stems or not isinstance(stems[-1], str) or not re.fullmatch(r'[A-Za-z0-9_-]{1,80}', stems[-1]):
+        return []
+    try:
+        path = evidence / (stems[-1] + '.png')
+        if path.is_symlink() or not path.is_file():
+            return []
+        from PIL import Image
+        with Image.open(path) as image:
+            left, top, right, bottom = PRIMALIST_FRAME_REGION
+            cut = image.convert('RGB').crop((left, top, min(right, image.width), min(bottom, image.height)))
+            for colours in (64, 32):
+                raw = io.BytesIO()
+                cut.quantize(colours).save(raw, format='PNG', optimize=True)
+                text = base64.b64encode(raw.getvalue()).decode('ascii')
+                if len(text) <= limit:
+                    break
+        if len(text) > limit:
+            return []
+        parts = [text[i:i + 3000] for i in range(0, len(text), 3000)]
+        return ['%sname=%s part=%d/%d %s' % (PRIMALIST_FRAME_MARK, stems[-1], index, len(parts), part)
+                for index, part in enumerate(parts, 1)]
+    except (OSError, ValueError, ImportError) as error:
+        return [PRIMALIST_FRAME_MARK + 'error=' + str(error)[:160].replace('\n', ' ')]
+
+
 def failure_detail(evidence, work, observer):
     """Failed sessions only: what the client, Atlas and the host input did last.
 
@@ -1536,6 +1576,8 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
             costume = creator_costume_line(observer)
             if costume:
                 print(costume, flush=True)
+            for line in primalist_frame_lines(evidence, observer):
+                print(line, flush=True)
             if failure is not None:
                 detail = failure_detail(evidence, work, observer)
                 (evidence / 'failure-detail.json').write_text(json.dumps(detail, indent=2) + '\n')
