@@ -623,6 +623,101 @@ The workspace has PostgreSQL 16 (`pg_ctlcluster 16 main start`, then the two
 `runuser -u postgres --`): `test_character_profile_eligibility` runs all its
 real-database cases locally with the build workflow's environment line.
 
+## 0.13.88 (103): a saved Primalist opens again; a hero made in the character list is accepted
+
+Thor test of 0.13.87, 2026-11-26 (owner): "I was able to create a second
+character alongside Ralakar, primalist icon did not show in character
+creation, when attempting to start with mission maps ticked it failed twice.
+… on the new character, the FPS settings were greyed out for its duration in
+the world". The Primalist-only saved game is not needed (owner) and is left
+as it is.
+
+Exports `20261126-160606` (setup), `-160620` (the hero made in the list),
+`-160736`, `-160749` (the two failed starts):
+
+- **The saved game could not be opened once it held a Primalist.** Both
+  failed starts stop in eligibility with "Character attribute is absent from
+  the accepted mapping: ents.class". Eligibility reads every hero before
+  `prepare_runtime` appends `Class_Primalist` to the accepted names, so a
+  saved hero of that class had a class number nothing accepted. Mission maps
+  had no part in it. No Primalist had been reopened before: the CI hero of
+  0.13.85 to 0.13.87 was a Blaster with the option on, and the 0.13.87 sheet
+  and issue comment were wrong to say CI "created and reopened a Primalist".
+  Fix: `local_login_server.primalist_stored_number()` reads the one stored
+  `class_primalist` row; `single_player_content.accept_stored_class_attribute`
+  accepts it only if it is the number this version would append
+  (`expect_class_attribute`), otherwise the session stops with "The saved
+  game holds the Primalist class under another number than this version
+  expects". `LocalCharacterServer.initialize` calls it before the heroes are
+  read (`eligibility['primalist_class_number']`).
+- **The app reported the created hero's session as failed** ("The guest
+  completed, but its current-session client evidence did not match this
+  APK") although the guest had proved the save. `clientObservationAccepted`
+  wants a session budget for a manual session; a created hero has none.
+  Fix: `ClientAcceptance.createdHeroObservationAccepted` (manual session,
+  finish requested, no budget rows) used by `ClientRuntime.guestAccepted`
+  when `heroCreatedInSession`.
+- **FPS buttons greyed for the created hero.** Two gates:
+  `performanceCommandInputAllowed` needed `sessionBudget.canMove`, and the
+  activity enables the buttons on `sessionPhase` connected/grounded. Fix:
+  `heroCreatedInSession ||` in the first, `ClientRuntime.menuPhase()`
+  ("connected" once a created hero is in the world) for the second; the
+  report keeps `sessionBudget.phase()`.
+- **No Primalist icon in the creator.** `pc_primalist.def` named
+  `archetypeicon_primalist.texture`; the client strips only `.tga` (and
+  three-letter suffixes) when it looks an icon up. Now `.tga`; the build
+  checks the compiled class list. The content identity changes, so the first
+  launch after the update links the content folder and compiles the class
+  and power lists once more. The creator's three showcase pictures
+  (`archetypeshots_<class>_0..2`) do not exist for the Primalist.
+
+Checking the app side without a device: a small harness
+(`Replay.java`, kept outside the repo) runs `ClientAcceptance` over a real
+export. On `-160620` every predicate is true except the 0.13.87 observation
+rule; with the new rule all are.
+
+CI now makes a real Primalist: with `single_player_probe=true`
+`interactive_host.PrimalistCharacterInteraction` picks the Melee play style
+and finds "Primalist" in the archetype list by OCR; the save proof names the
+hero's class (`creation_report['class_name']`), printed as
+`ARMPORT_HERO_CLASS_V1`, and the probe fails unless creation and reopen both
+say `class_primalist`.
+
+Tests: `test_character_profile_eligibility.test_pg_saved_primalist_reopen`
+(real PostgreSQL; fails with the device's message when the fix is disabled),
+`test_single_player_content`, `test_client_zoning_java` "heroes",
+`test_client_sidebar_runtime`, `test_several_heroes`,
+`armport/tests/test_primalist_probe.py`.
+
+CI at `f48a8a244` (build 45879536548). The first probe, 45875126986 at
+`8c9f88ed4`, made and saved a Primalist and failed only in the host:
+`armport_validate_observer` compared the steps with the first hero's script
+(now it takes the interaction that ran; `primalist_projection`).
+
+| Run | Form | Zone server new / reopened | Trip |
+| --- | --- | --- | --- |
+| 45889160018 | spare + Primalist probe: Primalist created, saved, reopened (`class_primalist` twice) | 172.7 s / 23.6 s | 9.6 s |
+| 45893114240 | trusted (APK source) | 389.5 s / 23.9 s | |
+| 45897435657 | heroes probe: HEROTWO made in the list, then THORHERO chosen | 198.1 s / 86.4 s | 78.8 s |
+| 45903889193 | spare | 162.7 s / 23.1 s | 9.2 s |
+
+`ARMPORT_PRIMALIST_FRAME_V1` in 45889160018 carries the creator's archetype
+list as drawn when the bar was found: the Primalist's bar shows its paw icon
+between Scrapper and Brute.
+
+APK 45907324995 from 45893114240, tag `coh-atlas-gameplay-v0.13.88` at
+`f48a8a244`: 93,950,466 bytes (the same size as 0.13.87, another file),
+sha256 `73b5f7e753dcb6ca68d4e04717fa920bbef902fb5d6bea948064f4d0b27a1af0`,
+signer unchanged; downloaded and hashed; 53 guest files equal the commit; the
+dex holds `createdHeroObservationAccepted` and `menuPhase` and no "Switch
+hero slot"; `data/bin/classes.bin` in the client package names
+`archetypeicon_primalist.tga`. Sheet: `THOR-TEST-0.13.88.md`.
+
+Not shown: the app-side fixes on Android (harness and replay only), the icon
+on the Thor, a chosen hero saved in another zone than the expected one, a
+villain second hero, navigation with mission maps on the Thor, travel by a
+hero made in the character list.
+
 ## 0.13.87 (102): several heroes in the one account, chosen in the game's own character list
 
 Owner, 2026-11-25: "every account can create multiple characters - I don't
