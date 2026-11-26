@@ -452,6 +452,7 @@ final class ClientAcceptance {
             return surfaceAccepted(connectedSamples, session, started, ended, connectedObserved,
                     savedObserved, connectedFrameWatermark);
         return characterRelocatedEvent(relocatedEvent, session, clientPid)
+                && sameHero(object(relocatedEvent).get("character_id"), object(connectedEvent).get("character_id"))
                 && relocatedObserved >= connectedObserved && savedObserved >= relocatedObserved
                 && surfaceAccepted(connectedSamples, session, started, ended, connectedObserved, relocatedObserved, connectedFrameWatermark)
                 && surfaceAccepted(relocationSamples, session, started, ended, relocatedObserved, savedObserved, relocatedFrameWatermark);
