@@ -542,6 +542,22 @@ final class ClientAcceptance {
         return true;
     }
 
+    /** 0.13.88: the observation of a Play session whose hero was made in the character list.
+     *  Such a session is the user's own (manual, ended by Finish) and has no session budget: the
+     *  guest proves the hero as a creation and sends no budget for it. 0.13.87 judged it by the
+     *  reopen rule, which wants a budget, and called a proved save "client evidence did not match"
+     *  (Thor export 20261126-160620). */
+    static boolean createdHeroObservationAccepted(Object value, List<?> acceptedBudgets) {
+        Map<?, ?> report = object(value);
+        Object seconds = report.get("observation_seconds"), rows = report.get("character_session_budgets");
+        return seconds instanceof Number && Double.isFinite(((Number) seconds).doubleValue())
+                && ((Number) seconds).doubleValue() >= 0 && yes(report.get("manual_session"))
+                && "finish_requested".equals(report.get("interaction_completion_reason"))
+                && number(report.get("interaction_timeout_seconds"), 0)
+                && (acceptedBudgets == null || acceptedBudgets.isEmpty())
+                && (jsonNull(rows) || rows instanceof List && ((List<?>) rows).isEmpty());
+    }
+
     static boolean cleanupSafe(Object value) {
         Map<?, ?> report = object(value), execution = object(report.get("cleanup_execution"));
         Object children = report.get("processes");

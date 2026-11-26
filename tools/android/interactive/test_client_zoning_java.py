@@ -257,6 +257,25 @@ public final class ZoningHost {
    need(!ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,74));
    need(ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,73));
   }
+  // 0.13.88 (Thor export 20261126-160620): a created hero's Play session is manual, ended by Finish and
+  // has no session budget; the reopen rule (a budget for every manual session) refused the proved save.
+  Map<String,Object> observed=new LinkedHashMap<>();
+  observed.put("observation_seconds",627.57);observed.put("manual_session",true);
+  observed.put("interaction_completion_reason","finish_requested");observed.put("interaction_timeout_seconds",0);
+  need(ClientAcceptance.createdHeroObservationAccepted(observed,new ArrayList<Object>()));
+  need(ClientAcceptance.createdHeroObservationAccepted(observed,null));
+  need(!ClientAcceptance.clientObservationAccepted(observed,new ArrayList<Object>(),SESSION,73,10,20,0,5,1,true));
+  observed.put("character_session_budgets",new ArrayList<Object>());need(ClientAcceptance.createdHeroObservationAccepted(observed,new ArrayList<Object>()));
+  observed.put("character_session_budgets",Arrays.asList(new LinkedHashMap<String,Object>()));need(!ClientAcceptance.createdHeroObservationAccepted(observed,new ArrayList<Object>()));
+  observed.remove("character_session_budgets");
+  need(!ClientAcceptance.createdHeroObservationAccepted(observed,Arrays.asList(new LinkedHashMap<String,Object>())));
+  observed.put("manual_session",false);need(!ClientAcceptance.createdHeroObservationAccepted(observed,null));observed.put("manual_session",true);
+  observed.put("interaction_completion_reason","interaction_timeout");need(!ClientAcceptance.createdHeroObservationAccepted(observed,null));
+  observed.put("interaction_completion_reason","finish_requested");
+  observed.put("interaction_timeout_seconds",1200);need(!ClientAcceptance.createdHeroObservationAccepted(observed,null));observed.put("interaction_timeout_seconds",0);
+  observed.put("observation_seconds",-1);need(!ClientAcceptance.createdHeroObservationAccepted(observed,null));
+  observed.put("observation_seconds","627");need(!ClientAcceptance.createdHeroObservationAccepted(observed,null));
+  observed.put("observation_seconds",86400.5);need(ClientAcceptance.createdHeroObservationAccepted(observed,null));
   // A saved hero other than container 1: the connection names the hero that was read before login.
   Map<String,Object> event=new LinkedHashMap<>();
   event.put("type","character_connected");event.put("session_id",SESSION);event.put("client_pid",73);event.put("character_id",2);

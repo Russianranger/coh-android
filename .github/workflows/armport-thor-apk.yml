@@ -1,7 +1,7 @@
 name: ArmPort Thor APK (M5 candidate)
 
 # User-authorized M5 development: build and sign COH Atlas
-# Gameplay 0.13.87, the 0.13.36 app plus the ARM64 client option, for the M5
+# Gameplay 0.13.88, the 0.13.36 app plus the ARM64 client option, for the M5
 # Thor play test. Uploads a workflow artifact; publish_release=true (only for a
 # user-approved candidate) also publishes it as a GitHub pre-release.
 on:
@@ -238,7 +238,7 @@ jobs:
               'target', 'status', 'source_commit', 'ndk_version', 'compiler', 'files', 'patches',
               'ioctl_command_filter_patch', 'corresponding_sources')}))
           EOF
-      - name: Build and sign COH Atlas Gameplay 0.13.87
+      - name: Build and sign COH Atlas Gameplay 0.13.88
         env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
         run: |
           mkdir -p out/thor
@@ -265,7 +265,7 @@ jobs:
             --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
             --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
             --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks" \
-            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.87.apk "${server_args[@]}"
+            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.88.apk "${server_args[@]}"
       - name: Remove retained signing material
         if: always()
         run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
@@ -293,7 +293,7 @@ jobs:
           EOF
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.87-apk
+          name: coh-atlas-gameplay-0.13.88-apk
           path: out/thor/
           retention-days: 30
           if-no-files-found: error
@@ -308,24 +308,38 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.87-apk
+          name: coh-atlas-gameplay-0.13.88-apk
           path: apk
-      - name: Publish the 0.13.87 pre-release
+      - name: Publish the 0.13.88 pre-release
         env: {GH_TOKEN: '${{ github.token }}'}
         run: |
           set -euo pipefail
           cd apk
-          test -f COH-Atlas-Gameplay-0.13.87.apk
-          sha256sum COH-Atlas-Gameplay-0.13.87.apk > COH-Atlas-Gameplay-0.13.87.apk.sha256
+          test -f COH-Atlas-Gameplay-0.13.88.apk
+          sha256sum COH-Atlas-Gameplay-0.13.88.apk > COH-Atlas-Gameplay-0.13.88.apk.sha256
           # The pack this APK pins (its build report's record names the pack's release).
           pack=$(python3 -c "import json, sys; r = json.load(open('thor-apk-build-report.json')).get('navigation_map_pack'); print('https://github.com/' + sys.argv[1] + '/releases/tag/' + r['release_tag'] if r else 'its release (see the test sheet)')" "$GITHUB_REPOSITORY")
           cat > notes.md <<EOF
-          COH Atlas Gameplay 0.13.87 (x86 track performance candidate) for the Thor play test.
+          COH Atlas Gameplay 0.13.88 (x86 track performance candidate) for the Thor play test.
 
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
-          New in 0.13.87 (the owner's request of 2026-11-25): several heroes in one account.
+          New in 0.13.88 (from the Thor test of 0.13.87, 2026-11-26):
+          - A saved game that holds a Primalist opens again. In 0.13.87 (and before) the saved
+            heroes were checked before the Primalist's class name was known to the check, so
+            every launch stopped at "Character attribute is absent from the accepted mapping:
+            ents.class" (with or without "Start mission maps"). Nothing was changed in the saved game.
+          - A hero made in the character list: the launch now ends "Session finished" (0.13.87
+            saved and proved the hero, then reported the session as failed), and Show FPS and
+            the 10 / 30 / 60 buttons work for that hero.
+          - The Primalist's icon shows in the character creator's archetype list (its
+            definition named the picture in a way only the in-game windows understood). The
+            large picture beside the list is still missing; no such art exists.
+          Shown in CI: a Primalist is created, saved and reopened (the first time CI's hero is
+          one). Not shown: anything on Android, the icon on screen.
+          From 0.13.87 (on the Thor: a second hero was made beside the first and saved):
+          several heroes in one account.
           - "Play" opens the game's own character list. Choose any saved hero and Enter Game,
             or make a new hero in an empty slot. There is no "Switch hero slot" step.
           - The zone of the hero you played last is prepared while the game starts. If you
@@ -344,7 +358,7 @@ jobs:
           later launch entered with the first hero while the second was the expected one. Not
           shown: anything on Android (the app side is unit-tested only), a villain or Praetorian
           second hero, more than two heroes.
-          From 0.13.86 (not yet on the Thor):
+          From 0.13.86 (on the Thor only as part of 0.13.88; navigation with mission maps still unseen):
           - With "Start mission maps" ticked the zones keep their navigation data (in 0.13.85
             every zone's navigation map was refused; one zone server took six minutes).
           - The Primalist has an archetype icon.
@@ -455,7 +469,7 @@ jobs:
           Unchanged: any character name the game accepts, one hero per saved game; every zone can
           start; at most two zone servers (three with the optional one); supergroup bases are not served; the full-window view, gear button
           and controller.
-          Test sheet: THOR-TEST-0.13.87.md.
+          Test sheet: THOR-TEST-0.13.88.md.
           EOF
           if [ "$SERVER_OPTION" = true ]; then
             echo "Servers: the CI-built MapServer with trusted prepared data by default (device-run in 0.13.69); unticking Fast server runs the 0.13.36 MapServer." >> notes.md
@@ -464,7 +478,7 @@ jobs:
           else
             echo "Servers: shipping MapServer, so the prepared server caches still load. The Fast server option has no effect in this build." >> notes.md
           fi
-          gh release create "coh-atlas-gameplay-v0.13.87" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-            --prerelease --title "COH Atlas Gameplay 0.13.87 (performance candidate)" --notes-file notes.md \
-            COH-Atlas-Gameplay-0.13.87.apk COH-Atlas-Gameplay-0.13.87.apk.sha256
-          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.87"
+          gh release create "coh-atlas-gameplay-v0.13.88" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "COH Atlas Gameplay 0.13.88 (performance candidate)" --notes-file notes.md \
+            COH-Atlas-Gameplay-0.13.88.apk COH-Atlas-Gameplay-0.13.88.apk.sha256
+          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.88"

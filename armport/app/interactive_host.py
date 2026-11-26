@@ -99,6 +99,46 @@ def armport_creation_actions():
     return tuple(actions)
 
 
+# 0.13.88: the single-player probe makes a Primalist (Thor 0.13.87: a saved Primalist could not be
+# reopened, and no CI hero had ever been one). uiPlaystyle.c draws the play styles 57 units apart
+# from y 130 of its 1024x768 layout (Melee is the second: y 146 at 800x600); the archetype bars
+# start at y 103, 54 units each, 400 wide from x 66. The bar is found by its rendered name.
+MELEE_PLAYSTYLE = (170, 146)
+ARCHETYPE_LIST_REGION = (30, 70, 400, 390)
+PRIMALIST_CLASS = 'class_primalist'
+
+
+def primalist_creation_actions():
+    actions = list(armport_creation_actions())
+    names = [action[2] for action in actions]
+    first = names.index('preposition_select_ranged_playstyle')
+    actions[first:first + 2] = character.click_steps('select_melee_playstyle', *MELEE_PLAYSTYLE)
+    names = [action[2] for action in actions]
+    first = names.index('preposition_select_blaster')
+    actions[first:first + 2] = [('move', (600, 300), 'clear_cursor_before_select_primalist'),
+                                ('ocr_move', ('Primalist', ARCHETYPE_LIST_REGION), 'preposition_select_primalist'),
+                                ('ocr_click', None, 'select_primalist')]
+    return tuple(actions)
+
+
+def primalist_creation_requested():
+    """The probe's creation session makes a Primalist (not the heroes probe, whose script is its own)."""
+    return (single_player_probe_requested() and 'COH_PRIMALIST=1' in single_player_probe_options()
+            and not heroes_probe_requested())
+
+
+def hero_class_check(report, key):
+    """With the Primalist probe both sessions must have saved a Primalist; the notice names the class."""
+    proof = report.get(key) if isinstance(report, dict) else None
+    name = proof.get('class_name') if isinstance(proof, dict) else None
+    print('ARMPORT_HERO_CLASS_V1 ' + json.dumps({'session': key, 'class_name': name if isinstance(name, str) else None},
+                                                separators=(',', ':'))[:200], flush=True)
+    if primalist_creation_requested():
+        require(isinstance(name, str) and name.casefold() == PRIMALIST_CLASS,
+                'Primalist probe: the saved hero is not a Primalist (' + str(name)[:40] + ')')
+    return name
+
+
 class ArmPortCharacterInteraction(character.CharacterInteraction):
     """The shared creation script plus page-transition proof before later clicks."""
     ACTIONS = character.CharacterInteraction.LOGIN_ACTIONS + armport_creation_actions()
@@ -221,6 +261,11 @@ class SecondHeroInteraction(ArmPortCharacterInteraction):
         else:
             self.action -= 1
         return True
+
+
+class PrimalistCharacterInteraction(ArmPortCharacterInteraction):
+    """The creation script with the Melee play style and the Primalist bar (0.13.88)."""
+    ACTIONS = character.CharacterInteraction.LOGIN_ACTIONS + primalist_creation_actions()
 
 
 def heroes_probe_validate(report, *, created):
@@ -1388,7 +1433,8 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
                     evidence / 'host-client.log', work / 'state/interaction-finish.json',
                     SecondHeroInteraction if second_hero else
                     (reopen.StockTravelReopenInteraction if travel else reopen.ReopenInteraction)
-                    if reopening else ArmPortCharacterInteraction,
+                    if reopening else PrimalistCharacterInteraction if primalist_creation_requested()
+                    else ArmPortCharacterInteraction,
                     None if second_hero else
                     (reopen.StockTravelReopenEvents if travel else reopen.ReopenEvents) if reopening else None)
             require(observer.get('failure') is None, observer.get('failure') or 'ARM64 RFB observer failed')
@@ -1408,6 +1454,8 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
             projected = legacy_report(report, runtime_manifest, client_manifest)
             checked_manifest = validation_manifest(report, runtime_manifest)
             require(time.monotonic() <= deadline, 'ARM64 interactive host deadline exceeded')
+            if not second_hero:
+                hero_class_check(report, 'character_reopen' if reopening else 'character_creation')
             if second_hero:
                 # The script is a creation's inside a reopen session: neither session's fixed
                 # report shape applies; heroes_probe_validate reads the guest's own proof.

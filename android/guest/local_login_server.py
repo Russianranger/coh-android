@@ -300,6 +300,28 @@ class LocalLoginServer:
         except (base.DiagnosticError, ValueError, OSError):
             return False
 
+    def primalist_stored_number(self):
+        """The number the saved game's name table gives the Primalist class, or None (read only)."""
+        if not self.primalist_in_database():
+            return None
+        value = self.sql("SELECT count(*) || '|' || coalesce(min(id), 0) FROM dbo.attributes "
+                         "WHERE lower(name)='class_primalist';", game=True)
+        require(re.fullmatch(r'1\|[1-9][0-9]{0,9}', value or '') is not None,
+                'The saved game\'s Primalist class name is unreadable or stored twice; preserve all data and export the report')
+        return int(value.split('|')[1])
+
+    def accept_stored_primalist(self):
+        """Before the saved heroes are checked: a saved game that knows the Primalist class has
+        heroes whose class is that name (0.13.88). Nothing is written."""
+        import single_player_content as content
+        number = self.primalist_stored_number()
+        if number is None:
+            return None
+        try:
+            return content.accept_stored_class_attribute(self.schema, number)
+        except ValueError as refused:
+            raise base.DiagnosticError(str(refused)) from None
+
     def apply_single_player_schema(self):
         """Primalist: on when asked for, and from then on whenever the saved game knows the class.
 

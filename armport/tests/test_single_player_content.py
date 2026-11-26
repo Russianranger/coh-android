@@ -445,6 +445,24 @@ class DatabaseName(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'not the last database name'):
             content.append_class_attribute(self.runtime, self.schema)
 
+    def test_a_saved_game_that_knows_the_class_is_accepted_before_the_server_tree_exists(self):
+        # Thor 0.13.87: the saved heroes are checked before prepare_runtime adds the name.
+        before = self.path.read_bytes()
+        self.assertEqual(content.accept_stored_class_attribute(self.schema, 4), 4)
+        self.assertEqual(self.schema['expected_attributes']['attributes'][-1], {'id': 4, 'name': 'class_primalist'})
+        self.assertEqual(self.path.read_bytes(), before)                                     # nothing written
+        self.assertEqual(content.append_class_attribute(self.runtime, self.schema), 4)        # prepare_runtime, later
+        self.assertTrue(self.path.read_bytes().endswith(b'4 "Class_Primalist"\r\n'))
+        self.assertEqual(len(self.schema['expected_attributes']['attributes']), 4)
+        self.assertEqual(content.accept_stored_class_attribute(self.schema, 4), 4)            # idempotent
+        for stored in (3, 5, 0, -1, True, '4', None):
+            with self.assertRaisesRegex(ValueError, 'another number|Invalid stored'):
+                content.accept_stored_class_attribute(self.schema, stored)
+        fresh = {'expected_attributes': {'attributes': [{'id': 1, 'name': 'race'}]}}
+        with self.assertRaisesRegex(ValueError, 'another number'):
+            content.accept_stored_class_attribute(fresh, 4)
+        self.assertEqual(len(fresh['expected_attributes']['attributes']), 1)                 # refused: unchanged
+
     def test_the_database_rows_say_whether_the_class_is_known(self):
         self.assertFalse(content.attribute_present([{'id': 1, 'name': 'class_scrapper'}]))
         self.assertTrue(content.attribute_present([{'id': 9, 'name': 'Class_Primalist'}]))

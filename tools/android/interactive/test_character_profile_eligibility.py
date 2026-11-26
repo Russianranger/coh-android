@@ -33,6 +33,7 @@ REQUIRED_POSTGRES_FIXTURES = {
     'unentered_character_with_badge_refused',
     'named_character_reopen', 'unentered_named_character_resume_removed',
     'two_saved_heroes_reopen', 'second_hero_without_rows_reopen_refused', 'unfinished_second_hero_reopen_removed',
+    'saved_primalist_reopen',
 }
 
 
@@ -601,6 +602,40 @@ class PostgreSQLEligibilityTests(unittest.TestCase):
         self.assertEqual(server.CHARACTER, first['name']); self.assertEqual(server.HERO_ID, 1)
         self.assertEqual(before, self.snapshot(), 'Eligibility mutated persistent rows or allocator')
         POSTGRES_FIXTURES_RUN.add('two_saved_heroes_reopen')
+
+    def primalist_game(self, offset=0):
+        """Two saved heroes, the second a Primalist: the saved game's name table holds the class name."""
+        first = saved_fixture()[1][0]
+        value = self.actual(reopen=True, inventory=[first, dict(first, containerid=2, name='PRIMA')], complete=True)
+        number = len(value.schema['expected_attributes']['attributes']) + 1
+        self.addCleanup(self.database_sql, 'DROP TABLE IF EXISTS dbo.attributes;')
+        self.database_sql('DROP TABLE IF EXISTS dbo.attributes; CREATE TABLE dbo.attributes (id integer, name text);')
+        self.database_sql("INSERT INTO dbo.attributes VALUES (%d, 'Class_Primalist');" % (number + offset))
+        self.database_sql('UPDATE dbo.ents SET class=%d WHERE containerid=2;' % number)
+        return value, number
+
+    def test_pg_saved_primalist_reopen(self):
+        # Thor 0.13.87 (exports 20261126-160736/-160749): a Primalist made beside Ralakar; every later
+        # launch stopped at "Character attribute is absent from the accepted mapping: ents.class",
+        # because the class name joined the expected names only after this check.
+        value, number = self.primalist_game()
+        before = self.snapshot()
+        proof = self.initialize_gate(value)
+        self.assertTrue(proof['eligible']); self.assertEqual(proof['hero_count'], 2)
+        self.assertEqual(proof['primalist_class_number'], number)
+        self.assertEqual(value.schema['expected_attributes']['attributes'][-1], {'id': number, 'name': 'class_primalist'})
+        self.assertEqual(before, self.snapshot(), 'Eligibility mutated persistent rows or allocator')
+        # The name stored under any other number is not this version's: refused, unchanged.
+        value, number = self.primalist_game(offset=3)
+        before = self.snapshot()
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'another number'): self.initialize_gate(value)
+        self.assertEqual(before, self.snapshot())
+        # Without the name in the saved game, a hero of that class number stays refused.
+        value, number = self.primalist_game()
+        self.database_sql('DELETE FROM dbo.attributes;')
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'absent from the accepted mapping: ents.class'):
+            self.initialize_gate(value)
+        POSTGRES_FIXTURES_RUN.add('saved_primalist_reopen')
 
     def test_pg_second_hero_without_rows_reopen_refused(self):
         # A second committed hero whose powers and costume are missing refuses the saved game unchanged.

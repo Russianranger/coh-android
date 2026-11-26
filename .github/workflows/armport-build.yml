@@ -892,8 +892,13 @@ jobs:
           root = Path(sys.argv[1])
           found = {name: (b'Class_Primalist' in (root / name).read_bytes()) for name in ('classes.bin',)}
           found['classes.bin bytes'] = (root / 'classes.bin').stat().st_size
+          # 0.13.88: the creator finds the icon only under the stock ".tga" spelling.
+          data = (root / 'classes.bin').read_bytes()
+          found['icon as .tga'] = b'archetypeicon_primalist.tga' in data.lower()
+          found['icon as .texture'] = b'archetypeicon_primalist.texture' in data.lower()
           print('::notice title=ArmPort single-player content in client bins::' + json.dumps(found))
           assert found['classes.bin'], 'classes.bin was compiled without the Primalist class'
+          assert found['icon as .tga'] and not found['icon as .texture'], 'Primalist icon name is not the stock spelling'
           PY
       - name: Export the last screen
         if: always()

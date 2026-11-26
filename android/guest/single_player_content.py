@@ -266,6 +266,37 @@ def attribute_line(number):
     return ('%d "%s"\r\n' % (number, CLASS_ATTRIBUTE)).encode()
 
 
+def expect_class_attribute(schema):
+    """The rows the session expects in the database's name table gain the class name, once, as
+    their last row. Returns the name's number."""
+    rows = schema['expected_attributes'][ATTRIBUTE_TABLE]
+    require(isinstance(rows, list) and rows, 'Unexpected database name list')
+    names = [row['name'] for row in rows]
+    if CLASS_ATTRIBUTE.casefold() in names:
+        number = names.index(CLASS_ATTRIBUTE.casefold()) + 1
+        require(number == len(rows), 'The Primalist class name is not the last database name')
+    else:
+        number = len(rows) + 1
+        rows.append({'id': number, 'name': CLASS_ATTRIBUTE.casefold()})
+    return number
+
+
+def accept_stored_class_attribute(schema, stored):
+    """The saved game already holds the class name under number `stored` (0.13.88).
+
+    The saved heroes are checked against the expected names before this session's server tree
+    exists (Thor 0.13.87, exports 20261126-160736/-160749: a saved Primalist was refused,
+    "Character attribute is absent from the accepted mapping: ents.class", so that saved game
+    could not be opened). The name must sit where this version would have added it.
+    """
+    require(type(stored) is int and stored > 0, 'Invalid stored Primalist class number')
+    known = [row['name'] for row in schema['expected_attributes'][ATTRIBUTE_TABLE]]
+    expected = (known.index(CLASS_ATTRIBUTE.casefold()) if CLASS_ATTRIBUTE.casefold() in known else len(known)) + 1
+    require(stored == expected, 'The saved game holds the Primalist class under another number than this '
+            'version expects; preserve all data and export the report')
+    return expect_class_attribute(schema)
+
+
 def append_class_attribute(runtime, schema):
     """Add the class name after the last name of this session's vars.attribute and of the expected rows.
 
@@ -274,15 +305,8 @@ def append_class_attribute(runtime, schema):
     """
     path = Path(runtime) / ATTRIBUTE_FILE
     data = path.read_bytes()
-    rows = schema['expected_attributes'][ATTRIBUTE_TABLE]
-    require(isinstance(rows, list) and rows and data.endswith(b'\r\n'), 'Unexpected database name list')
-    names = [row['name'] for row in rows]
-    if CLASS_ATTRIBUTE.casefold() in names:
-        number = names.index(CLASS_ATTRIBUTE.casefold()) + 1
-        require(number == len(rows), 'The Primalist class name is not the last database name')
-    else:
-        number = len(rows) + 1
-        rows.append({'id': number, 'name': CLASS_ATTRIBUTE.casefold()})
+    require(data.endswith(b'\r\n'), 'Unexpected database name list')
+    number = expect_class_attribute(schema)
     last = data[:-2].rsplit(b'\n', 1)[-1]
     if last + b'\r\n' != attribute_line(number):
         require(last.split(b' ', 1)[0] == str(number - 1).encode(),

@@ -9,7 +9,7 @@ Class
 	PowerPoolCategory		"Pool"
 	DisplayShortHelp		"Melee attacks, Defensive Powers and Ally buffs."
 	DisplayHelp				"Primalists are competent melee combatants, this is enhanced by their ability to shapeshift into a Hunter or a Prowler. While in primal form, the Primalist will deal good damage and heal nearby allies. In Hunter form you can attack foes with tooth and claw and weaken nearby foes and in Prowler form you can shred enemies and stun them."
-	Icon					"archetypeicon_primalist.texture"
+	Icon					"archetypeicon_primalist.tga"
 	AllowedOrigins			Science, Magic, Natural, Mutation, Technology
 	SpecialRestrictions		Hero, Villain
 	StoreRequires			"ctatprim ProductOwned?"

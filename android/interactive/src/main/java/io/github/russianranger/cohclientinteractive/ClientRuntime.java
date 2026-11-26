@@ -82,6 +82,13 @@ public final class ClientRuntime {
      *  character list is a creation: no reopen budget and no preservation checks apply to it. */
     private volatile boolean heroCreatedInSession;
     private boolean reopenedHero() { return reopen && !heroCreatedInSession; }
+    /** 0.13.88: what the menu is told. A hero made in the character list has no session budget, so its
+     *  budget stays in the "menu" phase; once that hero is in the world the menu treats it as connected
+     *  (the FPS buttons need that phase). The report keeps the budget's own phase. */
+    private String menuPhase() {
+        return heroCreatedInSession && characterConnectedEvent != null && sessionBudget.revision() < 1
+                ? "connected" : sessionBudget.phase();
+    }
     /** The session's hero (any container ID of the account); 1 until it has connected. */
     private long heroId() { JSONObject connected = characterConnectedEvent; return connected == null ? 1 : connected.optLong("character_id", 1); }
     private boolean resumeFirstCreation;
@@ -1627,7 +1634,9 @@ public final class ClientRuntime {
                 && (!stuckRequested || relocationCapturedReady)
                 && !(taskContactRequested && taskContactReceipt == null)
                 && !(taskCompletionRequested && taskCompletionReceipt == null)
-                && sessionBudget.canMove(SystemClock.uptimeMillis());
+                // 0.13.88: a hero made in the character list has no session budget (Thor
+                // 0.13.87: Show FPS and the caps stayed greyed out for that hero's whole session).
+                && (heroCreatedInSession || sessionBudget.canMove(SystemClock.uptimeMillis()));
     }
     public synchronized boolean canSendPerformanceCommand() {
         return !performanceCommandPending && decoder != null && !inputWorker.isShutdown()
@@ -2091,7 +2100,7 @@ public final class ClientRuntime {
                 finishRequested && !finished, characterSavedReady,
                 zoningRecoveryAllowed() && !zoning.blocksInput() && !performanceCommandPending && reopen && sessionBudget.canMove(SystemClock.uptimeMillis()) && connectedCapturedReady && !stuckRequested && !saveLogoutRequested,
                 !zoning.blocksInput() && !performanceCommandPending && characterConnectedEvent != null && (!reopenedHero() || (connectedCapturedReady && (!stuckRequested || relocationCapturedReady) && sessionBudget.canSave(SystemClock.uptimeMillis()))) && !saveLogoutRequested && characterSavedEvent == null,
-                inputSent, inputFailed, readyDeadlineUptimeMillis, sessionBudget.phase(), sessionBudget.saveDeadline(), sessionBudget.movementDeadline());
+                inputSent, inputFailed, readyDeadlineUptimeMillis, menuPhase(), sessionBudget.saveDeadline(), sessionBudget.movementDeadline());
     }
     private synchronized void inputFailure(String detail) {
         inputFailed++; inputReady = false; cancelPendingInput();
@@ -3081,9 +3090,11 @@ public final class ClientRuntime {
                 "client_main_loop_reached", "client_window_observed", "startup_observed"})
             if (!Boolean.TRUE.equals(report.opt(key))) return false;
         double elapsed = report.optDouble("startup_elapsed_seconds", -1);
-        if (!ClientAcceptance.clientObservationAccepted(jsonValue(report), sessionBudgetEvents,
+        if (!(reopen && heroCreatedInSession
+                    ? ClientAcceptance.createdHeroObservationAccepted(jsonValue(report), sessionBudgetEvents)
+                    : ClientAcceptance.clientObservationAccepted(jsonValue(report), sessionBudgetEvents,
                 session, observedClientPid, clientWindowObservedUptime, clientWindowEndedUptime,
-                sessionBudget.deadline(), launcherBudgetStartedUptime, startedUptime,zoningEnabled())
+                sessionBudget.deadline(), launcherBudgetStartedUptime, startedUptime,zoningEnabled()))
                 || !Double.isFinite(elapsed) || elapsed < 0 || elapsed > 900) return false;
         JSONObject launch = report.optJSONObject("client_launch");
         if (launch == null || !session.equals(launch.optString("session_id")) || observedClientPid < 1

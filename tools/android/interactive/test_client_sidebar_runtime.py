@@ -80,7 +80,8 @@ public final class SidebarRuntimeHost {
  static void require(boolean ok){if(!ok)throw new AssertionError();}
  static final class ClientRuntime {
   boolean reopen=true,inputReady=true,finishRequested,finished,cancelled,producerCompleted;
-  boolean reopenedHero(){return reopen;} long heroId(){return 1;}
+  boolean heroCreatedInSession;
+  boolean reopenedHero(){return reopen&&!heroCreatedInSession;} long heroId(){return 1;}
   boolean connectedCapturedReady,saveLogoutRequested,stuckRequested,relocationCapturedReady;
   boolean taskContactRequested,taskCompletionRequested,performanceCommandPending;
   long performanceCommandGeneration,observedClientPid=17,inputSent,inputFailed,lastInputUptime,lastInputFrameWatermark,decodedFrames,lastInputRefresh,clientWindowObservedUptime=1;
@@ -124,7 +125,10 @@ ACTUAL_METHODS
    r.taskContactRequested=true;require(!r.canSendPerformanceCommand());r.taskContactReceipt=new Object();
    require(r.canSendPerformanceCommand());r.taskCompletionRequested=true;require(!r.canSendPerformanceCommand());
    r.taskCompletionReceipt=new Object();require(r.canSendPerformanceCommand());
-   r.sessionBudget.move=false;require(!r.canSendPerformanceCommand());r.sessionBudget.move=true;
+   r.sessionBudget.move=false;require(!r.canSendPerformanceCommand());
+   // 0.13.88: a hero made in the character list has no session budget; its FPS buttons work all the same.
+   r.heroCreatedInSession=true;require(r.canSendPerformanceCommand());r.heroCreatedInSession=false;
+   require(!r.canSendPerformanceCommand());r.sessionBudget.move=true;
    r.cancelled=true;require(!r.canSendPerformanceCommand());r.cancelled=false;
    r.producerCompleted=true;require(!r.canSendPerformanceCommand());r.producerCompleted=false;
    r.finished=true;require(!r.canSendPerformanceCommand());r.finished=false;
@@ -221,12 +225,23 @@ class SidebarRuntimeTests(unittest.TestCase):
             result=subprocess.run(['java','-cp',str(output),'io.github.russianranger.cohclientinteractive.SidebarRuntimeHost'],check=True,capture_output=True,text=True,timeout=15)
             self.assertIn('PASS shipped runtime gates',result.stdout)
 
+    def test_a_created_hero_s_menu_phase_is_connected_once_it_is_in_the_world(self):
+        # 0.13.88 (Thor 0.13.87): the menu enables Show FPS and the caps only in the "connected" or
+        # "grounded" phase, which come from a session budget; a hero made in the character list has none.
+        source=(JAVA/'ClientRuntime.java').read_text()
+        self.assertIn('return heroCreatedInSession && characterConnectedEvent != null && sessionBudget.revision() < 1\n'
+                      '                ? "connected" : sessionBudget.phase();',source)
+        self.assertIn('inputSent, inputFailed, readyDeadlineUptimeMillis, menuPhase(), sessionBudget.saveDeadline()',source)
+        self.assertIn('.put("session_budget_phase", sessionBudget.phase())',source)      # the report keeps the budget's own
+        activity=(JAVA/'ClientActivity.java').read_text()
+        self.assertIn('&&("connected".equals(state.sessionPhase)||"grounded".equals(state.sessionPhase))',activity)
+
     def test_world_entry_cap_is_quiet_once_per_session_and_reported(self):
         source=(JAVA/'ClientRuntime.java').read_text()
         ready=source.index('connectedCapturedReady = true;')
         hook=source.index('if (gameplay60Requested && !gameplay60Queued) {',ready)
         self.assertLess(hook-ready,2500)
-        self.assertIn('requestPerformanceCommand(ClientInput.PerformanceCommand.FPS_60, false)',source[hook:hook+300])
+        self.assertIn('requestPerformanceCommand(ClientInput.PerformanceCommand.FPS_60, false)',source[hook:hook+900])  # 0.13.82 put a comment and the ARM64 skip before it
         self.assertIn('gameplay60Requested=gameplay60FpsEnabled(context);gameplay60Queued=false;',source)
         self.assertIn('.put("gameplay_60fps_requested", gameplay60Requested)',source)
         self.assertIn('if (announce) stage("FPS command sent"',source)

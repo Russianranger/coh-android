@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build COH Atlas Gameplay 0.13.87 with the ARM64 client option.
+"""Build COH Atlas Gameplay 0.13.88 with the ARM64 client option.
 
 User approval (2026-10-26, Claude lead session): build and sign this APK for the
 M5 Thor play test. It is an in-place update of the installed 0.13.36 app: same
@@ -16,7 +16,7 @@ Inputs are pinned:
 Changes against the donor:
 - classes.dex is recompiled from this repository's app sources (0.13.36
   sources plus the reviewed M4 ARM64-option diff);
-- version metadata becomes 0.13.87 / 102, and the binary manifest is checked
+- version metadata becomes 0.13.88 / 103, and the binary manifest is checked
   to differ only in its version fields;
 - stage_app_assets adds the ARM64 client, its guest helpers and the manifest
   entries and the explicitly listed guest helpers;
@@ -46,8 +46,8 @@ import server_pipeline
 ROOT = Path(__file__).resolve().parents[2]
 APP_ID = 'io.github.russianranger.cohclientinteractive'
 ANDROID = '{http://schemas.android.com/apk/res/android}'
-VERSION_NAME, VERSION_CODE = '0.13.87', 102
-APK_NAME = 'COH-Atlas-Gameplay-0.13.87.apk'
+VERSION_NAME, VERSION_CODE = '0.13.88', 103
+APK_NAME = 'COH-Atlas-Gameplay-0.13.88.apk'
 DONOR_NAME = 'COH-Atlas-Gameplay-0.13.36.apk'
 DONOR_RELEASE = 'coh-atlas-gameplay-v0.13.36'
 DONOR_ASSET_ID = 635975286
@@ -109,7 +109,7 @@ REVIEWED_JAVA_CHANGES = frozenset({
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientInput.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java',
-    # 0.13.87: the session budget follows the hero that connected (any hero of the account).
+    # 0.13.88: the session budget follows the hero that connected (any hero of the account).
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSessionBudget.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSurface.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/InteractiveRfbClient.java'})

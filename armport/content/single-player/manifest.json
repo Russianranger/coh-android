@@ -10,9 +10,9 @@
    "sha256": "384590d602e826513fd0c74ccb28ddc4b5fdd0ee7234c17c063881cc3750aa31"
   },
   "defs/classes/pc_primalist.def": {
-   "bytes": 188363,
-   "origin": "Primalist zip localdata/Defs/classes/PC_Primalist.def",
-   "sha256": "e2405dbe4fe85ac6d5d3d8ab0c827b72a6a7a2c023921e7a0ed9fbb62b440af0"
+   "bytes": 188359,
+   "origin": "Primalist zip localdata/Defs/classes/PC_Primalist.def; Icon names the texture as the stock classes do (.tga: the creator looks it up by that name)",
+   "sha256": "e661bc6c1c45006b0e61625b1bef600721d5f28fa4cf61024786ba1bc472f3f9"
   },
   "defs/powers/feral_might_feral_might.powers": {
    "bytes": 112608,
@@ -280,7 +280,7 @@
    "sha256": "263657eeeb879b79aa37ab7e0b40b53fa0323dc168167027398e811b6f65d75c"
   }
  },
- "files_sha256": "3fa56ed5affbf14728d2ccb53c21a3ca17bc030352084ddf62338ee1deba1485",
+ "files_sha256": "2215c55684773c9956b8fa3621d1524ee190c8f4b9b0c7cfb996ee295cb8d78b",
  "format": 1,
  "name": "single-player-content",
  "scope": "Primalist archetype: class file, power files, animation bindings and two text lines",

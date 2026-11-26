@@ -306,7 +306,11 @@ class ClientPackage(unittest.TestCase):
         self.assertEqual([p.relative_to(self.ART).as_posix() for p in sorted(self.ART.rglob('*')) if p.is_file()],
                          [self.ICON])
         definition = (self.ART.parent / 'data/defs/classes/pc_primalist.def').read_text(errors='replace')
-        self.assertIn('"archetypeicon_primalist.texture"', definition)
+        # 0.13.88: named as the stock classes name theirs. The creator looks the name up as written,
+        # less a three-letter suffix (tex.c texFixName); ".texture" stayed on and nothing was found
+        # (Thor 0.13.87: no icon in the creator's archetype list).
+        self.assertIn('"archetypeicon_primalist.tga"', definition)
+        self.assertNotIn('archetypeicon_primalist.texture', definition)
 
     def test_client_art_rides_in_the_overlay_and_merges_into_the_imported_folders(self):
         document = package.package(self.client, self.bins, self.shaders, self.launcher, self.archive, 123, 122,

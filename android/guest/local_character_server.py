@@ -2235,6 +2235,10 @@ class LocalCharacterServer(login.LocalLoginServer):
             require(len({row['name'] for row in inventory}) == len(inventory)
                     and len({row['containerid'] for row in inventory}) == len(inventory),
                     'Two characters of the saved game share a name or an ID; preserve all characters')
+            # 0.13.88: a saved game that knows the Primalist class may hold a Primalist; its class
+            # name joins the expected names here, before the heroes' rows are checked against them
+            # (prepare_runtime, which adds it to this session's server tree, runs later).
+            eligibility['primalist_class_number'] = self.accept_stored_primalist()
             all_rows = self.heroes_rows([row['containerid'] for row in inventory])
             committed, unfinished = [], []
             for identity in inventory:
@@ -4516,7 +4520,17 @@ class LocalCharacterServer(login.LocalLoginServer):
             row_counts={name: len(value) for name, value in rows.items()},
             evidence_scope='fresh_graphical_character_ready_on_atlas_then_requested_logout_timer_and_committed_full_character_rows')
         self.creation_report.update(self.saved_metadata(snapshot))
+        self.creation_report['class_name'] = self.saved_class_name(rows)
         return self.creation_report
+
+    def saved_class_name(self, rows):
+        """The saved hero's archetype as the database names it (0.13.88; for the report only)."""
+        try:
+            number = rows['ents'][0]['class']
+            return next((row['name'] for row in self.schema['expected_attributes']['attributes']
+                         if row['id'] == number), None)
+        except (KeyError, IndexError, TypeError):
+            return None
 
     def collect(self, target):
         self.sample_startup_observation(force=True)

@@ -37,6 +37,16 @@ def ready_line(name, map_id, utc_ms, port=7001):
 
 
 class SeveralHeroesTests(unittest.TestCase):
+    def test_the_save_proof_names_the_hero_s_class(self):
+        # 0.13.88: for the report (and CI's Primalist probe); never a reason to fail a save.
+        owner = SimpleNamespace(schema={'expected_attributes': {'attributes': [
+            {'id': 1, 'name': 'race'}, {'id': 2, 'name': 'class_scrapper'}, {'id': 3, 'name': 'class_primalist'}]}})
+        name = lambda rows: server.LocalCharacterServer.saved_class_name(owner, rows)
+        self.assertEqual(name({'ents': [{'class': 3}]}), 'class_primalist')
+        self.assertEqual(name({'ents': [{'class': 2}]}), 'class_scrapper')
+        for rows in ({'ents': [{'class': 9}]}, {'ents': [{}]}, {'ents': []}, {}, None):
+            self.assertIsNone(name(rows))
+
     instance = saved.SavedMapStartupTests.instance
     dynamic = dynamic_tests.DynamicInitialMapTests.dynamic
     layer = dynamic_tests.DynamicInitialMapTests.layer
