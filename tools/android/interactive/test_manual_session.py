@@ -332,7 +332,7 @@ class ManualSessionJavaTests(unittest.TestCase):
         activity = (JAVA/'ClientActivity.java').read_text()
         service = method((JAVA/'ClientService.java').read_text(), 'public String zoningStatus(')
         runtime = method((JAVA/'ClientRuntime.java').read_text(), 'private void captureOutput(')
-        self.assertIn("Play starts in your hero's saved zone.", activity)
+        self.assertIn("The zone of the hero you played last is prepared first.", activity)
         self.assertIn('Tap Start test when ready and Stop test when finished; neither starts a countdown.', activity)
         self.assertIn('When ready to save, release controls', activity)
         self.assertNotIn('Choose Kings Row at the actual monorail station', activity)

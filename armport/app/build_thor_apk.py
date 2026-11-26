@@ -109,6 +109,8 @@ REVIEWED_JAVA_CHANGES = frozenset({
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientInput.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java',
+    # 0.13.87: the session budget follows the hero that connected (any hero of the account).
+    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSessionBudget.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSurface.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/InteractiveRfbClient.java'})
 # Overlay menu and controller mapping (ported from the owner's TRASC launcher); Java only, no resources.

@@ -147,6 +147,102 @@ class ArmPortCharacterInteraction(character.CharacterInteraction):
         return True
 
 
+# 0.13.87 (CI only): several heroes in the one account. After the two ordinary sessions a third
+# makes a second hero from the game's character list during a reopen ("Play"), and a fourth enters
+# with the first hero while the second, played last, is the one the launch expects.
+HEROES_PROBE_ENV = 'COH_HEROES_PROBE'
+SECOND_HERO = 'HEROTWO'
+# The second slot of the character list: uiLogin.c draws 13 slots in 660 units of its 1024x768
+# layout (LINE_HEIGHT), 39.7 pixels each at 800x600; the first is clicked at (200, 72).
+SECOND_SLOT = (200, 112)
+CREATOR_ATTEMPTS = 12
+HEROES_PROBE_SECONDS = 3000
+
+
+def heroes_probe_requested():
+    value = os.environ.get(HEROES_PROBE_ENV, '')
+    require(value in ('', '0', '1'), HEROES_PROBE_ENV + ' must be empty, 0 or 1')
+    return value == '1'
+
+
+def creator_opened(tsv):
+    """The creator's first page (the origin page names Primal Earth and Praetorian Earth)."""
+    words = {word.casefold() for word in screen_words(tsv, limit=200)}
+    return bool(words & {'primal', 'praetorian', 'praetoria'})
+
+
+def second_hero_actions(name):
+    creation = list(armport_creation_actions())
+    names = [action[2] for action in creation]
+    body = [('text', name, action[2]) if action[2] == 'enter_character_name' else action
+            for action in creation[names.index('preposition_select_primal_earth'):]]
+    actions = [('login', None, 'wait_existing_character_list'),
+               ('move', (600, 100), 'clear_cursor_before_second_slot')]
+    actions += character.click_steps('open_second_character_creator', *SECOND_SLOT)
+    actions += [('verify_creator', None, 'verify_creator_opened')]
+    return tuple(actions + body)
+
+
+class SecondHeroInteraction(ArmPortCharacterInteraction):
+    """A reopen session in which the script makes a new hero in the second slot of the character list."""
+    ACTIONS = character.CharacterInteraction.LOGIN_ACTIONS + second_hero_actions(SECOND_HERO)
+
+    def __init__(self, session, evidence, finish_path):
+        super().__init__(session, evidence, finish_path)
+        self.creator_attempts = 0
+        self.result['character_name'] = SECOND_HERO
+
+    def custom_action(self, kind, value, name, connection, frame, events, sequence, now):
+        if kind != 'verify_creator':
+            return super().custom_action(kind, value, name, connection, frame, events, sequence, now)
+        tsv, stem = character.read_ocr(frame, self.evidence, name, self.creator_attempts + 1, (0, 0, 800, 600))
+        shown = creator_opened(tsv)
+        self.creator_attempts += 1
+        self.result['armport_transition_checks'].append({'check': name, 'attempt': self.creator_attempts,
+            'creator_opened': shown, 'evidence': stem, 'frame_sequence': sequence, 'words': screen_words(tsv)})
+        if not shown:
+            require(self.creator_attempts < CREATOR_ATTEMPTS,
+                    'The character creator did not open from the second slot of the character list')
+            if self.creator_attempts in (4, 8):
+                # The click selected the slot without opening it: the list's own button opens it.
+                self.result['armport_transition_checks'][-1]['button_clicked'] = True
+                character.host.pointer_move(connection, 757, 579)
+                character.host.pointer_click(connection, 757, 579)
+            self.action -= 1
+        return True
+
+
+def heroes_probe_validate(report, *, created):
+    """What the two extra sessions must show (the guest has already proved each save itself)."""
+    proof = report.get('character_reopen') if isinstance(report, dict) else None
+    require(isinstance(proof, dict) and report.get('passed') is True and proof.get('verified') is True,
+            'Heroes probe: the session did not end with a verified save')
+    heroes = proof.get('heroes')
+    require(isinstance(heroes, dict), 'Heroes probe: the session has no record of the account\'s heroes')
+    if created:
+        require(proof.get('created_in_session') is True and proof.get('name') == SECOND_HERO
+                and type(proof.get('character_id')) is int and proof['character_id'] > 1
+                and heroes.get('count') == 1 and heroes.get('expected_character_id') == 1
+                and heroes.get('chosen_character_id') == proof['character_id']
+                and heroes.get('choice') == 'created_in_the_character_list'
+                and 'baseline_character_id' not in proof and proof.get('saved_heroes_at_start') == 1,
+                'Heroes probe: the second hero was not followed as a hero made in the character list: '
+                + json.dumps({key: proof.get(key) for key in ('created_in_session', 'name', 'character_id',
+                                                               'heroes', 'operation')})[:600])
+    else:
+        require(proof.get('created_in_session') is not True and proof.get('character_id') == 1
+                and proof.get('baseline_character_id') == 1 and proof.get('before_character_id') == 1
+                and heroes.get('count') == 2 and type(heroes.get('expected_character_id')) is int
+                and heroes['expected_character_id'] > 1 and heroes.get('chosen_character_id') == 1
+                and heroes.get('choice') == 'another_saved_hero'
+                and proof.get('login_count') == proof.get('before_login_count', -2) + 1,
+                'Heroes probe: the first hero was not followed as another saved hero: '
+                + json.dumps({key: proof.get(key) for key in ('character_id', 'baseline_character_id',
+                                                               'heroes', 'login_count', 'before_login_count')})[:600])
+    return {'character_id': proof['character_id'], 'name': proof.get('name'), 'heroes': heroes,
+            'created_in_session': proof.get('created_in_session') is True, 'map_id': proof.get('map_id')}
+
+
 def armport_validate_observer(observer, report):
     """Prove the transition checks and their replays, then run the shared checks
     on the shared step sequence (one pass through each replayed segment)."""
@@ -1253,7 +1349,7 @@ def ci_notice(result):
 
 
 def run_session(command, work, evidence, proot, session, runtime_manifest, client_manifest,
-                deadline, reopening=False):
+                deadline, reopening=False, second_hero=False):
     evidence.mkdir(parents=True)
     isolated, environment, expected_network = runtime_host.runtime.isolate_command(
         command, evidence=evidence, proot=proot, work=work)
@@ -1279,8 +1375,10 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
                 travel = reopening and stock_travel_requested()
                 observer = character.observe_rfb(connection, session, process, deadline, evidence,
                     evidence / 'host-client.log', work / 'state/interaction-finish.json',
+                    SecondHeroInteraction if second_hero else
                     (reopen.StockTravelReopenInteraction if travel else reopen.ReopenInteraction)
                     if reopening else ArmPortCharacterInteraction,
+                    None if second_hero else
                     (reopen.StockTravelReopenEvents if travel else reopen.ReopenEvents) if reopening else None)
             require(observer.get('failure') is None, observer.get('failure') or 'ARM64 RFB observer failed')
             require(process.wait(timeout=max(1, deadline - time.monotonic())) == 0,
@@ -1299,6 +1397,11 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
             projected = legacy_report(report, runtime_manifest, client_manifest)
             checked_manifest = validation_manifest(report, runtime_manifest)
             require(time.monotonic() <= deadline, 'ARM64 interactive host deadline exceeded')
+            if second_hero:
+                # The script is a creation's inside a reopen session: neither session's fixed
+                # report shape applies; heroes_probe_validate reads the guest's own proof.
+                require(not endpoint.exists(), 'Private display survived guest cleanup')
+                return report
             if reopening:
                 finish_request = observer.get('interaction_script', {}).get('finish_request')
                 require(finish_request is not None, 'Missing host explicit-finish request')
@@ -1508,6 +1611,32 @@ def main():
                                second, runtime_manifest, client_manifest, deadline, reopening=True)
         after = reopen.persistent_profile_identity(args.work)
         reopen.validate_continuity(created, reopened, before, after)
+        if heroes_probe_requested():
+            require(stock_travel_requested(), "The heroes probe needs the game's own zone travel")
+            first_hero = character.CHARACTER
+            previous, summary = second, {}
+            # Two more sessions: their own bound (the job's timeout covers all four).
+            deadline = time.monotonic() + HEROES_PROBE_SECONDS
+            for label, made in (('second-hero', True), ('first-hero', False)):
+                session = secrets.token_hex(16)
+                reopen.archive_completed_reports(args.work / 'state', previous)
+                reopen.reset_session_requests(args.work / 'state')
+                probe_command = reopen.reopen_command(command, first, session)
+                probe_command.insert(probe_command.index('/usr/bin/python3'), 'COH_ARMPORT_GRAPHICS_PROFILE=effects_off')
+                probe_command.insert(probe_command.index('/opt/coh/character_reopen_diagnostic.py') + 1, '--zoning')
+                # The driver's checks follow one name: the new hero's while it is made.
+                character.CHARACTER = SECOND_HERO if made else first_hero
+                try:
+                    probe_report = run_session(probe_command, args.work, args.evidence / label, args.proot,
+                                               session, runtime_manifest, client_manifest, deadline,
+                                               reopening=True, second_hero=made)
+                finally:
+                    character.CHARACTER = first_hero
+                summary[label] = heroes_probe_validate(probe_report, created=made)
+                previous = session
+            result['heroes_probe'] = summary
+            print('::notice title=ArmPort heroes probe::' + json.dumps(summary, separators=(',', ':'))[:3800],
+                  flush=True)
         if receiver is not None:
             audio = audio_summary(receiver.snapshot())
             (args.evidence / 'audio-report.json').write_text(json.dumps(audio, indent=2) + '\n')
@@ -1533,7 +1662,7 @@ def main():
                   + (args.evidence / 'audio-report.json').read_text().replace('\n', ' '), flush=True)
         result['elapsed_seconds'] = round(time.monotonic() - started, 3)
         result['guest_failures'] = {name: guest_failure_summary(args.evidence / name)
-                                    for name in ('creation', 'reopen')
+                                    for name in ('creation', 'reopen', 'second-hero', 'first-hero')
                                     if (args.evidence / name).exists()}
         (args.evidence / 'host-report.json').write_text(json.dumps(result, indent=2) + '\n')
         print(ci_notice({key: result.get(key) for key in

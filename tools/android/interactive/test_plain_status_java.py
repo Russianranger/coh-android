@@ -31,9 +31,9 @@ public final class PlainStatusHost {
   String[] in=plain("Character connected","Ralakar connected to Kings Row. Walking works now; more.");
   need(in[0].equals("In the game")&&in[1].startsWith("Ralakar is in Kings Row. Play as long as you like."),in[1]);
   String[] found=plain("Saved destination verified","Ralakar is saved in Atlas Park. Atlas Park starts when you press Enter Game.");
-  need(found[0].equals("Hero found")&&found[1].equals("Ralakar is saved in Atlas Park."),found[1]);
+  need(found[0].equals("Hero found")&&found[1].startsWith("Ralakar is saved in Atlas Park. That zone is prepared first;"),found[1]);
   need(plain("Client ready for input","Log in with COHLOCAL / offline, select your existing character and click Enter Game.")[1]
-    .equals("Log in as COHLOCAL (offline), then choose your hero and click Enter Game."),"ready");
+    .equals("Log in as COHLOCAL (offline), then choose a hero and click Enter Game, or make a new one in an empty slot."),"ready");
   need(plain("Local login verified","Create your character (any name) as a Primal Earth Hero.")[1]
     .startsWith("Create your hero. After Enter Game"),"create");
   // A status the table does not know, and the setup ones, pass unchanged.

@@ -82,11 +82,11 @@ public final class ClientZoning {
                 // A first hero is made in the game's creator; a saved one is chosen from the game's list.
                 String next=d.contains("Create your character")
                     ?"create your hero. After Enter Game the first zone can take a few minutes to load."
-                    :"choose your hero and click Enter Game.";
+                    :"choose a hero and click Enter Game, or make a new one in an empty slot.";
                 return new String[]{s.startsWith("Client")?"Game ready":"Logged in",s.startsWith("Client")
                     ?"Log in as COHLOCAL (offline), then "+next:Character.toUpperCase(next.charAt(0))+next.substring(1)};
             }
-            case "Saved destination verified":return new String[]{"Hero found",sentence(d)};
+            case "Saved destination verified":return new String[]{"Hero found",sentence(d)+" That zone is prepared first; you can choose any hero in the game's character list."};
             case "Character connected":
             case "Ready for zone travel":
             case "Atlas ready for task check":

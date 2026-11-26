@@ -84,9 +84,9 @@ on:
         required: false
         default: false
       single_player_probe:
-        description: Both sessions run with the Primalist archetype and "Unlock all content" on (0.13.85); unlock or primalist runs one of the two
+        description: Both sessions run with the Primalist archetype and "Unlock all content" on (0.13.85); unlock or primalist runs one of the two; heroes adds two sessions with a second hero (0.13.87)
         type: choice
-        options: ['false', 'true', unlock, primalist]
+        options: ['false', 'true', unlock, primalist, heroes]
         required: false
         default: 'false'
       client_group_bins:
@@ -150,6 +150,7 @@ env:
   COH_MISSION_PROBE: ${{ inputs.mission_probe && '1' || '' }}
   COH_SINGLE_PLAYER_PROBE: ${{ (inputs.single_player_probe == 'true' || inputs.single_player_probe == 'unlock' || inputs.single_player_probe == 'primalist') && '1' || '' }}
   COH_SINGLE_PLAYER_PROBE_PART: ${{ (inputs.single_player_probe == 'unlock' || inputs.single_player_probe == 'primalist') && inputs.single_player_probe || 'both' }}
+  COH_HEROES_PROBE: ${{ inputs.single_player_probe == 'heroes' && '1' || '' }}
   COH_TRAP_SAMPLER: ${{ inputs.trap_sampler && '1' || '' }}
   COH_PROOT_IOCTL_FILTER: ${{ inputs.proot_ioctl_filter && '1' || '' }}
   ARMPORT_CI_CHARACTER_NAME: ${{ inputs.character_name || 'THORHERO' }}

@@ -161,7 +161,7 @@ public final class ClientActivity extends Activity {
         run=button("Play",()->request(ClientService.RUN));controls.addView(run);
         createFresh=button("Create fresh character",this::confirmFreshProfile);createFresh.setVisibility(View.GONE);controls.addView(createFresh);
         profileStatus=text("Checking saved character profile…",12,false);controls.addView(profileStatus);
-        controls.addView(text("Play starts in your hero's saved zone. Sign in as COHLOCAL (offline).",12,false));
+        controls.addView(text("Play opens the game's own character list: choose a hero, or make a new one in an empty slot. The zone of the hero you played last is prepared first. Sign in as COHLOCAL (offline).",12,false));
         typeText=button("Send text / L3",this::showTextInput);controls.addView(typeText);
         enterKey=button("Enter / Start",this::sendEnter);controls.addView(enterKey);
         saveLogout=button("Save character / log out",this::saveCharacter);controls.addView(saveLogout);
@@ -379,9 +379,11 @@ public final class ClientActivity extends Activity {
         // Owner, 2026-11-09: every zone's navigation map, imported with the same button (optional).
         navigationMapStatus=text("Checking navigation maps…",12,false);controls.addView(navigationMapStatus);
         controls.addView(text("Fresh install: import every ZIP part from the compatible versioned Assets release, then Set up / update runtime. Each completed part is retained; the app shows any missing parts. Keep these ZIPs for reinstalling. Future APK updates reuse compatible imported assets.",12,false));
-        controls.addView(text("Saved hero",15,true));
-        controls.addView(text("The app keeps one saved hero, plus one more in a second slot. Switching swaps them; nothing is deleted. With an empty second slot the saved hero is set aside and Create fresh character appears on the Play tab, for example to make a Primalist.",12,false));
-        switchHero=button("Switch hero slot",this::confirmSwitchHero);controls.addView(switchHero);
+        controls.addView(text("Saved games",15,true));
+        // 0.13.87 (owner, 2026-11-25): every hero is in the one saved game and is chosen in the game's own
+        // character list. The second saved game of 0.13.85 stays reachable here; nothing is merged or deleted.
+        controls.addView(text("All your heroes are in one saved game; you choose or make them in the game's own character list. If you made a second saved game with version 0.13.85, this button swaps it in and back. Nothing is deleted.",12,false));
+        switchHero=button("Swap to the other saved game",this::confirmSwitchHero);controls.addView(switchHero);
         resumeCreation=button("Resume first character creation",this::confirmResumeCreation);resumeCreation.setVisibility(View.GONE);controls.addView(resumeCreation);
         controls.addView(text("Resume first character creation is only for a first hero whose creation was interrupted before it was saved.",12,false));
         controls.addView(text("Controller and options button",15,true));
@@ -602,11 +604,11 @@ public final class ClientActivity extends Activity {
         if(!profileIdle(state))return;
         boolean other=ClientRuntime.otherHeroPresent(this);
         boolean saved=state.profileState==ClientRuntime.ProfileState.READY;
-        String message=saved&&other?"Swap the saved hero with the hero in the other slot? Both are kept."
-                :saved?"Set the saved hero aside in the other slot? It is kept exactly as it is. You can then create a new hero with Create fresh character, and swap back here at any time."
-                :other?"Bring the hero in the other slot back as the saved hero?"
-                :"There is no saved hero in either slot.";
-        AlertDialog.Builder dialog=new AlertDialog.Builder(this).setTitle("Switch hero slot").setMessage(message).setNegativeButton("Cancel",null);
+        String message=saved&&other?"Swap this saved game with the other one? Both are kept, each with all of its heroes."
+                :saved?"Set this saved game aside? It is kept exactly as it is, and you can swap back here at any time. You do not need this to make another hero: use an empty slot in the game's character list."
+                :other?"Bring the other saved game back?"
+                :"There is no saved game in either place.";
+        AlertDialog.Builder dialog=new AlertDialog.Builder(this).setTitle("Swap saved games").setMessage(message).setNegativeButton("Cancel",null);
         if(saved||other)dialog.setPositiveButton("Switch",(d,which)->{
             if(profileIdle(state)&&service!=null)Toast.makeText(this,service.switchHero(),Toast.LENGTH_LONG).show();
         });

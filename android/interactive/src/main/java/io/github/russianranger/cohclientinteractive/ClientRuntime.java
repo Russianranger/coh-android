@@ -2486,7 +2486,7 @@ public final class ClientRuntime {
                 login.put("post_login_frame_observed", true);
                 loginSamples.add(login); loginPngs.add(png.clone());
                 if (loginSamples.size() == 3)
-                    stage("Local login verified", reopen ? "Select your existing character and click Enter Game. Keep its existing costume and powers. Do not create or delete a character." : "Create your character (any name) as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified.");
+                    stage("Local login verified", reopen ? "Select a character and click Enter Game, or make a new one in an empty slot. Do not delete a character." : "Create your character (any name) as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified.");
             }
             if (connectedSample) {
                 Map<String,Object> connected = new LinkedHashMap<>(sample);
@@ -2741,7 +2741,7 @@ public final class ClientRuntime {
                                 catch (IOException e) { receiverFailure = "Cannot refresh the logged-in client: " + message(e); }
                             }
                             recordLifecycle("local_login_observed");
-                            stage("Local server login observed", reopen ? "The server sent the saved character list. Select your character and click Enter Game. Do not create or delete a character."
+                            stage("Local server login observed", reopen ? "The server sent the saved character list. Select a character and click Enter Game, or make a new one in an empty slot. Do not delete a character."
                                     : dynamicCreation() ? "The server sent the character list. Create your character, with any name the game accepts, as a hero, villain or Praetorian. After Enter Game the game starts its starting zone (Atlas Park, Mercy Island, Nova Praetoria or a tutorial); the screen can stay still for a few minutes while it loads."
                                     : "The server sent the character list. Create your character (any name) as a Primal Earth Hero and skip the tutorial.");
                         }
@@ -2944,7 +2944,7 @@ public final class ClientRuntime {
                             interactionReadyObserved = true;
                             if (sessionBudget.revision() == 0) readyDeadlineUptimeMillis = reopen ? 0 : SystemClock.uptimeMillis() + 1200000;
                             inputReady = true; recordLifecycle("interaction_ready"); notifyInputState();
-                            stage("Client ready for input", reopen ? "Log in with COHLOCAL / offline, select your existing character and click Enter Game. Do not create or delete a character. Login and gameplay have no countdown. Tap Start test when ready, then Stop test to end capture; Save / Logout and Finish preserve the character and report." : dynamicCreation() ? "Log in with COHLOCAL / offline. Create your character (any name the game accepts) as a hero, villain or Praetorian; after Enter Game the game starts its starting zone (the screen can stay still for a few minutes). Save, then wait for Saved character verified. Twenty minutes remain for the creator; the zone's start does not count."
+                            stage("Client ready for input", reopen ? "Log in with COHLOCAL / offline, select a character and click Enter Game, or make a new one in an empty slot. Do not delete a character. Login and gameplay have no countdown. Tap Start test when ready, then Stop test to end capture; Save / Logout and Finish preserve the character and report." : dynamicCreation() ? "Log in with COHLOCAL / offline. Create your character (any name the game accepts) as a hero, villain or Praetorian; after Enter Game the game starts its starting zone (the screen can stay still for a few minutes). Save, then wait for Saved character verified. Twenty minutes remain for the creator; the zone's start does not count."
                                     : "Log in with COHLOCAL / offline. Create your character (any name) as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified. Twenty minutes remain.");
                         }
                         // Keep the actionable save/Finish instruction visible while

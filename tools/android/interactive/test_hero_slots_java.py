@@ -74,7 +74,7 @@ class HeroSlots(unittest.TestCase):
         self.assertIn('if(busy||storageBusy||reportExporting||blocked)return "Finish the current operation first.";', service)
         self.assertIn('refreshProfileState();publish();return message;', service)
         activity = (JAVA / 'ClientActivity.java').read_text()
-        self.assertIn('switchHero=button("Switch hero slot",this::confirmSwitchHero);', activity)
+        self.assertIn('switchHero=button("Swap to the other saved game",this::confirmSwitchHero);', activity)
         self.assertIn('if(!profileIdle(state))return;', activity[activity.index('private void confirmSwitchHero()'):][:200])
 
 
