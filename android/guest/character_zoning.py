@@ -3541,6 +3541,12 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             monorail_enabled=False, recovery_requested=False, recovery_verified=False,
             ordinary_stuck_observed=False, on_atlas_safe_position=False, stable_ground_verified=False,
             committed_safe_position_verified=False)
+        # This accepted arrival binds the map the hero is in from now on
+        # (local_character_server.stock_arrival_binds); the session's first ready record stays.
+        self.creation_report['stock_arrival'] = {
+            'map_id': target, 'observed_utc_ms': now_ms, 'epoch': self.epoch,
+            'source': sample.get('source') if isinstance(sample, dict) and isinstance(sample.get('source'), str)
+            else 'dbserver_character_status'}
         # The first zone's own start (initial_login) is not a trip's destination start.
         start = next((row for row in reversed(self.stock['starts'])
                       if row['map_id'] == target and row.get('ready') and not row.get('initial_login')), None)

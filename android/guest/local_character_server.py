@@ -1315,6 +1315,27 @@ def logout_record(logs, *, map_id=1):
     return None
 
 
+STOCK_ARRIVAL_SOURCES = ('zone_console', 'stock_entity_log', 'stock_occupied_probe', 'dbserver_character_status')
+
+
+def stock_arrival_binds(proof, ready, map_id, now_utc_ms):
+    """The hero travelled on by the game's own travel after the ready record's zone.
+
+    0.13.86: Thor 0.13.85 (20261126-014613) slotted an enhancement, took a tunnel and saved;
+    the session's ready record was the first zone's (72) and the saved map the second (71), so
+    this binding was refused and the enhancement record failed the launch. The zoning server
+    records each arrival it accepted (character_zoning._stock_arrival); the latest one, of the
+    current travel epoch, binds the map the hero is in now.
+    """
+    arrival = proof.get('stock_arrival') if type(proof) is dict else None
+    return (type(arrival) is dict and type(arrival.get('map_id')) is int and arrival['map_id'] == map_id
+            and type(ready.get('utc_ms')) is int and type(arrival.get('observed_utc_ms')) is int
+            and ready['utc_ms'] <= arrival['observed_utc_ms'] <= now_utc_ms
+            and arrival.get('source') in STOCK_ARRIVAL_SOURCES
+            and type(arrival.get('epoch')) is int and arrival['epoch'] >= 1
+            and proof.get('zoning_epoch') == arrival['epoch'])
+
+
 def stock_zone_binding(proof, ready, session, client_pid, now_utc_ms):
     """The same binding for a reopen connected in a zone the game's own travel started.
 
@@ -1342,7 +1363,8 @@ def stock_zone_binding(proof, ready, session, client_pid, now_utc_ms):
             and type(ready) is dict and ready.get('loaded_world_assets') is True
             and ready.get('name') == CHARACTER and ready.get('account') == ACCOUNT
             and ready.get('log_route') in ('embedded_dbserver_logserver', 'owned_zone_server_console')
-            and type(ready.get('map_id')) is int and ready['map_id'] == map_id
+            and type(ready.get('map_id')) is int
+            and (ready['map_id'] == map_id or stock_arrival_binds(proof, ready, map_id, now_utc_ms))
             and type(ready.get('utc_ms')) is int
             and 0 < ready['utc_ms'] <= proof['client_ready_observed_utc_ms']
             and re.fullmatch(r'[0-9a-f]{64}', str(ready.get('line_sha256', '')))):
@@ -3578,18 +3600,137 @@ class LocalCharacterServer(login.LocalLoginServer):
         private mirror), sealed with read-only directories and a marker, and
         reused by later sessions. A tree left without its marker (a stopped
         build) holds only directories and links and is rebuilt; trees of other
-        identities are removed when a new one is built. runtime/serverdata is a
+        sources are removed when a new one is built (shared_tree_plan says which
+        trees serve one source with and without the content). runtime/serverdata is a
         real directory holding one directory link per shared folder (and, from
         0.13.52, links to the private bin, geobin and server folders); Wine
         follows each link as a path component.
         """
         started = time.monotonic()
-        key = hashlib.sha256(server_data_cache.canonical(identity)).hexdigest()[:24]
+        roots = list(identity['shared_server_data']['shared_top_level'])
+        removed = {'unsealed_trees': 0, 'other_identity_trees': 0}
+        plan = self.shared_tree_plan(identity, roots)
+        providers, trees, stats, reused = {}, [], None, True
+        for group in plan['groups']:
+            shared, group_reused, group_stats = self.shared_tree(group, plan['known'], removed)
+            reused = reused and group_reused
+            trees.append({'tree': shared.name, 'roots': len(group['roots']), 'reused': group_reused,
+                          'kind': group['kind'], 'files': group_stats.get('files')})
+            stats = group_stats if stats is None else {
+                key: (stats.get(key) or 0) + (group_stats.get(key) or 0) for key in ('files', 'directories')}
+            for name in group.get('use', group['roots']):
+                providers[name] = shared
+        for name in roots:
+            shared = providers[name]
+            info = shared.lstat()
+            require(stat.S_ISDIR(info.st_mode) and stat.S_IMODE(info.st_mode) == 0o500
+                    and info.st_uid == os.getuid(), 'Shared server data tree is not owned and read-only')
+            require(not (runtime / 'data' / name).exists() and not (runtime / 'data' / name).is_symlink(),
+                    map_label + ' private data still holds a shared folder: ' + name)
+            require((shared / name).is_dir() and not (shared / name).is_symlink(),
+                    'Shared server data folder is missing: ' + name)
+        link = runtime / 'serverdata'
+        require(not link.exists() and not link.is_symlink(), map_label + ' runtime already has serverdata')
+        require((runtime / 'data').is_dir() and (runtime / 'tools').is_dir(),
+                'serverdata needs the data/ and tools/ layout')
+        # A real directory of folder links; Wine follows each as a path component.
+        link.mkdir()
+        for name in roots:
+            (link / name).symlink_to(providers[name] / name, target_is_directory=True)
+        first_lookup = []
+        if serverdata_first_lookup_enabled():
+            shared_names = {name.casefold() for name in roots}
+            private = {child.name.casefold(): child for child in (runtime / 'data').iterdir()}
+            for name in SERVERDATA_FIRST_LOOKUP_FOLDERS:
+                child = private.get(name)
+                if child is None or child.is_symlink() or not child.is_dir():
+                    continue
+                require(name not in shared_names, 'A first-lookup folder is also shared: ' + child.name)
+                # Relative, on-disk spelling: the link resolves inside this runtime only.
+                (link / child.name).symlink_to(Path('..') / 'data' / child.name, target_is_directory=True)
+                first_lookup.append(child.name)
+        return {'format': 2, 'policy': 'shared_readonly_serverdata_folder_links_v2',
+            'first_lookup_private_folders': first_lookup,
+            'selection': identity['shared_server_data'].get('selection'),
+            'level': identity['shared_server_data'].get('level'), 'shared_top_level': roots,
+            'shared_tree': trees[0]['tree'], 'shared_trees': trees, 'reused_shared_tree': reused, 'removed': removed,
+            'shared_files': stats.get('files'), 'shared_directories': stats.get('directories'),
+            'directories_read_only': True, 'private_copy_absent': True,
+            'engine_search_order': ['localdata', 'serverdata', 'data'],
+            'link_seconds': round(time.monotonic() - started, 6),
+            'native_resolution_verified': False, 'physical_gain_validated': False}
+
+    def shared_content_archive(self):
+        """The single-player content the APK carries (None when it carries none), whatever the options."""
+        if not hasattr(self, '_shared_content_archive'):
+            import single_player_content
+            active = getattr(self, 'single_player_content', None)
+            try:
+                self._shared_content_archive = active or single_player_content.load(self.owner.args.assets)
+            except (base.DiagnosticError, OSError, ValueError, KeyError, AttributeError, TypeError):
+                self._shared_content_archive = None
+        return self._shared_content_archive
+
+    def shared_tree_plan(self, identity, roots):
+        """Which shared tree serves which folder (0.13.86).
+
+        The Primalist content touches two of the fifteen shared folders (menu, texts: 10,700 of
+        128,765 files). Until 0.13.85 a session with the content built a whole second tree and
+        removed the other one: 335 s of file links on the Thor (export 20261126-035051), and
+        again on the way back. Now the folders the content does not touch come from whichever
+        sealed tree already has them, with or without the content, and only the touched folders
+        get a tree of their own. A tree of all folders keeps its old name, so trees made by
+        earlier versions are used as they are.
+        """
+        def full(value):
+            return hashlib.sha256(server_data_cache.canonical(value)).hexdigest()[:24]
+
+        def part(value, names):
+            return hashlib.sha256(server_data_cache.canonical(
+                {'format': 1, 'identity': value, 'roots': names})).hexdigest()[:24]
+
+        def sealed(key):
+            return (self.owner.root / (SHARED_TREE_PREFIX + key + '.json')).is_file()
+
+        archive = self.shared_content_archive()
+        folded = {name.casefold() for name in roots}
+        touched = sorted({archive.top_level(name) for name in archive.files} & folded) if archive is not None else []
+        touched = [name for name in roots if name.casefold() in touched]
+        untouched = [name for name in roots if name not in touched]
+        plain = {key: value for key, value in identity.items() if key != 'single_player_content'}
+        with_content = None if archive is None else dict(plain, single_player_content=archive.identity)
+        active = 'single_player_content' in identity
+        if active:
+            require(with_content is not None and identity['single_player_content'] == archive.identity,
+                    'The single-player content of this session is not the packaged one')
+        whole = {'key': full(identity), 'roots': roots, 'kind': 'all_folders'}
+        if not touched or not untouched:
+            return {'groups': [whole], 'known': {whole['key']}}
+        mine = with_content if active else plain
+        known = {full(plain), full(with_content), part(plain, touched), part(plain, untouched),
+                 part(with_content, touched)}
+        if sealed(whole['key']):
+            return {'groups': [whole], 'known': known}
+        other_whole = full(plain if active else with_content)
+        any_tree = any(sealed(key) for key in known)
+        if not active and not any_tree:
+            return {'groups': [whole], 'known': known}        # nothing kept yet: one tree, as before
+        if sealed(full(plain)):
+            rest = {'key': full(plain), 'roots': roots, 'kind': 'all_folders_without_content', 'use': untouched}
+        elif sealed(other_whole):
+            rest = {'key': other_whole, 'roots': roots, 'kind': 'all_folders_other_content_state', 'use': untouched}
+        else:
+            rest = {'key': part(plain, untouched), 'roots': untouched, 'kind': 'untouched_folders'}
+        own = {'key': part(mine, touched), 'roots': touched,
+               'kind': 'content_folders' if active else 'content_folders_without_content'}
+        return {'groups': [own, rest], 'known': known}
+
+    def shared_tree(self, group, known, removed):
+        """One sealed shared tree (built when missing): (path, reused, stats)."""
+        key, roots = group['key'], group['roots']
         shared = self.owner.root / (SHARED_TREE_PREFIX + key)
         marker = self.owner.root / (shared.name + '.json')
-        roots = list(identity['shared_server_data']['shared_top_level'])
         reused = marker.exists() or marker.is_symlink()
-        removed = {'unsealed_trees': 0, 'other_identity_trees': 0}
         if reused:
             info = marker.lstat()
             require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1 and info.st_size <= 4096,
@@ -3612,6 +3753,9 @@ class LocalCharacterServer(login.LocalLoginServer):
                     continue
                 if other.is_symlink() or not other.is_dir():
                     continue                      # never ours; leave it alone
+                if (other.name[len(SHARED_TREE_PREFIX):] in known
+                        and (self.owner.root / (other.name + '.json')).is_file()):
+                    continue                      # the same source with or without the content: kept
                 self.remove_shared_tree(other)
                 (self.owner.root / (other.name + '.json')).unlink(missing_ok=True)
                 removed['other_identity_trees'] += 1
@@ -3626,44 +3770,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                 os.chmod(current, 0o500)
             base.private_write(marker, json.dumps({'format': 1, 'key': key, 'roots': roots,
                 'stats': stats}, sort_keys=True) + '\n')
-        info = shared.lstat()
-        require(stat.S_ISDIR(info.st_mode) and stat.S_IMODE(info.st_mode) == 0o500
-                and info.st_uid == os.getuid(), 'Shared server data tree is not owned and read-only')
-        for name in roots:
-            require(not (runtime / 'data' / name).exists() and not (runtime / 'data' / name).is_symlink(),
-                    map_label + ' private data still holds a shared folder: ' + name)
-            require((shared / name).is_dir() and not (shared / name).is_symlink(),
-                    'Shared server data folder is missing: ' + name)
-        link = runtime / 'serverdata'
-        require(not link.exists() and not link.is_symlink(), map_label + ' runtime already has serverdata')
-        require((runtime / 'data').is_dir() and (runtime / 'tools').is_dir(),
-                'serverdata needs the data/ and tools/ layout')
-        # A real directory of folder links; Wine follows each as a path component.
-        link.mkdir()
-        for name in roots:
-            (link / name).symlink_to(shared / name, target_is_directory=True)
-        first_lookup = []
-        if serverdata_first_lookup_enabled():
-            shared_names = {name.casefold() for name in roots}
-            private = {child.name.casefold(): child for child in (runtime / 'data').iterdir()}
-            for name in SERVERDATA_FIRST_LOOKUP_FOLDERS:
-                child = private.get(name)
-                if child is None or child.is_symlink() or not child.is_dir():
-                    continue
-                require(name not in shared_names, 'A first-lookup folder is also shared: ' + child.name)
-                # Relative, on-disk spelling: the link resolves inside this runtime only.
-                (link / child.name).symlink_to(Path('..') / 'data' / child.name, target_is_directory=True)
-                first_lookup.append(child.name)
-        return {'format': 2, 'policy': 'shared_readonly_serverdata_folder_links_v2',
-            'first_lookup_private_folders': first_lookup,
-            'selection': identity['shared_server_data'].get('selection'),
-            'level': identity['shared_server_data'].get('level'), 'shared_top_level': roots,
-            'shared_tree': shared.name, 'reused_shared_tree': reused, 'removed': removed,
-            'shared_files': stats.get('files'), 'shared_directories': stats.get('directories'),
-            'directories_read_only': True, 'private_copy_absent': True,
-            'engine_search_order': ['localdata', 'serverdata', 'data'],
-            'link_seconds': round(time.monotonic() - started, 6),
-            'native_resolution_verified': False, 'physical_gain_validated': False}
+        return shared, reused, stats
 
     def remove_shared_tree(self, path):
         """Remove a shared tree: it may hold only owned directories and links, never data."""

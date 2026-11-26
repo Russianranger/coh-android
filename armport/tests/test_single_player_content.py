@@ -174,6 +174,82 @@ class Archive(unittest.TestCase):
             link = source / name; link.parent.mkdir(parents=True, exist_ok=True); link.symlink_to(original)
         return value, source, imported
 
+    def shared_setup(self, *, content_on):
+        """A server over the small import, with the shared folders of the phone (menu, texts, fx)."""
+        import local_character_server as server
+        if not hasattr(self, 'shared_value'):
+            value, source, imported = self.mirror()
+            original = imported / 'fx/a.fx'; original.parent.mkdir(parents=True)
+            original.write_text('imported'); original.chmod(0o444)
+            (source / 'fx').mkdir(); (source / 'fx/a.fx').symlink_to(original)
+            value.owner.root = self.root / 'owner-root'; value.owner.root.mkdir()
+            value.owner.args.assets = self.assets
+            self.shared_value, self.shared_content, self.shared_count = value, value.single_player_content, 0
+        value = self.shared_value
+        value.single_player_content = self.shared_content if content_on else None
+        identity = {'format': 2, 'source': 'the import', 'shared_server_data': {
+            'shared_top_level': ['fx', 'menu', 'texts'], 'selection': 'app_default_folders_v1', 'level': None}}
+        if content_on:
+            identity['single_player_content'] = self.shared_content.identity
+        self.shared_count += 1
+        runtime = self.root / ('shared-runtime-%d' % self.shared_count)
+        for name in ('data', 'tools'):
+            (runtime / name).mkdir(parents=True)
+        return value, runtime, identity
+
+    def shared_link(self, *, content_on):
+        value, runtime, identity = self.shared_setup(content_on=content_on)
+        result = value.link_shared_server_data(runtime, identity)
+        served = {name: (runtime / 'serverdata' / name).resolve().parent.name for name in ('fx', 'menu', 'texts')}
+        class_text = (runtime / 'serverdata/texts/english/classes/classes.def.ms').read_bytes()
+        has_content = class_text == self.shared_content.files['texts/english/classes/classes.def.ms']['data']
+        return result, served, has_content
+
+    def test_only_the_folders_the_content_touches_get_a_second_shared_tree(self):
+        """Thor 20261126-035051: the Primalist's first launch linked all 128,765 shared files again
+        (335 s) and removed the other tree; only menu and texts differ (10,700 files)."""
+        plain, plain_served, plain_content = self.shared_link(content_on=False)
+        self.assertEqual((len(set(plain_served.values())), plain_content, plain['reused_shared_tree']), (1, False, False))
+        self.assertEqual([row['kind'] for row in plain['shared_trees']], ['all_folders'])
+        first, served, has_content = self.shared_link(content_on=True)
+        self.assertTrue(has_content)
+        self.assertEqual(served['fx'], plain_served['fx'])                    # untouched: the kept tree
+        self.assertEqual(served['menu'], served['texts']); self.assertNotEqual(served['menu'], plain_served['menu'])
+        self.assertEqual([(row['kind'], row['reused'], row['roots']) for row in first['shared_trees']],
+                         [('content_folders', False, 2), ('all_folders_without_content', True, 3)])
+        self.assertEqual(first['removed'], {'unsealed_trees': 0, 'other_identity_trees': 0})
+        self.assertFalse(first['reused_shared_tree'])
+        again, served_again, _ = self.shared_link(content_on=True)
+        self.assertEqual((again['reused_shared_tree'], served_again), (True, served))
+        back, back_served, back_content = self.shared_link(content_on=False)   # and the way back costs nothing
+        self.assertEqual((back['reused_shared_tree'], back_served, back_content), (True, plain_served, False))
+
+    def test_a_whole_tree_made_with_the_content_by_0_13_85_serves_both_states(self):
+        value, runtime, identity = self.shared_setup(content_on=True)
+        import hashlib, character_server_data_cache as cache
+        key = hashlib.sha256(cache.canonical(identity)).hexdigest()[:24]
+        old = value.shared_tree({'key': key, 'roots': ['fx', 'menu', 'texts'], 'kind': 'all_folders'}, {key},
+                                {'unsealed_trees': 0, 'other_identity_trees': 0})[0]
+        with_content, served, has_content = self.shared_link(content_on=True)
+        self.assertEqual((with_content['reused_shared_tree'], set(served.values()), has_content), (True, {old.name}, True))
+        plain, plain_served, plain_content = self.shared_link(content_on=False)
+        self.assertFalse(plain_content)
+        self.assertEqual(plain_served['fx'], old.name)                         # untouched folders: the 0.13.85 tree
+        self.assertNotEqual(plain_served['menu'], old.name)
+        self.assertEqual([(row['kind'], row['reused']) for row in plain['shared_trees']],
+                         [('content_folders_without_content', False), ('all_folders_other_content_state', True)])
+        self.assertTrue(old.is_dir())
+        self.assertEqual(plain['removed']['other_identity_trees'], 0)
+
+    def test_a_tree_of_another_source_is_still_removed(self):
+        value, runtime, identity = self.shared_setup(content_on=False)
+        stranger = value.owner.root / 'shared-server-data-0123456789abcdef01234567'
+        (stranger / 'fx').mkdir(parents=True)
+        (value.owner.root / (stranger.name + '.json')).write_text('{}')
+        result = value.link_shared_server_data(runtime, identity)
+        self.assertEqual(result['removed']['other_identity_trees'], 1)
+        self.assertFalse(stranger.exists())
+
     def test_the_mirror_takes_private_copies_and_leaves_the_import_alone(self):
         import character_server_data_cache as cache
         value, source, imported = self.mirror()

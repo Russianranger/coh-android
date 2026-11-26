@@ -335,6 +335,25 @@ class StockZoneBindingTests(unittest.TestCase):
         # A stock-zone binding offers no Atlas reward-credit route (task.records serves 1 and 5).
         self.assertIsNone(task.records([], 1000, 3000, map_id=71))
 
+    def test_a_hero_who_travelled_on_is_bound_by_the_arrival_the_zoning_server_recorded(self):
+        """Thor 0.13.85, 20261126-014613: ready in zone 72, a tunnel to 71, an enhancement slotted,
+        save; the binding was refused and the enhancement record failed the launch."""
+        proof = self.proof(); proof['client_ready_evidence']['map_id'] = 72      # the first zone
+        self.assertIsNone(server.reopen_connection_binding(proof, 'c' * 32, 7, 3000))
+        proof.update(zoning_epoch=1, stock_arrival={'map_id': 71, 'observed_utc_ms': 2500, 'epoch': 1,
+                                                    'source': 'zone_console'})
+        binding = server.reopen_connection_binding(proof, 'c' * 32, 7, 3000)
+        self.assertEqual((binding['map_id'], binding['name']), (71, 'Ralakar'))
+        for change in ({'map_id': 72}, {'observed_utc_ms': 999}, {'observed_utc_ms': 3001}, {'epoch': 2},
+                       {'epoch': 0}, {'source': 'somewhere'}, {'observed_utc_ms': '2500'}):
+            other = self.proof(); other['client_ready_evidence']['map_id'] = 72
+            other.update(zoning_epoch=1, stock_arrival=dict(proof['stock_arrival'], **change))
+            with self.subTest(change=change):
+                self.assertIsNone(server.reopen_connection_binding(other, 'c' * 32, 7, 3000))
+        for source in server.STOCK_ARRIVAL_SOURCES:
+            proof['stock_arrival']['source'] = source
+            self.assertIsNotNone(server.reopen_connection_binding(proof, 'c' * 32, 7, 3000))
+
     def test_zoning_identities_follow_the_bound_name(self):
         creation = {'session_id': 'c' * 32, 'name': 'Ralakar', 'account': 'COHLOCAL', 'character_id': 1,
                     'auth_id': 77, 'map_id': 1, **{key: True for key in (
