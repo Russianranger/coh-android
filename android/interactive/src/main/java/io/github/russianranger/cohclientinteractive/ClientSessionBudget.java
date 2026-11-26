@@ -27,6 +27,9 @@ public final class ClientSessionBudget {
     private static long integer(Object value) {
         return value instanceof Integer || value instanceof Long ? ((Number)value).longValue() : -1;
     }
+    /** 0.13.87: the hero that connected in this session (any hero of the account; 1 until it is known). */
+    private long characterId = 1;
+    public synchronized void character(long id) { if (id > 0) characterId = id; }
     public synchronized boolean apply(Map<String,Object> event, String session, long pid,
             boolean connected, boolean grounded, long relocationSentUtc,
             long wallNow, long uptimeNow, long hardCapUptime) {
@@ -40,7 +43,7 @@ public final class ClientSessionBudget {
                 || uptimeNow < 0 || uptimeNow > Long.MAX_VALUE - 1201000 || !manual && hardCapUptime <= uptimeNow
                 || !"character_session_budget".equals(event.get("type"))
                 || integer(event.get("format")) != 1 || !session.equals(event.get("session_id"))
-                || integer(event.get("client_pid")) != pid || integer(event.get("character_id")) != 1
+                || integer(event.get("client_pid")) != pid || integer(event.get("character_id")) != characterId
                 || !characterName(event.get("name")) || !"COHLOCAL".equals(event.get("account"))
                 || !(integer(event.get("map_id")) == connectedMap && (connectedMap == 1
                     || zoning && (connectedMap == 101 || connectedMap == 5 && Boolean.TRUE.equals(event.get("monorail_enabled"))

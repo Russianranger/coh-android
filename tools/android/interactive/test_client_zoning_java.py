@@ -233,6 +233,39 @@ public final class ZoningHost {
   need(ClientAcceptance.characterCreationVerified(report,saved,connected,SESSION,73,false));
   need(!ClientAcceptance.characterCreationVerified(report,saved,connected,SESSION,73,true));
  }
+ static void heroes(){
+  // 0.13.87: Play follows the hero that entered the game. A hero made in the character list is proved
+  // as a creation under the session's own report key; a saved hero under any container ID.
+  for(int map:new int[]{1,71}){
+   Map<String,Object> connected=new LinkedHashMap<>(),saved=new LinkedHashMap<>();
+   Map<String,Object> report=creationReport(map,true,connected,saved);
+   Map<String,Object> proof=(Map<String,Object>)report.remove("character_creation");report.put("character_reopen",proof);
+   for(Map<String,Object> item:Arrays.asList(connected,saved,proof)){item.put("character_id",3);item.put("name","New Hero");}
+   need(!ClientAcceptance.heroCreatedConnectedEvent(connected,SESSION,73));
+   for(Map<String,Object> item:Arrays.asList(connected,saved,proof))item.put("created_in_session",true);
+   need(ClientAcceptance.heroCreatedConnectedEvent(connected,SESSION,73));
+   need(ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,73));
+   need(!ClientAcceptance.characterReopenConnectedEvent(connected,SESSION,73,true));
+   need(!ClientAcceptance.characterReopenVerified(report,saved,connected,SESSION,73,true));
+   // It claims nothing of a reopen, belongs to this session and client, and names one hero throughout.
+   connected.put("reopen_verified",true);need(!ClientAcceptance.heroCreatedConnectedEvent(connected,SESSION,73));connected.remove("reopen_verified");
+   proof.put("baseline_character_id",3);need(!ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,73));proof.remove("baseline_character_id");
+   saved.put("character_id",1);need(!ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,73));saved.put("character_id",3);
+   saved.remove("created_in_session");need(!ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,73));saved.put("created_in_session",true);
+   proof.put("stock_travel",false);need(!ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,73));proof.put("stock_travel",true);
+   proof.put("verified",false);need(!ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,73));proof.put("verified",true);
+   need(!ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,74));
+   need(ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,73));
+  }
+  // A saved hero other than container 1: the connection names the hero that was read before login.
+  Map<String,Object> event=new LinkedHashMap<>();
+  event.put("type","character_connected");event.put("session_id",SESSION);event.put("client_pid",73);event.put("character_id",2);
+  event.put("name","Second Hero");event.put("account","COHLOCAL");event.put("map_id",1);event.put("baseline_character_id",2);
+  event.put("reopen_verified",true);event.put("existing_character_verified",true);
+  need(ClientAcceptance.characterReopenConnectedEvent(event,SESSION,73,true));
+  event.put("baseline_character_id",1);need(!ClientAcceptance.characterReopenConnectedEvent(event,SESSION,73,true));
+  event.put("baseline_character_id",2);event.put("character_id",0);need(!ClientAcceptance.characterReopenConnectedEvent(event,SESSION,73,true));
+ }
  static void stockArrival(){
   // Thor 0.13.56 (export 20261106-152038): King's Row reached by the game's own
   // travel has monorail_enabled false; stock_travel makes it (and every other
@@ -276,7 +309,7 @@ public final class ZoningHost {
   }
  }
  public static void main(String[] args)throws Exception {
-  switch(args[0]){case "creation":creation();break;case "stockarrival":stockArrival();break;case "stockacceptance":stockAcceptance();break;case "stock":stockTravel();break;case "roundtrip":roundtrip();break;case "stale":stale();break;case "fail":fail();break;case "connection":connection();break;case "budget":budget();break;case "saves":saves();break;case "commands":commands();break;default:forged(args[0]);}
+  switch(args[0]){case "creation":creation();break;case "heroes":heroes();break;case "stockarrival":stockArrival();break;case "stockacceptance":stockAcceptance();break;case "stock":stockTravel();break;case "roundtrip":roundtrip();break;case "stale":stale();break;case "fail":fail();break;case "connection":connection();break;case "budget":budget();break;case "saves":saves();break;case "commands":commands();break;default:forged(args[0]);}
   System.out.println("PASS");
  }
 }
@@ -298,6 +331,7 @@ class ClientZoningJavaTests(unittest.TestCase):
     def test_stock_travel_accepts_any_static_zone_window_and_saved_destination(self):self.run_host('stockacceptance')
     def test_stock_travel_kings_row_and_other_zones_connect_budget_and_save(self):self.run_host('stockarrival')
     def test_a_new_character_is_proved_in_its_own_starting_zone(self):self.run_host('creation')
+    def test_play_follows_a_saved_hero_under_its_own_id_or_one_made_in_the_character_list(self):self.run_host('heroes')
     def test_stale_future_and_pre_delivery_arrivals_rejected(self):self.run_host('stale')
     def test_preparation_failure_preserves_save_but_transfer_failure_blocks(self):self.run_host('fail')
     def test_map101_connection_requires_opt_in_and_supported_map_proof(self):self.run_host('connection')

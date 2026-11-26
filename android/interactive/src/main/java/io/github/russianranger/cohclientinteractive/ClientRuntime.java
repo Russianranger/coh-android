@@ -78,6 +78,12 @@ public final class ClientRuntime {
     private final List<byte[]> connectedPngs = new ArrayList<>();
     private volatile long connectedObservedUptime = -1, connectedFrameWatermark = -1;
     private volatile boolean connectedCapturedReady, relocationCapturedReady, stuckRequested, reopen;
+    /** 0.13.87: Play follows whichever hero of the account enters the game. A hero made in the game's
+     *  character list is a creation: no reopen budget and no preservation checks apply to it. */
+    private volatile boolean heroCreatedInSession;
+    private boolean reopenedHero() { return reopen && !heroCreatedInSession; }
+    /** The session's hero (any container ID of the account); 1 until it has connected. */
+    private long heroId() { JSONObject connected = characterConnectedEvent; return connected == null ? 1 : connected.optLong("character_id", 1); }
     private boolean resumeFirstCreation;
     private final List<Map<String, Object>> relocationSamples = new ArrayList<>();
     private final List<byte[]> relocationPngs = new ArrayList<>();
@@ -133,7 +139,7 @@ public final class ClientRuntime {
         Map<String,Object> row = new LinkedHashMap<>();
         row.put("test_id", manualTestEvents.size()/2+1);
         row.put("action", action); row.put("reason", reason); row.put("session_id", session);
-        row.put("client_pid", observedClientPid); row.put("character_id", 1);
+        row.put("client_pid", observedClientPid); row.put("character_id", heroId());
         row.put("map_id", zoningEnabled() ? zoning.currentMap() : characterConnectedEvent.optInt("map_id", -1));
         row.put("utc_ms", System.currentTimeMillis()); row.put("uptime_ms", SystemClock.uptimeMillis());
         row.put("input_sent", inputSent); row.put("decoded_frames", decodedFrames);
@@ -1550,6 +1556,8 @@ public final class ClientRuntime {
         String label = taskGateRequired() ? "Task save" : reopen ? "Character reopen" : "Character creation";
         String summary = passed ? (taskGateRequired()
                 ? "One manually accepted task completed through the stock command and remained committed after ordinary logout, with matching native/SQL evidence, accepted/completed Android views and verified cleanup. Review both task views; combat, mission maps and reward turn-in remain separate."
+                : reopen && heroCreatedInSession
+                ? "The new hero was created in the game's character list and saved to the local database, with matching current-session SQL evidence, fresh Android captures and verified cleanup; the saved heroes were not changed."
                 : reopen
                 ? "The existing character was reopened and saved with its identity, powers and costume preserved, fresh Android captures after connection and save, and verified cleanup. Review the saved world view; rendering and gameplay require separate visual validation."
                 : "The character was saved to the local database, with matching current-session SQL evidence, fresh Android captures and verified cleanup. World rendering, movement and gameplay still need validation.")
@@ -1746,7 +1754,7 @@ public final class ClientRuntime {
         long now=System.currentTimeMillis();
         if(!zoningEnabled()||session==null||!session.equals(event.get("session_id"))||observedClientPid<=0
                 ||!"character_zoning_preparation".equals(event.get("type"))
-                ||preparationInteger(event.get("client_pid"))!=observedClientPid||preparationInteger(event.get("character_id"))!=1
+                ||preparationInteger(event.get("client_pid"))!=observedClientPid||preparationInteger(event.get("character_id"))!=heroId()
                 ||zoning.epoch()<1||preparationInteger(event.get("epoch"))!=zoning.epoch()
                 ||preparationInteger(event.get("map_id"))!=zoning.targetMap()||zoningTimings.isEmpty()
                 ||observed<((Number)zoningTimings.get(zoningTimings.size()-1).get("request_utc_ms")).longValue()
@@ -1798,7 +1806,7 @@ public final class ClientRuntime {
     }
     private JSONObject zoningRequest(String action,long stamp) throws Exception {
         return new JSONObject().put("format",1).put("session_id",session).put("client_pid",observedClientPid)
-                .put("character_id",1).put("epoch",zoning.epoch()).put("action",action)
+                .put("character_id",heroId()).put("epoch",zoning.epoch()).put("action",action)
                 .put("from_map_id",zoning.currentMap()).put("to_map_id",zoning.targetMap())
                 .put("prepare".equals(action)?"requested_utc_ms":"sent_utc_ms",stamp);
     }
@@ -1897,7 +1905,7 @@ public final class ClientRuntime {
         long now=SystemClock.uptimeMillis();
         if(!contactCapture.request(session,observedClientPid,characterConnectedEvent.optLong("character_id",-1),now,decodedFrames))return false;
         Map<String,Object> request=new LinkedHashMap<>();
-        request.put("session_id",session);request.put("client_pid",observedClientPid);request.put("character_id",1);
+        request.put("session_id",session);request.put("client_pid",observedClientPid);request.put("character_id",heroId());
         request.put("batch",contactCapture.batch());request.put("requested_uptime_ms",now);
         request.put("frame_watermark",decodedFrames);request.put("dialog_semantics_verified",false);
         contactRequests.add(request);
@@ -1948,7 +1956,7 @@ public final class ClientRuntime {
             active.sendOpenTaskContact(epoch);
             try {
                 JSONObject receipt=new JSONObject().put("format",1).put("session_id",selectedSession)
-                        .put("client_pid",selectedPid).put("character_id",1).put("action","contactdialog")
+                        .put("client_pid",selectedPid).put("character_id",heroId()).put("action","contactdialog")
                         .put("contact_path","Contacts/Atlas_Park/Matthew_Habashy.contact")
                         .put("commands",new JSONArray().put("/contactdialog Contacts/Atlas_Park/Matthew_Habashy.contact"))
                         .put("sent_utc_ms",System.currentTimeMillis()).put("native_effect_verified",false);
@@ -1971,7 +1979,7 @@ public final class ClientRuntime {
         if(!window.request(session,observedClientPid,1,now,decodedFrames))return false;
         try {
             Map<String,Object> request=new LinkedHashMap<>();
-            request.put("session_id",session);request.put("client_pid",observedClientPid);request.put("character_id",1);
+            request.put("session_id",session);request.put("client_pid",observedClientPid);request.put("character_id",heroId());
             request.put("phase",completed?"completed":"accepted");request.put("batch",window.batch());
             request.put("requested_uptime_ms",now);request.put("frame_watermark",decodedFrames);
             request.put("task",jsonValue(event.getJSONObject("task")));request.put("dialog_semantics_verified",false);
@@ -1998,7 +2006,7 @@ public final class ClientRuntime {
             active.sendCompleteAcceptedTask(epoch);
             try {
                 JSONObject receipt=new JSONObject().put("format",1).put("session_id",selectedSession)
-                        .put("client_pid",selectedPid).put("character_id",1).put("action","completetask")
+                        .put("client_pid",selectedPid).put("character_id",heroId()).put("action","completetask")
                         .put("task_index",0).put("task",accepted.getJSONObject("task"))
                         .put("sent_utc_ms",System.currentTimeMillis());
                 write(new File(state,"character-task-completion.json"),receipt.toString().getBytes(StandardCharsets.UTF_8));
@@ -2082,7 +2090,7 @@ public final class ClientRuntime {
         listener.onInputState(inputReady && !finishRequested && !producerCompleted && !cancelled && !finished,
                 finishRequested && !finished, characterSavedReady,
                 zoningRecoveryAllowed() && !zoning.blocksInput() && !performanceCommandPending && reopen && sessionBudget.canMove(SystemClock.uptimeMillis()) && connectedCapturedReady && !stuckRequested && !saveLogoutRequested,
-                !zoning.blocksInput() && !performanceCommandPending && characterConnectedEvent != null && (!reopen || (connectedCapturedReady && (!stuckRequested || relocationCapturedReady) && sessionBudget.canSave(SystemClock.uptimeMillis()))) && !saveLogoutRequested && characterSavedEvent == null,
+                !zoning.blocksInput() && !performanceCommandPending && characterConnectedEvent != null && (!reopenedHero() || (connectedCapturedReady && (!stuckRequested || relocationCapturedReady) && sessionBudget.canSave(SystemClock.uptimeMillis()))) && !saveLogoutRequested && characterSavedEvent == null,
                 inputSent, inputFailed, readyDeadlineUptimeMillis, sessionBudget.phase(), sessionBudget.saveDeadline(), sessionBudget.movementDeadline());
     }
     private synchronized void inputFailure(String detail) {
@@ -2161,7 +2169,7 @@ public final class ClientRuntime {
     /** Save readiness is separate from the connected-session capability used for movement and task input. */
     public synchronized boolean canRequestSaveLogout() {
         return !zoning.blocksInput() && !performanceCommandPending && inputReady && !finished && !finishRequested && !cancelled && !producerCompleted
-                && characterConnectedEvent != null && (!reopen || (connectedCapturedReady
+                && characterConnectedEvent != null && (!reopenedHero() || (connectedCapturedReady
                 && (!stuckRequested || relocationCapturedReady) && sessionBudget.canSave(SystemClock.uptimeMillis())))
                 && characterSavedEvent == null && !saveLogoutRequested && taskSaveReady();
     }
@@ -2179,7 +2187,7 @@ public final class ClientRuntime {
         final long logoutClientPid = observedClientPid;
         final long logoutCharacterId = characterConnectedEvent.optLong("character_id", -1);
         if (!queueInput(logoutSession, (active, epoch) -> {
-            if ((reopen && !sessionBudget.canSave(SystemClock.uptimeMillis())) || !taskSaveReady()) {
+            if ((reopenedHero() && !sessionBudget.canSave(SystemClock.uptimeMillis())) || !taskSaveReady()) {
                 saveLogoutRequested = false;
                 if(!taskSaveReady()) {
                     recordLifecycle("ordinary_character_logout_task_gate_incomplete_before_delivery");
@@ -2442,7 +2450,7 @@ public final class ClientRuntime {
                 JSONObject event=completed?taskCompletedEvent:taskAcceptedEvent;
                 if(window.accept(session,observedClientPid,1,captured,((Number)sequence).longValue())) {
                     Map<String,Object> task=new LinkedHashMap<>(sample);
-                    task.put("client_pid",observedClientPid);task.put("character_id",1);
+                    task.put("client_pid",observedClientPid);task.put("character_id",heroId());
                     task.put("phase",completed?"completed":"accepted");task.put("batch",window.batch());
                     task.put("task",jsonValue(event.getJSONObject("task")));task.put("dialog_semantics_verified",false);
                     task.put("archive_path","android-task/"+(completed?"completed":"accepted")+"-capture-"+(taskSamples.size()+1)+".png");
@@ -2458,7 +2466,7 @@ public final class ClientRuntime {
             }
             if (contactSample && contactCapture.accept(session,observedClientPid,characterConnectedEvent.optLong("character_id",-1),captured,((Number)sequence).longValue())) {
                 Map<String,Object> contact = new LinkedHashMap<>(sample);
-                contact.put("client_pid",observedClientPid);contact.put("character_id",1);
+                contact.put("client_pid",observedClientPid);contact.put("character_id",heroId());
                 contact.put("batch",contactCapture.batch());contact.put("dialog_semantics_verified",false);
                 contact.put("archive_path","android-contact/capture-"+(contactSamples.size()+1)+".png");
                 contactSamples.add(contact);contactPngs.add(png.clone());
@@ -2751,6 +2759,16 @@ public final class ClientRuntime {
                             recordLifecycle("saved_destination_verified map_id=" + event.optInt("map_id", -1)
                                 + " port=" + event.optInt("port", -1));
                         }
+                        if (reopen && "session_hero".equals(event.optString("type")) && session.equals(event.optString("session_id"))
+                                && ClientAcceptance.characterName(event.optString("name", null)) && event.optLong("character_id", -1) > 0
+                                && "COHLOCAL".equals(event.optString("account"))
+                                && characterConnectedEvent == null && !cancelled && !finished && !producerCompleted) {
+                            // 0.13.87: the player entered with another hero than the one played last, or made one in
+                            // the character list. The guest has bound its checks to that hero; so does the app.
+                            characterName = event.optString("name");
+                            recordLifecycle("session_hero character_id=" + event.optLong("character_id", -1)
+                                + " created=" + event.optBoolean("created_in_session", false));
+                        }
                         if ("character_initial_zone".equals(event.optString("type")) && session.equals(event.optString("session_id"))
                                 && characterConnectedEvent == null && !cancelled && !finished && !producerCompleted) {
                             String status = event.optString("status");
@@ -2769,10 +2787,16 @@ public final class ClientRuntime {
                                 stage("not_ready".equals(status) ? "Zone did not start" : "Starting the zone", message);
                             }
                         }
-                        if ((reopen ? ClientAcceptance.characterReopenConnectedEvent(jsonValue(event), session, observedClientPid,zoningEnabled()) : ClientAcceptance.characterConnectedEvent(jsonValue(event), session, observedClientPid, dynamicCreation()))
+                        // 0.13.87: in Play the hero is the one that entered the game: a saved hero (reopen checks under
+                        // its own ID) or one made in the character list (a creation, marked created_in_session).
+                        boolean heroCreated = reopen && zoningEnabled() && stockTravelRequested
+                                && ClientAcceptance.heroCreatedConnectedEvent(jsonValue(event), session, observedClientPid);
+                        if ((reopen ? heroCreated || ClientAcceptance.characterReopenConnectedEvent(jsonValue(event), session, observedClientPid,zoningEnabled()) : ClientAcceptance.characterConnectedEvent(jsonValue(event), session, observedClientPid, dynamicCreation()))
                                 && characterConnectedEvent == null && loginObservedUptime >= 0 && sameCharacter(event)
                                 && !cancelled && !finished && !producerCompleted) {
                             synchronized (this) {
+                                heroCreatedInSession = heroCreated;
+                                sessionBudget.character(event.optLong("character_id", 1));
                                 characterConnectedEvent = event;
                                 characterName = event.optString("name");
                                 connectedObservedUptime = SystemClock.uptimeMillis();
@@ -3044,7 +3068,7 @@ public final class ClientRuntime {
                 && report.optJSONArray("failures") != null && report.getJSONArray("failures").length() == 0
                 && Boolean.TRUE.equals(report.opt("postgres_started")) && Boolean.TRUE.equals(report.opt("server_started"))
                 && Boolean.TRUE.equals(report.opt("mapserver_started"))
-                && (reopen ? ClientAcceptance.characterReopenVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid,zoningEnabled()) : ClientAcceptance.characterCreationVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid, dynamicCreation()))
+                && (reopen ? (heroCreatedInSession ? ClientAcceptance.heroCreatedVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid) : ClientAcceptance.characterReopenVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid,zoningEnabled())) : ClientAcceptance.characterCreationVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid, dynamicCreation()))
                 && Boolean.FALSE.equals(report.opt("android_surface_validated"))
                 && Boolean.FALSE.equals(report.opt("game_validated")) && Boolean.FALSE.equals(report.opt("gameplay_validated"))
                 && Boolean.FALSE.equals(report.opt("menu_visual_validated"))
@@ -3144,6 +3168,10 @@ public final class ClientRuntime {
 
     private boolean characterSurfaceAccepted(JSONObject report) throws Exception {
         synchronized (this) {
+            if (reopen && heroCreatedInSession) return characterSavedReady
+                    && ClientAcceptance.heroCreatedAccepted(jsonValue(report), jsonValue(characterSavedEvent),
+                    jsonValue(characterConnectedEvent), characterSamples, session, observedClientPid, startedUptime, endedUptime,
+                    characterObservedUptime, clientWindowEndedUptime, characterFrameWatermark);
             if (reopen) return characterSavedReady && connectedCapturedReady && (!stuckRequested || relocationCapturedReady)
                     && (!taskGateRequired() || taskGateAccepted(report))
                     && ClientAcceptance.characterReopenAccepted(jsonValue(report), jsonValue(characterSavedEvent),
@@ -3511,12 +3539,14 @@ public final class ClientRuntime {
                 || !(reopening?"actual_character_reopen_guest":"actual_character_creation_guest").equals(report.get("scope"))
                 || !(reopening?"actual_character_reopen":"actual_character_creation").equals(report.get("diagnostic_mode"))
                 || !ClientAcceptance.characterSavedEvent(saved,selectedSession,pid)
-                || !(reopening?ClientAcceptance.characterReopenConnectedEvent(connected,selectedSession,pid,zoning)
+                || !(reopening?(Boolean.TRUE.equals(proof.get("created_in_session"))
+                        ?ClientAcceptance.heroCreatedConnectedEvent(connected,selectedSession,pid)
+                        :ClientAcceptance.characterReopenConnectedEvent(connected,selectedSession,pid,zoning))
                     :ClientAcceptance.characterConnectedEvent(connected,selectedSession,pid,zoning)))return false;
         for(Map<?,?> identity:new Map<?,?>[]{proof,login})
             if(!selectedSession.equals(identity.get("session_id")) || preparationInteger(identity.get("client_pid"))!=pid)return false;
         long id=preparationInteger(proof.get("character_id")),auth=preparationInteger(proof.get("auth_id"));
-        if(id!=1 || auth<=0 || auth>4294967295L || preparationInteger(saved.get("character_id"))!=id
+        if(id<=0 || auth<=0 || auth>4294967295L || preparationInteger(saved.get("character_id"))!=id
                 || preparationInteger(connected.get("character_id"))!=id || preparationInteger(login.get("auth_id"))!=auth
                 || !ClientAcceptance.characterName(proof.get("name")) || !"COHLOCAL".equals(proof.get("account"))
                 || !proof.get("name").equals(connected.get("name")) || !proof.get("name").equals(saved.get("name"))
@@ -3531,7 +3561,10 @@ public final class ClientRuntime {
         if(!Boolean.FALSE.equals(proof.get("forced_stop_before_save")))return false;
         if(zoning && (!Boolean.TRUE.equals(proof.get("zoning_enabled")) || !Boolean.TRUE.equals(proof.get("connected_on_supported_map"))
                 || !Boolean.TRUE.equals(saved.get("zoning_enabled")) || preparationInteger(saved.get("map_id"))!=currentMap))return false;
-        if(reopening) {
+        if(reopening && Boolean.TRUE.equals(proof.get("created_in_session"))) {
+            // A hero made in the character list during Play: a creation's proof, nothing of a reopen.
+            if(!Boolean.TRUE.equals(saved.get("created_in_session")) || proof.get("before_character_id")!=null)return false;
+        } else if(reopening) {
             for(String name:new String[]{"reopen_verified","existing_character_verified","preserved_existing_identity",
                     "native_client_ready_observed","powers_preserved","costume_preserved","selected_rows_preserved","committed_native_position_verified"})
                 if(!Boolean.TRUE.equals(proof.get(name)))return false;

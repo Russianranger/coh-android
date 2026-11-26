@@ -80,6 +80,7 @@ public final class SidebarRuntimeHost {
  static void require(boolean ok){if(!ok)throw new AssertionError();}
  static final class ClientRuntime {
   boolean reopen=true,inputReady=true,finishRequested,finished,cancelled,producerCompleted;
+  boolean reopenedHero(){return reopen;} long heroId(){return 1;}
   boolean connectedCapturedReady,saveLogoutRequested,stuckRequested,relocationCapturedReady;
   boolean taskContactRequested,taskCompletionRequested,performanceCommandPending;
   long performanceCommandGeneration,observedClientPid=17,inputSent,inputFailed,lastInputUptime,lastInputFrameWatermark,decodedFrames,lastInputRefresh,clientWindowObservedUptime=1;

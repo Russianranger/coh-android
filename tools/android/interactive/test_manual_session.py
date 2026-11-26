@@ -286,6 +286,7 @@ public final class ManualSessionHost {
  static class Zoning {String phase="idle";int currentMap(){return 5;}String phase(){return phase;}}
  static class Capture {boolean active;boolean pending(long n){return active;}}
  boolean reopen=true,inputReady=true,saveLogoutRequested,finished,finishRequested,cancelled,producerCompleted,manualTestActive,manualTestOpeningCaptured;
+ boolean reopenedHero(){return reopen;} long heroId(){return 1;}
  long manualTestStartedUptime,manualTestFrameWatermark,manualTestCapturesAccepted;
  String session=SESSION;long observedClientPid=44,inputSent,decodedFrames;
  Event characterConnectedEvent=new Event();Zoning zoning=new Zoning();

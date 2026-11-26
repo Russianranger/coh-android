@@ -65,6 +65,7 @@ class ClientRuntime {
     public enum ProfileState { ABSENT, READY, PRESERVE }
     final Context context;
     final ClientZoning zoning=new ClientZoning();
+    boolean reopenedHero(){return reopen;} long heroId(){return 1;}
     boolean reopen,resumeFirstCreation,inputReady=true,finished,finishRequested,cancelled,producerCompleted,connectedCapturedReady,stuckRequested,relocationCapturedReady,saveLogoutRequested,performanceCommandPending;
     JSONObject manifest,characterConnectedEvent=new JSONObject(),characterSavedEvent,taskAcceptedEvent,taskCompletedEvent,taskContactReceipt,taskCompletionReceipt;
     Capture taskAcceptedCapture=new Capture(),taskCompletedCapture=new Capture();

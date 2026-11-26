@@ -122,13 +122,18 @@ class SessionBudget:
                 'Reopen budget differs from the validated native character connection')
         self.map_id = proof['map_id']
         self.name = proof['name']
+        # 0.13.87: the session's hero is the one that connected; it does not change afterwards.
+        require(getattr(self, 'character_id', proof['character_id']) == proof['character_id'],
+                'Reopen budget differs from the validated native character connection')
+        self.character_id = proof['character_id']
 
     def event(self, phase, now, now_utc_ms, deadline, *, save_ms=0, movement_ms=0):
         deadline_ms = 0 if self.manual else now_utc_ms + int(round((deadline - now) * 1000))
         require(self.manual or utc_milliseconds(deadline_ms) and now_utc_ms < deadline_ms,
                 'Reopen phase deadline is exhausted')
         value = {'format': 1, 'session_id': self.session_id, 'client_pid': self.client_pid,
-            'character_id': 1, 'name': self.name, 'account': 'COHLOCAL', 'map_id': self.map_id,
+            'character_id': getattr(self, 'character_id', 1), 'name': self.name, 'account': 'COHLOCAL',
+            'map_id': self.map_id,
             'revision': self.revision, 'phase': phase, 'generated_utc_ms': now_utc_ms,
             'deadline_utc_ms': deadline_ms, 'save_request_deadline_utc_ms': save_ms,
             'movement_deadline_utc_ms': movement_ms, 'native_client_ready_observed': True,

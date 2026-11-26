@@ -234,7 +234,7 @@ final class ClientAcceptance {
         Map<?, ?> event = object(value);
         if (session == null || !session.matches("[0-9a-f]{32}")
                 || !"saved_character_destination".equals(event.get("type"))
-                || !session.equals(event.get("session_id")) || !number(event.get("character_id"), 1)
+                || !session.equals(event.get("session_id")) || !positiveInteger(event.get("character_id"))
                 || !positiveInteger(event.get("auth_id")) || ((Number) event.get("auth_id")).longValue() > 4294967295L
                 || !characterName(event.get("name"))
                 || !"COHLOCAL".equals(event.get("account")) || !yes(event.get("existing_character_verified"))
@@ -357,9 +357,39 @@ final class ClientAcceptance {
     }
     static boolean characterReopenConnectedEvent(Object value, String session, long clientPid, boolean zoning) {
         Map<?, ?> event = object(value);
+        // 0.13.87: any hero of the account; the one that connected is the one read before login.
         return characterConnectedEvent(value, session, clientPid,zoning)
-                && number(event.get("character_id"), 1) && number(event.get("baseline_character_id"), 1)
+                && sameHero(event.get("baseline_character_id"), event.get("character_id"))
                 && yes(event.get("reopen_verified")) && yes(event.get("existing_character_verified"));
+    }
+    /** Two fields that must name the same hero (a positive container ID). */
+    private static boolean sameHero(Object first, Object second) {
+        return positiveInteger(first) && positiveInteger(second)
+                && ((Number) first).longValue() == ((Number) second).longValue();
+    }
+
+    /** 0.13.87: a hero made in the game's character list during Play. The guest proves it as a
+     *  creation (the new row, its committed rows, every saved hero unchanged) and marks every
+     *  record of it created_in_session; nothing of a reopen is claimed for it. */
+    static boolean heroCreatedConnectedEvent(Object value, String session, long clientPid) {
+        Map<?, ?> event = object(value);
+        return characterConnectedEvent(value, session, clientPid, true) && yes(event.get("created_in_session"))
+                && stockTravelMap(event) && event.get("reopen_verified") == null
+                && event.get("baseline_character_id") == null;
+    }
+    static boolean heroCreatedVerified(Object value, Object savedEvent, Object connectedEvent, String session, long clientPid) {
+        Map<?, ?> proof = object(object(value).get("character_reopen"));
+        return characterPersistenceVerified(value, savedEvent, connectedEvent, session, clientPid, "character_reopen", true)
+                && heroCreatedConnectedEvent(connectedEvent, session, clientPid)
+                && yes(proof.get("created_in_session")) && stockTravelMap(proof)
+                && yes(object(savedEvent).get("created_in_session"))
+                && proof.get("before_character_id") == null && proof.get("baseline_character_id") == null;
+    }
+    static boolean heroCreatedAccepted(Object value, Object savedEvent, Object connectedEvent, List<?> samples,
+            String session, long clientPid, long started, long ended, long savedObserved, long windowEnded,
+            long frameWatermark) {
+        return heroCreatedVerified(value, savedEvent, connectedEvent, session, clientPid)
+                && surfaceAccepted(samples, session, started, ended, savedObserved, windowEnded, frameWatermark);
     }
 
     static boolean characterRelocatedEvent(Object value, String session, long clientPid) {
@@ -367,7 +397,7 @@ final class ClientAcceptance {
         return session != null && session.matches("[0-9a-f]{32}") && clientPid > 0
                 && "character_relocated".equals(event.get("type"))
                 && session.equals(event.get("session_id")) && number(event.get("client_pid"), clientPid)
-                && number(event.get("character_id"), 1) && characterName(event.get("name"))
+                && positiveInteger(event.get("character_id")) && characterName(event.get("name"))
                 && "COHLOCAL".equals(event.get("account")) && number(event.get("map_id"), 1)
                 && yes(event.get("recovery_requested")) && yes(event.get("recovery_verified"))
                 && yes(event.get("ordinary_stuck_observed")) && yes(event.get("on_atlas_safe_position"))
@@ -387,8 +417,8 @@ final class ClientAcceptance {
                 && yes(reopen.get("powers_preserved")) && yes(reopen.get("costume_preserved"))
                 && yes(reopen.get("selected_rows_preserved")) && yes(reopen.get("committed_native_position_verified"))
                 && optionalRecoveryVerified(reopen)
-                && number(reopen.get("before_character_id"), 1) && number(reopen.get("baseline_character_id"), 1)
-                && number(reopen.get("character_id"), 1);
+                && sameHero(reopen.get("before_character_id"), reopen.get("character_id"))
+                && sameHero(reopen.get("baseline_character_id"), reopen.get("character_id"));
     }
 
     private static boolean optionalRecoveryVerified(Map<?, ?> reopen) {
@@ -482,7 +512,7 @@ final class ClientAcceptance {
             Map<?, ?> accepted = object(acceptedBudgets.get(i)), row = object(((List<?>) rows).get(i));
             if (!"character_session_budget".equals(accepted.get("type"))
                     || !session.equals(row.get("session_id")) || !number(row.get("client_pid"), clientPid)
-                    || !number(row.get("format"), 1) || !number(row.get("character_id"), 1)
+                    || !number(row.get("format"), 1) || !positiveInteger(row.get("character_id"))
                     || !(number(row.get("map_id"), 1) || zoning && (number(row.get("map_id"),101)
                         || number(row.get("map_id"),5) && yes(row.get("monorail_enabled")) && yes(accepted.get("monorail_enabled"))
                         || stockTravelMap(row) && yes(accepted.get("stock_travel")))
