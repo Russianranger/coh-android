@@ -32,6 +32,7 @@ REQUIRED_POSTGRES_FIXTURES = {
     'unentered_character_resume_removed', 'unentered_character_reopen_explained',
     'unentered_character_with_badge_refused',
     'named_character_reopen', 'unentered_named_character_resume_removed',
+    'two_saved_heroes_reopen', 'second_hero_without_rows_reopen_refused', 'unfinished_second_hero_reopen_removed',
 }
 
 
@@ -464,7 +465,7 @@ class PostgreSQLEligibilityTests(unittest.TestCase):
         return result.stdout.strip()
 
     def actual(self, *, reopen=False, missing=False, inventory=None, provisional=False, missing_powers=False, advanced=False,
-               unentered=False, badge=False):
+               unentered=False, badge=False, complete=False, unfinished_second=False):
         value = self.instance(reopen=reopen, resume=not reopen, inventory=inventory)
         # These tables live solely in the explicitly guarded disposable fixture.
         self.database_sql((ROOT/'database/postgresql/001-coh-compat.sql').read_text())
@@ -484,10 +485,21 @@ class PostgreSQLEligibilityTests(unittest.TestCase):
                 raw = json.dumps(record).replace("'", "''")
                 self.database_sql("INSERT INTO dbo.ents SELECT * FROM json_populate_record(NULL::dbo.ents, '" + raw + "'::json);")
             if selected and not provisional:
-                for table in ('ents2', 'powers', 'costumeparts'):
-                    if table == 'powers' and missing_powers: continue
-                    raw = json.dumps(rows[table][0]).replace("'", "''")
-                    self.database_sql('INSERT INTO dbo.' + table + ' SELECT * FROM json_populate_record(NULL::dbo.' + table + ", '" + raw + "'::json);")
+                # complete (0.13.87): every listed hero gets its own child rows, not only hero 1.
+                for owner in ([identity['containerid'] for identity in selected] if complete else [1]):
+                    for table in ('ents2', 'powers', 'costumeparts'):
+                        if table == 'powers' and missing_powers: continue
+                        raw = json.dumps(dict(rows[table][0], containerid=owner)).replace("'", "''")
+                        self.database_sql('INSERT INTO dbo.' + table + ' SELECT * FROM json_populate_record(NULL::dbo.' + table + ", '" + raw + "'::json);")
+            if unfinished_second:
+                # 0.13.87: a hero made in the character list whose first zone never started, beside a saved hero.
+                self.database_sql("SELECT dbo.coh_reserve_id('dbo.ents'::regclass, 2);")
+                self.database_sql('INSERT INTO dbo.ents (containerid) VALUES (2);')
+                self.database_sql('UPDATE dbo.ents SET ' + ', '.join(key + '=' + (str(field) if type(field) is int else "'" + field + "'")
+                                  for key, field in dict(UNENTERED_ENTS, name='HEROTWO', authid=selected[0]['authid']).items()
+                                  if key != 'containerid') + ' WHERE containerid=2;')
+                self.database_sql('INSERT INTO dbo.ents2 (' + ','.join(UNENTERED_ENTS2) + ') VALUES ('
+                                  + ','.join(str(field) for field in dict(UNENTERED_ENTS2, containerid=2).values()) + ');')
             if advanced:
                 self.database_sql("SELECT dbo.coh_reserve_id('dbo.ents'::regclass, 1);")
             if unentered:
@@ -576,6 +588,40 @@ class PostgreSQLEligibilityTests(unittest.TestCase):
         self.real_case('named_character_reopen', allowed=True, reopen=True,
                        inventory=[dict(saved_fixture()[1][0], name="Dr. O'Malley")])
         self.assertEqual(server.CHARACTER, "Dr. O'Malley")
+
+    def test_pg_two_saved_heroes_reopen(self):
+        # 0.13.87: one account, several heroes; nothing is changed, and the launch expects one of them.
+        first = saved_fixture()[1][0]
+        second = dict(first, containerid=2, name='HEROTWO')
+        value = self.actual(reopen=True, inventory=[first, second], complete=True)
+        before = self.snapshot()
+        proof = self.initialize_gate(value)
+        self.assertTrue(proof['eligible']); self.assertEqual(proof['hero_count'], 2)
+        self.assertEqual(proof['expected_character_id'], 1); self.assertEqual(proof['unfinished_characters'], [])
+        self.assertEqual(server.CHARACTER, first['name']); self.assertEqual(server.HERO_ID, 1)
+        self.assertEqual(before, self.snapshot(), 'Eligibility mutated persistent rows or allocator')
+        POSTGRES_FIXTURES_RUN.add('two_saved_heroes_reopen')
+
+    def test_pg_second_hero_without_rows_reopen_refused(self):
+        # A second committed hero whose powers and costume are missing refuses the saved game unchanged.
+        first = saved_fixture()[1][0]
+        self.real_case('second_hero_without_rows_reopen_refused', reopen=True,
+                       inventory=[first, dict(first, containerid=2, name='HEROTWO')])
+
+    def test_pg_unfinished_second_hero_reopen_removed(self):
+        # A hero made in the character list whose first zone never started is removed; the saved hero is untouched.
+        value = self.actual(reopen=True, complete=True, unfinished_second=True)
+        saved = self.database_sql("SELECT row_to_json(x) FROM dbo.ents x WHERE containerid=1;")
+        proof = self.initialize_removal(value)
+        self.assertTrue(proof['eligible']); self.assertEqual(proof['hero_count'], 1)
+        self.assertEqual([item['identity']['name'] for item in proof['unfinished_characters']], ['HEROTWO'])
+        self.assertIs(proof['unfinished_characters'][0]['removed'], True)
+        self.assertEqual(self.database_sql('SELECT count(*) FROM dbo.ents;'), '1')
+        self.assertEqual(self.database_sql('SELECT count(*) FROM dbo.ents2 WHERE containerid=2;'), '0')
+        self.assertEqual(saved, self.database_sql("SELECT row_to_json(x) FROM dbo.ents x WHERE containerid=1;"))
+        # Its ID stays used: the DbServer's next hero is 3, never a reused 2.
+        self.assertEqual(self.database_sql("SELECT dbo.coh_container_high_water('dbo.ents'::regclass) + 1;"), '3')
+        POSTGRES_FIXTURES_RUN.add('unfinished_second_hero_reopen_removed')
 
     def test_pg_unentered_named_character_resume_removed(self):
         value = self.actual(unentered=True)
