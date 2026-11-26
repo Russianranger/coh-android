@@ -299,9 +299,39 @@ def heroes_probe_validate(report, *, created):
             'created_in_session': proof.get('created_in_session') is True, 'map_id': proof.get('map_id')}
 
 
-def armport_validate_observer(observer, report):
+PRIMALIST_STEPS = (('preposition_select_melee_playstyle', 'preposition_select_ranged_playstyle'),
+                   ('select_melee_playstyle', 'select_ranged_playstyle'),
+                   ('clear_cursor_before_select_primalist', None),
+                   ('preposition_select_primalist', 'preposition_select_blaster'),
+                   ('select_primalist', 'select_blaster'))
+
+
+def primalist_projection(script):
+    """The shared validator knows the first hero's creator script only. The Primalist's own steps
+    (already compared with its script, in order) take the place of the play style and archetype
+    steps there; its bar must have been found once, by name, inside the archetype list."""
+    buttons = script.get('ocr_buttons', [])
+    found = [item for item in buttons if isinstance(item, dict) and item.get('label') == 'Primalist']
+    left, top, right, bottom = ARCHETYPE_LIST_REGION
+    require(len(found) == 1 and all(type(found[0].get(key)) in (int, float) for key in ('x', 'y'))
+            and left <= found[0]['x'] <= right and top <= found[0]['y'] <= bottom,
+            'Primalist probe: the Primalist bar was not found once inside the archetype list')
+    script['ocr_buttons'] = [item for item in buttons if item is not found[0]]
+    stands_for, steps = dict(PRIMALIST_STEPS), []
+    for step in script['steps']:
+        name = step.get('action')
+        if name in stands_for:
+            if stands_for[name] is None:
+                continue
+            step = dict(step, action=stands_for[name], primalist_probe_action=name)
+        steps.append(step)
+    script['steps'] = steps
+
+
+def armport_validate_observer(observer, report, interaction=None):
     """Prove the transition checks and their replays, then run the shared checks
     on the shared step sequence (one pass through each replayed segment)."""
+    interaction = interaction or ArmPortCharacterInteraction
     script = observer.get('interaction_script', {})
     checks = script.get('armport_transition_checks', [])
     primary = [c for c in checks if c.get('check') == 'verify_primary_power_selected']
@@ -319,7 +349,7 @@ def armport_validate_observer(observer, report):
             and 'reclick' not in costume[-1]
             and all(isinstance(c.get('evidence'), str) and c['evidence'] for c in checks),
             'Missing creator transition evidence (primary power selection, costume page)')
-    names = [action[2] for action in ArmPortCharacterInteraction.ACTIONS]
+    names = [action[2] for action in interaction.ACTIONS]
     retry_start, account_check = names.index('preposition_account'), names.index('verify_rendered_account')
     accounts = len(script.get('account_entry_checks', []))
     replay_start = names.index('preposition_select_primary_set')
@@ -349,6 +379,8 @@ def armport_validate_observer(observer, report):
     projected = copy.deepcopy(observer)
     projected['interaction_script']['steps'] = [copy.deepcopy(step) for step in keep
         if step.get('action') not in ('verify_primary_power_selected', 'verify_costume_page')]
+    if interaction is PrimalistCharacterInteraction:
+        primalist_projection(projected['interaction_script'])
     character.validate_observer(projected, report)
 
 
@@ -1477,7 +1509,8 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
                     print(travel_input_line(observer, 'reopen'), flush=True)
                 require_early_zone_decision(report)
             else:
-                armport_validate_observer(observer, report)
+                armport_validate_observer(observer, report, PrimalistCharacterInteraction
+                                          if primalist_creation_requested() else None)
             require_proot_ioctl_filter(report)
             require_proot_stop_counts(proot_stop_counts(work))
             require(not endpoint.exists(), 'Private display survived guest cleanup')

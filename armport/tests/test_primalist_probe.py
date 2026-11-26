@@ -54,6 +54,50 @@ class PrimalistProbe(unittest.TestCase):
         with probe(COH_SINGLE_PLAYER_PROBE='1', **{host.HEROES_PROBE_ENV: '1'}):
             self.assertFalse(host.primalist_creation_requested())
 
+    def observer(self, interaction, buttons):
+        names = [action[2] for action in interaction.ACTIONS]
+        check, costume = names.index('verify_primary_power_selected'), names.index('verify_costume_page')
+        steps = [{'action': name, 'order': index} for index, name in enumerate(names)]
+        checks = [{'check': 'verify_primary_power_selected', 'retry': 0, 'primary_selection_pending': False,
+                   'evidence': 'p'}, {'check': 'verify_costume_page', 'attempt': 1, 'costume_page_shown': True,
+                                      'evidence': 'c'}]
+        return {'interaction_script': {'steps': steps, 'armport_transition_checks': checks,
+                                       'account_entry_checks': [{}], 'ocr_buttons': buttons}}
+
+    def test_the_host_validator_follows_the_primalist_s_script(self):
+        # Run 45875126986: the Primalist was made and saved, and the host then compared the
+        # steps with the first hero's script ("Graphical creator script did not finish").
+        stock = [{'label': label, 'x': 400, 'y': 300} for label in ('a', 'b', 'c')]
+        bar = {'label': 'Primalist', 'x': 180, 'y': 140, 'confidence': 91}
+        observer = self.observer(host.PrimalistCharacterInteraction, stock[:1] + [bar] + stock[1:])
+        with mock.patch.object(host.character, 'validate_observer') as shared:
+            host.armport_validate_observer(observer, {}, host.PrimalistCharacterInteraction)
+        script = shared.call_args[0][0]['interaction_script']
+        self.assertEqual([step['action'] for step in script['steps']],
+                         [action[2] for action in host.character.CharacterInteraction.ACTIONS])
+        self.assertEqual(script['ocr_buttons'], stock)
+        renamed = {step['primalist_probe_action']: step['action'] for step in script['steps']
+                   if 'primalist_probe_action' in step}
+        self.assertEqual(renamed, {old: new for old, new in host.PRIMALIST_STEPS if new})
+        orders = [step['order'] for step in script['steps']]
+        self.assertEqual(orders, sorted(orders))
+        # The observer itself is left as it was recorded.
+        self.assertEqual(len(observer['interaction_script']['ocr_buttons']), 4)
+        self.assertIn('select_primalist', [step['action'] for step in observer['interaction_script']['steps']])
+        with mock.patch.object(host.character, 'validate_observer'):
+            # The first hero's script is not a Primalist's, and the other way round.
+            with self.assertRaisesRegex(ValueError, 'did not finish'):
+                host.armport_validate_observer(observer, {})
+            first = self.observer(host.ArmPortCharacterInteraction, stock)
+            host.armport_validate_observer(first, {})
+            with self.assertRaisesRegex(ValueError, 'did not finish'):
+                host.armport_validate_observer(first, {}, host.PrimalistCharacterInteraction)
+            # The bar must have been found once, inside the archetype list.
+            for buttons in (stock, stock + [bar, dict(bar)], stock + [dict(bar, y=500)], stock + [dict(bar, x='180')]):
+                with self.assertRaisesRegex(ValueError, 'Primalist bar'):
+                    host.armport_validate_observer(self.observer(host.PrimalistCharacterInteraction, buttons), {},
+                                                   host.PrimalistCharacterInteraction)
+
     def check(self, report, key):
         with contextlib.redirect_stdout(io.StringIO()) as out:
             name = host.hero_class_check(report, key)
