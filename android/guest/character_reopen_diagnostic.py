@@ -18,10 +18,11 @@ REQUIRED = creation.REQUIRED | {'character_reopen_diagnostic.py', 'character_ses
 
 
 def character_identity(proof, session):
+    hero = creation.character.HERO_ID
     return (creation.character_identity(proof, session)
-        and proof.get('character_id') == 1
-        and type(proof.get('before_character_id')) is int and proof['before_character_id'] == 1
-        and type(proof.get('baseline_character_id')) is int and proof['baseline_character_id'] == 1
+        and proof.get('character_id') == hero
+        and type(proof.get('before_character_id')) is int and proof['before_character_id'] == hero
+        and type(proof.get('baseline_character_id')) is int and proof['baseline_character_id'] == hero
         and all(proof.get(key) is True for key in ('existing_character_verified', 'reopen_verified',
             'preserved_existing_identity', 'native_client_ready_observed')))
 
@@ -107,6 +108,10 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
         if not self.connected_announced:
             return deadline
         proof = self.ctx.report.get(self.REPORT_KEY, {})
+        if proof.get('created_in_session') is True:
+            # A hero made in the character list: a creation has no reopen budget, and a session
+            # started with Play has no countdown.
+            return deadline
         require(self.identity_verified(proof, self.args.session_id)
                 and isinstance(launch, dict) and proof.get('client_pid') == launch.get('pid'),
                 'Reopen phase budget lacks the current validated graphical character')
@@ -149,10 +154,10 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
                     require(observed.get('task_' + phase + '_verified') is True
                         and observed.get('session_id') == self.args.session_id
                         and observed.get('client_pid') == proof.get('client_pid')
-                        and observed.get('character_id') == 1,
+                        and observed.get('character_id') == creation.character.HERO_ID,
                         'Task milestone event differs from this native graphical character')
                     self.ctx.event('character_task_' + phase, session_id=self.args.session_id,
-                        client_pid=proof['client_pid'], character_id=1,
+                        client_pid=proof['client_pid'], character_id=creation.character.HERO_ID,
                         **{key: observed[key] for key in ('task', 'observed_utc_ms',
                             'active_task_count', 'native_task_verified', 'sql_task_verified')})
                     setattr(self, announced, True)
@@ -206,14 +211,19 @@ class ZoningCharacterReopenDiagnostic(CharacterReopenDiagnostic):
     ZONING = True
     REQUIRED = REQUIRED | {'character_zoning.py', 'character_zoning_scheduler.py'}
 
+    # 0.13.87: the proof of a hero made in the character list is a creation's (created_in_session).
     @staticmethod
     def identity_verified(proof, session):
         import character_zoning
+        if isinstance(proof, dict) and proof.get('created_in_session') is True:
+            return character_zoning.creation_identity(proof, session)
         return character_zoning.character_identity(proof, session)
 
     @staticmethod
     def proof_verified(proof, session):
         import character_zoning
+        if isinstance(proof, dict) and proof.get('created_in_session') is True:
+            return character_zoning.creation_save_verified(proof, session)
         return character_zoning.save_verified(proof, session)
 
     def make_server(self):
@@ -234,6 +244,10 @@ class ZoningCharacterReopenDiagnostic(CharacterReopenDiagnostic):
     # the other static zones for a character connected or saved there.
     def connected_event_data(self, proof):
         import character_zoning
+        if proof.get('created_in_session') is True:
+            return {'created_in_session': True, 'zoning_enabled': True, 'connected_on_supported_map': True,
+                    'monorail_enabled': False, 'stock_travel': proof.get('stock_travel') is True,
+                    'map_name': character_zoning.zone_name(proof['map_id'])}
         return dict(super().connected_event_data(proof), zoning_enabled=True, connected_on_supported_map=True,
                     monorail_enabled=proof.get('monorail_enabled') is True,
                     stock_travel=proof.get('stock_travel') is True,
@@ -241,6 +255,10 @@ class ZoningCharacterReopenDiagnostic(CharacterReopenDiagnostic):
 
     def saved_event_data(self, proof):
         import character_zoning
+        if proof.get('created_in_session') is True:
+            return {'created_in_session': True, 'zoning_enabled': True, 'connected_on_supported_map': True,
+                    'map_id': proof['map_id'], 'map_name': character_zoning.zone_name(proof['map_id']),
+                    'monorail_enabled': False, 'stock_travel': proof.get('stock_travel') is True}
         return dict(super().saved_event_data(proof), zoning_enabled=True,
                     connected_on_supported_map=True, map_id=proof['map_id'],
                     map_name=character_zoning.zone_name(proof['map_id']),

@@ -38,6 +38,10 @@ PROFILE, ACCOUNT = login.PROFILE, login.ACCOUNT
 LEGACY_CHARACTER = 'THORHERO'
 CHARACTER = LEGACY_CHARACTER
 CHARACTER_BOUND = False
+# 0.13.87: the hero of this session is no longer always container 1 of the account. The account can
+# hold several heroes; the one that enters the game is the session's (bind_hero), and every check
+# that used to say "ID 1" reads this.
+HERO_ID = 1
 
 
 def state_inventory(root):
@@ -58,8 +62,8 @@ def valid_character_name(name):
 
 def reset_character():
     """A new session starts unbound (THORHERO until its SQL row names the character)."""
-    global CHARACTER, CHARACTER_BOUND
-    CHARACTER, CHARACTER_BOUND = LEGACY_CHARACTER, False
+    global CHARACTER, CHARACTER_BOUND, HERO_ID
+    CHARACTER, CHARACTER_BOUND, HERO_ID = LEGACY_CHARACTER, False, 1
 
 
 def bind_character(name):
@@ -74,6 +78,28 @@ def bind_character(name):
     return name
 
 
+def hero_id(value):
+    """A character container ID the database can hold."""
+    return type(value) is int and 0 < value <= 2147483647
+
+
+def bind_hero(name, identifier, *, replace=False):
+    """Fix this session's hero (name and container ID) from its SQL row.
+
+    replace: the player chose another hero of the account than the one the launch
+    expected, or created one; allowed only before the first connection (the caller checks).
+    """
+    global CHARACTER_BOUND, HERO_ID
+    require(hero_id(identifier), 'The character ID is not one the database holds; preserve all data and export the report')
+    require(replace or not CHARACTER_BOUND or identifier == HERO_ID,
+            'The character changed during this session; preserve all data and export the report')
+    if replace:
+        CHARACTER_BOUND = False
+    bind_character(name)
+    HERO_ID = identifier
+    return name
+
+
 def entity_name_prefix():
     """This character's stock entity-log identity, "Name:COHLOCAL", as an exact regex."""
     return '"' + re.escape(CHARACTER) + ':' + re.escape(ACCOUNT) + '"'
@@ -85,6 +111,8 @@ def character_label():
 
 
 POLL_SECONDS = 15
+# The game's own bound on one account's characters on a shard (AccountData.h MAX_SLOTS_PER_SHARD).
+HERO_LIMIT = 36
 # 0.13.81: how often the session looks for a zone start request between its inspections.
 TRAVEL_REQUEST_SECONDS = 0.5
 MAP_STARTUP_SECONDS = 2400
@@ -286,7 +314,7 @@ def stock_power_delta(previous, current, attributes):
         index = {}
         for row in rows:
             if not (type(row) is dict and set(row) == fields
-                    and type(row['containerid']) is int and row['containerid'] == 1
+                    and type(row['containerid']) is int and row['containerid'] == HERO_ID
                     and type(row['uniqueid']) is int and 0 < row['uniqueid'] <= 0x7fffffff
                     and row['uniqueid'] not in index
                     and type(row['subid']) is int and 0 <= row['subid'] < POWER_DELTA_LIMIT
@@ -363,7 +391,7 @@ def enhancement_semantics(boosts, powers, attributes):
     result, subids, locations = [], set(), set()
     for row in boosts:
         require(type(row) is dict and set(row) == set(BOOST_FIELDS)
-                and type(row['containerid']) is int and row['containerid'] == 1
+                and type(row['containerid']) is int and row['containerid'] == HERO_ID
                 and type(row['subid']) is int and 0 <= row['subid'] < 6010
                 and row['subid'] not in subids and type(row['powerid']) is int,
                 'Incomplete, duplicate or foreign enhancement row')
@@ -1352,7 +1380,7 @@ def stock_zone_binding(proof, ready, session, client_pid, now_utc_ms):
             and contact.positive_int(client_pid) and type(now_utc_ms) is int and now_utc_ms > 0
             and proof.get('session_id') == session and type(proof.get('client_pid')) is int
             and proof['client_pid'] == client_pid and type(proof.get('character_id')) is int
-            and proof['character_id'] == 1 and type(map_id) is int and 1 <= map_id <= 999
+            and proof['character_id'] == HERO_ID and type(map_id) is int and 1 <= map_id <= 999
             and contact.positive_int(proof.get('auth_id'))
             and proof.get('name') == CHARACTER and proof.get('account') == ACCOUNT
             and all(proof.get(key) is True for key in ('connected_on_atlas', 'connected_on_supported_map',
@@ -1369,7 +1397,7 @@ def stock_zone_binding(proof, ready, session, client_pid, now_utc_ms):
             and 0 < ready['utc_ms'] <= proof['client_ready_observed_utc_ms']
             and re.fullmatch(r'[0-9a-f]{64}', str(ready.get('line_sha256', '')))):
         return None
-    return {'session_id': session, 'client_pid': client_pid, 'character_id': 1,
+    return {'session_id': session, 'client_pid': client_pid, 'character_id': HERO_ID,
             'auth_id': proof['auth_id'], 'map_id': map_id, 'name': CHARACTER, 'account': ACCOUNT,
             'client_ready_observed_utc_ms': proof['client_ready_observed_utc_ms'],
             'scope': 'previously_validated_current_session_stock_zone_connection',
@@ -1394,7 +1422,7 @@ def reopen_connection_binding(proof, session, client_pid, now_utc_ms):
             and contact.positive_int(client_pid) and type(now_utc_ms) is int
             and proof.get('session_id') == session and type(proof.get('client_pid')) is int
             and proof['client_pid'] == client_pid and type(proof.get('character_id')) is int
-            and proof['character_id'] == 1 and type(proof.get('map_id')) is int
+            and proof['character_id'] == HERO_ID and type(proof.get('map_id')) is int
             and proof['map_id'] in (1, 5) and contact.positive_int(proof.get('auth_id'))
             and proof.get('name') == CHARACTER and proof.get('account') == ACCOUNT
             and all(proof.get(key) is True for key in ('existing_character_verified',
@@ -1409,7 +1437,7 @@ def reopen_connection_binding(proof, session, client_pid, now_utc_ms):
             and ready.get('kind') == 'ready' and ready.get('session_id') == session
             and ready.get('loaded_world_assets') is True and ready.get('name') == CHARACTER
             and ready.get('account') == ACCOUNT and ready.get('log_route') == 'immediate_owned_mapserver_console'
-            and type(ready.get('db_id')) is int and ready['db_id'] == 1
+            and type(ready.get('db_id')) is int and ready['db_id'] == HERO_ID
             and type(ready.get('auth_id')) is int and ready['auth_id'] == proof['auth_id']
             and type(ready.get('map_id')) is int and ready['map_id'] == proof['map_id']
             and contact.positive_int(ready.get('windows_pid')) and type(ready.get('pid')) is int
@@ -1426,7 +1454,7 @@ def reopen_connection_binding(proof, session, client_pid, now_utc_ms):
             and 0 < ready['utc_ms'] <= proof['client_ready_observed_utc_ms']
             and re.fullmatch(r'[0-9a-f]{64}', str(ready.get('line_sha256', '')))):
         return None
-    return {'session_id': session, 'client_pid': client_pid, 'character_id': 1,
+    return {'session_id': session, 'client_pid': client_pid, 'character_id': HERO_ID,
         'auth_id': proof['auth_id'], 'map_id': proof['map_id'], 'name': CHARACTER, 'account': ACCOUNT,
         'client_ready_observed_utc_ms': proof['client_ready_observed_utc_ms'],
         'scope': 'previously_validated_current_session_monorail_and_dbserver_connection',
@@ -1461,7 +1489,7 @@ def native_reward_windows(proof, current, logout_ms, *, session, client_pid, now
                 and prior['map_id'] != following['map_id']
                 and type(delivery) is dict and delivery.get('session_id') == session
                 and type(delivery.get('client_pid')) is int and delivery['client_pid'] == client_pid
-                and type(delivery.get('character_id')) is int and delivery['character_id'] == 1
+                and type(delivery.get('character_id')) is int and delivery['character_id'] == HERO_ID
                 and (delivery.get('from_map_id'), delivery.get('to_map_id')) == (prior['map_id'], following['map_id'])
                 and type(delivery.get('sent_utc_ms')) is int
                 and prior['client_ready_observed_utc_ms'] <= delivery['sent_utc_ms']
@@ -1469,7 +1497,7 @@ def native_reward_windows(proof, current, logout_ms, *, session, client_pid, now
                 and type(depart) is dict and depart.get('source') == 'current_owned_mapserver_monorail_station_departure'
                 and depart.get('kind') == 'station_departure' and depart.get('session_id') == session
                 and depart.get('name') == CHARACTER and depart.get('account') == ACCOUNT
-                and type(depart.get('db_id')) is int and depart['db_id'] == 1
+                and type(depart.get('db_id')) is int and depart['db_id'] == HERO_ID
                 and type(depart.get('auth_id')) is int and depart['auth_id'] == current['auth_id']
                 and type(depart.get('pid')) is int and depart['pid'] == before_ready['windows_pid']
                 and type(depart.get('tid')) is int and depart['tid'] == before_ready['main_thread_id']
@@ -1697,7 +1725,7 @@ def ents_family_tables(template, expected_tables):
 
 
 def validate_character_rows(rows, baseline, inventory, attributes, auth_id, *,
-                            existing_identity=None, expected_login_count=1):
+                            existing_identity=None, expected_login_count=1, name=None):
     """Reject provisional rows and bind every child to the observed player."""
     require(isinstance(rows, dict) and set(rows) == set(evidence.SELECTED), 'Character snapshot tables differ')
     evidence.validate_attributes(attributes)
@@ -1715,7 +1743,7 @@ def validate_character_rows(rows, baseline, inventory, attributes, auth_id, *,
         require(evidence._same({key: parent[key] for key in evidence.IDENTITY_FIELDS}, existing_identity)
                 and sum(evidence._same(row, existing_identity) for row in baseline) == 1,
                 'Existing character identity differs from the preserved baseline')
-    require(parent.get('name') == CHARACTER and parent.get('authname') == ACCOUNT
+    require(parent.get('name') == (CHARACTER if name is None else name) and parent.get('authname') == ACCOUNT
             and parent.get('authid') == auth_id, 'Character/account SQL identity differs')
     if not parent.get('class') or not parent.get('origin') or not parent.get('logincount'):
         return None
@@ -2014,7 +2042,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         require(type(identity) is dict and type(identity.get('containerid')) is int
                 and identity['containerid'] > 0 and identity.get('authname') == ACCOUNT,
                 'The local character is not one of the COHLOCAL account; preserve all data and export the report')
-        name = bind_character(identity.get('name'))
+        name = bind_hero(identity.get('name'), identity['containerid'])
         self.creation_report['name'] = name
         events = self.creation_report.get('immediate_native_events')
         if name != LEGACY_CHARACTER and isinstance(events, dict):
@@ -2198,32 +2226,62 @@ class LocalCharacterServer(login.LocalLoginServer):
                         and type(row.get('authid')) is int and 0 < row['authid'] <= 4294967295
                         for row in inventory),
                     'Character inventory contains incomplete or invalid identities; preserve all data and export the report')
-            # 0.13.62: the saved character is ID 1 of the local account, whatever its name.
-            candidates = [row for row in inventory if row.get('containerid') == 1]
-            require(len(candidates) == 1, 'Expected exactly the saved character ID 1; preserve all characters')
-            identity = candidates[0]
-            auth_id = identity.get('authid')
-            require(identity.get('authname') == ACCOUNT
-                    and type(auth_id) is int and 0 < auth_id <= 4294967295
-                    and [row for row in inventory if row.get('authid') == auth_id] == [identity],
-                    'The saved character differs from the accepted local character (ID 1 of COHLOCAL); '
-                    'preserve all characters')
-            name = self.bind_session_character(identity)
-            eligibility['character_name'] = name
-            rows = self.character_rows(1)
-            parents = rows.get('ents', [])
-            committed = (len(parents) == 1 and type(parents[0].get('logincount')) is int
-                         and 0 < parents[0]['logincount'] < 2**31 - 1)
-            if not committed:
+            # 0.13.87: the account's heroes, whatever their names and IDs. The launch expects the one
+            # played last (hero_order); the player chooses in the game's own character list.
+            auth_ids = {row.get('authid') for row in inventory}
+            require(all(row.get('authname') == ACCOUNT for row in inventory) and len(auth_ids) == 1,
+                    'The saved game holds a character of another account than COHLOCAL; preserve all characters')
+            auth_id = inventory[0]['authid']
+            require(len({row['name'] for row in inventory}) == len(inventory)
+                    and len({row['containerid'] for row in inventory}) == len(inventory),
+                    'Two characters of the saved game share a name or an ID; preserve all characters')
+            all_rows = self.heroes_rows([row['containerid'] for row in inventory])
+            committed, unfinished = [], []
+            for identity in inventory:
+                rows = all_rows[identity['containerid']]
+                parents = rows.get('ents', [])
+                if (len(parents) == 1 and type(parents[0].get('logincount')) is int
+                        and 0 < parents[0]['logincount'] < 2**31 - 1):
+                    committed.append((identity, rows, parents[0]['logincount']))
+                else:
+                    unfinished.append((identity, rows))
+            if not committed and len(inventory) == 1:
                 # Thor 0.13.60: the row a failed first zone left was reported as
                 # an unexplained missing baseline. Nothing is changed here.
-                require(self.unentered_creation(inventory, rows) is None, UNENTERED_REOPEN.format(name=name))
-            require(committed, 'Saved ' + name + ' has no committed login baseline; preserve all data and export the report')
-            snapshot = validate_character_rows(rows, inventory, inventory,
-                self.schema['expected_attributes'], auth_id,
-                existing_identity=identity, expected_login_count=parents[0]['logincount'])
-            require(snapshot is not None,
-                    'Saved ' + name + "'s powers or costume are incomplete; preserve all data and export the report")
+                name = self.bind_session_character(inventory[0])
+                require(self.unentered_creation(inventory, all_rows[inventory[0]['containerid']]) is None,
+                        UNENTERED_REOPEN.format(name=name))
+                require(False, 'Saved ' + name + ' has no committed login baseline; preserve all data and export the report')
+            require(committed, 'No hero of this saved game has a committed login baseline; preserve all data and export the report')
+            eligibility['unfinished_characters'] = []
+            for identity, rows in unfinished:
+                # A hero created from the character list whose first zone never started: the game
+                # cannot enter it (it has no class or costume), so it is removed like the first one.
+                record = self.unfinished_hero(identity, rows)
+                require(record is not None, 'Saved ' + str(identity.get('name'))[:20] + ' has no committed login '
+                        'baseline and is not an unfinished creation; preserve all data and export the report')
+                eligibility['unfinished_characters'].append(self.remove_unfinished_hero(record))
+                eligibility['sql_game_mutations_performed'] = True
+            if unfinished:
+                inventory = self.inventory()
+                require(inventory == [identity for identity, _, _ in committed],
+                        'The saved game changed while an unfinished character was removed; export this report')
+                eligibility['character_count'] = len(inventory)
+            for identity, rows, count in committed:
+                require(valid_character_name(identity.get('name')),
+                        'A saved hero has a name the game does not accept; preserve all data and export the report')
+            order = self.hero_order([identity for identity, _, _ in committed])
+            identity, rows, count = next(item for item in committed if item[0]['containerid'] == order[0])
+            name = self.bind_session_character(identity)
+            eligibility.update(character_name=name, hero_count=len(committed),
+                               expected_character_id=identity['containerid'])
+            for other, other_rows, other_count in committed:
+                snapshot = validate_character_rows(other_rows, inventory, inventory,
+                    self.schema['expected_attributes'], auth_id,
+                    existing_identity=other, expected_login_count=other_count,
+                    name=other['name'])
+                require(snapshot is not None,
+                        'Saved ' + other['name'] + "'s powers or costume are incomplete; preserve all data and export the report")
             eligibility['committed_character_rows_verified'] = True
         else:
             unentered = self.unentered_creation(inventory) if inventory and resume else None
@@ -4057,6 +4115,19 @@ class LocalCharacterServer(login.LocalLoginServer):
             self.auth_id = proof['auth_id']
         return proof
 
+    def session_identity(self, inventory):
+        """The row of the character this session created: the one that was not there at its start."""
+        known = {row['containerid'] for row in self.baseline}
+        created = [row for row in inventory if row.get('containerid') not in known]
+        if not created: return None
+        require(len(created) == 1 and len(inventory) == len(self.baseline) + 1,
+                'More than one character exists; preserve all characters and export the report')
+        return created[0]
+
+    def observe_chosen_hero(self):
+        """Only a session that reopens saved heroes follows the player's choice (LocalCharacterReopenServer)."""
+        return False
+
     def verify_current_identity(self, identity, inventory):
         identifier = identity['containerid']
         require(type(identifier) is int and identifier > 0 and identity.get('authname') == ACCOUNT
@@ -4068,6 +4139,95 @@ class LocalCharacterServer(login.LocalLoginServer):
         return {table: self.sql_rows(table, tuple(fields) + (('logincount',) if table == 'ents' else ()),
                 evidence.ROW_KEYS[table], 'containerid=' + str(identifier))
                 for table, fields in evidence.SELECTED.items()}
+
+    def heroes_rows(self, identifiers):
+        """The selected rows of each of the account's heroes, by container ID (read-only)."""
+        identifiers = sorted(set(identifiers))
+        require(identifiers and len(identifiers) <= HERO_LIMIT and all(hero_id(value) for value in identifiers),
+                'The saved game holds more characters than this app follows; preserve all data and export the report')
+        return {identifier: self.character_rows(identifier) for identifier in identifiers}
+
+    def hero_order(self, identities):
+        """Container IDs, the hero played last first (ents.LastActive), then by ID.
+
+        The launch expects the first one: its zone is the one started beside the client. The
+        player's choice in the game's character list decides which hero the session follows.
+        """
+        identifiers = sorted(row['containerid'] for row in identities)
+        require(identifiers and all(hero_id(value) for value in identifiers), 'Invalid saved hero identities')
+        seen = {}
+        if len(identifiers) > 1 and 'lastactive' in self.schema['expected_tables'].get('ents', ()):
+            rows = self.sql_rows('ents', ('containerid', 'lastactive'), ('containerid',),
+                                 'containerid IN (' + ','.join(str(value) for value in identifiers) + ')')
+            seen = {row.get('containerid'): row.get('lastactive') for row in rows
+                    if type(row) is dict and type(row.get('lastactive')) is str and len(row['lastactive']) <= 64}
+        return sorted(identifiers, key=lambda value: (value not in seen, [-ord(c) for c in seen.get(value, '')], value))
+
+    def unfinished_hero(self, identity, rows):
+        """A hero of the account whose first zone never started, beside saved heroes, or None (read-only).
+
+        The same row unentered_creation describes (name, account and start zone; every field a
+        MapServer writes still NULL; rows only in Ents and Ents2[0]), under any container ID.
+        """
+        if not (type(identity) is dict and set(identity) == set(evidence.IDENTITY_FIELDS)
+                and hero_id(identity.get('containerid')) and valid_character_name(identity.get('name'))
+                and identity.get('authname') == ACCOUNT and hero_id(identity.get('authid'))):
+            return None
+        identifier = identity['containerid']
+        ents, ents2 = rows.get('ents'), rows.get('ents2')
+        if not (type(ents) is list and len(ents) == 1 and type(ents[0]) is dict
+                and all(ents[0].get(field) is None for field in UNENTERED_NULL_FIELDS['ents'])
+                and {key: ents[0].get(key) for key in evidence.IDENTITY_FIELDS} == identity
+                and type(ents2) is list and len(ents2) <= 1
+                and all(type(row) is dict and row.get('subid') == 0
+                        and all(row.get(field) is None for field in UNENTERED_NULL_FIELDS['ents2']) for row in ents2)
+                and rows.get('powers') == [] and rows.get('costumeparts') == []):
+            return None
+        tables = self.ents_tables()
+        counts = self.container_row_counts(tables, identifier)
+        if not (counts['ents'] == 1 and counts['ents2'] == len(ents2)
+                and all(count == 0 for table, count in counts.items() if table not in ('ents', 'ents2'))):
+            return None
+        kept = {table: self.sql_rows(table, fields, evidence.ROW_KEYS[table], 'containerid=' + str(identifier))
+                for table, fields in UNENTERED_RECORD_FIELDS.items()}
+        return {'format': 1, 'policy': 'unfinished_hero_beside_saved_heroes_v1', 'identity': dict(identity),
+                'row_counts': {table: count for table, count in counts.items() if count},
+                'tables_checked': len(tables), 'rows': kept,
+                'start_map_id': kept['ents'][0].get('staticmapid') if len(kept['ents']) == 1 else None}
+
+    def remove_unfinished_hero(self, record):
+        """Delete exactly that hero's two rows in one statement (it rolls back whole); its ID stays used."""
+        tables = self.ents_tables()
+        identity = record['identity']
+        identifier, auth_id, name = identity['containerid'], identity['authid'], identity.get('name')
+        ents2_rows = record['row_counts'].get('ents2', 0)
+        require(hero_id(identifier) and hero_id(auth_id) and ents2_rows in (0, 1) and valid_character_name(name),
+                'Invalid unfinished character record')
+        where = ' WHERE containerid=' + str(identifier)
+        others = ''.join(' OR EXISTS (SELECT 1 FROM dbo.' + table + where + ')'
+                         for table in tables if table not in ('ents', 'ents2'))
+        self.ctx.event('stage', status='running', message=(
+            'Removing the unfinished ' + name + ': it was created, but its first zone never started, so it never '
+            'entered the game. The report keeps a copy of its rows.'))
+        statement = (
+            'DO $$DECLARE removed_ents integer; removed_ents2 integer; BEGIN '
+            'DELETE FROM dbo.ents2' + where + ' AND subid=0'
+            + ''.join(' AND ' + field + ' IS NULL' for field in UNENTERED_NULL_FIELDS['ents2']) + '; '
+            'GET DIAGNOSTICS removed_ents2 = ROW_COUNT; '
+            # The player chose the name, so it enters SQL only as its digest.
+            'DELETE FROM dbo.ents' + where + " AND md5(name)='" + hashlib.md5(name.encode()).hexdigest()
+            + "' AND authname='" + ACCOUNT + "' AND authid=" + str(auth_id)
+            + ''.join(' AND ' + field + ' IS NULL' for field in UNENTERED_NULL_FIELDS['ents']) + '; '
+            'GET DIAGNOSTICS removed_ents = ROW_COUNT; '
+            'IF removed_ents <> 1 OR removed_ents2 <> ' + str(ents2_rows) + ' OR EXISTS (SELECT 1 FROM dbo.ents'
+            + where + ')' + others + " THEN RAISE EXCEPTION 'The unfinished character rows changed'; END IF; END$$;")
+        try:
+            output = self.sql(statement, game=True)
+        except base.DiagnosticError as failure:
+            raise base.DiagnosticError('The unfinished ' + name + ' could not be removed and nothing was changed ('
+                                       + str(failure)[-300:] + '); export this report') from failure
+        require(output == 'DO', 'Unexpected result removing the unfinished ' + name + '; export this report')
+        return dict(record, removed=True)
 
     def ents_tables(self):
         path = Path(self.schema_dir) / ENTS_TEMPLATE
@@ -4240,6 +4400,9 @@ class LocalCharacterServer(login.LocalLoginServer):
         if self.auth_id is None: return None
         if (getattr(self.owner, 'MANUAL_SESSION', False) and self.requires_saved_character
                 and not self.creation_report['connected_on_atlas']):
+            # 0.13.87: the player may enter with another saved hero than the launch expected, or
+            # with one made in the character list (observe_chosen_hero follows that choice; a
+            # created hero turns this session into a creation and leaves this branch).
             # Baseline SQL already authenticated the existing identity. Waiting
             # at character selection must not repeatedly spawn translated status
             # probes until their operation-count limit expires. A current native
@@ -4252,7 +4415,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                     and type(baseline.get('auth_id')) is int and baseline['auth_id'] == self.auth_id,
                     'Manual connection wait lacks the verified saved character identity')
             self.creation_report['character_id'] = baseline['character_id']
-            if self.native_ready_record() is None:
+            if self.native_ready_record() is None and not self.observe_chosen_hero():
                 policy = self.ctx.report.setdefault('character_observer_metrics', {}).setdefault(
                     'manual_login_wait', {'policy': 'native_ready_triggers_full_sql_and_protocol_proof',
                         'translated_status_probes_skipped': 0, 'sql_inventory_reads_skipped': 0,
@@ -4298,9 +4461,8 @@ class LocalCharacterServer(login.LocalLoginServer):
         # whatever name the player gave it in the creator (the DbServer inserts
         # it at Enter Game); verify_current_identity checks it is this session's
         # (new, or the preserved ID 1), and its name binds the session.
-        if not inventory: return None
-        require(len(inventory) == 1, 'More than one character exists; preserve all characters and export the report')
-        identity = inventory[0]
+        identity = self.session_identity(inventory)
+        if identity is None: return None
         identifier = identity['containerid']
         self.verify_current_identity(identity, inventory)
         self.bind_session_character(identity)
@@ -4609,53 +4771,161 @@ class LocalCharacterReopenServer(LocalCharacterServer):
 
     def capture_baseline(self):
         self.baseline = self.inventory()
-        candidates = [row for row in self.baseline if row.get('containerid') == self.CHARACTER_ID]
-        require(len(candidates) == 1, 'Expected exactly the existing character ID 1; preserve all characters')
-        identity = candidates[0]
-        auth_id = identity.get('authid')
-        require(type(identity.get('containerid')) is int and identity['containerid'] == self.CHARACTER_ID
-                and identity.get('authname') == ACCOUNT
-                and type(auth_id) is int and 0 < auth_id <= 4294967295,
-                'Preserved character identity differs from the accepted local character (ID 1 of COHLOCAL)')
-        self.bind_session_character(identity)
-        require([row for row in self.baseline if row.get('authid') == auth_id] == [identity],
-                'Reopen requires exactly the existing COHLOCAL character')
+        heroes = [row for row in self.baseline if row.get('authname') == ACCOUNT]
+        require(heroes and heroes == self.baseline and len({row.get('authid') for row in heroes}) == 1
+                and all(hero_id(row.get('containerid')) for row in heroes),
+                'Reopen requires the saved heroes of the one COHLOCAL account; preserve all characters')
+        auth_id = heroes[0].get('authid')
+        require(type(auth_id) is int and 0 < auth_id <= 4294967295
+                and len({row.get('name') for row in heroes}) == len(heroes)
+                and len({row['containerid'] for row in heroes}) == len(heroes),
+                'Preserved character identity differs from the accepted local account (COHLOCAL)')
         account = self.sql("SELECT containerid || '|' || authname FROM dbo.shardaccounts "
             "WHERE lower(authname)=lower('COHLOCAL') ORDER BY containerid;", game=True)
         require(account == str(auth_id) + '|' + ACCOUNT, 'Preserved character account differs from SQL')
-        rows = self.character_rows(self.CHARACTER_ID)
-        parents = rows.get('ents', [])
-        require(len(parents) == 1 and type(parents[0].get('logincount')) is int
-                and 0 < parents[0]['logincount'] < 2**31 - 1,
-                'Existing character has no accepted committed login baseline')
-        count = parents[0]['logincount']
-        snapshot = validate_character_rows(rows, self.baseline, self.baseline,
-            self.schema['expected_attributes'], auth_id, existing_identity=identity, expected_login_count=count)
-        require(snapshot is not None, 'Existing character powers/costume are incomplete; do not synthesize them')
+        order = self.hero_order(heroes)
+        all_rows = self.heroes_rows(order)
+        enhancements = native_producer_matches(self.creation_report.get('mapserver_producer', {}))
+        self.hero_baselines = {}
+        for identity in heroes:
+            identifier = identity['containerid']
+            rows = all_rows[identifier]
+            parents = rows.get('ents', [])
+            require(len(parents) == 1 and type(parents[0].get('logincount')) is int
+                    and 0 < parents[0]['logincount'] < 2**31 - 1,
+                    'Existing character has no accepted committed login baseline')
+            count = parents[0]['logincount']
+            snapshot = validate_character_rows(rows, self.baseline, self.baseline,
+                self.schema['expected_attributes'], auth_id, existing_identity=identity,
+                expected_login_count=count, name=identity.get('name'))
+            require(snapshot is not None, 'Existing character powers/costume are incomplete; do not synthesize them')
+            entry = {'identity': identity, 'rows': rows, 'snapshot': snapshot, 'login_count': count,
+                     'saved_position': self.saved_position_row(identifier)}
+            if enhancements:
+                entry['boosts'] = self.sql_rows('boosts', BOOST_FIELDS, ('containerid', 'subid'),
+                                                'containerid=' + str(identifier))
+            self.hero_baselines[identifier] = entry
+        # Every saved hero is read before the client can log in; the one played last is expected.
+        self.creation_report['heroes'] = {'format': 1, 'count': len(heroes), 'order': order,
+            'expected_character_id': order[0], 'chosen_character_id': None, 'choice': None,
+            'policy': 'the_hero_that_enters_the_game_is_the_session_hero_v1',
+            'sql_game_mutations_performed': False}
+        self.use_hero_baseline(order[0])
+        if self.stock_power_diagnostics_enabled():
+            self.creation_report['stock_power_lifecycle_before_login'] = self.stock_power_lifecycle(
+                self.hero_baselines[order[0]]['rows'])
+        self.ctx.event('existing_character_ready', session_id=self.owner.args.session_id,
+            character_id=self.CHARACTER_ID, auth_id=auth_id, account=ACCOUNT, name=CHARACTER,
+            existing_character_verified=True, before_login_count=self.baseline_snapshot['login_count'],
+            hero_count=len(heroes))
+
+    def saved_position_row(self, identifier):
+        values = self.sql_rows('ents', ('containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'),
+                               ('containerid',), 'containerid=' + str(identifier))
+        require(len(values) == 1 and set(values[0]) == {'containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'},
+                'Existing character position snapshot differs')
+        return values[0]
+
+    def use_hero_baseline(self, identifier, *, chosen=False):
+        """Make one saved hero the session's: its ID, name and the rows read before login.
+
+        chosen: the player entered with another hero than the launch expected. That is only
+        possible before the first connection, and nothing about the first hero was changed.
+        """
+        entry = self.hero_baselines[identifier]
+        identity, rows, snapshot, count = entry['identity'], entry['rows'], entry['snapshot'], entry['login_count']
+        require(not chosen or not self.creation_report.get('connected_on_atlas'),
+                'The hero cannot change after it entered the game; preserve all data and export the report')
+        self.CHARACTER_ID = identifier
+        if chosen:
+            self.creation_report['name'] = bind_hero(identity.get('name'), identifier, replace=True)
+            self.require_station_travel_name()
+        else:
+            self.bind_session_character(identity)
         self.baseline_snapshot = snapshot
-        position = self.character_position(allow_unassigned_active_map=True)
+        position = self.character_position(allow_unassigned_active_map=True, value=dict(entry['saved_position']),
+                                           activate=not chosen)
         self.creation_report.update(existing_character_verified=True,
+            before_character_id=identifier, baseline_character_id=identifier,
             baseline_character_count=len(self.baseline), baseline_identity_sha256=digest_json(self.baseline),
             before_login_count=count,
-            baseline={'character_id': self.CHARACTER_ID, 'auth_id': auth_id,
+            baseline={'character_id': identifier, 'auth_id': identity['authid'],
                 'identity_sha256': digest_json(identity), 'snapshot_sha256': digest_json(snapshot),
                 'table_sha256': {name: digest_json(value) for name, value in rows.items()},
                 'row_counts': {name: len(value) for name, value in rows.items()},
                 'login_count': count, 'captured_utc': base.utc(), 'saved_position': position},
             sql_game_mutations_performed=False)
-        if native_producer_matches(self.creation_report.get('mapserver_producer', {})):
-            boosts = self.sql_rows('boosts', BOOST_FIELDS, ('containerid', 'subid'), 'containerid=1')
+        self.baseline_enhancements = None
+        self.creation_report.pop('enhancement_baseline', None)
+        if 'boosts' in entry:
+            boosts = entry['boosts']
             semantic = enhancement_semantics(boosts, rows['powers'], self.schema['expected_attributes']['attributes'])
             self.baseline_enhancements = {'rows': boosts, 'semantic': semantic}
             self.creation_report['enhancement_baseline'] = {'row_count': len(boosts),
                 'rows_sha256': digest_json(boosts), 'semantic_sha256': digest_json(semantic),
                 'attachment_identity': 'native_PowerID_resolved_to_stable_power_UniqueID',
                 'sql_game_mutations_performed': False}
-        if self.stock_power_diagnostics_enabled():
-            self.creation_report['stock_power_lifecycle_before_login'] = self.stock_power_lifecycle(rows)
-        self.ctx.event('existing_character_ready', session_id=self.owner.args.session_id,
-            character_id=self.CHARACTER_ID, auth_id=auth_id, account=ACCOUNT, name=CHARACTER,
-            existing_character_verified=True, before_login_count=count)
+        if chosen:
+            self.creation_report.pop('stock_power_lifecycle_before_login', None)
+        return entry
+
+    def entered_hero_names(self):
+        """Names of heroes of the account that resumed on an owned zone server (the zoning server reads them)."""
+        return []
+
+    def created_hero_supported(self):
+        return False
+
+    def observe_chosen_hero(self):
+        """Follow the player's choice in the game's character list (before the first connection).
+
+        The launch expected the hero played last. A resume line under another name is another
+        saved hero of the account (its rows were read before login: use_hero_baseline), or a
+        hero made in the character list (adopt_created_hero). Returns True when the session's
+        hero changed, so the ordinary full inspection runs now.
+        """
+        if (getattr(self, 'hero_baselines', None) is None or self.creation_report.get('connected_on_atlas')
+                or getattr(self, 'created_in_session', False)):
+            return False
+        names = sorted({name for name in self.entered_hero_names() if name != CHARACTER})
+        if not names:
+            return False
+        require(len(names) == 1 and valid_character_name(names[0]),
+                'Two heroes entered the game in one session; preserve all data and export the report')
+        inventory = self.inventory()
+        rows = [row for row in inventory if row.get('name') == names[0] and row.get('authname') == ACCOUNT]
+        require(len(rows) == 1 and hero_id(rows[0].get('containerid'))
+                and rows[0].get('authid') == self.baseline_snapshot['identity']['authid'],
+                'The hero that entered the game is not one of the COHLOCAL account; preserve all data and export')
+        identity = rows[0]
+        heroes = self.creation_report['heroes']
+        if identity['containerid'] in self.hero_baselines:
+            require(evidence._same(identity, self.hero_baselines[identity['containerid']]['identity'])
+                    and evidence._same(inventory, self.baseline),
+                    'A saved hero changed before it entered the game; preserve all data and export the report')
+            self.use_hero_baseline(identity['containerid'], chosen=True)
+            heroes.update(chosen_character_id=identity['containerid'], choice='another_saved_hero')
+        else:
+            require(identity['containerid'] not in {row['containerid'] for row in self.baseline}
+                    and self.created_hero_supported(),
+                    'More than one character exists; preserve all characters and export the report')
+            self.adopt_created_hero(identity, inventory)
+            heroes.update(chosen_character_id=identity['containerid'], choice='created_in_the_character_list')
+        self.ctx.event('session_hero', format=1, session_id=self.owner.args.session_id,
+            character_id=identity['containerid'], name=CHARACTER, account=ACCOUNT,
+            created_in_session=heroes['choice'] == 'created_in_the_character_list',
+            expected_character_id=heroes['expected_character_id'])
+        return True
+
+    def adopt_created_hero(self, identity, inventory):
+        raise base.DiagnosticError('More than one character exists; preserve all characters and export the report')
+
+    def session_identity(self, inventory):
+        """The session's saved hero among the account's heroes."""
+        rows = [row for row in inventory if row.get('containerid') == self.CHARACTER_ID]
+        require(len(rows) == 1 and len(inventory) == len(self.baseline),
+                'More than one character exists; preserve all characters and export the report')
+        return rows[0]
 
     def stock_power_diagnostics_enabled(self):
         """Supplemental reads belong only to the fully verified new Game lane."""
@@ -4680,15 +4950,16 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         try:
             require(type(rows.get('powers')) is list and 0 < len(rows['powers']) <= POWER_DELTA_LIMIT,
                     'Stock lifecycle power count exceeds finite scope')
-            parent = self.sql_rows('ents', ('containerid', 'lastactive'), ('containerid',), 'containerid=1')
+            where = 'containerid=' + str(self.CHARACTER_ID)
+            parent = self.sql_rows('ents', ('containerid', 'lastactive'), ('containerid',), where)
             extension = self.sql_rows('ents2', ('containerid', 'subid', 'lastdayjobsstart'),
-                                      ('containerid', 'subid'), 'containerid=1')
+                                      ('containerid', 'subid'), where)
             fields = ('containerid', 'subid', 'uniqueid', 'numcharges', 'usagetime', 'availabletime', 'creationtime')
-            powers = self.sql_rows('powers', fields, ('containerid', 'subid'), 'containerid=1')
+            powers = self.sql_rows('powers', fields, ('containerid', 'subid'), where)
             require(len(parent) == 1 and set(parent[0]) == {'containerid', 'lastactive'}
-                    and type(parent[0]['containerid']) is int and parent[0]['containerid'] == 1
+                    and type(parent[0]['containerid']) is int and parent[0]['containerid'] == self.CHARACTER_ID
                     and len(extension) == 1 and set(extension[0]) == {'containerid', 'subid', 'lastdayjobsstart'}
-                    and type(extension[0]['containerid']) is int and extension[0]['containerid'] == 1
+                    and type(extension[0]['containerid']) is int and extension[0]['containerid'] == self.CHARACTER_ID
                     and type(extension[0]['subid']) is int and extension[0]['subid'] == 0,
                     'Stock lifecycle parent identity differs')
             timestamps = {'lastactive': parent[0]['lastactive'], 'lastdayjobsstart': extension[0]['lastdayjobsstart']}
@@ -4720,7 +4991,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         if proof is not None:
             require(self.baseline_snapshot is not None
                     and proof['auth_id'] == self.baseline_snapshot['identity']['authid']
-                    and proof['character_count'] == 1,
+                    and proof['character_count'] == len(self.baseline),
                     'Current graphical login differs from the preserved character account')
         return proof
 
@@ -4737,12 +5008,9 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         return {'reopen_verified': True, 'existing_character_verified': True,
                 'preserved_existing_identity': True, 'native_client_ready_observed': True}
 
-    def character_position(self, *, allow_unassigned_active_map=False):
-        values = self.sql_rows('ents', ('containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'),
-                              ('containerid',), 'containerid=' + str(self.CHARACTER_ID))
-        require(len(values) == 1 and set(values[0]) == {'containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'},
-                'Existing character position snapshot differs')
-        value = values[0]
+    def character_position(self, *, allow_unassigned_active_map=False, value=None, activate=True):
+        # value: the row read before login (capture_baseline reads every saved hero's).
+        value = self.saved_position_row(self.CHARACTER_ID) if value is None else value
         # Before login, MapId is an active assignment and may be SQL NULL.
         # StaticMapId retains the saved Atlas destination. Only the read-only
         # baseline accepts that unassigned state; connected save still needs 1.
@@ -4814,7 +5082,8 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             return None
         location = self.observe_saved_location()
         if self.baseline_enhancements is not None:
-            boosts = self.sql_rows('boosts', BOOST_FIELDS, ('containerid', 'subid'), 'containerid=1')
+            boosts = self.sql_rows('boosts', BOOST_FIELDS, ('containerid', 'subid'),
+                                   'containerid=' + str(self.CHARACTER_ID))
             comparison = {'verified': False, 'status': 'incomplete',
                 'before_rows': self.baseline_enhancements['rows'], 'saved_rows': boosts,
                 'before_semantic_sha256': digest_json(self.baseline_enhancements['semantic']),

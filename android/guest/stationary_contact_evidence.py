@@ -79,7 +79,7 @@ def binding(proof, session, client_pid, now_utc_ms):
             and positive_int(client_pid) and type(now_utc_ms) is int and now_utc_ms > 0
             and type(proof) is dict and proof.get('session_id') == session
             and proof.get('client_pid') == client_pid and type(proof.get('client_pid')) is int
-            and type(proof.get('character_id')) is int and proof['character_id'] == 1
+            and type(proof.get('character_id')) is int and proof['character_id'] == server.HERO_ID
             and type(proof.get('map_id')) is int and proof['map_id'] == 1
             and positive_int(proof.get('auth_id'))
             and proof.get('name') == server.CHARACTER and proof.get('account') == 'COHLOCAL'
@@ -95,7 +95,7 @@ def binding(proof, session, client_pid, now_utc_ms):
         return None
     if ready.get('source') == 'current_owned_mapserver_immediate_ready':
         if not (ready.get('kind') == 'ready' and ready.get('session_id') == session
-                and type(ready.get('db_id')) is int and ready['db_id'] == 1
+                and type(ready.get('db_id')) is int and ready['db_id'] == server.HERO_ID
                 and ready.get('auth_id') == proof['auth_id'] and type(ready.get('auth_id')) is int
                 and type(ready.get('map_id')) is int and ready['map_id'] == 1
                 and positive_int(ready.get('windows_pid')) and positive_int(ready.get('main_thread_id'))
@@ -113,7 +113,7 @@ def binding(proof, session, client_pid, now_utc_ms):
             return None
         if not 0 < native_ms <= proof['client_ready_observed_utc_ms']:
             return None
-    return {'session_id': session, 'client_pid': client_pid, 'character_id': 1,
+    return {'session_id': session, 'client_pid': client_pid, 'character_id': server.HERO_ID,
             'auth_id': proof['auth_id'], 'map_id': 1, 'name': server.CHARACTER, 'account': 'COHLOCAL',
             'client_ready_observed_utc_ms': proof['client_ready_observed_utc_ms'],
             'scope': 'previously_validated_current_session_reopen_connection',

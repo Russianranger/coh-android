@@ -407,7 +407,7 @@ def validate_request(value, *, session, client_pid, epoch, origin, action, now_m
     require(type(value) is dict and set(value) == fields and value.get('format') == 1
         and type(value['format']) is int and value['session_id'] == session
         and type(value['client_pid']) is int and value['client_pid'] == client_pid and client_pid > 0
-        and type(value['character_id']) is int and value['character_id'] == 1
+        and type(value['character_id']) is int and value['character_id'] == character.HERO_ID
         and type(value['epoch']) is int and value['epoch'] == epoch and 1 <= epoch <= MAX_EPOCHS
         and value['action'] == action and supported(value['from_map_id'])
         and value['from_map_id'] == origin and supported(value['to_map_id'])
@@ -474,6 +474,8 @@ CONSOLE_READY_ROUTE = 'owned_zone_server_console'
 CONSOLE_READY_PREFIX = b'ARMPORT_CLIENT_READY_V1 utc_ms='
 # Extra inspections one session may run for new resume lines (a trip prints one; 256 trips).
 READY_PEEK_LIMIT = 256
+# How long the new hero's row may be behind the game's request for its zone (other_hero_zone).
+NEW_HERO_ROW_SECONDS = 3
 READY_PEEK_SECONDS = 0.5
 READY_LOG_ROUTES = ('embedded_dbserver_logserver', CONSOLE_READY_ROUTE)
 KEEP_PREVIOUS_ZONE_ENV = 'COH_KEEP_PREVIOUS_ZONE'
@@ -548,6 +550,33 @@ def console_ready(output, map_id, minimum_ms, now_ms):
                       'loaded_world_assets': True,
                       'source': 'current_target_stock_CLIENT_READY_resumeCharacter_success'}
     return newest
+
+
+def console_ready_names(output, minimum_ms):
+    """Hero names of the local account on an owned zone server's resume lines, oldest first."""
+    account = character.ACCOUNT.encode()
+    names = []
+    for match in CONSOLE_READY.finditer(bytes(output)):
+        if int(match[1]) >= minimum_ms and match[5] == account and int(match[3]) <= 65535:
+            try:
+                names.append(match[4].decode('ascii'))
+            except UnicodeDecodeError:
+                continue
+    return names
+
+
+ENTITY_READY_NAME = re.compile(r'^"([^":\r\n]{3,20}):COHLOCAL" -?\d+ Connection:ResumeCharacter from '
+                               r'127\.0\.0\.1:[1-9][0-9]{0,4} AuthName "COHLOCAL"(?: [^\r\n]*)?$')
+
+
+def entity_ready_names(logs, map_id, minimum_ms, now_ms):
+    """The same names from the stock entity log of one zone (a server without the console line)."""
+    names = []
+    for message, record in entity_records(logs, map_id, minimum_ms=minimum_ms, now_ms=now_ms):
+        match = ENTITY_READY_NAME.fullmatch(message)
+        if match is not None:
+            names.append(match[1])
+    return names
 
 
 def legacy_ready(logs, minimum_ms, now_ms):
@@ -1288,8 +1317,74 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             name=character.CHARACTER, account=character.ACCOUNT, map_id=saved,
             map_name=destination['name'], world=destination['world'], port=port,
             existing_character_verified=True, saved_location_verified=True,
-            sql_game_mutations_performed=False, dynamic_start=dynamic)
+            sql_game_mutations_performed=False, dynamic_start=dynamic,
+            hero_count=len(getattr(self, 'hero_baselines', None) or [None]))
         self.persist_startup_observation()
+
+    def use_hero_baseline(self, identifier, *, chosen=False):
+        entry = super().use_hero_baseline(identifier, chosen=chosen)
+        if chosen:
+            # The zone is the one the game asked for and this hero entered; the records of the
+            # launch's expected hero now describe the chosen one.
+            saved = entry['saved_position']['staticmapid']
+            self.startup_saved_map_id = saved
+            self.zoning_report['saved_destination_map_id'] = saved
+            startup = self.zoning_report.get('saved_startup')
+            if startup is not None:
+                startup.update(map_id=saved, name=zone_name(saved), world=MAPS[saved]['world'],
+                               saved_position=dict(entry['saved_position']),
+                               hero_chosen_in_the_character_list=True)
+            initial = self.dynamic_initial()
+            if initial is not None:
+                initial['expected_map_id'] = saved
+        return entry
+
+    def entered_hero_names(self):
+        """Names on the resume lines of the owned zone servers since the first zone's launch."""
+        floor = getattr(self, 'ready_floor_ms', 0)
+        names = []
+        for map_id, owned in list(getattr(self, 'maps', {}).items()):
+            try:
+                names.extend(console_ready_names(owned['process'].output, floor))
+            except (KeyError, AttributeError, TypeError, ValueError):
+                continue
+        now = time.monotonic()
+        if not names and self.map_process is not None and now >= getattr(self, 'entity_names_next', 0):
+            # A zone server without the console line: the stock entity log (60-90 s later), read
+            # at most twice a minute here (the ordinary inspection reads it for the expected hero).
+            self.entity_names_next = now + 30
+            names.extend(entity_ready_names(self.current_logs(), self.active_map_id, floor, int(time.time() * 1000)))
+        return names
+
+    def created_hero_supported(self):
+        return self.dynamic_initial() is not None and self.stock_travel_active()
+
+    def adopt_created_hero(self, identity, inventory):
+        """The player made a hero in the game's character list: this session becomes its creation.
+
+        The game started the new hero's starting zone and the hero entered it. From here the
+        session proves what a creation proves (the new row, its committed rows at save, every
+        other hero's identity unchanged); nothing of a reopen is claimed for it.
+        """
+        initial = self.dynamic_initial()
+        require(initial is not None and self.created_hero_supported() and not self.creation_report.get('connected_on_atlas'),
+                'More than one character exists; preserve all characters and export the report')
+        require(sorted(self.baseline + [identity], key=lambda row: row['containerid']) == inventory,
+                'Existing character identities changed or unexpected characters were created')
+        self.CHARACTER_ID = identity['containerid']
+        self.creation_report['name'] = character.bind_hero(identity.get('name'), identity['containerid'], replace=True)
+        self.created_in_session = True
+        for key in LocalCharacterZoningCreationServer.REOPEN_FIELDS:
+            self.creation_report.pop(key, None)
+        for key in ('baseline', 'before_login_count', 'enhancement_baseline', 'stock_power_lifecycle_before_login'):
+            self.creation_report.pop(key, None)
+        self.baseline_enhancements = None
+        self.creation_report.update(created_in_session=True, operation='hero_created_in_the_character_list',
+                                    saved_heroes_at_start=len(self.baseline))
+        initial['expected_map_id'] = None
+        self.zoning_report['scope'] = 'stock_travel_hero_created_in_the_character_list'
+        # The same object, now with a creation's checks (the class only overrides methods).
+        self.__class__ = LocalCharacterZoningCreatedHeroServer
 
     def dynamic_initial_requested(self):
         """No zone server before Enter Game (the game's own travel, ARM64 client).
@@ -1342,16 +1437,104 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         if not self.initial_zone_pending():
             return None
         initial = self.dynamic_initial()
-        reason = None
-        if any(other != map_id for other in self.maps):
-            reason = 'initial_zone_already_starting'
-        elif initial['expected_map_id'] is not None and not same_zone(map_id, initial['expected_map_id']):
-            reason = 'not_the_saved_zone'
+        reason = choice = None
+        expected = initial['expected_map_id']
+        others = [other for other in self.maps if other != map_id]
+        different = expected is not None and not same_zone(map_id, expected)
+        # 0.13.87: the player may enter with another saved hero, or with one made in the character
+        # list. Only such a hero's own zone starts (other_hero_zone); anything else stays refused.
+        # The expected hero's zone, started beside the client and never asked for, makes way.
+        if others:
+            if different and self.early_zone_unrequested(others):
+                choice = self.other_hero_zone(map_id)
+            if choice is None:
+                reason = 'initial_zone_already_starting'
+            else:
+                self.stop_unrequested_early_zone(map_id)
+        elif different:
+            choice = self.other_hero_zone(map_id)
+            if choice is None:
+                reason = 'not_the_saved_zone'
+        if reason is None and choice is not None:
+            initial.setdefault('launch_expected_map_id', expected)
+            initial.update(expected_map_id=map_id, map_id=map_id, zone_choice=choice)
         if reason is not None:
             initial['refused_requests'].append({'map_id': map_id, 'reason': reason,
                                                 'utc_ms': int(time.time() * 1000)})
             del initial['refused_requests'][:-8]
         return reason
+
+    def other_hero_zone(self, map_id):
+        """Why the game may ask for a zone other than the expected hero's, or None.
+
+        'another_saved_hero': a hero read before login is saved there. 'new_hero': the account
+        has a row that was not there at the start (the DbServer writes it at Enter Game, before
+        it asks for the zone) whose start zone this is. The row can be a moment behind the
+        request, so it is looked for up to three seconds.
+        """
+        baselines = getattr(self, 'hero_baselines', None)
+        if baselines is None:
+            return None
+        if any(same_zone(map_id, entry['saved_position'].get('staticmapid')) for entry in baselines.values()
+               if type(entry['saved_position'].get('staticmapid')) is int):
+            return 'another_saved_hero'
+        if not self.created_hero_supported():
+            return None
+        known = {row['containerid'] for row in self.baseline}
+        deadline = time.monotonic() + NEW_HERO_ROW_SECONDS
+        while True:
+            try:
+                rows = self.sql_rows('ents', ('containerid', 'authname', 'staticmapid'), ('containerid',))
+            except base.Cancelled:
+                raise
+            except (base.DiagnosticError, OSError, ValueError):
+                rows = []
+            created = [row for row in rows if type(row) is dict and row.get('containerid') not in known
+                       and row.get('authname') == character.ACCOUNT]
+            if len(created) == 1 and type(created[0].get('staticmapid')) is int:
+                return 'new_hero' if same_zone(map_id, created[0]['staticmapid']) else None
+            if created or time.monotonic() >= deadline:
+                return None
+            time.sleep(0.5)
+
+    def early_zone_unrequested(self, others):
+        """Whether the only other zone server is the one started beside the client that the game never asked for."""
+        initial = self.dynamic_initial()
+        record = None if initial is None else initial.get('early_start')
+        if record is None or record.get('started') is not True or record.get('ended') is True or len(others) != 1:
+            return False
+        owned = self.maps.get(record['map_id'])
+        return (others[0] == record['map_id'] and owned is not None and owned.get('early') is True
+                and owned.get('early_requested_monotonic') is None)
+
+    def stop_unrequested_early_zone(self, requested_map_id):
+        """The zone started beside the client was the expected hero's; the game asked for another hero's.
+
+        It is stopped only if the game never asked for it. One zone loads at a time before the
+        first connection (0.13.57: two beside the client ended with Android closing the app).
+        """
+        initial = self.dynamic_initial()
+        record = None if initial is None else initial.get('early_start')
+        if record is None or record.get('started') is not True or record.get('ended') is True:
+            return False
+        map_id = record['map_id']
+        owned = self.maps.get(map_id)
+        if (owned is None or owned.get('early') is not True or owned.get('early_requested_monotonic') is not None
+                or same_zone(map_id, requested_map_id)):
+            return False
+        self.maps.pop(map_id, None)
+        if owned['process'].process.poll() is None:
+            owned['process'].process.terminate()
+        path = owned['progress_path']
+        if path.exists() or path.is_symlink():
+            path.rename(path.with_name(path.name + '.early-stopped'))
+        if self.map_process is owned['process']:
+            self.map_process = None
+        record.update(ended=True, stopped_for_map_id=requested_map_id, was_ready=owned.get('ready') is True,
+                      stopped_reason='the_player_chose_a_hero_in_another_zone',
+                      stopped_utc_ms=int(time.time() * 1000))
+        initial['zone_servers_before_enter_game'] = 0
+        return True
 
     def initial_zone_wait_seconds(self, now=None):
         """Seconds spent waiting for the first zone after the game asked for it (bounded)."""
@@ -1588,12 +1771,16 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 self._accept_delivery(value, now_ms)
                 self.pending['delivery']['native_station_departure'] = record
 
-    def character_position(self, *, allow_unassigned_active_map=False):
-        values = self.sql_rows('ents', ('containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'),
-                              ('containerid',), 'containerid=1')
-        require(len(values) == 1 and set(values[0]) == {'containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'},
+    def character_position(self, *, allow_unassigned_active_map=False, value=None, activate=True):
+        # value: the row read before login (capture_baseline reads every saved hero's). activate=False:
+        # the player chose this hero in the game, which has already started and entered its zone.
+        if value is None:
+            values = self.sql_rows('ents', ('containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'),
+                                   ('containerid',), 'containerid=' + str(self.CHARACTER_ID))
+            require(len(values) == 1, 'Zoning character position fields differ')
+            value = values[0]
+        require(type(value) is dict and set(value) == {'containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'},
                 'Zoning character position fields differ')
-        value = values[0]
         if (type(value.get('staticmapid')) is int and value['staticmapid'] not in MAPS
                 and value['staticmapid'] in zone_index.ZONES
                 and getattr(self, 'zone_asset_document', None) is not None):
@@ -1607,7 +1794,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                     and value['mapid'] not in zone_index.ZONES and value['mapid'] not in (1, 5, 101))
         inside = (instance and not allow_unassigned_active_map and mission_map(self.active_map_id)
                   and value['mapid'] == self.active_map_id)
-        require(type(value['containerid']) is int and value['containerid'] == 1
+        require(type(value['containerid']) is int and value['containerid'] == self.CHARACTER_ID
             and supported(value['staticmapid'])
             and (type(value['mapid']) is int and value['mapid'] == value['staticmapid']
                  or allow_unassigned_active_map and (value['mapid'] is None or instance) or inside)
@@ -1615,7 +1802,11 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                     for k in ('posx', 'posy', 'posz')), 'Saved character is outside the supported local zones')
         require(value['staticmapid'] != 5 or getattr(self, 'monorail_qualified', False) is True,
                 'Saved Kings Row character requires the verified monorail/zone package')
-        if allow_unassigned_active_map:
+        if allow_unassigned_active_map and not activate:
+            require(same_zone(self.active_map_id, value['staticmapid']),
+                    'The game started ' + zone_name(self.active_map_id) + ' for ' + character.character_label()
+                    + ', who is saved in ' + zone_name(value['staticmapid']) + '; nothing was moved; export this report')
+        elif allow_unassigned_active_map:
             self.active_map_id = value['staticmapid']
             self.monorail_requires_reopen = self.active_map_id == 101
             self.creation_report['map_id'] = self.active_map_id
@@ -1645,6 +1836,10 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         startup = self.zoning_report.get('saved_startup')
         initial = self.dynamic_initial()
         if initial is not None:
+            saved = self.creation_report['baseline']['saved_position'].get('staticmapid')
+            require(type(saved) is int and same_zone(self.active_map_id, saved),
+                    'The game started ' + zone_name(self.active_map_id) + ' for ' + character.character_label()
+                    + ', not the saved zone; nothing was moved; export this report')
             self.verify_initial_connection(initial)
             if startup is not None:
                 startup['character_world_entry_verified'] = True
@@ -2535,7 +2730,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         pending = self.pending
         target = pending['to_map_id']
         if result is not None and result[0] == 'arrival_character':
-            sample = character.evidence.parse_character_status(result[1], 1, character.CHARACTER, character.ACCOUNT)
+            sample = character.evidence.parse_character_status(result[1], self.CHARACTER_ID, character.CHARACTER,
+                                                               character.ACCOUNT)
             pending['arrival_character'] = sample
             if not connected(sample, target):
                 pending['observed_transition'] = True
@@ -2560,10 +2756,11 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 pending['next_query'] = time.monotonic() + 3
                 return
             pending.update(arrival_map=sample, arrival_native=native)
-            self._query_start(['-getstatus', '3', '1'], 'arrival_final_character')
+            self._query_start(['-getstatus', '3', str(self.CHARACTER_ID)], 'arrival_final_character')
             return
         if result is not None and result[0] == 'arrival_final_character':
-            sample = character.evidence.parse_character_status(result[1], 1, character.CHARACTER, character.ACCOUNT)
+            sample = character.evidence.parse_character_status(result[1], self.CHARACTER_ID, character.CHARACTER,
+                                                               character.ACCOUNT)
             current = self._map_progress(target)
             if not connected(sample, target) or not self.live_progress(current):
                 pending['observed_transition'] = True
@@ -2625,7 +2822,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 pending['arrival_native'] = native
                 self._query_start(['-getstatus', '1', str(target)], 'arrival_map')
             else:
-                self._query_start(['-getstatus', '3', '1'], 'arrival_character')
+                self._query_start(['-getstatus', '3', str(self.CHARACTER_ID)], 'arrival_character')
 
     def tick_zoning(self):
         if not self.creation_report.get('connected_on_atlas') or not self.creation_report.get('client_pid'):
@@ -2849,7 +3046,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             return None
         try:
             sample = character.evidence.parse_character_status(
-                self.query(['-getstatus', '3', '1'], 'stock-occupied'), 1, character.CHARACTER, character.ACCOUNT,
+                self.query(['-getstatus', '3', str(self.CHARACTER_ID)], 'stock-occupied'), self.CHARACTER_ID,
+                character.CHARACTER, character.ACCOUNT,
                 allow_missing=True)
         except base.Cancelled:
             raise
@@ -3696,12 +3894,36 @@ class LocalCharacterZoningCreationServer(LocalCharacterZoningServer):
         character.LocalCharacterServer.collect(self, target)
 
 
+class LocalCharacterZoningCreatedHeroServer(LocalCharacterZoningCreationServer):
+    """A Play session whose player made a new hero in the game's character list (0.13.87).
+
+    LocalCharacterZoningServer.adopt_created_hero turns the running session into this class
+    when the new hero resumes in its starting zone. The saved heroes were read before login
+    and stay the baseline: the new row must be the only change to the account's inventory.
+    The report keeps the session's key; the proof says created_in_session.
+    """
+    REPORT_KEY = 'character_reopen'
+
+    def session_identity(self, inventory):
+        return character.LocalCharacterServer.session_identity(self, inventory)
+
+    def observe_chosen_hero(self):
+        return False
+
+    def connection_metadata(self):
+        return dict(super().connection_metadata(), created_in_session=True)
+
+    def saved_metadata(self, snapshot):
+        return dict(super().saved_metadata(snapshot), created_in_session=True,
+                    saved_heroes_unchanged=len(self.baseline))
+
+
 def creation_identity(proof, session):
     """A new character connected in the starting zone the game started (stock travel)."""
     return (isinstance(proof, dict) and proof.get('session_id') == session
         and character.valid_character_name(proof.get('name')) and proof.get('name') == character.CHARACTER
         and proof.get('account') == 'COHLOCAL'
-        and type(proof.get('character_id')) is int and proof['character_id'] == 1
+        and type(proof.get('character_id')) is int and proof['character_id'] == character.HERO_ID
         and type(proof.get('auth_id')) is int and 0 < proof['auth_id'] <= 4294967295
         and type(proof.get('map_id')) is int and 1 <= proof['map_id'] <= 999 and supported(proof['map_id'])
         and all(proof.get(key) is True for key in ('connected_on_atlas', 'connected_on_supported_map',
@@ -3719,14 +3941,14 @@ def character_identity(proof, session):
     return (isinstance(proof, dict) and proof.get('session_id') == session
         and character.valid_character_name(proof.get('name')) and proof.get('name') == character.CHARACTER
         and proof.get('account') == 'COHLOCAL'
-        and type(proof.get('character_id')) is int and proof['character_id'] == 1
+        and type(proof.get('character_id')) is int and proof['character_id'] == character.HERO_ID
         and type(proof.get('auth_id')) is int and proof['auth_id'] > 0 and supported(proof.get('map_id'))
         # King's Row needs its verified package: the station monorail, or the
         # game's own travel, whose supervisor starts it only from that package
         # (zone_tree_for). Thor 0.13.56: arrival by stock monorail ended here.
         and (proof['map_id'] != 5 or proof.get('monorail_enabled') is True or proof.get('stock_travel') is True)
-        and type(proof.get('before_character_id')) is int and proof['before_character_id'] == 1
-        and type(proof.get('baseline_character_id')) is int and proof['baseline_character_id'] == 1
+        and type(proof.get('before_character_id')) is int and proof['before_character_id'] == character.HERO_ID
+        and type(proof.get('baseline_character_id')) is int and proof['baseline_character_id'] == character.HERO_ID
         and all(proof.get(k) is True for k in ('zoning_enabled', 'connected_on_atlas',
             'connected_on_supported_map', 'existing_character_verified', 'reopen_verified',
             'preserved_existing_identity', 'native_client_ready_observed')))

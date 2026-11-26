@@ -98,9 +98,12 @@ class SessionBudget:
     def identity(self, proof):
         require(isinstance(proof, dict) and proof.get('session_id') == self.session_id
                 and type(proof.get('client_pid')) is int and proof['client_pid'] == self.client_pid
-                and type(proof.get('character_id')) is int and proof['character_id'] == 1
-                and type(proof.get('before_character_id')) is int and proof['before_character_id'] == 1
-                and type(proof.get('baseline_character_id')) is int and proof['baseline_character_id'] == 1
+                # 0.13.87: any hero of the account, the same one in all three places.
+                and type(proof.get('character_id')) is int and 0 < proof['character_id'] <= 2147483647
+                and type(proof.get('before_character_id')) is int
+                and proof['before_character_id'] == proof['character_id']
+                and type(proof.get('baseline_character_id')) is int
+                and proof['baseline_character_id'] == proof['character_id']
                 and type(proof.get('map_id')) is int
                 # 0.13.84: or a mission map of this session (the zoning server marks the proof on
                 # arrival and clears the mark on the way out). CI probe 45510289790 ended here on
@@ -177,7 +180,7 @@ class SessionBudget:
                 and type(receipt['format']) is int and receipt['format'] == 1
                 and receipt['session_id'] == self.session_id
                 and type(receipt['client_pid']) is int and receipt['client_pid'] == self.client_pid
-                and type(receipt['character_id']) is int and receipt['character_id'] == 1
+                and type(receipt['character_id']) is int and receipt['character_id'] == proof.get('character_id')
                 and receipt['action'] == 'stuck' and utc_milliseconds(receipt['sent_utc_ms'])
                 and utc_milliseconds(ready_ms) and ready_ms <= receipt['sent_utc_ms']
                 and 0 <= now_utc_ms - receipt['sent_utc_ms'] <= RECOVERY_MAX_AGE_MS,
