@@ -57,6 +57,72 @@ public final class ClientZoning {
         if(!pending.renameTo(other))throw new java.io.IOException("The other hero is now the saved hero, but the first one stayed in "+pending.getName()+". Export a report.");
         return "Switched to the hero from the other slot.";
     }
+    /** 0.13.86 (owner, 2026-11-25): the menu says what is happening in plain words. The checks a session
+     *  makes ("check complete", "verified", captures) stay in the report; they are shown only with
+     *  "Show test details and tools" ticked. Returns {status, detail}; an unknown status passes unchanged. */
+    public static String[] plainStatus(String stage,String detail){
+        String s=stage==null?"":stage,d=detail==null?"":detail;
+        final String report=" A report of this session is kept under Reports / export.";
+        if(s.endsWith(" check complete"))return new String[]{"Session finished","Your hero is saved."+report};
+        if(s.endsWith(" check incomplete"))return new String[]{"Session finished","The game is closed and your hero's last save is kept."+report};
+        if(s.endsWith(" check stopped"))return new String[]{"Session stopped","The game was stopped. Your hero's last save is kept."+report};
+        if(s.endsWith(" check failed")){
+            String reason=d;int cut=reason.indexOf(" check failed. ");
+            if(cut>=0)reason=reason.substring(cut+" check failed. ".length());
+            reason=reason.replace("Export the latest report.","").trim();
+            return new String[]{"Session ended with a problem",(reason.isEmpty()?"":reason+" ")+"Your hero's last save is kept."+report};
+        }
+        switch(s){
+            case "Starting City of Heroes":return new String[]{s,"Starting the local server and the game. This can take a minute or two."};
+            case "Client window observed":return new String[]{"Game window open","The game is starting."};
+            case "Client ready for input":
+            case "Local server login observed":
+            case "Local login verified":
+            {
+                // A first hero is made in the game's creator; a saved one is chosen from the game's list.
+                String next=d.contains("Create your character")
+                    ?"create your hero. After Enter Game the first zone can take a few minutes to load."
+                    :"choose your hero and click Enter Game.";
+                return new String[]{s.startsWith("Client")?"Game ready":"Logged in",s.startsWith("Client")
+                    ?"Log in as COHLOCAL (offline), then "+next:Character.toUpperCase(next.charAt(0))+next.substring(1)};
+            }
+            case "Saved destination verified":return new String[]{"Hero found",sentence(d)};
+            case "Character connected":
+            case "Ready for zone travel":
+            case "Atlas ready for task check":
+            case "Atlas connected for startup timing":{
+                String who=sentence(d).replace(" connected to "," is in ");
+                if(!who.contains(" is in "))who="";
+                return new String[]{"In the game",(who.isEmpty()?"":who+" ")+"Play as long as you like. When you are done, tap Save character / log out, then Finish."};
+            }
+            case "Destination view captured":return new String[]{"Arrived",d.replace(" · movement available","")};
+            case "Saving character":
+            case "Waiting for saved character":return new String[]{"Saving","Logging out and saving your hero. Keep the controls released for a moment."};
+            case "Character saved":return new String[]{"Saved","Your hero is saved. One moment…"};
+            case "Saved character verified":return new String[]{"Saved","Your hero is saved. Tap Finish to close the game."};
+            case "Stand still before saving":return new String[]{"Time to save","Release the controls, then tap Save character / log out."};
+            case "Save window expired":return new String[]{"Save did not finish","The save was not sent in time. Tap Abort operation; your hero's last save is kept."};
+            case "Finishing session":return new String[]{"Closing","Closing the game and the local server."};
+            case "Session ownership not verified":return new String[]{"Save not available yet","The game has not confirmed this session yet. If Save stays greyed out, log out from the game's own menu and tap Abort operation."};
+            case "FPS command sent":return new String[]{"FPS setting sent",d};
+            case "Returning to safe ground":return new String[]{s,"Stay still for about half a minute while the game moves your hero to safe ground."};
+            case "Stable Atlas position observed":
+            case "Atlas position verified":return new String[]{"On safe ground","Release the controls, then tap Save character / log out when you are ready."};
+            default:return new String[]{s,d};
+        }
+    }
+    /** The first sentence of a detail line (it names the hero and the zone). */
+    private static String sentence(String text){
+        int end=text.indexOf(". ");
+        return end<0?text:text.substring(0,end+1);
+    }
+    /** The line under the status: only what the player has to act on (a time limit applies to a first hero only). */
+    public static String plainTiming(boolean inputReady,boolean saved,long readyRemaining,boolean readyLimited,long saveRemaining,long moveRemaining,boolean saveLimited){
+        if(!inputReady||saved)return "";
+        if(saveLimited)return saveRemaining==0?"The time to save has run out.":moveRemaining==0
+                ?"Stand still and save within "+saveRemaining+" s.":"Save within "+saveRemaining+" s.";
+        return readyLimited?"Time left for this first session: "+readyRemaining+" s.":"";
+    }
     /** maps.db static zones (ids 1-999, Atlas Park instance 2 is 101). */
     public static boolean staticZone(long map){return map>=1&&map<=999;}
     /**

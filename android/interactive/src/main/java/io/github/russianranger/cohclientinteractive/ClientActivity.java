@@ -80,6 +80,8 @@ public final class ClientActivity extends Activity {
     private final Runnable hideLayer=()->{if(layerBanner!=null)layerBanner.animate().alpha(0f).setDuration(250).start();};
     private boolean bound,exporting,captureEnabled,importWaiting;
     private Button startTest,stopTest;
+    private CheckBox testDetails;
+    private LinearLayout testTools;
     private TextView assetPackStatus,navigationMapStatus;
     private boolean assetStatusChecking,assetStatusLoaded,assetStatusDirty;
     private String pendingExport,pendingAction,shownSession="";
@@ -156,13 +158,26 @@ public final class ClientActivity extends Activity {
     /** Play: the commands of an ordinary session, in the order they are used. */
     private void buildPlayPage(LinearLayout controls){
         resumeGame=button("Resume game",()->setMenuOpen(false));resumeGame.setEnabled(false);controls.addView(resumeGame);
-        run=button("Reopen saved character",()->request(ClientService.RUN));controls.addView(run);
+        run=button("Play",()->request(ClientService.RUN));controls.addView(run);
         createFresh=button("Create fresh character",this::confirmFreshProfile);createFresh.setVisibility(View.GONE);controls.addView(createFresh);
-        resumeCreation=button("Resume first character creation",this::confirmResumeCreation);resumeCreation.setVisibility(View.GONE);controls.addView(resumeCreation);
         profileStatus=text("Checking saved character profile…",12,false);controls.addView(profileStatus);
-        controls.addView(text("Reopen starts in the character's saved destination. Sign in as COHLOCAL (offline).",12,false));
+        controls.addView(text("Play starts in your hero's saved zone. Sign in as COHLOCAL (offline).",12,false));
         typeText=button("Send text / L3",this::showTextInput);controls.addView(typeText);
         enterKey=button("Enter / Start",this::sendEnter);controls.addView(enterKey);
+        saveLogout=button("Save character / log out",this::saveCharacter);controls.addView(saveLogout);
+        finish=button("Finish",()->{releaseControls();if(service!=null)service.requestFinish();});controls.addView(finish);
+        export=button("Reports / export",this::chooseExport);controls.addView(export);
+        controls.addView(text("Travel",15,true));
+        zoningStatus=text("Start Play to travel.",12,false);controls.addView(zoningStatus);
+        travelZone=button("Return from old Atlas instance",this::travelToZone);travelZone.setVisibility(View.GONE);controls.addView(travelZone);
+        returnGround=button("Return to safe ground (optional)",()->{releaseControls();if(service!=null)service.requestReturnToSafeGround();});controls.addView(returnGround);
+        stop=button("Abort operation",()->{movementSuppressed=true;releaseControls();refreshMovementControls();if(service!=null)startService(new Intent(this,ClientService.class).setAction(ClientService.STOP));});controls.addView(stop);
+        controls.addView(text("When ready to save, release controls, tap Save character / log out, wait until the status says Saved, then tap Finish. Show FPS and the FPS caps are on the Options tab. Reports / export makes the ZIP of a session.",12,false));
+    }
+    /** 0.13.86 (owner, 2026-11-25): Show FPS and the frame caps sit at the top of the Options tab. */
+    private void addFpsControls(LinearLayout controls){
+        controls.addView(text("Frame rate",15,true));
+        controls.addView(text("These work while your hero is in the game.",12,false));
         showFps=button("Show FPS",()->sendPerformanceCommand(ClientInput.PerformanceCommand.SHOW_FPS));controls.addView(showFps);
         LinearLayout fpsRow=new LinearLayout(this);
         fps10=button("10 FPS",()->sendPerformanceCommand(ClientInput.PerformanceCommand.FPS_10));
@@ -171,19 +186,12 @@ public final class ClientActivity extends Activity {
         fpsRow.addView(fps10,new LinearLayout.LayoutParams(0,-2,1));
         fpsRow.addView(fps30,new LinearLayout.LayoutParams(0,-2,1));
         fpsRow.addView(fps60,new LinearLayout.LayoutParams(0,-2,1));controls.addView(fpsRow);
-        saveLogout=button("Save character / log out",this::saveCharacter);controls.addView(saveLogout);
-        finish=button("Finish and save report",()->{releaseControls();if(service!=null)service.requestFinish();});controls.addView(finish);
-        export=button("Reports / export",this::chooseExport);controls.addView(export);
-        controls.addView(text("Travel",15,true));
-        zoningStatus=text("Reopen your character to travel.",12,false);controls.addView(zoningStatus);
-        travelZone=button("Return from old Atlas instance",this::travelToZone);travelZone.setVisibility(View.GONE);controls.addView(travelZone);
-        returnGround=button("Return to safe ground (optional)",()->{releaseControls();if(service!=null)service.requestReturnToSafeGround();});controls.addView(returnGround);
-        stop=button("Abort operation",()->{movementSuppressed=true;releaseControls();refreshMovementControls();if(service!=null)startService(new Intent(this,ClientService.class).setAction(ClientService.STOP));});controls.addView(stop);
-        controls.addView(text("When ready to save, release controls, tap Save character / log out, wait for Saved character verified, then Finish and save report. Reports / export makes the ZIP for a test report.",12,false));
     }
     /** Options: one line that says whether anything is off the recommended settings, then four categories
      *  (owner, 2026-11-24): Recommended, Optional, Test, Experimental. */
     private void buildOptionsPage(LinearLayout controls){
+        addFpsControls(controls);
+        controls.addView(text("Launch options",15,true));
         // 0.13.76: Thor 0.13.75 ran four launches with one option left unticked by an earlier test.
         recommendedStatus=text("Checking options…",12,true);controls.addView(recommendedStatus);
         controls.addView(button("Restore recommended options",this::restoreRecommendedOptions));
@@ -374,6 +382,8 @@ public final class ClientActivity extends Activity {
         controls.addView(text("Saved hero",15,true));
         controls.addView(text("The app keeps one saved hero, plus one more in a second slot. Switching swaps them; nothing is deleted. With an empty second slot the saved hero is set aside and Create fresh character appears on the Play tab, for example to make a Primalist.",12,false));
         switchHero=button("Switch hero slot",this::confirmSwitchHero);controls.addView(switchHero);
+        resumeCreation=button("Resume first character creation",this::confirmResumeCreation);resumeCreation.setVisibility(View.GONE);controls.addView(resumeCreation);
+        controls.addView(text("Resume first character creation is only for a first hero whose creation was interrupted before it was saved.",12,false));
         controls.addView(text("Controller and options button",15,true));
         controls.addView(button("Controller mappings",this::controllerDialog));
         controls.addView(text("Default controller: Left stick: WASD · X: jump · Right stick: cursor · A: click/talk · B: Esc · Shoulders: right click / turn view · D-pad: arrows · L3: text · Start: Enter. Triggers are unbound. The COH power trays preset adds hold LT for 1–0 and Select for this menu; Back or the gear also opens it.",12,false));
@@ -382,6 +392,15 @@ public final class ClientActivity extends Activity {
         controls.addView(text("Reports and storage",15,true));
         recoverReports=button("Recover interrupted reports",()->{if(service!=null)startForegroundService(new Intent(this,ClientService.class).setAction(ClientService.RECOVER_REPORTS));});controls.addView(recoverReports);
         storage=button("Storage and cleanup",this::showStorage);controls.addView(storage);
+        // 0.13.86 (owner, 2026-11-25): what a session checks is recorded in its report, not shown in the menu.
+        // This box brings the check wording, the counters, the log and the test buttons back for a test sheet.
+        testDetails=new CheckBox(this);testDetails.setText("Show test details and tools");
+        testDetails.setTextColor(Color.rgb(221,234,245));testDetails.setTextSize(13);
+        testDetails.setChecked(controlsPreferences.getBoolean(CONTROLS_PREFIX+"test_details",false));
+        testDetails.setOnCheckedChangeListener((button,checked)->{controlsPreferences.edit().putBoolean(CONTROLS_PREFIX+"test_details",checked).apply();applyTestDetails();});
+        controls.addView(testDetails);
+        final LinearLayout page=controls;
+        controls=new LinearLayout(this);controls.setOrientation(LinearLayout.VERTICAL);testTools=controls;page.addView(controls);
         controls.addView(text("Test tools",15,true));
         controls.addView(text("Tap Start test when ready and Stop test when finished; neither starts a countdown.",12,false));
         startTest=button("Start test",()->{if(service!=null)service.startManualTest();});controls.addView(startTest);
@@ -395,8 +414,21 @@ public final class ClientActivity extends Activity {
         addMovementRow(controls,"Forward",'w',"Back",'s',120001);
         addMovementRow(controls,"Left",'a',"Right",'d',120003);
         controls.addView(movementButton("Jump",' ',120005));
-        controls.addView(text("First time: import every asset-pack part, tap Set up / update runtime, then on the Play tab create your character (one per install; sign in as COHLOCAL, offline) and save it once. After an interruption use Recover interrupted reports; Reopen resumes from the last verified save.",12,false));
         logs=text("",10,false);logs.setTypeface(Typeface.MONOSPACE);logs.setTextIsSelectable(true);controls.addView(logs);
+        page.addView(text("First time: import every asset-pack part, tap Set up / update runtime, then on the Play tab create your character (sign in as COHLOCAL, offline) and save it once. After an interruption use Recover interrupted reports; Play resumes from the last save.",12,false));
+        applyTestDetails();
+    }
+    private boolean testDetailsShown(){return testDetails!=null&&testDetails.isChecked();}
+    private void applyTestDetails(){
+        boolean shown=testDetailsShown();
+        if(testTools!=null)testTools.setVisibility(shown?View.VISIBLE:View.GONE);
+        if(state!=null){showStatus(state);updateCounter();}
+    }
+    /** The two lines above the tabs: plain words, or the session's own check wording with test details shown. */
+    private void showStatus(ClientService.State next){
+        String stage=next.storageBusy?"Storage":next.stage,line=next.storageBusy?next.storageStatus:next.detail;
+        if(!testDetailsShown()&&!next.storageBusy){String[] plain=ClientZoning.plainStatus(stage,line);stage=plain[0];line=plain[1];}
+        setTextIfChanged(status,stage);setTextIfChanged(detail,line);
     }
     private void category(LinearLayout parent,String name,String note){parent.addView(text(name,15,true));parent.addView(text(note,12,false));}
     private void selectTab(int index){
@@ -483,7 +515,7 @@ public final class ClientActivity extends Activity {
     }
     private void refreshZoningControls(){
         boolean available=inputActive&&service!=null&&state!=null&&!textDialogVisible&&hasWindowFocus();
-        if(zoningStatus!=null)setTextIfChanged(zoningStatus,service==null?"Reopen your character to travel.":service.zoningStatus());
+        if(zoningStatus!=null)setTextIfChanged(zoningStatus,service==null?"Start Play to travel.":service.zoningStatus());
         if(travelZone!=null){
             boolean legacy=service!=null&&service.zoningCurrentMap()==101;
             travelZone.setVisibility(legacy?View.VISIBLE:View.GONE);
@@ -583,7 +615,7 @@ public final class ClientActivity extends Activity {
     private void confirmFreshProfile(){
         if(!canCreateFreshProfile(state))return;
         new AlertDialog.Builder(this).setTitle("Create fresh character?")
-                .setMessage("This installation has no saved profile. Runtime setup and asset import do not restore a character database deleted by uninstalling. Start native character creation using your current runtime and imported assets, log in with COHLOCAL / offline and create your character, with any name the game accepts, as a hero, villain or Praetorian. With the game's own zone travel the game starts its starting zone after Enter Game (Atlas Park, Mercy Island, Nova Praetoria or a tutorial). Save character / log out, then Finish and export. Reopen saved character resumes in the zone it was saved in.")
+                .setMessage("This installation has no saved profile. Runtime setup and asset import do not restore a character database deleted by uninstalling. Start native character creation using your current runtime and imported assets, log in with COHLOCAL / offline and create your character, with any name the game accepts, as a hero, villain or Praetorian. With the game's own zone travel the game starts its starting zone after Enter Game (Atlas Park, Mercy Island, Nova Praetoria or a tutorial). Save character / log out, then Finish and export. Play resumes in the zone it was saved in.")
                 .setNegativeButton("Cancel",null).setPositiveButton("Start character creation",(dialog,which)->{
                     // The profile or operation may change while this confirmation is open.
                     if(canCreateFreshProfile(state))request(ClientService.CREATE);
@@ -592,7 +624,7 @@ public final class ClientActivity extends Activity {
     private void confirmResumeCreation(){
         if(!canResumeFirstCreation(state))return;
         new AlertDialog.Builder(this).setTitle("Resume first character creation?")
-                .setMessage("Continue the first creation attempt using the existing initialized profile and imported assets. The database is preserved. Startup checks its real character rows. A character that was created but never entered the game (its first zone did not start) is removed first, and the report keeps a copy of its rows; any other existing character makes this request stop before the game opens. If your character was already saved, use Reopen saved character. Log in with COHLOCAL / offline, create your character (any name the game accepts), then Save character / log out and Finish and export.")
+                .setMessage("Continue the first creation attempt using the existing initialized profile and imported assets. The database is preserved. Startup checks its real character rows. A character that was created but never entered the game (its first zone did not start) is removed first, and the report keeps a copy of its rows; any other existing character makes this request stop before the game opens. If your character was already saved, use Play. Log in with COHLOCAL / offline, create your character (any name the game accepts), then Save character / log out and Finish and export.")
                 .setNegativeButton("Cancel",null).setPositiveButton("Resume first creation",(dialog,which)->{
                     if(canResumeFirstCreation(state))request(ClientService.RESUME_FIRST_CREATION);
                 }).show();
@@ -605,11 +637,10 @@ public final class ClientActivity extends Activity {
         if(next.busy)assetStatusDirty=true;
         if(!next.busy&&!next.storageBusy&&!assetStatusChecking&&(!assetStatusLoaded||assetStatusDirty))refreshAssetPackStatus();
         if(next.busy&&next.session.isEmpty())display.clearFrames();
-        state=next;refreshTestControls();setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
+        state=next;refreshTestControls();showStatus(next);setTextIfChanged(logs,next.log);updateCounter();
         recoverReports.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&!ClientRuntime.operationInProgress());
         boolean diagnostics=diagnosticControlsReady(next,service!=null,exporting,ClientRuntime.operationInProgress());
         boolean idle=diagnostics&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);refreshHeroSlotControl(next);performanceGraphics.setEnabled(idle);prootFastMode.setEnabled(idle);prestartNextZone.setEnabled(idle);trustedBins.setEnabled(idle);gameplay60.setEnabled(idle);idleResidentMaps.setEnabled(idle);sharedServerData.setEnabled(idle);clientSkipServerFolders.setEnabled(idle);clientFolderIndex.setEnabled(idle);clientAudio.setEnabled(idle);sharedHeap.setEnabled(idle);stockTravel.setEnabled(idle);earlyZone.setEnabled(idle);spareZone.setEnabled(idle);glDirect.setEnabled(idle);gpuProfile.setEnabled(idle);clientArchitecture.setEnabled(idle);storage.setEnabled(diagnostics);refreshAbortControl(next);export.setEnabled(diagnostics);
-        if(next.storageBusy){setTextIfChanged(status,"Storage");setTextIfChanged(detail,next.storageStatus);}
         if(storageDialogRequested&&diagnostics){storageDialogRequested=false;showStorage();}
         if(!next.session.isEmpty()&&!next.session.equals(shownSession)){releaseControls();shownSession=next.session;movementSuppressed=false;deadlineMovementSuppressed=false;display.setSession(shownSession);}
         boolean enabled=next.busy&&next.inputReady&&!next.finishing&&!next.blocked;
@@ -632,6 +663,14 @@ public final class ClientActivity extends Activity {
     private void updateCounter(){
         if(state==null||counter==null)return;
         long remaining=state.readyDeadlineUptimeMillis>0?Math.max(0,(state.readyDeadlineUptimeMillis-SystemClock.uptimeMillis()+999)/1000):0;
+        if(!testDetailsShown()){
+            long now=SystemClock.uptimeMillis();
+            String line=ClientZoning.plainTiming(state.inputReady,state.characterSaved,remaining,state.readyDeadlineUptimeMillis>0,
+                    Math.max(0,(state.saveDeadlineUptimeMillis-now+999)/1000),Math.max(0,(state.movementDeadlineUptimeMillis-now+999)/1000),
+                    state.saveDeadlineUptimeMillis>0);
+            setTextIfChanged(counter,line);counter.setVisibility(line.isEmpty()?View.GONE:View.VISIBLE);return;
+        }
+        counter.setVisibility(View.VISIBLE);
         String timing="";
         if(state.inputReady){
             long now=SystemClock.uptimeMillis();

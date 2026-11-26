@@ -997,12 +997,34 @@ public final class ClientRuntime {
             sample.put("thermal_headroom_10s", thermalHeadroom(context));
             sample.put("zoning_phase", zoning.phase());
             sample.put("current_map_id", zoning.currentMap());
+            sample.putAll(systemMemorySample(context));
         } catch (RuntimeException | OutOfMemoryError unavailable) { return; }
         synchronized (this) {
             sample.put("operation_uptime_ms", startedUptime > 0 ? SystemClock.uptimeMillis() - startedUptime : null);
             if (thermalSamples.size() < THERMAL_SAMPLE_LIMIT) thermalSamples.add(sample);
             else thermalSamplesTruncated = true;
         }
+        // The samples only explain a low-memory stop by Android if they
+        // outlive the process, so every sample is carried by a checkpoint.
+        checkpoint();
+    }
+    /** What Android says is free for the whole device; a stop for low memory is read against these. */
+    static Map<String, Object> systemMemorySample(Context context) {
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("system_memory_available_bytes", null);
+        result.put("system_memory_threshold_bytes", null);
+        result.put("system_memory_low", null);
+        try {
+            android.app.ActivityManager manager = (android.app.ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            if (manager != null) {
+                android.app.ActivityManager.MemoryInfo memory = new android.app.ActivityManager.MemoryInfo();
+                manager.getMemoryInfo(memory);
+                result.put("system_memory_available_bytes", memory.availMem);
+                result.put("system_memory_threshold_bytes", memory.threshold);
+                result.put("system_memory_low", memory.lowMemory);
+            }
+        } catch (RuntimeException unavailable) { result.put("system_memory_error", unavailable.getClass().getSimpleName()); }
+        return result;
     }
     private synchronized JSONObject thermalSamplesReport() {
         JSONArray rows = new JSONArray();
@@ -2503,7 +2525,7 @@ public final class ClientRuntime {
                 if (characterSamples.size() == 3) {
                     characterSavedReady = true;
                     retainCheckpointPng(saved,characterPngs.get(characterPngs.size()-1));recordLifecycle("character_saved_views_verified");
-                    stage("Saved character verified", who() + " was committed to the local database and three fresh Android views were captured. Tap Finish and save report.");
+                    stage("Saved character verified", who() + " was committed to the local database and three fresh Android views were captured. Tap Finish.");
                     notifyInputState();
                 }
             }

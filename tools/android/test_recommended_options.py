@@ -200,17 +200,33 @@ class OptionCategories(unittest.TestCase):
                         activity.index('LinearLayout tabRow=new LinearLayout(this);'))
         start = activity.index('    private void buildPlayPage(LinearLayout controls){')
         play = activity[start:activity.index('\n    }\n', start)]
-        order = ['resumeGame=button(', 'run=button("Reopen saved character"', 'typeText=button(', 'enterKey=button(',
-                 'showFps=button(', 'saveLogout=button(', 'finish=button(', 'export=button(', 'returnGround=button(',
+        order = ['resumeGame=button(', 'run=button("Play"', 'typeText=button(', 'enterKey=button(',
+                 'saveLogout=button(', 'finish=button("Finish"', 'export=button(', 'returnGround=button(',
                  'stop=button(']
         places = [play.index(item) for item in order]
         self.assertEqual(places, sorted(places))
         self.assertNotIn('CheckBox', play)
+        # 0.13.86 (owner, 2026-11-25): Show FPS and the caps are the first thing on the Options tab.
+        self.assertNotIn('showFps', play)
+        start = activity.index('    private void buildOptionsPage(LinearLayout controls){')
+        options = activity[start:activity.index('\n    }\n', start)]
+        self.assertLess(options.index('addFpsControls(controls);'), options.index('recommendedStatus=text('))
+        start = activity.index('    private void addFpsControls(LinearLayout controls){')
+        fps = activity[start:activity.index('\n    }\n', start)]
+        for item in ('showFps=button("Show FPS"', 'fps10=button(', 'fps30=button(', 'fps60=button('):
+            self.assertEqual(fps.count(item), 1, item)
         start = activity.index('    private void buildSetupPage(LinearLayout controls){')
         setup = activity[start:activity.index('\n    }\n', start)]
         for item in ('setup=button(', 'importAssets=button(', 'button("Controller mappings"', 'recoverReports=button(',
-                     'storage=button(', 'startTest=button(', 'captureContact=button(', 'logs=text('):
+                     'storage=button(', 'startTest=button(', 'captureContact=button(', 'logs=text(',
+                     'resumeCreation=button('):
             self.assertEqual(setup.count(item), 1, item)
+        # The test buttons, the counters and the log sit in a group that is hidden unless its box is ticked.
+        self.assertLess(setup.index('testDetails=new CheckBox(this);'), setup.index('testTools=controls;'))
+        self.assertLess(setup.index('testTools=controls;'), setup.index('startTest=button('))
+        self.assertIn('controlsPreferences.getBoolean(CONTROLS_PREFIX+"test_details",false)', setup)
+        self.assertIn('if(testTools!=null)testTools.setVisibility(shown?View.VISIBLE:View.GONE);', activity)
+        self.assertIn('if(!testDetailsShown()&&!next.storageBusy){String[] plain=ClientZoning.plainStatus(stage,line);', activity)
         # Only the chosen page is shown, and the choice is remembered.
         select = activity[activity.index('    private void selectTab(int index){'):]
         select = select[:select.index('\n    }\n')]

@@ -247,13 +247,15 @@ class SidebarCommandTests(unittest.TestCase):
             'private void controllerCommand(', 'private boolean controllerCaptures(', 'private void refreshControllerCapture(',
             'private boolean controllerKey(')]
         start = text.index('        typeText=button("Send text / L3"')
-        # 0.13.83: the commands sit on the Play tab; Save / log out follows the FPS row there.
+        # 0.13.83: the commands sit on the Play tab. 0.13.86: Show FPS and the caps are built for the Options tab.
         end = text.index('        saveLogout=button("Save character / log out"', start)
+        fps = text.index('        showFps=button("Show FPS"')
+        fps_end = text.index('\n    }\n', fps)
         cls.directory = tempfile.TemporaryDirectory(prefix='coh-sidebar-ui-')
         cls.path = Path(cls.directory.name)
         host = cls.path/'SidebarHost.java'
         host.write_text(HOST.replace('PRODUCTION_METHODS', '\n'.join(methods))
-            .replace('BUILD_CONTROLS', text[start:end]))
+            .replace('BUILD_CONTROLS', text[start:end] + text[fps:fps_end]))
         subprocess.run(['java', '-m', 'jdk.compiler/com.sun.tools.javac.Main', '--release', '8',
             '-d', str(cls.path), str(JAVA/'ClientInput.java'), str(JAVA/'ControllerInput.java'),
             str(JAVA/'ControllerBridge.java'), str(host)],
