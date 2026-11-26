@@ -1360,7 +1360,7 @@ def ci_notice(result):
 
 
 def run_session(command, work, evidence, proot, session, runtime_manifest, client_manifest,
-                deadline, reopening=False, second_hero=False):
+                deadline, reopening=False, second_hero=False, heroes=1):
     evidence.mkdir(parents=True)
     isolated, environment, expected_network = runtime_host.runtime.isolate_command(
         command, evidence=evidence, proot=proot, work=work)
@@ -1416,7 +1416,8 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
             if reopening:
                 finish_request = observer.get('interaction_script', {}).get('finish_request')
                 require(finish_request is not None, 'Missing host explicit-finish request')
-                reopen.validate_report(projected, session, checked_manifest, finish_request=finish_request)
+                reopen.validate_report(projected, session, checked_manifest, finish_request=finish_request,
+                                       heroes=heroes)
             else:
                 character.validate_report(projected, session, checked_manifest)
             if not reopening:
@@ -1641,7 +1642,7 @@ def main():
                 try:
                     probe_report = run_session(probe_command, args.work, args.evidence / label, args.proot,
                                                session, runtime_manifest, client_manifest, deadline,
-                                               reopening=True, second_hero=made)
+                                               reopening=True, second_hero=made, heroes=1 if made else 2)
                 finally:
                     character.CHARACTER = first_hero
                 summary[label] = heroes_probe_validate(probe_report, created=made)

@@ -376,7 +376,9 @@ def validate_world_supplement(report, manifest):
             'World private-cache refresh receipt is incomplete or unbounded')
 
 
-def validate_report(report, session, manifest, *, finish_request=None):
+def validate_report(report, session, manifest, *, finish_request=None, heroes=1):
+    # heroes (0.13.87): how many heroes the account held at the start; the session follows one of them.
+    require(type(heroes) is int and 1 <= heroes <= 36, 'Invalid expected hero count')
     require(report.get('scope') == 'actual_character_reopen_guest'
             and report.get('diagnostic_mode') == 'actual_character_reopen', 'Wrong reopen report scope')
     # Retain every creation-mode startup, current-client, ordinary logout,
@@ -389,11 +391,12 @@ def validate_report(report, session, manifest, *, finish_request=None):
     local = report['local_login']
     proof = report['character_reopen']
     baseline = proof.get('baseline', {})
-    require(local.get('profile_reused') is True and local.get('character_count') == 1,
+    require(local.get('profile_reused') is True and local.get('character_count') == heroes,
             'Reopening did not reuse the saved one-character profile')
     require(proof.get('character_id') == 1
             and all(type(proof.get(name)) is int and proof[name] == 1
-                    for name in ('before_character_id', 'baseline_character_id', 'baseline_character_count'))
+                    for name in ('before_character_id', 'baseline_character_id'))
+            and type(proof.get('baseline_character_count')) is int and proof['baseline_character_count'] == heroes
             and type(baseline.get('character_id')) is int and baseline['character_id'] == 1
             and type(baseline.get('auth_id')) is int and baseline['auth_id'] == proof.get('auth_id')
             and all(proof.get(name) is True for name in ('reopen_verified', 'existing_character_verified',
