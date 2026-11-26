@@ -598,7 +598,7 @@ Changes:
   a stopped app then has them).
 
 Not in 0.13.86: several heroes per account. Findings and the design are in
-"For 0.13.87" below; the code is on `x86/perf-round3`.
+"0.13.87 (102)" below.
 
 CI at `fafe21a12` (build 45757162842), all passed: probe with both options, the
 trusted server and the spare 45766784376 (`shared_trees`: `content_folders` 2
@@ -623,7 +623,7 @@ The workspace has PostgreSQL 16 (`pg_ctlcluster 16 main start`, then the two
 `runuser -u postgres --`): `test_character_profile_eligibility` runs all its
 real-database cases locally with the build workflow's environment line.
 
-## For 0.13.87: several heroes in the one account, chosen in the game's own character list
+## 0.13.87 (102): several heroes in the one account, chosen in the game's own character list
 
 Owner, 2026-11-25: "every account can create multiple characters - I don't
 like the whole 'switch hero' method. Ideally, multiple characters should be
@@ -685,6 +685,46 @@ Tests: `test_several_heroes.py` (guest), `test_client_zoning_java.py`
 `single_player_probe=heroes` adds two sessions to a zc-form run: the script
 makes HEROTWO in the second slot of the character list during a reopen, then
 a reopen enters with the first hero while HEROTWO is the expected one.
+
+CI for several heroes (probe `single_player_probe=heroes`, zc form):
+
+- 45784712557 at `a0430a4cb`: failed in the first creation, "More than one
+  character exists": `LocalCharacterZoningCreationServer` inherited the
+  reopen class's `session_identity` (a saved hero among an unchanged
+  inventory). Fixed in `de0406b28` (the creation rule, and
+  `observe_chosen_hero` False); `test_several_heroes.py` gained the case.
+- 45788558779: all four guest sessions passed; the host's legacy check of the
+  last session expected a one-character profile.
+  `character_reopen_host_smoke.validate_report(heroes=)` (`e55222c2b`).
+- 45798191917 at `e55222c2b`: passed. `second-hero`: ID 2 HEROTWO, heroes
+  count 1, expected 1, chosen 2, `created_in_the_character_list`. `first-hero`:
+  ID 1, count 2, order [2, 1], expected 2, chosen 1, `another_saved_hero`.
+- 0.13.87 chain at `e55222c2b`: build 45807264231; heroes probe 45821035737
+  (same result; zone server 216.9 s new, 87.0 s reopened, trip zone 84.0 s);
+  trusted 45830386270 (372.7 / 24.0 s); spare 45836206662 (157.6 / 23.5 s,
+  trip 9.7 s); spare with both options 45841519885 (188.1 / 23.0 s, trip
+  9.5 s; shared trees content_folders 10,715 + untouched_folders 118,050);
+  APK 45847002904 (93,950,466 bytes, sha256
+  `dab3e731d3c39b6eef7cf23a875ab3cb782e67f41f57c3d5b47d1126a5c22628`, signer
+  unchanged; downloaded and hashed; 53 guest files equal the commit).
+
+Not shown in CI: the app's acceptance of a created hero (the host observer
+runs the second-hero session without an event validator and reads only the
+guest's proof; the Java predicates are unit-tested against hand-written
+records, and were read against `connected_event_data`/`saved_event_data` and
+`adopt_created_hero`, which agree); a chosen hero saved in another zone than
+the expected one (both in Atlas Park); a villain or Praetorian second hero;
+more than two heroes; the awaited-row path (`NEW_HERO_ROW_SECONDS`).
+
+Local PostgreSQL 16 runs in the session container (`pg_ctlcluster 16 main
+start`, database `coh_test_startup_bundle`, `COH_REQUIRE_POSTGRESQL=1`):
+`test_character_profile_eligibility` 41 tests including 22 real-database
+cases, three of them for several heroes (`667cdb541`).
+
+Known leftover in the published APK: `ClientZoning.switchHeroFolders` still
+answers "...; Switch hero slot brings this one back." when the other saved
+game is empty (the button is "Swap to the other saved game"); corrected in
+the source after the release. Test sheet: `THOR-TEST-0.13.87.md`.
 
 ## 0.13.85 (100): the Primalist archetype, unlocked content, a second hero slot
 
