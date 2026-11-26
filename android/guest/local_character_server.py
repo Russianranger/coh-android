@@ -4156,7 +4156,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         identifiers = sorted(row['containerid'] for row in identities)
         require(identifiers and all(hero_id(value) for value in identifiers), 'Invalid saved hero identities')
         seen = {}
-        if len(identifiers) > 1 and 'lastactive' in self.schema['expected_tables'].get('ents', ()):
+        if len(identifiers) > 1 and 'lastactive' in self.schema.get('expected_tables', {}).get('ents', ()):
             rows = self.sql_rows('ents', ('containerid', 'lastactive'), ('containerid',),
                                  'containerid IN (' + ','.join(str(value) for value in identifiers) + ')')
             seen = {row.get('containerid'): row.get('lastactive') for row in rows
