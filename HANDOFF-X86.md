@@ -529,6 +529,163 @@ would be missions".
   92:95:53:53..., 51 guest files equal the commit, the dex holds the new
   menu's strings. The menu itself has not run on Android.
 
+## 0.13.86 (101): fixes from the Thor test of 0.13.85; plain menu wording
+
+Owner, 2026-11-25, after seven exports of 0.13.85 (20261126-011040 ... -035051
+UTC): the app closed while a screenshot of the character list was taken; with
+"Start mission maps" the other zones lost their navigation data; the Primalist
+has no graphics; its first launch took long; one account should hold several
+heroes without "Switch hero slot"; the checks ("check complete/incomplete")
+belong in the report, not the menu; Show FPS belongs on the Options tab.
+
+What the exports showed (`<scratch>/thor85/<stamp>`, `tools/thor85c.py`):
+
+- 011040/011056: recovery exports of a reopen started 01:06:03 and stopped by
+  Android at 01:09:46 with exit reason 3 (low memory, foreground, pss 208 MB).
+  16.0 GB device, 11.0 GB available at setup; nothing recorded at the stop.
+- 011853 (recommended options): passed; world 154 s, zone server 93.0 s, trip
+  through the warm spare 13.5 s.
+- 014613 (mission maps): the new zones tree (503 collision files) had every
+  navigation graph refused, "Actual zone N source inventory has no qualified
+  native profile"; the launch failed on "saved enhancements changed outside
+  the verified preservation policy" after an enhancement was slotted and the
+  hero took a tunnel (72 to 71).
+- 030959 (mission maps): zone server 376 s (no graph; it built its own).
+- 031914 (unlock on Ralakar): world 143.8 s; `unlock_all_changes` ents,
+  powers, costumeparts; failed only in cleanup ("Wine descendant cleanup:
+  Cannot inspect same-UID Wine ownership"), a known intermittent fault.
+- 035051 (creation, unlock, Primalist): created and played to level 2. World
+  902.9 s: about 3.5 min in the creator, then 457 s of preparation (shared
+  tree link 335.0 s for 128,765 files, which also removed the other setting's
+  tree; cold mirror 67.7 s; beacon graph 46.5 s) and zone server 126.2 s
+  (classes.bin and powers.bin rebuilt).
+
+Changes:
+
+- **Navigation graphs in a zone tree with mission collision files.**
+  `atlas_beacon_package.collision_input_snapshot(..., allowed_extra=())`: the
+  actual inventory may exceed the declared one by exactly the allowed leaves;
+  `zone_beacon_package` passes `mission_index.COLLISION_FILES`. Three tests in
+  `test_zone_beacons.py`. CI has no zone asset pack: the Thor confirms.
+- **Binding after a trip.** `character_zoning._stock_arrival` records
+  `creation_report['stock_arrival']` (map, time, epoch, source);
+  `local_character_server.stock_arrival_binds` lets `stock_zone_binding`
+  accept a ready record of the zone the hero left when that record shows the
+  later arrival (epoch equal to `zoning_epoch`, source one of
+  `STOCK_ARRIVAL_SOURCES`). `client_ready_observed_utc_ms` is not moved
+  (`session_purchases` reads it as the session start).
+- **Shared server data.** `link_shared_server_data` plans per folder
+  (`shared_tree_plan`): folders the content changes (menu, texts) get their
+  own tree per content state; the others come from any sealed tree of the same
+  source, including the whole tree 0.13.85 made (old key kept); nothing of the
+  same source is removed. Report: `shared_trees`.
+- **Primalist icon.** `armport/content/single-player/client/data/
+  texture_library/GUI/Icons/Archetype/archetypeicon_primalist.texture` (32x32
+  BGRA with mips, drawn by `tools/make_primalist_icon.py`; the supplied zip's
+  icon is not used). `armport_client_package.package(client_data=)` carries
+  up to 16 files of 1 MiB under `data/texture_library`; the runtime workflow
+  passes the folder; the import's folder and the package's are merged.
+- **Menu.** `ClientZoning.plainStatus/plainTiming` (pure Java, run by
+  `test_plain_status_java.py` over every `stage("...")` name): the two lines
+  above the tabs show plain words unless Setup's "Show test details and
+  tools" is ticked (preference `test_details`); that box also shows the
+  counters, the log and the test buttons (`testTools`). Show FPS and the caps
+  are built by `addFpsControls` at the top of Options. "Play", "Finish";
+  "Resume first character creation" on Setup.
+- **Memory samples.** `ClientRuntime.systemMemorySample` adds
+  `system_memory_available_bytes`, `_threshold_bytes`, `_low` to each 30 s
+  sample, and each sample is written to the checkpoint (the recovery export of
+  a stopped app then has them).
+
+Not in 0.13.86: several heroes per account. Findings and the design are in
+"For 0.13.87" below; the code is on `x86/perf-round3`.
+
+CI at `fafe21a12` (build 45757162842), all passed: probe with both options, the
+trusted server and the spare 45766784376 (`shared_trees`: `content_folders` 2
+roots, 10,715 files and `untouched_folders` 13 roots, 118,050 files, both new;
+link 93.7 s; the reopened session reused both in 0.009 s; zone server 167.9 s
+new, 23.9 s reopened; trip zone ready 9.5 s; 5 console ready records, 0 from
+the log); zone change on the stock server 45770545583 (211.8 s / 86.5 s, trip
+80.2 s); trusted 45774932914 (372.1 s / 23.9 s); spare 45779358365 (172.9 s /
+23.3 s, trip 9.5 s). APK 45784045022 (93,942,274 bytes,
+sha256 `733014e9b563d2638c9990a74985d70f7e230b73b736626ff98b68bc41625c1e`,
+signer unchanged; downloaded and hashed; 53 guest files equal the commit;
+the icon is in the client package, the menu texts and the memory field in
+the dex). Test sheet: `THOR-TEST-0.13.86.md`.
+
+Not shown: graphs in a mission-maps tree (no zone pack in CI), the untouched
+folders taken from a 0.13.85 whole tree (CI starts empty), the icon on screen,
+a Primalist created or played, `stock_arrival` after an enhancement (the CI
+notices do not carry the record), anything in Java on Android.
+
+The workspace has PostgreSQL 16 (`pg_ctlcluster 16 main start`, then the two
+`psql`/`createdb` lines of `armport/scripts/pg_fixture.sh` through
+`runuser -u postgres --`): `test_character_profile_eligibility` runs all its
+real-database cases locally with the build workflow's environment line.
+
+## For 0.13.87: several heroes in the one account, chosen in the game's own character list
+
+Owner, 2026-11-25: "every account can create multiple characters - I don't
+like the whole 'switch hero' method. Ideally, multiple characters should be
+able to be created per account without that."
+
+Before: a session followed exactly container 1 of COHLOCAL. A second hero made
+in the game's character list stopped the session ("More than one character
+exists") and every later reopen refused that saved game. The account's slot
+count is account data (`ShardAccountCon.slot_count`), so empty slots cannot be
+hidden for a session; a creation inside "Play" has to be followed.
+
+Design (guest; the three layers are the server, the session orchestrator and
+the app):
+
+- **The session's hero** is `local_character_server.HERO_ID` beside
+  `CHARACTER` (`bind_hero(name, id, replace=)`); every check that said ID 1
+  reads it, or checks that the IDs of one record agree
+  (`character_session_budget`, the app's `sameHero`).
+- **Start.** Eligibility accepts N committed heroes of the one account with
+  distinct names. A hero whose first zone never started (name, account, start
+  zone; every MapServer field NULL; rows only in Ents and Ents2[0]) is removed
+  like the first one, under any ID and without touching the ID sequence
+  (`unfinished_hero`, `remove_unfinished_hero`); the single such row keeps the
+  explicit "Resume first character creation".
+- **Baseline.** `capture_baseline` reads every hero before the client can log
+  in (`hero_baselines`: identity, rows, snapshot, login count, saved position,
+  enhancements) and expects the one played last (`hero_order`,
+  `ents.LastActive`); its zone is the one started beside the client.
+- **Choice.** While the session waits at the character list it reads the
+  resume lines of its zone servers for any hero name (`entered_heroes`). A
+  name other than the expected one is another saved hero
+  (`use_hero_baseline(chosen=True)`: ID, name, baseline, saved position; only
+  before the first connection) or a new row (`adopt_created_hero`). Guest
+  event `session_hero`.
+- **A hero made in the character list** turns the running session into
+  `LocalCharacterZoningCreatedHeroServer` (the creation's checks: the new row
+  is the only change to the inventory, its committed rows at save). The proof
+  stays under `character_reopen`, says `created_in_session`, and carries no
+  reopen field; the orchestrator and the app read it as a creation (no
+  session budget, Save available at once).
+- **Zones before the first connection.** Only the expected hero's zone,
+  another saved hero's zone, or the start zone of a row that was not there at
+  the start may start (`other_hero_zone`; the row is awaited up to 10 s). The
+  expected hero's zone, if still loading and never asked for, is stopped; if
+  already loaded it stays and the chosen hero's zone becomes the session's
+  when the hero resumes there (`enter_chosen_zone`). At connection a saved
+  hero must be in its own saved zone (`connection_metadata`).
+- **App.** `ClientAcceptance.sameHero`, `heroCreatedConnectedEvent`,
+  `heroCreatedVerified`, `heroCreatedAccepted`; `ClientRuntime`
+  `heroCreatedInSession`, `reopenedHero()`, `heroId()`, the `session_hero`
+  event sets the expected name; `ClientSessionBudget.character(id)`,
+  `ClientZoning.character(id)`. Play's hint and Setup's "Swap to the other
+  saved game" (the 0.13.85 second slot; saved games are not merged).
+- **Not supported:** deleting a hero in the character list (the inventory
+  check stops the session); two heroes in one launch (Finish, then Play).
+
+Tests: `test_several_heroes.py` (guest), `test_client_zoning_java.py`
+"heroes" (app acceptance), `armport/tests/test_heroes_probe.py`. CI probe:
+`single_player_probe=heroes` adds two sessions to a zc-form run: the script
+makes HEROTWO in the second slot of the character list during a reopen, then
+a reopen enters with the first hero while HEROTWO is the expected one.
+
 ## 0.13.85 (100): the Primalist archetype, unlocked content, a second hero slot
 
 Owner, 2026-11-25 (after a review of the "SoloExperienceMod" and a Primalist
