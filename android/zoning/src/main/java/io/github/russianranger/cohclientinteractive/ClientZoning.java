@@ -47,7 +47,7 @@ public final class ClientZoning {
         }
         if(!hasOther){
             if(!current.renameTo(other))throw new java.io.IOException("The saved hero could not be set aside. Nothing was changed.");
-            return "The saved hero is in the other slot. Use Create fresh character for a new hero; Switch hero slot brings this one back.";
+            return "The saved hero is in the other slot. Use Create fresh character for a new hero; Swap to the other saved game brings this one back.";
         }
         if(!current.renameTo(pending))throw new java.io.IOException("The saved hero could not be moved. Nothing was changed.");
         if(!other.renameTo(current)){
