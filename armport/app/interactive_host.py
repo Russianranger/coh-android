@@ -165,10 +165,16 @@ def heroes_probe_requested():
     return value == '1'
 
 
-def creator_opened(tsv):
-    """The creator's first page (the origin page names Primal Earth and Praetorian Earth)."""
+def creator_opened(tsv, listed=None):
+    """The creator's first page: it names Primal Earth and Praetorian Earth, and the character
+    list (with the first hero's name, which the reopen script finds by the same reading) is gone.
+    None: neither is certain on this frame."""
     words = {word.casefold() for word in screen_words(tsv, limit=200)}
-    return bool(words & {'primal', 'praetorian', 'praetoria'})
+    if words & {'primal', 'praetorian', 'praetoria'}:
+        return True
+    if listed is not None and listed.casefold() in words:
+        return False
+    return None
 
 
 def second_hero_actions(name):
@@ -186,28 +192,33 @@ def second_hero_actions(name):
 class SecondHeroInteraction(ArmPortCharacterInteraction):
     """A reopen session in which the script makes a new hero in the second slot of the character list."""
     ACTIONS = character.CharacterInteraction.LOGIN_ACTIONS + second_hero_actions(SECOND_HERO)
+    FIRST_HERO = None      # the name on the character list (set by the probe before the session)
 
     def __init__(self, session, evidence, finish_path):
         super().__init__(session, evidence, finish_path)
-        self.creator_attempts = 0
+        self.creator_attempts = self.creator_unsure = 0
         self.result['character_name'] = SECOND_HERO
 
     def custom_action(self, kind, value, name, connection, frame, events, sequence, now):
         if kind != 'verify_creator':
             return super().custom_action(kind, value, name, connection, frame, events, sequence, now)
         tsv, stem = character.read_ocr(frame, self.evidence, name, self.creator_attempts + 1, (0, 0, 800, 600))
-        shown = creator_opened(tsv)
+        shown = creator_opened(tsv, self.FIRST_HERO)
         self.creator_attempts += 1
+        self.creator_unsure = self.creator_unsure + 1 if shown is None else 0
         self.result['armport_transition_checks'].append({'check': name, 'attempt': self.creator_attempts,
             'creator_opened': shown, 'evidence': stem, 'frame_sequence': sequence, 'words': screen_words(tsv)})
-        if not shown:
-            require(self.creator_attempts < CREATOR_ATTEMPTS,
-                    'The character creator did not open from the second slot of the character list')
-            if self.creator_attempts in (4, 8):
-                # The click selected the slot without opening it: the list's own button opens it.
-                self.result['armport_transition_checks'][-1]['button_clicked'] = True
-                character.host.pointer_move(connection, 757, 579)
-                character.host.pointer_click(connection, 757, 579)
+        # Two frames in a row without the character list count as the creator (its page words
+        # are small print); a frame that still shows the list is a click that did not register.
+        if shown is True or self.creator_unsure >= 2:
+            return True
+        require(self.creator_attempts < CREATOR_ATTEMPTS,
+                'The character creator did not open from the second slot of the character list')
+        if shown is False and self.creator_attempts in (4, 8):
+            self.result['armport_transition_checks'][-1]['reclick'] = True
+            self.action = next(index for index, action in enumerate(self.ACTIONS)
+                               if action[2] == 'preposition_open_second_character_creator') - 1
+        else:
             self.action -= 1
         return True
 
@@ -1626,6 +1637,7 @@ def main():
                 probe_command.insert(probe_command.index('/opt/coh/character_reopen_diagnostic.py') + 1, '--zoning')
                 # The driver's checks follow one name: the new hero's while it is made.
                 character.CHARACTER = SECOND_HERO if made else first_hero
+                SecondHeroInteraction.FIRST_HERO = first_hero
                 try:
                     probe_report = run_session(probe_command, args.work, args.evidence / label, args.proot,
                                                session, runtime_manifest, client_manifest, deadline,

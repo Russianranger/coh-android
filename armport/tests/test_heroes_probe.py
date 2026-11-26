@@ -28,8 +28,11 @@ class HeroesProbe(unittest.TestCase):
         self.assertNotEqual(host.SECOND_HERO, host.character.CHARACTER)
 
     def test_the_creator_is_recognised_by_its_origin_page(self):
-        self.assertTrue(host.creator_opened(tsv([('Primal', 90), ('Earth', 88), ('Praetorian', 80)])))
-        self.assertFalse(host.creator_opened(tsv([('THORHERO', 90), ('Create', 85), ('Character', 85)])))
+        self.assertIs(host.creator_opened(tsv([('Primal', 90), ('Earth', 88), ('Praetorian', 80)])), True)
+        listed = tsv([('THORHERO', 90), ('Create', 85), ('Character', 85)])
+        self.assertIs(host.creator_opened(listed, 'THORHERO'), False)      # the list is still shown
+        self.assertIsNone(host.creator_opened(tsv([('Origin', 90), ('Next', 85)]), 'THORHERO'))
+        self.assertIsNone(host.creator_opened(listed))
 
     def proof(self, **changes):
         proof = {'verified': True, 'created_in_session': True, 'name': host.SECOND_HERO, 'character_id': 2,
