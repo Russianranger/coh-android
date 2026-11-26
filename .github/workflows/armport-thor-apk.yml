@@ -1,7 +1,7 @@
 name: ArmPort Thor APK (M5 candidate)
 
 # User-authorized M5 development: build and sign COH Atlas
-# Gameplay 0.13.86, the 0.13.36 app plus the ARM64 client option, for the M5
+# Gameplay 0.13.87, the 0.13.36 app plus the ARM64 client option, for the M5
 # Thor play test. Uploads a workflow artifact; publish_release=true (only for a
 # user-approved candidate) also publishes it as a GitHub pre-release.
 on:
@@ -238,7 +238,7 @@ jobs:
               'target', 'status', 'source_commit', 'ndk_version', 'compiler', 'files', 'patches',
               'ioctl_command_filter_patch', 'corresponding_sources')}))
           EOF
-      - name: Build and sign COH Atlas Gameplay 0.13.86
+      - name: Build and sign COH Atlas Gameplay 0.13.87
         env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
         run: |
           mkdir -p out/thor
@@ -265,7 +265,7 @@ jobs:
             --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
             --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
             --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks" \
-            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.86.apk "${server_args[@]}"
+            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.87.apk "${server_args[@]}"
       - name: Remove retained signing material
         if: always()
         run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
@@ -293,7 +293,7 @@ jobs:
           EOF
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.86-apk
+          name: coh-atlas-gameplay-0.13.87-apk
           path: out/thor/
           retention-days: 30
           if-no-files-found: error
@@ -308,50 +308,54 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.86-apk
+          name: coh-atlas-gameplay-0.13.87-apk
           path: apk
-      - name: Publish the 0.13.86 pre-release
+      - name: Publish the 0.13.87 pre-release
         env: {GH_TOKEN: '${{ github.token }}'}
         run: |
           set -euo pipefail
           cd apk
-          test -f COH-Atlas-Gameplay-0.13.86.apk
-          sha256sum COH-Atlas-Gameplay-0.13.86.apk > COH-Atlas-Gameplay-0.13.86.apk.sha256
+          test -f COH-Atlas-Gameplay-0.13.87.apk
+          sha256sum COH-Atlas-Gameplay-0.13.87.apk > COH-Atlas-Gameplay-0.13.87.apk.sha256
           # The pack this APK pins (its build report's record names the pack's release).
           pack=$(python3 -c "import json, sys; r = json.load(open('thor-apk-build-report.json')).get('navigation_map_pack'); print('https://github.com/' + sys.argv[1] + '/releases/tag/' + r['release_tag'] if r else 'its release (see the test sheet)')" "$GITHUB_REPOSITORY")
           cat > notes.md <<EOF
-          COH Atlas Gameplay 0.13.86 (x86 track performance candidate) for the Thor play test.
+          COH Atlas Gameplay 0.13.87 (x86 track performance candidate) for the Thor play test.
 
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
-          New in 0.13.86 (from the Thor test of 0.13.85, 2026-11-25):
-          - With "Start mission maps" ticked the zones keep their navigation data. In 0.13.85
-            the zone data made for that option was refused by every zone's navigation map
-            check: zones started without their navigation map, and one zone server took about
-            six minutes to start. Not shown in CI (no zone asset pack there); the Thor has to
-            confirm it.
-          - The Primalist has an archetype icon (a paw on a green badge, drawn for this build).
-          - A first launch with the Primalist or "Unlock all content" prepares less: only the
-            two folders the content changes are made again (about 10,700 files, not 128,765),
-            and the server data of the other setting is kept, so switching the option back and
-            forth no longer prepares everything again. On the Thor that step took 335 s.
+          New in 0.13.87 (the owner's request of 2026-11-25): several heroes in one account.
+          - "Play" opens the game's own character list. Choose any saved hero and Enter Game,
+            or make a new hero in an empty slot. There is no "Switch hero slot" step.
+          - The zone of the hero you played last is prepared while the game starts. If you
+            enter with another hero, or with a new one, its own zone is started then (a new
+            hero's zone is its starting zone; no hero is moved to another zone).
+          - A hero made from the character list is saved and proved like a first hero; the
+            other heroes of the account are checked to be unchanged.
+          - A hero whose creation was interrupted before its first zone started is removed at
+            the next "Play" (it has no class or costume and the game cannot enter it); the
+            report keeps a copy of its rows.
+          - Not supported: deleting a hero in the character list (the session stops; nothing is
+            lost, but do not do it), and two heroes in one launch (Finish, then Play again).
+          - The two saved games of 0.13.85 (the second hero slot) stay separate and both keep
+            working: Setup, "Swap to the other saved game".
+          Shown in CI: a second hero made from the character list during "Play", saved, and a
+          later launch entered with the first hero while the second was the expected one. Not
+          shown: anything on Android (the app side is unit-tested only), a villain or Praetorian
+          second hero, more than two heroes.
+          From 0.13.86 (not yet on the Thor):
+          - With "Start mission maps" ticked the zones keep their navigation data (in 0.13.85
+            every zone's navigation map was refused; one zone server took six minutes).
+          - The Primalist has an archetype icon.
+          - A first launch with the Primalist or "Unlock all content" prepares about 10,700
+            files, not 128,765, and keeps the other setting's server data.
           - A launch is no longer marked failed when the hero slotted an enhancement and then
             travelled to another zone.
-          - The menu says what is happening in plain words ("In the game", "Saved", "Session
-            finished"). What a session checks is still written to its report. "Show test
-            details and tools" on the Setup tab brings back the check wording, the counters,
-            the log and the test buttons.
-          - Show FPS and the 10 / 30 / 60 FPS buttons are at the top of the Options tab.
-            "Reopen saved character" is now "Play"; "Finish and save report" is "Finish".
-          - The app records the device's free memory every 30 seconds and keeps it across a
-            stop, so a stop by Android for low memory can be explained. The stop while taking
-            a screenshot at the character list in 0.13.85 was such a stop (Android's reason:
-            low memory; nothing was lost).
-          Not in this version: several heroes in one account chosen in the game's own character
-          list. It is in development; "Switch hero slot" is still the way to a second hero. Do
-          not create a second hero from the game's character list yet: the app would stop the
-          session and refuse that saved game afterwards.
+          - Plain status words in the menu; "Show test details and tools" on the Setup tab
+            brings back the check wording, counters, log and test buttons. Show FPS and the
+            10 / 30 / 60 FPS buttons are at the top of the Options tab. "Play", "Finish".
+          - Free memory is recorded every 30 seconds and kept across a stop by Android.
           From 0.13.85 (on the Thor: the Primalist was created and played; the unlocks worked):
           - Test option "Unlock all content": the one local account owns every store product and
             every veteran (loyalty) reward, is a VIP, and has every pack and archetype access bit.
@@ -363,7 +367,7 @@ jobs:
             the archetype stays on whatever the box says, and versions before 0.13.85 no longer
             open that saved game. Known gaps: no selection screenshots, no ancillary power
             pools, and the balance was never shipped by the original developers.
-          - A second hero slot: Setup, "Switch hero slot".
+          - A second saved game: Setup, "Swap to the other saved game" (was "Switch hero slot").
           Both options need "Fast server".
           From 0.13.84 (not yet on the Thor when this was built; missions):
           - Test option, off by default: "Start mission maps". With it a mission door (or a
@@ -451,7 +455,7 @@ jobs:
           Unchanged: any character name the game accepts, one hero per saved game; every zone can
           start; at most two zone servers (three with the optional one); supergroup bases are not served; the full-window view, gear button
           and controller.
-          Test sheet: THOR-TEST-0.13.86.md.
+          Test sheet: THOR-TEST-0.13.87.md.
           EOF
           if [ "$SERVER_OPTION" = true ]; then
             echo "Servers: the CI-built MapServer with trusted prepared data by default (device-run in 0.13.69); unticking Fast server runs the 0.13.36 MapServer." >> notes.md
@@ -460,7 +464,7 @@ jobs:
           else
             echo "Servers: shipping MapServer, so the prepared server caches still load. The Fast server option has no effect in this build." >> notes.md
           fi
-          gh release create "coh-atlas-gameplay-v0.13.86" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-            --prerelease --title "COH Atlas Gameplay 0.13.86 (performance candidate)" --notes-file notes.md \
-            COH-Atlas-Gameplay-0.13.86.apk COH-Atlas-Gameplay-0.13.86.apk.sha256
-          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.86"
+          gh release create "coh-atlas-gameplay-v0.13.87" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "COH Atlas Gameplay 0.13.87 (performance candidate)" --notes-file notes.md \
+            COH-Atlas-Gameplay-0.13.87.apk COH-Atlas-Gameplay-0.13.87.apk.sha256
+          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.87"
