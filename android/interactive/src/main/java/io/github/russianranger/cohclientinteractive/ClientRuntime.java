@@ -2797,6 +2797,7 @@ public final class ClientRuntime {
                             synchronized (this) {
                                 heroCreatedInSession = heroCreated;
                                 sessionBudget.character(event.optLong("character_id", 1));
+                                zoning.character(event.optLong("character_id", 1));
                                 characterConnectedEvent = event;
                                 characterName = event.optString("name");
                                 connectedObservedUptime = SystemClock.uptimeMillis();

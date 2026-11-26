@@ -147,6 +147,9 @@ public final class ClientZoning {
         deliveredUtc=utc;phase="transferring";return true;
     }
     public synchronized void fail(){if(enabled())phase=blocksInput()?"failed":"prepare_failed";}
+    /** 0.13.87: the hero that connected in this session (any hero of the account; 1 until it is known). */
+    private long characterId=1;
+    public synchronized void character(long id){if(id>0)characterId=id;}
     public synchronized boolean accept(Map<?,?> e,String selectedSession,long selectedPid,int connectedMap,
             long wallNow,long uptimeNow,long sequence){
         return accept(e,selectedSession,selectedPid,connectedMap,wallNow,uptimeNow,sequence,false);
@@ -156,7 +159,7 @@ public final class ClientZoning {
         if(e==null||selectedSession==null||!selectedSession.matches("[0-9a-f]{32}")||selectedPid<=0
                 ||!"character_zoning".equals(e.get("type"))||integer(e.get("format"))!=1
                 ||!selectedSession.equals(e.get("session_id"))||integer(e.get("client_pid"))!=selectedPid
-                ||integer(e.get("character_id"))!=1||uptimeNow<0||sequence<0)return false;
+                ||integer(e.get("character_id"))!=characterId||uptimeNow<0||sequence<0)return false;
         long generated=integer(e.get("generated_utc_ms"));
         if(generated<=0||generated>wallNow+1000||wallNow-generated>120000||generated<eventUtc)return false;
         String next=String.valueOf(e.get("status"));

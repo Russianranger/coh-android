@@ -1525,7 +1525,7 @@ def native_reward_credit_evidence(logs, proof, delivery, logout, *, session, cli
     identity = reopen_connection_binding(proof, session, client_pid, now_utc_ms)
     if (identity is None or type(delivery) is not dict
             or delivery.get('session_id') != session or delivery.get('client_pid') != client_pid
-            or type(delivery.get('client_pid')) is not int or delivery.get('character_id') != 1
+            or type(delivery.get('client_pid')) is not int or delivery.get('character_id') != HERO_ID
             or type(delivery.get('character_id')) is not int or delivery.get('action') != 'quittologin'
             or type(delivery.get('sent_utc_ms')) is not int
             or not identity['client_ready_observed_utc_ms'] <= delivery['sent_utc_ms'] <= now_utc_ms

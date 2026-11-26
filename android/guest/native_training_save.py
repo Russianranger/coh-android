@@ -182,7 +182,7 @@ def verify(logs, proof, delivery, logout, previous, current, attributes, *, sess
     identity = contact.binding(proof, session, client_pid, now_utc_ms)
     if (identity is None or type(delivery) is not dict or delivery.get('session_id') != session
             or type(delivery.get('client_pid')) is not int or delivery['client_pid'] != client_pid
-            or type(delivery.get('character_id')) is not int or delivery['character_id'] != 1
+            or type(delivery.get('character_id')) is not int or delivery['character_id'] != server.HERO_ID
             or delivery.get('action') != 'quittologin' or type(delivery.get('sent_utc_ms')) is not int
             or not identity['client_ready_observed_utc_ms'] <= delivery['sent_utc_ms'] <= now_utc_ms
             or logout is None or not server.logout_follows_delivery(logout, delivery)):
@@ -198,7 +198,7 @@ def verify(logs, proof, delivery, logout, previous, current, attributes, *, sess
             or len(previous['ents']) != 1 or len(current['ents']) != 1
             or _zero(previous['ents'][0].get('level')) != 0
             or type(current['ents'][0].get('level')) is not int or current['ents'][0]['level'] != 1
-            or previous['ents'][0].get('containerid') != 1
+            or previous['ents'][0].get('containerid') != server.HERO_ID
             or previous['ents'][0].get('authid') != identity['auth_id']):
         return None
     purchase = _purchase(logs, identity['client_ready_observed_utc_ms'], end_ms)
@@ -228,7 +228,7 @@ def verify(logs, proof, delivery, logout, previous, current, attributes, *, sess
         for row in rows:
             uid = row.get('uniqueid')
             if (type(uid) is not int or not 0 < uid <= 0x7fffffff or uid in index
-                    or row.get('containerid') != 1):
+                    or row.get('containerid') != server.HERO_ID):
                 return None
             index[uid] = row
     semantic_fields = set(server.evidence.SELECTED['powers']) - {'subid', 'powerid'}
@@ -308,7 +308,7 @@ def verify_reopen_normalization(logs, proof, delivery, logout, previous, current
     identity = contact.binding(proof, session, client_pid, now_utc_ms)
     if (identity is None or type(delivery) is not dict or delivery.get('session_id') != session
             or type(delivery.get('client_pid')) is not int or delivery['client_pid'] != client_pid
-            or type(delivery.get('character_id')) is not int or delivery['character_id'] != 1
+            or type(delivery.get('character_id')) is not int or delivery['character_id'] != server.HERO_ID
             or delivery.get('action') != 'quittologin' or type(delivery.get('sent_utc_ms')) is not int
             or not identity['client_ready_observed_utc_ms'] <= delivery['sent_utc_ms'] <= now_utc_ms
             or logout is None or not server.logout_follows_delivery(logout, delivery)):
@@ -324,7 +324,7 @@ def verify_reopen_normalization(logs, proof, delivery, logout, previous, current
             or len(previous['ents']) != 1 or len(current['ents']) != 1
             or type(previous['ents'][0].get('level')) is not int or previous['ents'][0]['level'] != 1
             or type(current['ents'][0].get('level')) is not int or current['ents'][0]['level'] != 1
-            or previous['ents'][0].get('containerid') != 1
+            or previous['ents'][0].get('containerid') != server.HERO_ID
             or previous['ents'][0].get('authid') != identity['auth_id']
             or len(previous['ents2']) != 1 or len(current['ents2']) != 1
             or not (type(attributes) is list and all(type(row) is dict and type(row.get('id')) is int
@@ -346,7 +346,7 @@ def verify_reopen_normalization(logs, proof, delivery, logout, previous, current
             return None
         if (type(old['uniqueid']) is not int or not 0 < old['uniqueid'] <= 0x7fffffff
                 or old['uniqueid'] in identifiers or type(old['containerid']) is not int
-                or old['containerid'] != 1):
+                or old['containerid'] != server.HERO_ID):
             return None
         identifiers.add(old['uniqueid'])
         parts = [names.get(old[key]) for key in ('categoryname', 'powersetname', 'powername')]

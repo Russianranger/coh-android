@@ -1794,7 +1794,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 require(not getattr(self, 'monorail_requires_reopen', False),
                     'After returning from the old Atlas instance, save, Finish and reopen for Kings Row')
                 request = dict(format=1, session_id=self.owner.args.session_id,
-                    client_pid=self.creation_report['client_pid'], character_id=1,
+                    client_pid=self.creation_report['client_pid'], character_id=self.CHARACTER_ID,
                     epoch=self.epoch + 1, action='prepare', from_map_id=self.active_map_id,
                     to_map_id=record['target'], requested_utc_ms=record['utc_ms'])
                 # Set these before the first preparing event reaches Android.
@@ -1810,7 +1810,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                     and record['target'] == self.pending['to_map_id'],
                     'Native station departure does not match prepared request')
                 value = dict(format=1, session_id=self.owner.args.session_id,
-                    client_pid=self.creation_report['client_pid'], character_id=1, epoch=self.epoch,
+                    client_pid=self.creation_report['client_pid'], character_id=self.CHARACTER_ID, epoch=self.epoch,
                     action='mapmove', from_map_id=self.active_map_id, to_map_id=record['target'],
                     sent_utc_ms=record['utc_ms'])
                 self._accept_delivery(value, now_ms)
@@ -2447,14 +2447,14 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             **{key: pending[key] for key in PREPARATION_FIELDS if key in pending}}
         self.zoning_report.setdefault('preparation_phase_observations', []).append(value)
         self.ctx.event('character_zoning_preparation', session_id=self.owner.args.session_id,
-            client_pid=self.creation_report['client_pid'], character_id=1, **value)
+            client_pid=self.creation_report['client_pid'], character_id=self.CHARACTER_ID, **value)
 
     def _scheduler_observation(self, phase, pacing):
         report = pacing.report
         if not isinstance(report, dict):
             return
         self.ctx.event('character_zoning_preparation', session_id=self.owner.args.session_id,
-            client_pid=self.creation_report['client_pid'], character_id=1, epoch=self.epoch,
+            client_pid=self.creation_report['client_pid'], character_id=self.CHARACTER_ID, epoch=self.epoch,
             map_id=report['map_id'], observation_kind='scheduler', scheduler_phase=phase,
             observed_utc_ms=int(time.time() * 1000), observed_monotonic_ms=int(time.monotonic()*1000),
             capability=report['capability'], changed_threads=report['changed_threads'],
@@ -2494,7 +2494,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                         'native_stage_duration_measured': False}
                     rows.append(observation)
                     self.ctx.event('character_zoning_preparation', session_id=self.owner.args.session_id,
-                        client_pid=self.creation_report['client_pid'], character_id=1, **observation)
+                        client_pid=self.creation_report['client_pid'], character_id=self.CHARACTER_ID, **observation)
         return owned['previous']
 
     def health(self):
@@ -2642,7 +2642,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         target = self.pending['to_map_id'] if self.pending else self.active_map_id if stock else (
             (5 if self.monorail_enabled() else 101) if self.active_map_id == 1 else 1)
         value = {'format': 1, 'session_id': self.owner.args.session_id,
-            'client_pid': self.creation_report['client_pid'], 'character_id': 1,
+            'client_pid': self.creation_report['client_pid'], 'character_id': self.CHARACTER_ID,
             'epoch': self.epoch, 'status': status, 'current_map_id': self.active_map_id,
             'target_map_id': target, 'current_map_name': zone_name(self.active_map_id),
             'target_map_name': zone_name(target), 'generated_utc_ms': int(time.time() * 1000),
