@@ -19,6 +19,7 @@ import struct
 import time
 import zipfile
 import atlas_beacon_package as atlas
+import mission_index
 
 ROLE = 'authentic_native_zone_beacon_graph'
 POLICY = 'native_shared_zone_tree_complete_collision_two_fresh_crc_graph_32routes_v1'
@@ -298,6 +299,10 @@ def shared_identity(shared):
             'names': len(shared), 'names_sha256': hashlib.sha256(canonical(sorted(shared))).hexdigest(), 'code': code}
 
 
+# A zone tree made with "Start mission maps" also holds these object library leaves (0.13.84).
+MISSION_LEAVES = mission_index.COLLISION_FILES
+
+
 def shared_path(store, identity):
     return Path(store) / ('zone-shared-inputs-' + identity['names_sha256'][:16] + '.json')
 
@@ -338,7 +343,8 @@ def shared_inventory(runtime, shared, context, map_id, store):
         before = scope_rows(runtime, context)
     except (OSError, ValueError):
         # Nothing to compare a kept result with: the walk decides alone, as before 0.13.80.
-        return atlas.collision_input_snapshot(runtime, shared, SHARED_SCOPES, context, zone='zone ' + str(map_id))
+        return atlas.collision_input_snapshot(runtime, shared, SHARED_SCOPES, context, zone='zone ' + str(map_id),
+                                              allowed_extra=MISSION_LEAVES)
     held = _SHARED_INVENTORIES.get(key)
     if held is None and store is not None:
         held = load_shared(store, identity)
@@ -347,7 +353,7 @@ def shared_inventory(runtime, shared, context, map_id, store):
         return dict(held['fingerprints']), {name: runtime / row['path'] for name, row in held['fingerprints'].items()}
     _SHARED_INVENTORIES.pop(key, None)
     fingerprints, targets = atlas.collision_input_snapshot(runtime, shared, SHARED_SCOPES, context,
-                                                           zone='zone ' + str(map_id))
+                                                           zone='zone ' + str(map_id), allowed_extra=MISSION_LEAVES)
     require(scope_rows(runtime, context) == before, 'Collision source directory changed during the shared inventory')
     if not all(targets[name] == runtime / row['path'] for name, row in fingerprints.items()):
         return fingerprints, targets          # a target the kept form cannot name: never kept
@@ -375,7 +381,7 @@ def inventory(runtime, value, context, map_id, *, provider_records=None, shared_
     if shared_store is False or provider_records is not None:
         return atlas.collision_input_snapshot(runtime, value['input_files'],
             (SHARED_SCOPES[0], own_scope, SHARED_SCOPES[1]),
-            context, zone='zone ' + str(map_id), provider_records=provider_records)
+            context, zone='zone ' + str(map_id), provider_records=provider_records, allowed_extra=MISSION_LEAVES)
     own = {name: row for name, row in value['input_files'].items() if name.startswith(own_scope[0] + '/')}
     shared = {name: row for name, row in value['input_files'].items() if name not in own}
     fingerprints, targets = shared_inventory(runtime, shared, context, map_id, shared_store)

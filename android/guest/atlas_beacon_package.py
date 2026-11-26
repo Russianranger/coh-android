@@ -161,13 +161,19 @@ def actual_targets(runtime, names, context):
     return world.resolve_targets(Path(runtime), names, context)
 
 
-def collision_input_snapshot(runtime, selected, scopes, context, *, required=(), zone="Atlas", provider_records=None):
+def collision_input_snapshot(runtime, selected, scopes, context, *, required=(), zone="Atlas", provider_records=None,
+                             allowed_extra=()):
     """Inventory and fingerprint one bounded collision namespace in one walk.
 
     DirEntry caches the type/target stat rather than rediscovering the same
     providers via rglob, is_dir, case resolution and a later fingerprint pass.
     Every leaf and directory remains enumerated; byte proof and the subsequent
     independent snapshot around cold hashing are still mandatory.
+
+    allowed_extra: one closed set of further leaves the namespace may hold as a whole (all of
+    them, or none): the mission collision files of a zone tree made with "Start mission maps".
+    No zone map names them, so a zone's graph is the same with and without them; refusing the
+    tree for them left every zone without its graph in 0.13.84-85 (Thor 20261126-014613).
     """
     runtime = Path(runtime)
     declared = {name.casefold(): name for name in selected}
@@ -262,7 +268,10 @@ def collision_input_snapshot(runtime, selected, scopes, context, *, required=(),
                 'Collision source provider changed before inventory completion')
     require(all(name.casefold() in actual for name in required),
             'Every required original Atlas geometry leaf must exist before graph installation')
-    require(set(actual) == set(declared), 'Actual ' + zone + ' source inventory has no qualified native profile')
+    extra = set(actual) - set(declared)
+    allowed = {name.casefold() for name in allowed_extra}
+    require(set(declared) <= set(actual) and not allowed & set(declared) and (not extra or extra == allowed),
+            'Actual ' + zone + ' source inventory has no qualified native profile')
     return fingerprints_by_name, targets
 
 

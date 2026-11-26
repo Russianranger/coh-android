@@ -498,6 +498,41 @@ class ZoneGraphInstallTests(unittest.TestCase):
             self.install()
         self.assertFalse((self.runtime / NAMES['graph']).exists())
 
+    def test_a_tree_with_all_the_mission_collision_leaves_keeps_its_graph(self):
+        """Thor 20261126-014613: with "Start mission maps" every zone lost its navigation graph
+        ("Actual zone 72 source inventory has no qualified native profile"); the 123 mission
+        leaves in the object library are no zone map's input."""
+        leaves = self.package.MISSION_LEAVES
+        self.assertEqual(len(leaves), 123)
+        self.assertTrue(all(name.startswith('data/object_library/') and name.endswith('.geo') for name in leaves))
+        for name in leaves:
+            self.write(name, b'mission geometry')
+        result = self.install()
+        self.assertEqual((result['status'], result['installed_files']), ('installed_verified_graph', 2))
+        self.assertEqual((self.runtime / NAMES['graph']).read_bytes(), b'complete native graph fixture')
+        self.assertEqual(self.install()['status'], 'reused_verified_graph')
+
+    def test_only_the_whole_set_of_mission_leaves_is_accepted(self):
+        leaves = self.package.MISSION_LEAVES
+        for name in leaves[:-1]:                       # one short of the set
+            self.write(name, b'mission geometry')
+        with self.assertRaisesRegex(ValueError, 'no qualified native profile'):
+            self.install()
+        self.write(leaves[-1], b'mission geometry')    # the whole set, and one stranger
+        self.write('data/object_library/zone/extra.geo', b'extra')
+        with self.assertRaisesRegex(ValueError, 'no qualified native profile'):
+            self.install()
+        self.assertFalse((self.runtime / NAMES['graph']).exists())
+
+    def test_the_shared_inventory_accepts_the_mission_leaves_too(self):
+        for name in self.package.MISSION_LEAVES:
+            self.write(name, b'mission geometry')
+        store = Path(self.temporary.name) / 'receipts'
+        source = self.package.sources(self.assets)[MAP_ID]
+        result = self.package.install(source, self.runtime, MAP_ID, context=self.Context(), imported_inputs_readonly=True,
+                                      shared_store=store)
+        self.assertEqual(result['status'], 'installed_verified_graph')
+
     @unittest.skipIf(os.name == 'nt', 'The guest server uses Android-side (POSIX) helpers')
     def test_a_launch_receipt_spares_a_later_start_the_input_walk(self):
         """0.13.70. Thor 0.13.69: 16.2 s per start to re-read 8,711 unchanged inputs."""
