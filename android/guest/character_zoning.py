@@ -3923,6 +3923,14 @@ class LocalCharacterZoningCreationServer(LocalCharacterZoningServer):
     def remember_reward_connection(self):
         pass
 
+    def session_identity(self, inventory):
+        # The one row that was not there at the start (heroes probe 45784712557: the reopen
+        # class's rule, a saved hero among an unchanged inventory, refused the first creation).
+        return character.LocalCharacterServer.session_identity(self, inventory)
+
+    def observe_chosen_hero(self):
+        return False
+
     def observe_connected_character(self):
         pass
 
@@ -3949,12 +3957,6 @@ class LocalCharacterZoningCreatedHeroServer(LocalCharacterZoningCreationServer):
     The report keeps the session's key; the proof says created_in_session.
     """
     REPORT_KEY = 'character_reopen'
-
-    def session_identity(self, inventory):
-        return character.LocalCharacterServer.session_identity(self, inventory)
-
-    def observe_chosen_hero(self):
-        return False
 
     def connection_metadata(self):
         return dict(super().connection_metadata(), created_in_session=True)

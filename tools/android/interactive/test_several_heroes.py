@@ -290,6 +290,24 @@ class SeveralHeroesTests(unittest.TestCase):
         self.assertNotIn('reopen_verified', data)
         self.assertEqual(diagnostic.saved_event_data(SimpleNamespace(), saved_proof)['map_id'], 1)
 
+    def test_a_first_creation_follows_the_one_new_row_not_a_saved_hero(self):
+        # Heroes probe 45784712557: the zoning creation inherited the reopen's rule (the session's
+        # saved hero among an unchanged inventory) and refused the first hero ever created.
+        first = {'containerid': 1, 'authid': 77, 'authname': 'COHLOCAL', 'name': 'THORHERO'}
+        second = dict(first, containerid=2, name='HEROTWO')
+        for cls in (zoning.LocalCharacterZoningCreationServer, zoning.LocalCharacterZoningCreatedHeroServer):
+            value = SimpleNamespace(baseline=[], CHARACTER_ID=1)
+            self.assertIsNone(cls.session_identity(value, []))
+            self.assertEqual(cls.session_identity(value, [first]), first)
+            self.assertIs(cls.observe_chosen_hero(value), False)
+            value.baseline = [first]
+            self.assertEqual(cls.session_identity(value, [first, second]), second)
+            with self.assertRaisesRegex(server.base.DiagnosticError, 'More than one character'):
+                cls.session_identity(value, [first, second, dict(first, containerid=3, name='THREE')])
+        # A reopen keeps its own rule.
+        self.assertIsNot(zoning.LocalCharacterZoningServer.session_identity,
+                         zoning.LocalCharacterZoningCreationServer.session_identity)
+
     def test_every_check_of_the_hero_s_id_follows_the_session_s_hero(self):
         server.bind_hero('Second Hero', 2)
         proof = {'session_id': SESSION, 'name': 'Second Hero', 'account': 'COHLOCAL', 'character_id': 2,
