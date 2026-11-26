@@ -474,8 +474,9 @@ CONSOLE_READY_ROUTE = 'owned_zone_server_console'
 CONSOLE_READY_PREFIX = b'ARMPORT_CLIENT_READY_V1 utc_ms='
 # Extra inspections one session may run for new resume lines (a trip prints one; 256 trips).
 READY_PEEK_LIMIT = 256
-# How long the new hero's row may be behind the game's request for its zone (other_hero_zone).
-NEW_HERO_ROW_SECONDS = 3
+# How long the new hero's row may be behind the game's request for its zone (other_hero_zone):
+# the DbServer queues its SQL writes. Only a request for a zone no saved hero is in waits.
+NEW_HERO_ROW_SECONDS = 10
 READY_PEEK_SECONDS = 0.5
 READY_LOG_ROUTES = ('embedded_dbserver_logserver', CONSOLE_READY_ROUTE)
 KEEP_PREVIOUS_ZONE_ENV = 'COH_KEEP_PREVIOUS_ZONE'
@@ -1515,7 +1516,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         'another_saved_hero': a hero read before login is saved there. 'new_hero': the account
         has a row that was not there at the start (the DbServer writes it at Enter Game, before
         it asks for the zone) whose start zone this is. The row can be a moment behind the
-        request, so it is looked for up to three seconds.
+        request, so it is looked for up to NEW_HERO_ROW_SECONDS.
         """
         baselines = getattr(self, 'hero_baselines', None)
         if baselines is None:

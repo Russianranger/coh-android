@@ -44,6 +44,9 @@ class SeveralHeroesTests(unittest.TestCase):
 
     def setUp(self):
         self.addCleanup(server.reset_character)
+        waiting = patch.object(zoning, 'NEW_HERO_ROW_SECONDS', 0)
+        waiting.start()
+        self.addCleanup(waiting.stop)
 
     def tearDown(self):
         for map_id in [m for m in zoning.MAPS if m not in (1, 5, 101)]:

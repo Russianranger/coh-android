@@ -40,6 +40,12 @@ class DynamicInitialMapTests(unittest.TestCase):
     instance = saved.SavedMapStartupTests.instance
     baseline = saved.SavedMapStartupTests.baseline
 
+    def setUp(self):
+        # 0.13.87: a request for a zone no saved hero is in waits for a new hero's row; not here.
+        waiting = patch.object(zoning, 'NEW_HERO_ROW_SECONDS', 0)
+        waiting.start()
+        self.addCleanup(waiting.stop)
+
     def tearDown(self):
         for map_id in [m for m in zoning.MAPS if m not in (1, 5, 101)]:
             del zoning.MAPS[map_id]
