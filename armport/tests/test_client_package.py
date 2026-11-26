@@ -281,6 +281,65 @@ class ClientPackage(unittest.TestCase):
             package.package(self.client, self.bins, self.shaders, self.launcher, self.root / 'x86.zip', 123, 122,
                             audio_plugin=plugin)
 
+    ART = Path(__file__).resolve().parents[1] / 'content/single-player/client'
+    ICON = 'data/texture_library/GUI/Icons/Archetype/archetypeicon_primalist.texture'
+
+    def test_the_primalist_icon_is_a_texture_the_client_reads(self):
+        """0.13.86 (owner, after the Thor test of 0.13.85): the Primalist had no archetype icon.
+        An original badge, drawn by armport/content/single-player/tools/make_primalist_icon.py."""
+        raw = (self.ART / self.ICON).read_bytes()
+        size, body, width, height, flags, fade0, fade1, alpha, mark = struct.unpack_from('<5i2fB3s', raw)
+        name = raw[32:size]
+        self.assertEqual((width, height, flags, alpha, mark), (32, 32, 0, 1, b'TX2'))            # tex.h TextureFileHeader
+        self.assertEqual(name, b'texture_library/GUI/Icons/Archetype/archetypeicon_primalist.dds\0')
+        self.assertEqual(len(raw), size + body)
+        dds = raw[size:]
+        magic, header, dds_flags, dds_height, dds_width, pitch, depth, mips = struct.unpack_from('<4s7I', dds)
+        self.assertEqual((magic, header, dds_height, dds_width, pitch, mips), (b'DDS ', 124, 32, 32, 128, 6))
+        # tex.c: DDS_RGBA (0x41), 32 bits, alpha mask ff000000 -> TEXFMT_ARGB_8888.
+        self.assertEqual(struct.unpack_from('<2I4s5I', dds, 76),
+                         (32, 0x41, b'\0\0\0\0', 32, 0xFF0000, 0xFF00, 0xFF, 0xFF000000))
+        self.assertEqual(len(dds), 128 + sum(max(1, 32 >> level) ** 2 * 4 for level in range(6)))
+        pixels = dds[128:128 + 4096]
+        self.assertEqual(pixels[3], 0)                              # corner: outside the round badge
+        self.assertEqual(pixels[(16 * 32 + 16) * 4 + 3], 255)       # centre: opaque
+        self.assertEqual([p.relative_to(self.ART).as_posix() for p in sorted(self.ART.rglob('*')) if p.is_file()],
+                         [self.ICON])
+        definition = (self.ART.parent / 'data/defs/classes/pc_primalist.def').read_text(errors='replace')
+        self.assertIn('"archetypeicon_primalist.texture"', definition)
+
+    def test_client_art_rides_in_the_overlay_and_merges_into_the_imported_folders(self):
+        document = package.package(self.client, self.bins, self.shaders, self.launcher, self.archive, 123, 122,
+                                   client_data=self.ART)
+        self.assertIn(self.ICON, document['files'])
+        # The import has the folder under another spelling, with the stock icons in it.
+        source = self.root / 'import/data'
+        stock = source / 'texture_library/gui/Icons/Archetype/archetypeicon_blaster.texture'
+        stock.parent.mkdir(parents=True); stock.write_bytes(b'stock icon')
+        (source / 'texture_library/gui/other.texture').write_bytes(b'other')
+        destination = self.root / 'arm64'
+        package.prepare(self.archive, source, destination)
+        view = destination / 'data/texture_library'
+        self.assertEqual((view / 'GUI/Icons/Archetype/archetypeicon_primalist.texture').read_bytes(),
+                         (self.ART / self.ICON).read_bytes())
+        self.assertEqual((view / 'GUI/Icons/Archetype/archetypeicon_blaster.texture').read_bytes(), b'stock icon')
+        self.assertEqual((view / 'GUI/other.texture').read_bytes(), b'other')
+        self.assertEqual(stock.read_bytes(), b'stock icon')
+
+    def test_client_art_is_bounded_to_small_textures_under_the_texture_library(self):
+        for name, raw in (('data/defs/x.texture', b'x'), ('data/texture_library/a/x.exe', b'x'),
+                          ('data/texture_library/x.texture', b'x'),                # too shallow: 3 parts
+                          ('data/texture_library/a/big.texture', b'x' * (package.CLIENT_ART_BYTES + 1)),
+                          ('data/texture_library/a/empty.texture', b'')):
+            art = self.root / ('art-' + str(abs(hash(name))))
+            (art / name).parent.mkdir(parents=True); (art / name).write_bytes(raw)
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, 'Unexpected client art'):
+                package.package(self.client, self.bins, self.shaders, self.launcher,
+                                self.root / ('out-' + str(abs(hash(name))) + '.zip'), 123, 122, client_data=art)
+        self.assertTrue(package.allowed(self.ICON))
+        self.assertFalse(package.allowed('data/texture_library/../x/y/z.texture'))
+        self.assertFalse(package.allowed('data/texture_library/a b/c/z.texture'))
+
 
 if __name__ == '__main__':
     unittest.main()

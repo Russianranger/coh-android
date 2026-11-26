@@ -318,6 +318,7 @@ jobs:
             --launcher "$RUNNER_TEMP/m4-client/armport-launcher.exe" \
             --audio-plugin "$RUNNER_TEMP/audio/libasound_module_pcm_trasc.so" \
             --realpath-cache "$RUNNER_TEMP/realpath/libarmport_realpath.so" \
+            --client-data armport/content/single-player/client \
             --client-run "$CLIENT_RUN_ID" --data-run "$DATA_RUN_ID" \
             --output "$RUNNER_TEMP/armport-client.zip" \
             --source-data "$RUNNER_TEMP/m4-client/data" --stage "$RUNNER_TEMP/m4-packaged-client"

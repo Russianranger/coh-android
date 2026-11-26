@@ -64,6 +64,17 @@ def arm64_elf_shared_object(path):
             'Expected an AArch64 little-endian ELF64 shared object: ' + path.name)
 
 
+# 0.13.86: client art the import does not have (the Primalist's archetype icon), from
+# armport/content/single-player/client. Textures only, a handful, each small.
+CLIENT_ART_LIMIT, CLIENT_ART_BYTES = 16, 1024 * 1024
+
+
+def client_art(name):
+    path = PurePosixPath(name)
+    return (4 <= len(path.parts) <= 8 and path.parts[:2] == ('data', 'texture_library')
+            and path.suffix == '.texture' and '..' not in path.parts)
+
+
 def allowed(name):
     if name in BINARIES or name in NATIVE_LIBRARIES:
         return True
@@ -71,11 +82,11 @@ def allowed(name):
     return ((len(path.parts) == 3 and path.parts[:2] == ('data', 'bin')
              and path.suffix.lower() == '.bin') or
             (len(path.parts) == 2 and path.parts[0] == 'armport_cg'
-             and path.suffix == '.arb')) and bool(re.fullmatch(r'[A-Za-z0-9_./-]+', name))
+             and path.suffix == '.arb') or client_art(name)) and bool(re.fullmatch(r'[A-Za-z0-9_./-]+', name))
 
 
 def package(client, bins, shaders, launcher, output, client_run, data_run, audio_plugin=None,
-            realpath_cache=None):
+            realpath_cache=None, client_data=None):
     require(not output.exists(), 'Package output already exists')
     require({p.name for p in client.iterdir()} == BINARIES - {'armport-launcher.exe'},
             'Expected the exact ARM64 Release artifact binary closure')
@@ -98,6 +109,16 @@ def package(client, bins, shaders, launcher, output, client_run, data_run, audio
         for source in selected:
             require(source.is_file() and not source.is_symlink(), 'Invalid overlay input')
             sources[prefix + source.name] = source
+    if client_data is not None:
+        require(client_data.is_dir() and not client_data.is_symlink(), 'Invalid client art folder')
+        art = sorted(p for p in client_data.rglob('*') if not p.is_dir())
+        require(0 < len(art) <= CLIENT_ART_LIMIT, 'Client art count is out of bounds')
+        for source in art:
+            name = source.relative_to(client_data).as_posix()
+            require(source.is_file() and not source.is_symlink() and client_art(name)
+                    and 0 < source.stat().st_size <= CLIENT_ART_BYTES and name not in sources,
+                    'Unexpected client art: ' + name)
+            sources[name] = source
     require(all(allowed(name) for name in sources), 'Unexpected overlay path')
     require(sum(p.stat().st_size for p in sources.values()) <= MAX_BYTES, 'Overlay too large')
     document = {'format': 1, 'role': 'arm64_graphical_client', 'machine': 'ARM64',
@@ -462,6 +483,8 @@ def main():
     parser.add_argument('--audio-plugin', type=Path, help='guest ALSA plugin (armport/audio/build.sh)')
     parser.add_argument('--realpath-cache', type=Path,
                         help='wineserver realpath cache (armport/wineserver/build.sh)')
+    parser.add_argument('--client-data', type=Path,
+                        help='client art laid over the imported data (armport/content/single-player/client)')
     args = vars(parser.parse_args())
     source_data, stage = args.pop('source_data'), args.pop('stage')
     require(bool(source_data) == bool(stage), '--source-data and --stage must be used together')
