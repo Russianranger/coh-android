@@ -4826,7 +4826,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
                 'Existing character position snapshot differs')
         return values[0]
 
-    def use_hero_baseline(self, identifier, *, chosen=False):
+    def use_hero_baseline(self, identifier, *, chosen=False, entered_map_id=None):
         """Make one saved hero the session's: its ID, name and the rows read before login.
 
         chosen: the player entered with another hero than the launch expected. That is only
@@ -4869,8 +4869,8 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             self.creation_report.pop('stock_power_lifecycle_before_login', None)
         return entry
 
-    def entered_hero_names(self):
-        """Names of heroes of the account that resumed on an owned zone server (the zoning server reads them)."""
+    def entered_heroes(self):
+        """(name, map) of heroes of the account that resumed on an owned zone server (the zoning server reads them)."""
         return []
 
     def created_hero_supported(self):
@@ -4887,7 +4887,8 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         if (getattr(self, 'hero_baselines', None) is None or self.creation_report.get('connected_on_atlas')
                 or getattr(self, 'created_in_session', False)):
             return False
-        names = sorted({name for name in self.entered_hero_names() if name != CHARACTER})
+        entered = {name: map_id for name, map_id in self.entered_heroes() if name != CHARACTER}
+        names = sorted(entered)
         if not names:
             return False
         require(len(names) == 1 and valid_character_name(names[0]),
@@ -4903,13 +4904,13 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             require(evidence._same(identity, self.hero_baselines[identity['containerid']]['identity'])
                     and evidence._same(inventory, self.baseline),
                     'A saved hero changed before it entered the game; preserve all data and export the report')
-            self.use_hero_baseline(identity['containerid'], chosen=True)
+            self.use_hero_baseline(identity['containerid'], chosen=True, entered_map_id=entered[names[0]])
             heroes.update(chosen_character_id=identity['containerid'], choice='another_saved_hero')
         else:
             require(identity['containerid'] not in {row['containerid'] for row in self.baseline}
                     and self.created_hero_supported(),
                     'More than one character exists; preserve all characters and export the report')
-            self.adopt_created_hero(identity, inventory)
+            self.adopt_created_hero(identity, inventory, entered[names[0]])
             heroes.update(chosen_character_id=identity['containerid'], choice='created_in_the_character_list')
         self.ctx.event('session_hero', format=1, session_id=self.owner.args.session_id,
             character_id=identity['containerid'], name=CHARACTER, account=ACCOUNT,
@@ -4917,7 +4918,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             expected_character_id=heroes['expected_character_id'])
         return True
 
-    def adopt_created_hero(self, identity, inventory):
+    def adopt_created_hero(self, identity, inventory, entered_map_id=None):
         raise base.DiagnosticError('More than one character exists; preserve all characters and export the report')
 
     def session_identity(self, inventory):

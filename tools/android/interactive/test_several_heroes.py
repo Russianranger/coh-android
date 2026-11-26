@@ -144,7 +144,7 @@ class SeveralHeroesTests(unittest.TestCase):
         self.assertFalse(value.observe_chosen_hero())
         value.maps[1]['process'].output = bytearray(ready_line('Second Hero', 1, launched + 5000))
         value.current_logs = Mock(return_value=[])
-        self.assertEqual(value.entered_hero_names(), ['Second Hero'])
+        self.assertEqual(value.entered_heroes(), [('Second Hero', 1)])
         self.assertTrue(value.observe_chosen_hero())
         self.assertEqual((value.CHARACTER_ID, server.HERO_ID, server.CHARACTER), (2, 2, 'Second Hero'))
         proof = value.creation_report
@@ -199,6 +199,39 @@ class SeveralHeroesTests(unittest.TestCase):
             process.terminate.assert_called_once_with()
             self.assertEqual((record['ended'], record['stopped_for_map_id']), (True, 1))
             self.assertEqual(value.dynamic_initial()['zone_servers_before_enter_game'], 0)
+
+    def test_a_loaded_zone_beside_the_client_stays_and_the_chosen_hero_s_zone_becomes_the_session_s(self):
+        with patch.dict('os.environ', {zoning.EARLY_ZONE_ENV: '1'}):
+            value, sup = self.chosen()
+
+            def spawn(target, **keywords):
+                value.maps[target] = dict(stock.owned(ready=False), launch_utc_ms=int(time.time() * 1000),
+                                          launch_monotonic=time.monotonic())
+            value._spawn_map = Mock(side_effect=spawn)
+            with patch.object(zoning, 'available_memory_mib', return_value=9000):
+                self.assertTrue(value.start_early_zone()['started'])
+            # King's Row is ready before anyone pressed Enter Game: it is the session's zone for now.
+            value.maps[5]['ready'] = True
+            value.tick_dynamic_initial()
+            initial = value.dynamic_initial()
+            self.assertEqual((initial['activated'], value.active_map_id), (True, 5))
+            # A zone no hero is saved in is still refused; hero 2's Atlas Park starts beside King's Row.
+            value.created_hero_supported = Mock(return_value=False)
+            self.assertEqual(value.admit_zone_request(36), 'not_the_saved_zone')
+            self.assertEqual(value.admit_zone_request(5), None)
+            self.assertEqual(value.admit_zone_request(1), None)
+            self.assertEqual((initial['zone_choice'], initial['chosen_zone_map_id'], sorted(value.maps)),
+                             ('another_saved_hero', 1, [5]))
+            launched = int(time.time() * 1000)
+            value.maps[1] = dict(stock.owned(ready=True), launch_utc_ms=launched, launch_monotonic=time.monotonic())
+            value.maps[1]['process'].output = bytearray(ready_line('Second Hero', 1, launched + 4000))
+            value.maps[5]['process'].output = bytearray()
+            value.current_logs = Mock(return_value=[])
+            self.assertTrue(value.observe_chosen_hero())
+            self.assertEqual((value.CHARACTER_ID, value.active_map_id, sorted(value.maps)), (2, 1, [1, 5]))
+            self.assertEqual((initial['map_id'], initial['expected_map_id'], initial['left_loaded_zone_map_id']), (1, 1, 5))
+            value.verify_initial_connection(initial)
+            self.assertEqual(value.ready_floor_ms, launched - 999)
 
     def test_a_hero_made_in_the_character_list_turns_the_session_into_its_creation(self):
         value, sup = self.chosen(second_map=5)        # both saved heroes are in King's Row

@@ -1321,7 +1321,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             hero_count=len(getattr(self, 'hero_baselines', None) or [None]))
         self.persist_startup_observation()
 
-    def use_hero_baseline(self, identifier, *, chosen=False):
+    def use_hero_baseline(self, identifier, *, chosen=False, entered_map_id=None):
+        if chosen:
+            self.enter_chosen_zone(entered_map_id)
         entry = super().use_hero_baseline(identifier, chosen=chosen)
         if chosen:
             # The zone is the one the game asked for and this hero entered; the records of the
@@ -1339,27 +1341,51 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 initial['expected_map_id'] = saved
         return entry
 
-    def entered_hero_names(self):
-        """Names on the resume lines of the owned zone servers since the first zone's launch."""
-        floor = getattr(self, 'ready_floor_ms', 0)
-        names = []
-        for map_id, owned in list(getattr(self, 'maps', {}).items()):
+    def entered_heroes(self):
+        """(name, map) of each resume line of the owned zone servers since this session's first zone launch."""
+        maps = list(getattr(self, 'maps', {}).items())
+        floor = min([owned.get('launch_utc_ms', 0) - 999 for _, owned in maps if type(owned.get('launch_utc_ms')) is int]
+                    or [getattr(self, 'ready_floor_ms', 0)])
+        heroes = []
+        for map_id, owned in maps:
             try:
-                names.extend(console_ready_names(owned['process'].output, floor))
+                heroes.extend((name, map_id) for name in console_ready_names(owned['process'].output, floor))
             except (KeyError, AttributeError, TypeError, ValueError):
                 continue
         now = time.monotonic()
-        if not names and self.map_process is not None and now >= getattr(self, 'entity_names_next', 0):
-            # A zone server without the console line: the stock entity log (60-90 s later), read
+        if not heroes and self.map_process is not None and now >= getattr(self, 'entity_names_next', 0):
+            # Zone servers without the console line: the stock entity log (60-90 s later), read
             # at most twice a minute here (the ordinary inspection reads it for the expected hero).
             self.entity_names_next = now + 30
-            names.extend(entity_ready_names(self.current_logs(), self.active_map_id, floor, int(time.time() * 1000)))
-        return names
+            logs, now_ms = self.current_logs(), int(time.time() * 1000)
+            for map_id, owned in maps:
+                if supported(map_id):
+                    heroes.extend((name, map_id) for name in entity_ready_names(logs, map_id, floor, now_ms))
+        return heroes
+
+    def enter_chosen_zone(self, map_id):
+        """The chosen hero resumed on another owned zone server than the one the launch made active.
+
+        That happens when the expected hero's zone, started beside the client, was already
+        loaded: the game then started the chosen hero's zone like a trip's destination.
+        """
+        if map_id is None or map_id == self.active_map_id:
+            return
+        owned = self.maps.get(map_id)
+        require(owned is not None and owned.get('ready') is True and not self.creation_report.get('connected_on_atlas'),
+                'The hero entered a zone this session did not start; preserve data and export')
+        previous = self.active_map_id
+        self._activate(map_id)
+        owned['last_occupied'] = time.monotonic()
+        self.ready_floor_ms = owned['launch_utc_ms'] - 999
+        initial = self.dynamic_initial()
+        if initial is not None:
+            initial.update(map_id=map_id, map_name=zone_name(map_id), left_loaded_zone_map_id=previous)
 
     def created_hero_supported(self):
         return self.dynamic_initial() is not None and self.stock_travel_active()
 
-    def adopt_created_hero(self, identity, inventory):
+    def adopt_created_hero(self, identity, inventory, entered_map_id=None):
         """The player made a hero in the game's character list: this session becomes its creation.
 
         The game started the new hero's starting zone and the hero entered it. From here the
@@ -1371,6 +1397,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 'More than one character exists; preserve all characters and export the report')
         require(sorted(self.baseline + [identity], key=lambda row: row['containerid']) == inventory,
                 'Existing character identities changed or unexpected characters were created')
+        self.enter_chosen_zone(entered_map_id)
+        initial['map_id'] = self.active_map_id
         self.CHARACTER_ID = identity['containerid']
         self.creation_report['name'] = character.bind_hero(identity.get('name'), identity['containerid'], replace=True)
         self.created_in_session = True
@@ -1434,9 +1462,26 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         is starting, is refused: the game reports that the map failed and the
         character stays at the character list. Nothing is moved.
         """
-        if not self.initial_zone_pending():
-            return None
         initial = self.dynamic_initial()
+        if initial is None or self.creation_report.get('connected_on_atlas'):
+            return None
+        if initial['activated'] is True:
+            # The expected hero's zone, started beside the client, is loaded and nobody is in it
+            # yet. 0.13.87: the player may still enter with another hero; only such a hero's own
+            # zone starts beside it (enter_chosen_zone makes it the session's zone when the hero
+            # resumes there).
+            expected = initial['expected_map_id']
+            if expected is None or same_zone(map_id, expected):
+                return None
+            choice = self.other_hero_zone(map_id)
+            if choice is None:
+                initial['refused_requests'].append({'map_id': map_id, 'reason': 'not_the_saved_zone',
+                                                    'utc_ms': int(time.time() * 1000)})
+                del initial['refused_requests'][:-8]
+                return 'not_the_saved_zone'
+            initial.setdefault('launch_expected_map_id', expected)
+            initial.update(zone_choice=choice, chosen_zone_map_id=map_id)
+            return None
         reason = choice = None
         expected = initial['expected_map_id']
         others = [other for other in self.maps if other != map_id]

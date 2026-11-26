@@ -174,7 +174,10 @@ class DynamicInitialMapTests(unittest.TestCase):
         self.assertTrue(metadata['stock_travel'])
         self.assertEqual(initial['connected_map_id'], 5)
         self.assertTrue(value.zoning_report['saved_startup']['character_world_entry_verified'])
-        # Once the zone is active, the ordinary policy (current zone plus one) applies again.
+        # 0.13.87: until the hero is in the game, still only a saved hero's zone may start.
+        self.assertEqual(value.admit_zone_request(1), 'not_the_saved_zone')
+        # Once the hero is in the zone, the ordinary policy (current zone plus one) applies again.
+        value.creation_report['connected_on_atlas'] = True
         self.assertIsNone(value.admit_zone_request(1))
         value.tick_dynamic_initial()
         value._activate.assert_called_once_with(5)
@@ -189,7 +192,8 @@ class DynamicInitialMapTests(unittest.TestCase):
         self.assertIn('map_ready_observed', trip['points'])
         self.assertEqual(initial_row['map_id'], 5)
         self.assertEqual([row['reason'] for row in initial['refused_requests']],
-                         ['not_the_saved_zone', 'not_the_saved_zone', 'initial_zone_already_starting'])
+                         ['not_the_saved_zone', 'not_the_saved_zone', 'initial_zone_already_starting',
+                          'not_the_saved_zone'])
 
     def test_a_hero_saved_in_atlas_instance_two_enters_atlas_park(self):
         value = self.dynamic(101)
