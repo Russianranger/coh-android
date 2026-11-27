@@ -47,6 +47,27 @@ def events():
 
 
 class CharacterHostTests(unittest.TestCase):
+    def test_the_zone_start_after_enter_game_is_not_interaction_time(self):
+        observed = character.CharacterEvents(Path('/nonexistent'), SESSION)
+        clock = iter([100.0, 400.0, 900.0, 950.0])
+        with mock.patch.object(character.time, 'monotonic', side_effect=lambda: next(clock)):
+            for status in ('starting', 'ready'):
+                observed.consume({'type': 'character_initial_zone', 'session_id': SESSION, 'status': status})
+            observed.consume({'type': 'character_initial_zone', 'session_id': '0' * 32, 'status': 'starting'})
+            self.assertEqual(character.initial_zone_seconds(observed, 500.0), 300.0)
+            observed.consume({'type': 'character_initial_zone', 'session_id': SESSION, 'status': 'starting'})
+            self.assertEqual(character.initial_zone_seconds(observed, 1000.0), 400.0)
+            observed.consume({'type': 'character_initial_zone', 'session_id': SESSION, 'status': 'not_ready'})
+        self.assertEqual(character.initial_zone_seconds(observed, 10 ** 6), 350.0)
+        self.assertEqual(character.initial_zone_seconds(SimpleNamespace(), 5.0), 0)
+        observed.initial_zone_started = 0.0
+        self.assertEqual(character.initial_zone_seconds(observed, 10 ** 6), character.INITIAL_ZONE_ALLOWANCE_SECONDS)
+        report = {'character_zoning': {'initial_zone': {'attempts': [
+            {'started_monotonic': 10.0, 'ended_monotonic': 70.5}, {'started_monotonic': 100.0},
+            {'started_monotonic': 'x', 'ended_monotonic': 5}, {'started_monotonic': 9.0, 'ended_monotonic': 1.0}]}}}
+        self.assertEqual(character.report_initial_zone_seconds(report), 60.5)
+        self.assertEqual(character.report_initial_zone_seconds({}), 0.0)
+
     def test_character_login_omits_optional_settings_probe_and_preserves_login_only_script(self):
         original = character.login.LoginInteraction.ACTIONS
         self.assertEqual([action[2] for action in original[2:8]], ['preposition_settings', 'open_settings',

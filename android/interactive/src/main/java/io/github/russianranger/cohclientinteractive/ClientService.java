@@ -97,7 +97,7 @@ public final class ClientService extends Service {
         @Override public void onReceive(Context context,Intent intent){ lifecycle("screen_event="+intent.getAction()); if(Intent.ACTION_SCREEN_OFF.equals(intent.getAction()))discardPendingInputs(); }
     };
     @Override public void onCreate(){
-        super.onCreate();main.post(sessionDeadlineTick);
+        super.onCreate();ClientCrash.install(this);main.post(sessionDeadlineTick);
         NotificationManager manager=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         manager.createNotificationChannel(new NotificationChannel(CHANNEL,"CoH saved character",NotificationManager.IMPORTANCE_LOW));
         ClientRuntime.initializeReportStorage();
@@ -139,6 +139,10 @@ public final class ClientService extends Service {
         ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&active!=null&&session.equals(selectedSession)
                 &&active.sendPointer(selectedSession,x,y,mask);
     }
+    public boolean sendWheel(String selectedSession,int x,int y,boolean up){
+        ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&active!=null&&session.equals(selectedSession)
+                &&active.sendWheel(selectedSession,x,y,up);
+    }
     public boolean requestEnter(){
         ClientRuntime active=runtime;
         return busy&&uiVisible&&inputReady&&!stopping&&!finishing&&!blocked&&active!=null
@@ -156,7 +160,7 @@ public final class ClientService extends Service {
         ClientRuntime active=runtime;
         return command!=null&&canSendPerformanceCommand()&&active!=null&&active.requestPerformanceCommand(command);
     }
-    public String zoningStatus(){ClientRuntime active=runtime;return active==null?"Reopen THORHERO to start in the saved destination.":active.zoningStatus();}
+    public String zoningStatus(){ClientRuntime active=runtime;return active==null?"Start Play to begin in your saved zone.":active.zoningStatus();}
     public int zoningCurrentMap(){ClientRuntime active=runtime;return active==null?0:active.zoningCurrentMap();}
     public boolean canPrepareZoning(){ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&!stopping&&!finishing&&!blocked&&active!=null&&active.canPrepareZoning();}
     public boolean canTravelZoning(){ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&!stopping&&!finishing&&!blocked&&active!=null&&active.canTravelZoning();}
@@ -225,7 +229,33 @@ public final class ClientService extends Service {
         publish();notifyStatus();return true;
     }
     private void lifecycle(String event){ClientRuntime r=runtime;if(r!=null&&busy)r.recordLifecycle(event);}
+    /** 0.13.90: Android's memory warnings go into the launch record with the device's free memory, so a
+     *  launch that Android ends shows whether Android had asked for memory first. The same level is
+     *  recorded at most every ten seconds. */
+    private int lastTrimLevel=-1;private long lastTrimUptime;
+    @Override public void onTrimMemory(int level){
+        super.onTrimMemory(level);
+        try{
+            long now=android.os.SystemClock.uptimeMillis();
+            if(level==lastTrimLevel&&now-lastTrimUptime<10000)return;
+            lastTrimLevel=level;lastTrimUptime=now;
+            lifecycle(trimMemoryEvent(level,ClientRuntime.systemMemorySample(this)));
+        }catch(RuntimeException ignored){ /* Evidence only. */ }
+    }
+    static String trimMemoryEvent(int level,java.util.Map<String,Object> memory){
+        Object available=memory.get("system_memory_available_bytes");
+        return "trim_memory level="+level+" available_mib="
+                +(available instanceof Number?String.valueOf(((Number)available).longValue()>>20):"unknown")
+                +" low="+memory.get("system_memory_low");
+    }
     private void refreshProfileState(){profileState=ClientRuntime.characterProfileState(this);profileNote=ClientRuntime.profileRecoveryMessage(profileState);}
+    /** 0.13.85: swap the saved hero with the other hero slot (folder renames only), then show the new state. */
+    public String switchHero(){
+        if(busy||storageBusy||reportExporting||blocked)return "Finish the current operation first.";
+        String message;
+        try{message=ClientRuntime.switchHero(this);}catch(IOException failure){message=String.valueOf(failure.getMessage());}
+        refreshProfileState();publish();return message;
+    }
     private State snapshot(){return new State(busy,blocked,stage,detail,session,logs.toString(),report,certified,inputReady,finishing,characterSaved,canReturnGround,canSaveLogout,inputSent,inputFailed,readyDeadlineUptimeMillis,sessionPhase,saveDeadlineUptimeMillis,movementDeadlineUptimeMillis,storageBusy,reportExporting,storagePlan,storageStatus,storageReport,profileState,profileNote);}
     private void publish(){if(destroyed)return;State s=snapshot();for(Listener l:new ArrayList<>(listeners))l.onState(s);}
     private void deliverFrame(Listener l){Frame value=frame;if(value!=null)l.onFrame(value.pixels,value.width,value.height,value.sequence);}
@@ -728,7 +758,7 @@ public final class ClientService extends Service {
         final Object owner;
         try{owner=cleaning?ClientRuntime.acquireStorage(this):ClientRuntime.acquireReportExport(this);}
         catch(IOException e){storageStatus=e.getMessage();publish();return;}
-        storageStopRequested.set(false);storageBusy=true;storageStatus=cleaning?"Cleaning the selected disposable files…":"Scanning private storage. No files are being changed…";
+        storageStopRequested.set(false);storageBusy=true;storageStatus=cleaning?"Cleaning the selected disposable files…":"Scanning private storage. No files are being removed…";
         final PowerManager.WakeLock storageWake;
         try{storageWake=((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"cohclient:storage");}
         catch(RuntimeException e){ClientRuntime.releaseStorage(owner);storageBusy=false;storageStatus="Could not start storage work. Reopen this screen and retry.";publish();return;}
@@ -740,7 +770,7 @@ public final class ClientService extends Service {
                 StorageAudit.ProgressListener progress=(phase,entries,path,elapsed)->checkpointStorage(mode,phase,entries,path,elapsed);
                 StorageFiles fs=new StorageFiles(getFilesDir(),getCacheDir());StorageAudit.Limits limits=StorageAudit.Limits.defaults();
                 if(cleaning){StorageAudit.CleanupResult cleanup=StorageAudit.cleanup(fs,reviewed,selected,limits,progress);saved=writeStorageReport(cleanup.toJson());plan=cleanup.afterPlan;result=cleanup.stalePlan?"Storage changed after review. No cleanup was started; review the fresh scan.":cleanup.completed?"Cleanup finished: "+cleanup.deletedCount+" entries removed. Review the fresh totals and export its report.":"Cleanup stopped before all selected files were removed. Review the fresh totals and export its report.";}
-                else{plan=StorageAudit.scan(fs,currentManifestSha(),limits,progress);saved=writeStorageReport(plan.toJson());result=plan.cleanupAllowed?"Storage scan complete. Select disposable categories to review cleanup.":plan.complete?"Storage scan complete. Cleanup is unavailable; export the report for details.":"Storage scan incomplete. Cleanup is unavailable; export the storage report.";}
+                else{int repaired=ClientRuntime.repairRuntimeMountPoints(getFilesDir());plan=StorageAudit.scan(fs,currentManifestSha(),limits,progress);saved=writeStorageReport(new JSONObject(plan.toJson()).put("runtime_mount_points_repaired",repaired).put("android_process_exit_history",storageProcessExits()).toString());result=plan.cleanupAllowed?"Storage scan complete. Select disposable categories to review cleanup.":plan.complete?"Storage scan complete. Cleanup is unavailable; export the report for details.":"Storage scan incomplete. Cleanup is unavailable; export the storage report.";}
             }catch(OutOfMemoryError e){plan=null;storageRecoveryReserve=null;result="Storage operation stopped at its memory limit. Export the storage report.";try{saved=storageFailureReport(result);}catch(Exception ignored){} }
             catch(Exception e){plan=null;result="Storage operation stopped: "+(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage());try{saved=storageFailureReport(result);}catch(Exception ignored){} }
             finally{
@@ -786,7 +816,7 @@ public final class ClientService extends Service {
         busy=true;stopping=false;blocked=false;inputReady=false;finishing=false;characterSaved=false;canReturnGround=false;canSaveLogout=false;inputSent=0;inputFailed=0;readyDeadlineUptimeMillis=0;saveDeadlineUptimeMillis=0;movementDeadlineUptimeMillis=0;sessionPhase="menu";certified=0;logs.setLength(0);frame=null;certificationErrors.clear();
         session=(RUN.equals(action)||creating)?UUID.randomUUID().toString().replace("-",""):"";
         stage=SETUP.equals(action)?"Setting up runtime":IMPORT.equals(action)?"Importing client data":"Starting CoH client";
-        detail=SETUP.equals(action)?"Preparing the private runtime. Close other apps; setup pauses if available memory is low.":IMPORT.equals(action)?"Verify and import the reviewed COH asset ZIP.":"Opening the persistent database and verifying THORHERO's saved destination before starting its MapServer and client. Native startup may take up to 40 minutes on the Thor.";
+        detail=SETUP.equals(action)?"Preparing the private runtime. Close other apps; setup pauses if available memory is low.":IMPORT.equals(action)?"Verify and import the reviewed COH asset ZIP.":"Opening the persistent database and verifying the saved character's destination before starting its MapServer and client. Native startup may take up to 40 minutes on the Thor.";
         getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("was_busy",true).commit();
         selectedSession=session;
         if(setup){setupStartedUtc=System.currentTimeMillis();lastSetupCheckpointUptime=0;lastSetupPhase="";setupFailureReport=null;setupWorkerOwnsWake=true;setupAppVersion=setupAppVersion();String appId=getPackageName();setupAppId=appId.substring(0,Math.min(160,appId.length()));}

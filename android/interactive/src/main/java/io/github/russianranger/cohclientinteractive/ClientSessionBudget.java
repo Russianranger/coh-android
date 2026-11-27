@@ -18,9 +18,18 @@ public final class ClientSessionBudget {
     public synchronized boolean canMove(long now) { return revision >= 1 && (manual || now < movementDeadline); }
     public synchronized boolean canSave(long now) { return revision >= 1 && (manual || now < saveDeadline); }
 
+    /** Any player name the game accepts (ClientAcceptance.characterName; 0.13.62: not only THORHERO). */
+    private static boolean characterName(Object value) {
+        if (!(value instanceof String)) return false;
+        String name = (String) value;
+        return name.matches("[\\x20-\\x7e]{3,20}") && name.equals(name.trim()) && !name.contains("  ");
+    }
     private static long integer(Object value) {
         return value instanceof Integer || value instanceof Long ? ((Number)value).longValue() : -1;
     }
+    /** 0.13.87: the hero that connected in this session (any hero of the account; 1 until it is known). */
+    private long characterId = 1;
+    public synchronized void character(long id) { if (id > 0) characterId = id; }
     public synchronized boolean apply(Map<String,Object> event, String session, long pid,
             boolean connected, boolean grounded, long relocationSentUtc,
             long wallNow, long uptimeNow, long hardCapUptime) {
@@ -34,10 +43,11 @@ public final class ClientSessionBudget {
                 || uptimeNow < 0 || uptimeNow > Long.MAX_VALUE - 1201000 || !manual && hardCapUptime <= uptimeNow
                 || !"character_session_budget".equals(event.get("type"))
                 || integer(event.get("format")) != 1 || !session.equals(event.get("session_id"))
-                || integer(event.get("client_pid")) != pid || integer(event.get("character_id")) != 1
-                || !"THORHERO".equals(event.get("name")) || !"COHLOCAL".equals(event.get("account"))
+                || integer(event.get("client_pid")) != pid || integer(event.get("character_id")) != characterId
+                || !characterName(event.get("name")) || !"COHLOCAL".equals(event.get("account"))
                 || !(integer(event.get("map_id")) == connectedMap && (connectedMap == 1
-                    || zoning && (connectedMap == 101 || connectedMap == 5 && Boolean.TRUE.equals(event.get("monorail_enabled")))
+                    || zoning && (connectedMap == 101 || connectedMap == 5 && Boolean.TRUE.equals(event.get("monorail_enabled"))
+                        || Boolean.TRUE.equals(event.get("stock_travel")) && connectedMap >= 1 && connectedMap <= 999)
                         && Boolean.TRUE.equals(event.get("zoning_enabled")))) || !connected
                 || !Boolean.TRUE.equals(event.get("native_client_ready_observed"))
                 || !Boolean.TRUE.equals(event.get("reopen_verified"))) return false;

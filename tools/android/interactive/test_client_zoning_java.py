@@ -125,8 +125,210 @@ public final class ZoningHost {
   for(int map:new int[]{-1,0,2,100,102,Integer.MAX_VALUE}){output.reset();try{r.sendMapMove(map,r.inputEpoch());throw new AssertionError();}catch(IOException expected){}need(output.size()==0);}
   long old=r.inputEpoch();r.cancelPendingInput();output.reset();try{r.sendMapMove(101,old);throw new AssertionError();}catch(InteractiveRfbClient.InputCancelledException expected){}need(output.size()==0);
  }
+ static Map<String,Object> stock(String status,int epoch,int map,int from,long now){
+  Map<String,Object> e=event(status,epoch,map,map,now);e.put("travel_method","stock_travel");
+  e.put("current_map_name",map==6?"steelcanyon":"Atlas Park");if(from>0)e.put("from_map_id",from);return e;
+ }
+ static void stockTravel(){
+  ClientZoning z=new ClientZoning();
+  need(!z.accept(stock("enabled",0,1,0,1000),SESSION,73,1,1000,10,1,false));   // needs the opt-in
+  need(z.accept(stock("enabled",0,1,0,1000),SESSION,73,1,1000,10,1,true));
+  need(z.stockTravel()&&!z.canPrepare()&&!z.canTravel()&&!z.blocksInput()&&z.currentMap()==1);
+  need(!z.accept(event("ready",0,1,101,1001),SESSION,73,1,1001,10,1,true));     // station events refused
+  need(!z.accept(stock("arrived",1,6,5,1002),SESSION,73,1,1002,10,1,true));     // wrong origin
+  need(!z.accept(stock("arrived",2,6,1,1002),SESSION,73,1,1002,10,1,true));     // skipped epoch
+  need(!z.accept(stock("arrived",1,1000,1,1002),SESSION,73,1,1002,10,1,true));  // not a static zone
+  need(z.accept(stock("arrived",1,6,1,1003),SESSION,73,1,1003,10,1,true));
+  need(z.currentMap()==6&&z.epoch()==1&&!z.blocksInput()&&"idle".equals(z.phase())&&z.currentName().equals("steelcanyon"));
+  need(z.accept(stock("arrived",2,1,6,1004),SESSION,73,1,1004,10,1,true));
+  need(z.currentMap()==1&&z.epoch()==2);
+  for(int epoch=3;epoch<12;epoch++){int to=epoch%2==1?6:1;need(z.accept(stock("arrived",epoch,to,to==6?1:6,1000+epoch*10),SESSION,73,1,1000+epoch*10,10,1,true));}
+  need(z.epoch()==11&&z.currentMap()==6);   // no four-trip limit
+  // 0.13.84: a mission map of this session, marked by the guest; in, then out to the zone.
+  Map<String,Object> m=stock("arrived",12,1000,6,2000);m.put("current_map_name","Mission");
+  need(!z.accept(m,SESSION,73,1,2000,10,1,true));                               // not marked: not a static zone
+  m.put("mission_map",true);m.put("current_map_id",100000);m.put("target_map_id",100000);
+  need(!z.accept(m,SESSION,73,1,2000,10,1,true));                               // beyond the id bound
+  m.put("current_map_id",1000);m.put("target_map_id",1000);
+  need(z.accept(m,SESSION,73,1,2000,10,1,true));
+  need(z.currentMap()==1000&&z.epoch()==12&&z.currentName().equals("Mission")&&!z.blocksInput());
+  Map<String,Object> out=stock("arrived",13,6,1000,2010);out.put("from_mission_map",true);
+  need(z.accept(out,SESSION,73,1,2010,10,1,true));need(z.currentMap()==6&&z.epoch()==13);
+  // A session never begins on a mission map.
+  ClientZoning fresh=new ClientZoning();Map<String,Object> begin=stock("enabled",0,1000,0,1000);begin.put("mission_map",true);
+  need(!fresh.accept(begin,SESSION,73,1000,1000,10,1,true));
+ }
+ static void stockAcceptance(){
+  Map<String,Object> w=new LinkedHashMap<>();w.put("mapped",true);w.put("width",800);w.put("height",600);
+  w.put("title","City of Heroes : City_Zones/City_02_01/City_02_01.txt PID: 77");
+  need(!ClientAcceptance.clientWindowAccepted(w,77L,1,6,true));
+  need(ClientAcceptance.clientWindowAccepted(w,77L,1,6,true,true));
+  w.put("title","City of Heroes : Hazard_Zones/Hazard_01_01/Hazard_01_01.txt PID: 77");
+  need(ClientAcceptance.clientWindowAccepted(w,77L,12,12,false,true));
+  need(!ClientAcceptance.clientWindowAccepted(w,78L,12,12,false,true));
+  need(!ClientAcceptance.clientWindowAccepted(w,77L,1000,1000,false,true));
+  w.put("title","City of Heroes : City_Zones/City_01_02/City_01_02.txt PID: 77");
+  need(ClientAcceptance.clientWindowAccepted(w,77L,1,5,false,true));
+  Map<String,Object> d=new LinkedHashMap<>();d.put("type","saved_character_destination");d.put("session_id",SESSION);
+  d.put("character_id",1);d.put("auth_id",9);d.put("name","THORHERO");d.put("account","COHLOCAL");
+  d.put("existing_character_verified",true);d.put("saved_location_verified",true);d.put("sql_game_mutations_performed",false);
+  d.put("map_id",6);d.put("port",7004);d.put("world","city_02_01");
+  need(!ClientAcceptance.savedDestinationEvent(d,SESSION,true));
+  need(ClientAcceptance.savedDestinationEvent(d,SESSION,true,true));
+  d.put("port",7001);need(!ClientAcceptance.savedDestinationEvent(d,SESSION,true,true));
+  d.put("port",7004);d.put("world","../x");need(!ClientAcceptance.savedDestinationEvent(d,SESSION,true,true));
+  d.put("world","city_01_02");d.put("map_id",5);d.put("port",7003);need(ClientAcceptance.savedDestinationEvent(d,SESSION,false,true));
+  // 0.13.59 dynamic start: no zone server before Enter Game, no zone prepared first
+  // (Atlas Park included); the saved zone has no port until the game asks for it.
+  d.put("map_id",6);d.put("port",null);d.put("world","city_02_01");
+  need(!ClientAcceptance.savedDestinationEvent(d,SESSION,false,true));
+  d.put("dynamic_start",true);need(ClientAcceptance.savedDestinationEvent(d,SESSION,false,true));
+  need(!ClientAcceptance.savedDestinationEvent(d,SESSION,true,false));
+  d.put("prepared_map_id",1);need(!ClientAcceptance.savedDestinationEvent(d,SESSION,false,true));   // 0.13.58 shape
+  d.remove("prepared_map_id");d.put("port",7004);need(ClientAcceptance.savedDestinationEvent(d,SESSION,false,true));  // legacy port branch
+  d.put("port",null);
+  for(Object map:new Object[]{1,101,5,71}){d.put("map_id",map);need(ClientAcceptance.savedDestinationEvent(d,SESSION,false,true));}
+  d.remove("port");need(!ClientAcceptance.savedDestinationEvent(d,SESSION,false,true));
+  d.put("port",null);d.put("world","../x");need(!ClientAcceptance.savedDestinationEvent(d,SESSION,false,true));
+  d.put("world","v_city_01_01");d.put("map_id",1000);need(!ClientAcceptance.savedDestinationEvent(d,SESSION,false,true));
+ }
+ static Map<String,Object> creationReport(int map,boolean stock,Map<String,Object> connected,Map<String,Object> saved){
+  Map<String,Object> proof=new LinkedHashMap<>(),login=new LinkedHashMap<>(),report=new LinkedHashMap<>();
+  for(Map<String,Object> item:Arrays.asList(connected,saved,proof,login)){
+   item.put("session_id",SESSION);item.put("client_pid",73);item.put("character_id",1);item.put("name","THORHERO");item.put("account","COHLOCAL");
+  }
+  for(Map<String,Object> item:Arrays.asList(connected,saved,proof)){
+   item.put("map_id",map);
+   if(stock){item.put("zoning_enabled",true);item.put("connected_on_supported_map",true);item.put("monorail_enabled",false);item.put("stock_travel",true);}
+  }
+  connected.put("type","character_connected");saved.put("type","character_saved");saved.put("committed_sql_verified",true);
+  for(String flag:new String[]{"verified","connected_on_atlas","committed_sql_verified","requested_logout_observed","logout_timer_observed","disconnected_before_sql"})proof.put(flag,true);
+  proof.put("forced_stop_before_save",false);proof.put("auth_id",2);
+  login.put("auth_id",2);login.put("profile","android-local-login");for(String flag:new String[]{"local_login_verified","character_list_sent","local_account_verified","character_list_response_sent","database_preserved"})login.put(flag,true);
+  report.put("local_login",login);report.put("character_creation",proof);
+  return report;
+ }
+ static void creation(){
+  // 0.13.59: a new THORHERO starts in the zone the game starts for it (hero, villain, Praetorian, tutorial).
+  for(int map:new int[]{1,71,36,24}){
+   Map<String,Object> connected=new LinkedHashMap<>(),saved=new LinkedHashMap<>();
+   Map<String,Object> report=creationReport(map,true,connected,saved);
+   need(ClientAcceptance.characterConnectedEvent(connected,SESSION,73,true));
+   need(ClientAcceptance.characterCreationVerified(report,saved,connected,SESSION,73,true));
+   need(map==1||!ClientAcceptance.characterConnectedEvent(connected,SESSION,73));
+   need(map==1||!ClientAcceptance.characterCreationVerified(report,saved,connected,SESSION,73));
+   need(!ClientAcceptance.characterCreationVerified(report,saved,connected,SESSION,73,false)||map==1);
+   ((Map<String,Object>)report.get("character_creation")).put("stock_travel",false);
+   need(!ClientAcceptance.characterCreationVerified(report,saved,connected,SESSION,73,true));
+   ((Map<String,Object>)report.get("character_creation")).put("stock_travel",true);
+   saved.put("map_id",map==1?71:1);need(!ClientAcceptance.characterCreationVerified(report,saved,connected,SESSION,73,true));
+   saved.put("map_id",map);((Map<String,Object>)report.get("character_creation")).put("character_id",2);
+   connected.put("character_id",2);saved.put("character_id",2);
+   need(!ClientAcceptance.characterCreationVerified(report,saved,connected,SESSION,73,true));
+  }
+  // The legacy creation (x86 client or no stock travel) keeps Atlas Park only.
+  Map<String,Object> connected=new LinkedHashMap<>(),saved=new LinkedHashMap<>();
+  Map<String,Object> report=creationReport(1,false,connected,saved);
+  need(ClientAcceptance.characterCreationVerified(report,saved,connected,SESSION,73));
+  need(ClientAcceptance.characterCreationVerified(report,saved,connected,SESSION,73,false));
+  need(!ClientAcceptance.characterCreationVerified(report,saved,connected,SESSION,73,true));
+ }
+ static void heroes(){
+  // 0.13.87: Play follows the hero that entered the game. A hero made in the character list is proved
+  // as a creation under the session's own report key; a saved hero under any container ID.
+  for(int map:new int[]{1,71}){
+   Map<String,Object> connected=new LinkedHashMap<>(),saved=new LinkedHashMap<>();
+   Map<String,Object> report=creationReport(map,true,connected,saved);
+   Map<String,Object> proof=(Map<String,Object>)report.remove("character_creation");report.put("character_reopen",proof);
+   for(Map<String,Object> item:Arrays.asList(connected,saved,proof)){item.put("character_id",3);item.put("name","New Hero");}
+   need(!ClientAcceptance.heroCreatedConnectedEvent(connected,SESSION,73));
+   for(Map<String,Object> item:Arrays.asList(connected,saved,proof))item.put("created_in_session",true);
+   need(ClientAcceptance.heroCreatedConnectedEvent(connected,SESSION,73));
+   need(ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,73));
+   need(!ClientAcceptance.characterReopenConnectedEvent(connected,SESSION,73,true));
+   need(!ClientAcceptance.characterReopenVerified(report,saved,connected,SESSION,73,true));
+   // It claims nothing of a reopen, belongs to this session and client, and names one hero throughout.
+   connected.put("reopen_verified",true);need(!ClientAcceptance.heroCreatedConnectedEvent(connected,SESSION,73));connected.remove("reopen_verified");
+   proof.put("baseline_character_id",3);need(!ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,73));proof.remove("baseline_character_id");
+   saved.put("character_id",1);need(!ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,73));saved.put("character_id",3);
+   saved.remove("created_in_session");need(!ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,73));saved.put("created_in_session",true);
+   proof.put("stock_travel",false);need(!ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,73));proof.put("stock_travel",true);
+   proof.put("verified",false);need(!ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,73));proof.put("verified",true);
+   need(!ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,74));
+   need(ClientAcceptance.heroCreatedVerified(report,saved,connected,SESSION,73));
+  }
+  // 0.13.88 (Thor export 20261126-160620): a created hero's Play session is manual, ended by Finish and
+  // has no session budget; the reopen rule (a budget for every manual session) refused the proved save.
+  Map<String,Object> observed=new LinkedHashMap<>();
+  observed.put("observation_seconds",627.57);observed.put("manual_session",true);
+  observed.put("interaction_completion_reason","finish_requested");observed.put("interaction_timeout_seconds",0);
+  need(ClientAcceptance.createdHeroObservationAccepted(observed,new ArrayList<Object>()));
+  need(ClientAcceptance.createdHeroObservationAccepted(observed,null));
+  need(!ClientAcceptance.clientObservationAccepted(observed,new ArrayList<Object>(),SESSION,73,10,20,0,5,1,true));
+  observed.put("character_session_budgets",new ArrayList<Object>());need(ClientAcceptance.createdHeroObservationAccepted(observed,new ArrayList<Object>()));
+  observed.put("character_session_budgets",Arrays.asList(new LinkedHashMap<String,Object>()));need(!ClientAcceptance.createdHeroObservationAccepted(observed,new ArrayList<Object>()));
+  observed.remove("character_session_budgets");
+  need(!ClientAcceptance.createdHeroObservationAccepted(observed,Arrays.asList(new LinkedHashMap<String,Object>())));
+  observed.put("manual_session",false);need(!ClientAcceptance.createdHeroObservationAccepted(observed,null));observed.put("manual_session",true);
+  observed.put("interaction_completion_reason","interaction_timeout");need(!ClientAcceptance.createdHeroObservationAccepted(observed,null));
+  observed.put("interaction_completion_reason","finish_requested");
+  observed.put("interaction_timeout_seconds",1200);need(!ClientAcceptance.createdHeroObservationAccepted(observed,null));observed.put("interaction_timeout_seconds",0);
+  observed.put("observation_seconds",-1);need(!ClientAcceptance.createdHeroObservationAccepted(observed,null));
+  observed.put("observation_seconds","627");need(!ClientAcceptance.createdHeroObservationAccepted(observed,null));
+  observed.put("observation_seconds",86400.5);need(ClientAcceptance.createdHeroObservationAccepted(observed,null));
+  // A saved hero other than container 1: the connection names the hero that was read before login.
+  Map<String,Object> event=new LinkedHashMap<>();
+  event.put("type","character_connected");event.put("session_id",SESSION);event.put("client_pid",73);event.put("character_id",2);
+  event.put("name","Second Hero");event.put("account","COHLOCAL");event.put("map_id",1);event.put("baseline_character_id",2);
+  event.put("reopen_verified",true);event.put("existing_character_verified",true);
+  need(ClientAcceptance.characterReopenConnectedEvent(event,SESSION,73,true));
+  event.put("baseline_character_id",1);need(!ClientAcceptance.characterReopenConnectedEvent(event,SESSION,73,true));
+  event.put("baseline_character_id",2);event.put("character_id",0);need(!ClientAcceptance.characterReopenConnectedEvent(event,SESSION,73,true));
+ }
+ static void stockArrival(){
+  // Thor 0.13.56 (export 20261106-152038): King's Row reached by the game's own
+  // travel has monorail_enabled false; stock_travel makes it (and every other
+  // static zone) a supported character map for connection, budget and save.
+  Map<String,Object> e=new LinkedHashMap<>();e.put("type","character_connected");e.put("session_id",SESSION);e.put("client_pid",73);
+  e.put("character_id",1);e.put("baseline_character_id",1);e.put("name","THORHERO");e.put("account","COHLOCAL");
+  e.put("map_id",5);e.put("zoning_enabled",true);e.put("connected_on_supported_map",true);e.put("reopen_verified",true);
+  e.put("existing_character_verified",true);e.put("monorail_enabled",false);
+  need(!ClientAcceptance.characterReopenConnectedEvent(e,SESSION,73,true));
+  e.put("stock_travel",true);need(ClientAcceptance.characterReopenConnectedEvent(e,SESSION,73,true));
+  need(!ClientAcceptance.characterReopenConnectedEvent(e,SESSION,73,false));
+  e.put("map_id",6);need(ClientAcceptance.characterReopenConnectedEvent(e,SESSION,73,true));
+  for(Object map:new Object[]{1000,0,-5,6.5,"6"}){e.put("map_id",map);need(!ClientAcceptance.characterReopenConnectedEvent(e,SESSION,73,true));}
+  Map<String,Object> b=new LinkedHashMap<>();b.put("type","character_session_budget");b.put("format",1);b.put("session_id",SESSION);b.put("client_pid",73);
+  b.put("character_id",1);b.put("name","THORHERO");b.put("account","COHLOCAL");b.put("map_id",5);b.put("zoning_enabled",true);
+  b.put("native_client_ready_observed",true);b.put("reopen_verified",true);b.put("revision",1);b.put("phase","connected");
+  b.put("generated_utc_ms",1000);b.put("deadline_utc_ms",601000);b.put("save_request_deadline_utc_ms",421000);b.put("movement_deadline_utc_ms",361000);
+  need(!new ClientSessionBudget().apply(b,SESSION,73,true,false,0,1000,10,700000,true,5));
+  b.put("stock_travel",true);need(!new ClientSessionBudget().apply(b,SESSION,73,true,false,0,1000,10,700000,false,5));
+  need(!new ClientSessionBudget().apply(b,SESSION,73,true,false,0,1000,10,700000,true,6));   // exact connected map
+  need(new ClientSessionBudget().apply(b,SESSION,73,true,false,0,1000,10,700000,true,5));
+  b.put("map_id",6);need(new ClientSessionBudget().apply(b,SESSION,73,true,false,0,1000,10,700000,true,6));
+  b.put("map_id",1000);need(!new ClientSessionBudget().apply(b,SESSION,73,true,false,0,1000,10,700000,true,1000));
+  for(int destination:new int[]{5,6}){
+   Map<String,Object> connected=new LinkedHashMap<>(),saved=new LinkedHashMap<>(),proof=new LinkedHashMap<>(),login=new LinkedHashMap<>(),report=new LinkedHashMap<>();
+   for(Map<String,Object> item:Arrays.asList(connected,saved,proof,login)){
+    item.put("session_id",SESSION);item.put("client_pid",73);item.put("character_id",1);item.put("name","THORHERO");item.put("account","COHLOCAL");
+    item.put("zoning_enabled",true);item.put("connected_on_supported_map",true);item.put("map_id",destination);
+    item.put("monorail_enabled",false);item.put("stock_travel",true);
+   }
+   connected.put("type","character_connected");connected.put("map_id",1);connected.put("baseline_character_id",1);connected.put("reopen_verified",true);connected.put("existing_character_verified",true);
+   saved.put("type","character_saved");saved.put("committed_sql_verified",true);
+   for(String flag:new String[]{"verified","connected_on_atlas","committed_sql_verified","requested_logout_observed","logout_timer_observed","disconnected_before_sql","reopen_verified","existing_character_verified","preserved_existing_identity","native_client_ready_observed","powers_preserved","costume_preserved","selected_rows_preserved","committed_native_position_verified"})proof.put(flag,true);
+   for(String flag:new String[]{"forced_stop_before_save","recovery_requested","recovery_verified","ordinary_stuck_observed","on_atlas_safe_position","stable_ground_verified","committed_safe_position_verified"})proof.put(flag,false);
+   proof.put("auth_id",2);proof.put("before_character_id",1);proof.put("baseline_character_id",1);
+   login.put("auth_id",2);login.put("profile","android-local-login");for(String flag:new String[]{"local_login_verified","character_list_sent","local_account_verified","character_list_response_sent","database_preserved"})login.put(flag,true);
+   report.put("local_login",login);report.put("character_reopen",proof);
+   need(ClientAcceptance.characterReopenVerified(report,saved,connected,SESSION,73,true));
+   proof.put("stock_travel",false);need(!ClientAcceptance.characterReopenVerified(report,saved,connected,SESSION,73,true));proof.put("stock_travel",true);
+   saved.put("map_id",1);need(!ClientAcceptance.characterReopenVerified(report,saved,connected,SESSION,73,true));
+  }
+ }
  public static void main(String[] args)throws Exception {
-  switch(args[0]){case "roundtrip":roundtrip();break;case "stale":stale();break;case "fail":fail();break;case "connection":connection();break;case "budget":budget();break;case "saves":saves();break;case "commands":commands();break;default:forged(args[0]);}
+  switch(args[0]){case "creation":creation();break;case "heroes":heroes();break;case "stockarrival":stockArrival();break;case "stockacceptance":stockAcceptance();break;case "stock":stockTravel();break;case "roundtrip":roundtrip();break;case "stale":stale();break;case "fail":fail();break;case "connection":connection();break;case "budget":budget();break;case "saves":saves();break;case "commands":commands();break;default:forged(args[0]);}
   System.out.println("PASS");
  }
 }
@@ -144,6 +346,11 @@ class ClientZoningJavaTests(unittest.TestCase):
         result=subprocess.run(['java','-cp',self.tmp.name,'io.github.russianranger.cohclientinteractive.ZoningHost',mode],check=True,capture_output=True,text=True,timeout=15)
         self.assertEqual(result.stdout.strip(),'PASS')
     def test_four_transfers_require_fresh_native_event_and_three_views(self):self.run_host('roundtrip')
+    def test_stock_travel_follows_any_static_zone_without_trip_limit(self):self.run_host('stock')
+    def test_stock_travel_accepts_any_static_zone_window_and_saved_destination(self):self.run_host('stockacceptance')
+    def test_stock_travel_kings_row_and_other_zones_connect_budget_and_save(self):self.run_host('stockarrival')
+    def test_a_new_character_is_proved_in_its_own_starting_zone(self):self.run_host('creation')
+    def test_play_follows_a_saved_hero_under_its_own_id_or_one_made_in_the_character_list(self):self.run_host('heroes')
     def test_stale_future_and_pre_delivery_arrivals_rejected(self):self.run_host('stale')
     def test_preparation_failure_preserves_save_but_transfer_failure_blocks(self):self.run_host('fail')
     def test_map101_connection_requires_opt_in_and_supported_map_proof(self):self.run_host('connection')

@@ -114,7 +114,9 @@ def verify_assets(assets):
     require(type(manifest.get('format')) is int and manifest['format'] == 1 and manifest.get('scope') == SCOPE,
             'Client manifest scope differs')
     files = manifest.get('files')
-    require(isinstance(files, dict) and REQUIRED <= set(files) and len(files) <= 96,
+    # 128 since 0.13.85 (96 before): the inventory had 95 entries in 0.13.84 and gains one with
+    # each guest module; stage_app_assets.CLIENT_INVENTORY_LIMIT is the packer's copy of this bound.
+    require(isinstance(files, dict) and REQUIRED <= set(files) and len(files) <= 128,
             'Client payload inventory differs')
     hashes = {}
     for name, expected in files.items():

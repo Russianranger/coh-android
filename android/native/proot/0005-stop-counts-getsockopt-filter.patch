@@ -1,0 +1,308 @@
+diff --git a/src/syscall/getsockopt_filter.h b/src/syscall/getsockopt_filter.h
+new file mode 100644
+index 0000000..16f19dc
+--- /dev/null
++++ b/src/syscall/getsockopt_filter.h
+@@ -0,0 +1,70 @@
++/* -*- c-set-style: "K&R"; c-basic-offset: 8 -*-
++ *
++ * Trace getsockopt(2) only for the option PRoot rewrites.
++ *
++ * The fake_id0 extension (-0, -i) asks for getsockopt(2) on exit to
++ * replace the peer's ids in a SOL_SOCKET/SO_PEERCRED answer
++ * (extension/fake_id0/getsockopt.c).  It ignores every other level
++ * and option, yet a guest that asks a socket for SO_ERROR, SO_TYPE or
++ * its buffer sizes pays two tracer round trips each time.  With
++ * PROOT_GETSOCKOPT_PEERCRED_ONLY=1 the seccomp filter compares the
++ * level and the option (second and third arguments) and notifies the
++ * tracer only for that one pair.
++ *
++ * This file is self-contained (no talloc, no PRoot types) so that the
++ * statements can be checked on any host by a test harness.
++ */
++
++#ifndef GETSOCKOPT_FILTER_H
++#define GETSOCKOPT_FILTER_H
++
++#include <linux/filter.h>  /* struct sock_filter, BPF_*, */
++#include <linux/seccomp.h> /* struct seccomp_data, SECCOMP_RET_*, */
++#include <stddef.h>        /* offsetof(3), size_t, */
++#include <stdint.h>        /* uint32_t, */
++
++/* Literal values (asm-generic, the same on arm64, arm and x86).  */
++#define GETSOCKOPT_FILTER_LEVEL  1	/* SOL_SOCKET */
++#define GETSOCKOPT_FILTER_OPTION 17	/* SO_PEERCRED */
++
++/* Statements written by getsockopt_filter_statements().  */
++#define LENGTH_TRACE_GETSOCKOPT 7
++
++/**
++ * Write to @out (LENGTH_TRACE_GETSOCKOPT items) the statements that
++ * notify the tracer, with the given @flag, about @syscall (getsockopt
++ * on the current architecture) when it asks for SOL_SOCKET/SO_PEERCRED,
++ * and allow it otherwise.
++ *
++ * On entry the accumulator holds the syscall number.  It is untouched
++ * unless that number is @syscall, so the statements that follow see it
++ * as before; when it is @syscall every path returns.
++ *
++ *	0:  if (nr != syscall) goto after;
++ *	1:  A = low word of the second argument (the level);
++ *	2:  if (A != SOL_SOCKET) goto allow;
++ *	3:  A = low word of the third argument (the option);
++ *	4:  if (A == SO_PEERCRED) goto trace;
++ *	5:  allow: return ALLOW;
++ *	6:  trace: return TRACE + flag;
++ *	after:
++ */
++static inline size_t getsockopt_filter_statements(struct sock_filter *out, uint32_t syscall, uint32_t flag)
++{
++	/* seccomp_data.args[] are 64-bit; both arguments are ints in the
++	 * low word.  PRoot's handled architectures are little-endian.  */
++	const uint32_t level_offset  = offsetof(struct seccomp_data, args[1]);
++	const uint32_t option_offset = offsetof(struct seccomp_data, args[2]);
++
++	out[0] = (struct sock_filter) BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K, syscall, 0, 6);
++	out[1] = (struct sock_filter) BPF_STMT(BPF_LD + BPF_W + BPF_ABS, level_offset);
++	out[2] = (struct sock_filter) BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K, GETSOCKOPT_FILTER_LEVEL, 0, 2);
++	out[3] = (struct sock_filter) BPF_STMT(BPF_LD + BPF_W + BPF_ABS, option_offset);
++	out[4] = (struct sock_filter) BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K, GETSOCKOPT_FILTER_OPTION, 1, 0);
++	out[5] = (struct sock_filter) BPF_STMT(BPF_RET + BPF_K, SECCOMP_RET_ALLOW);
++	out[6] = (struct sock_filter) BPF_STMT(BPF_RET + BPF_K, SECCOMP_RET_TRACE + flag);
++
++	return LENGTH_TRACE_GETSOCKOPT;
++}
++
++#endif /* GETSOCKOPT_FILTER_H */
+diff --git a/src/syscall/seccomp.c b/src/syscall/seccomp.c
+index 6ba7508..c4690b0 100644
+--- a/src/syscall/seccomp.c
++++ b/src/syscall/seccomp.c
+@@ -43,6 +43,7 @@
+ 
+ #include "syscall/seccomp.h"
+ #include "syscall/ioctl_filter.h"
++#include "syscall/getsockopt_filter.h"
+ #include "tracee/tracee.h"
+ #include "syscall/syscall.h"
+ #include "syscall/sysnum.h"
+@@ -155,6 +156,37 @@ static int add_trace_ioctl_commands(struct sock_fprog *program, word_t syscall,
+ 	return add_statements(program, LENGTH_TRACE_IOCTL, statements);
+ }
+ 
++/**
++ * PROOT_GETSOCKOPT_PEERCRED_ONLY=1: trace getsockopt(2) only for
++ * SOL_SOCKET/SO_PEERCRED (see getsockopt_filter.h).
++ */
++static bool getsockopt_peercred_only(void)
++{
++	const char *value = getenv("PROOT_GETSOCKOPT_PEERCRED_ONLY");
++	return value != NULL && value[0] == '1' && value[1] == '\0';
++}
++
++/**
++ * Append to @program->filter the statements required to notify PRoot
++ * about the given @syscall (getsockopt) with the given @flag, only for
++ * the option of getsockopt_filter.h.  This function returns -errno if
++ * an error occurred, otherwise 0.
++ */
++static int add_trace_getsockopt_peercred(struct sock_fprog *program, word_t syscall, int flag)
++{
++	struct sock_filter statements[LENGTH_TRACE_GETSOCKOPT];
++
++	/* Sanity check.  */
++	if (syscall > UINT32_MAX)
++		return -ERANGE;
++
++	getsockopt_filter_statements(statements, syscall, flag);
++
++	DEBUG_FILTER("FILTER:     trace if syscall == %ld and it asks for SO_PEERCRED\n", syscall);
++
++	return add_statements(program, LENGTH_TRACE_GETSOCKOPT, statements);
++}
++
+ /**
+  * Append to @program->filter the statements that allow anything (if
+  * unfiltered).  Note that @nb_traced_syscalls and @nb_extra_statements
+@@ -295,6 +327,7 @@ static int set_seccomp_filters(const FilteredSysnum *sysnums)
+ 
+ 	struct sock_fprog program = { .len = 0, .filter = NULL };
+ 	const bool commands_only = ioctl_commands_only();
++	const bool peercred_only = getsockopt_peercred_only();
+ 	size_t nb_traced_syscalls;
+ 	size_t nb_extra_statements;
+ 	size_t i, j, k;
+@@ -320,6 +353,8 @@ static int set_seccomp_filters(const FilteredSysnum *sysnums)
+ 				nb_traced_syscalls++;
+ 				if (commands_only && sysnums[k].value == PR_ioctl)
+ 					nb_extra_statements += LENGTH_TRACE_IOCTL - LENGTH_TRACE_SYSCALL;
++				if (peercred_only && sysnums[k].value == PR_getsockopt)
++					nb_extra_statements += LENGTH_TRACE_GETSOCKOPT - LENGTH_TRACE_SYSCALL;
+ 			}
+ 		}
+ 
+@@ -339,6 +374,8 @@ static int set_seccomp_filters(const FilteredSysnum *sysnums)
+ 				/* Filter: trace if handled syscall */
+ 				if (commands_only && sysnums[k].value == PR_ioctl)
+ 					status = add_trace_ioctl_commands(&program, syscall, sysnums[k].flags);
++				else if (peercred_only && sysnums[k].value == PR_getsockopt)
++					status = add_trace_getsockopt_peercred(&program, syscall, sysnums[k].flags);
+ 				else
+ 					status = add_trace_syscall(&program, syscall, sysnums[k].flags);
+ 				if (status < 0)
+diff --git a/src/syscall/stop_counts.h b/src/syscall/stop_counts.h
+new file mode 100644
+index 0000000..8fb7b34
+--- /dev/null
++++ b/src/syscall/stop_counts.h
+@@ -0,0 +1,126 @@
++/* -*- c-set-style: "K&R"; c-basic-offset: 8 -*-
++ *
++ * Count the syscall stops PRoot serves, per syscall number.
++ *
++ * Every traced syscall stops its thread until PRoot's one thread has
++ * served it, so the number of stops per syscall says where a guest's
++ * time under PRoot goes.  With PROOT_STOP_COUNTS=<file> PRoot counts
++ * each translation round (enter and exit apart) and writes the table
++ * to <file>, replacing it atomically, about every ten seconds while
++ * stops arrive and once more when it exits.  Without the variable
++ * nothing is counted and nothing is written.
++ *
++ * The file is text:
++ *
++ *	PROOT_STOP_COUNTS_V1 seconds=<since first stop> stops=<total>
++ *	<syscall number> <enter stops> <exit stops>
++ *	...
++ *
++ * Numbers are those of the tracee's ABI as the kernel reported them;
++ * numbers at or above STOP_COUNTS_SYSCALLS share the last row.
++ */
++
++#ifndef STOP_COUNTS_H
++#define STOP_COUNTS_H
++
++#include <limits.h>   /* PATH_MAX, */
++#include <stdbool.h>  /* bool, */
++#include <stdint.h>   /* uint64_t, */
++#include <stdio.h>    /* fopen(3), fprintf(3), rename(2), */
++#include <stdlib.h>   /* getenv(3), atexit(3), */
++#include <string.h>   /* strlen(3), */
++#include <time.h>     /* clock_gettime(2), */
++
++#define STOP_COUNTS_SYSCALLS 512
++#define STOP_COUNTS_PERIOD_SECONDS 10
++
++static struct {
++	int state;	/* 0: not looked up yet, 1: counting, -1: off.  */
++	char path[PATH_MAX];
++	char temporary[PATH_MAX + 8];
++	uint64_t enter[STOP_COUNTS_SYSCALLS + 1];
++	uint64_t exit[STOP_COUNTS_SYSCALLS + 1];
++	uint64_t total;
++	time_t started;
++	time_t written;
++} stop_counts;
++
++static inline time_t stop_counts_now(void)
++{
++	struct timespec now;
++
++	if (clock_gettime(CLOCK_MONOTONIC, &now) < 0)
++		return 0;
++	return now.tv_sec;
++}
++
++static inline void stop_counts_write(void)
++{
++	FILE *file;
++	int i;
++
++	if (stop_counts.state != 1)
++		return;
++
++	file = fopen(stop_counts.temporary, "w");
++	if (file == NULL)
++		return;
++
++	fprintf(file, "PROOT_STOP_COUNTS_V1 seconds=%lld stops=%llu\n",
++		(long long) (stop_counts_now() - stop_counts.started),
++		(unsigned long long) stop_counts.total);
++	for (i = 0; i <= STOP_COUNTS_SYSCALLS; i++) {
++		if (stop_counts.enter[i] == 0 && stop_counts.exit[i] == 0)
++			continue;
++		fprintf(file, "%d %llu %llu\n", i,
++			(unsigned long long) stop_counts.enter[i],
++			(unsigned long long) stop_counts.exit[i]);
++	}
++
++	if (fclose(file) == 0)
++		(void) rename(stop_counts.temporary, stop_counts.path);
++}
++
++/**
++ * Count one translation round of syscall @number, at the enter stage
++ * if @is_enter, otherwise at the exit stage.
++ */
++static inline void stop_counts_note(unsigned long number, bool is_enter)
++{
++	size_t index;
++
++	if (stop_counts.state == 0) {
++		const char *path = getenv("PROOT_STOP_COUNTS");
++		size_t length = path != NULL ? strlen(path) : 0;
++
++		if (length == 0 || length >= sizeof(stop_counts.path)) {
++			stop_counts.state = -1;
++			return;
++		}
++		memcpy(stop_counts.path, path, length + 1);
++		snprintf(stop_counts.temporary, sizeof(stop_counts.temporary), "%s.new", path);
++		stop_counts.started = stop_counts.written = stop_counts_now();
++		stop_counts.state = 1;
++		atexit(stop_counts_write);
++	}
++	if (stop_counts.state != 1)
++		return;
++
++	index = number < STOP_COUNTS_SYSCALLS ? number : STOP_COUNTS_SYSCALLS;
++	if (is_enter)
++		stop_counts.enter[index]++;
++	else
++		stop_counts.exit[index]++;
++
++	/* Look at the clock once in 256 stops only.  */
++	if ((++stop_counts.total & 255) == 0) {
++		time_t now = stop_counts_now();
++
++		if (now - stop_counts.written >= STOP_COUNTS_PERIOD_SECONDS) {
++			stop_counts.written = now;
++			stop_counts_write();
++		}
++	}
++}
++
++#endif /* STOP_COUNTS_H */
+diff --git a/src/syscall/syscall.c b/src/syscall/syscall.c
+index f4c2f50..778d6fb 100644
+--- a/src/syscall/syscall.c
++++ b/src/syscall/syscall.c
+@@ -27,6 +27,7 @@
+ 
+ #include "syscall/syscall.h"
+ #include "syscall/chain.h"
++#include "syscall/stop_counts.h"
+ #include "extension/extension.h"
+ #include "tracee/tracee.h"
+ #include "tracee/reg.h"
+@@ -148,6 +149,11 @@ void translate_syscall(Tracee *tracee)
+ 	if (status < 0)
+ 		return;
+ 
++	/* PROOT_STOP_COUNTS: the number the tracee asked for; at the exit
++	 * stage the current one may be PRoot's replacement.  */
++	stop_counts_note(peek_reg(tracee, is_enter_stage && tracee->chain.syscalls == NULL
++					  ? CURRENT : ORIGINAL, SYSARG_NUM), is_enter_stage);
++
+ 	int suppressed_syscall_status = 0;
+ 
+ 	if (is_enter_stage) {

@@ -113,7 +113,34 @@ def create_private_parents(path, root, created):
         created.add(parent)
 
 
-def game_config(original, database, connection):
+# 0.13.85, "Unlock all content" (COH_UNLOCK_ALL=1): account bits the DbServer grants to the one
+# local account through its own OverrideAuthBit setting (servercfg.c), which it also sends to the
+# client and the map servers. Purchased packs, promotions and archetype access; not trial, beta,
+# transfer or region bits. Every name is one authUserSetFieldByName accepts (an unknown name is
+# an assertion in the DbServer).
+UNLOCK_AUTH_BITS = (
+    'HeroAccess', 'VillainAccess', 'RogueAccess', 'Kheldian', 'ArachnosAccess', 'IsRetailAccount',
+    'RogueCompleteBox', 'DVDSpecialEdition', 'CovSpecialEdition',
+    'CovPreorder1', 'CovPreorder2', 'CovPreorder3', 'CovPreorder4',
+    'GRPreOrderSyndicateTechniques', 'GRPreOrderResistanceTactics', 'GRPreOrderMightOfTheEmpire',
+    'GRPreOrderClockworkEfficiency', 'GRPreOrderWillOfTheSeers',
+    'MagicPack', 'SupersciencePack', 'MartialArtsPack', 'CyborgPack', 'MacPack', 'WeddingPack',
+    'MutantPack', 'RecreationPack', 'HolidayPack', 'AuraPack', 'VanguardPack', 'AnimalPack', 'SteamPunk',
+    'Facepalm', 'PocketDVIP', 'JumpPack', 'JetPack', 'Valentine2006',
+    'GhoulCostume', 'PraetoriaPDCostume', 'RiktiCostume', 'VahzilokMeatDocCostume', 'CoralaxBossCostume',
+    'TargetPromo', 'PaxPromo', 'GenConPromo', 'ComiconPromo',
+    'Con2009Bit1', 'Con2009Bit2', 'Con2009Bit3', 'Con2009Bit4', 'Con2009Bit5',
+    'Promo2011A', 'Promo2011B', 'Promo2011C', 'Promo2011D', 'Promo2011E',
+    'Promo2012A', 'Promo2012B', 'Promo2012C', 'Promo2012D', 'Promo2012E',
+    'AceInHoleA', 'AceInHoleB', 'AceInHoleC', 'AceInHoleD', 'AceInHoleE')
+UNLOCK_ENVIRONMENT = 'COH_UNLOCK_ALL'
+
+
+def unlock_all_requested():
+    return os.environ.get(UNLOCK_ENVIRONMENT) == '1'
+
+
+def game_config(original, database, connection, *, unlock=False):
     settings = {
         'advertisedip': 'AdvertisedIp 127.0.0.1', 'usefakeauth': 'UseFakeAuth 1',
         'usequeueserver': 'UseQueueServer 0', 'defaultaccesslevel': 'DefaultAccessLevel 9',
@@ -124,8 +151,10 @@ def game_config(original, database, connection):
         'donotlaunchmapservertsr': 'DoNotLaunchMapServerTSR 1',
         'disablecontainerbackups': 'DisableContainerBackups 1'}
     kept = [line for line in original.splitlines()
-            if not line.split() or line.split()[0].lower() not in settings]
-    return dbserver.private_config('\n'.join(kept + list(settings.values())) + '\n', database, connection)
+            if not line.split() or line.split()[0].lower() not in settings
+            and line.split()[0].lower() != 'overrideauthbit']
+    granted = ['OverrideAuthBit ' + name for name in UNLOCK_AUTH_BITS] if unlock else []
+    return dbserver.private_config('\n'.join(kept + list(settings.values()) + granted) + '\n', database, connection)
 
 
 def fixed_inputs_acknowledgement(child):

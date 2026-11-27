@@ -1,0 +1,162 @@
+diff --git a/MapServer/src/svr/armport_spare_server.h b/MapServer/src/svr/armport_spare_server.h
+new file mode 100644
+index 0000000..b30315e
+--- /dev/null
++++ b/MapServer/src/svr/armport_spare_server.h
+@@ -0,0 +1,136 @@
++#ifndef ARMPORT_SPARE_SERVER_H
++#define ARMPORT_SPARE_SERVER_H
++
++/* ArmPort early zone server (opt-in: ARMPORT_SPARE_FILE=<path>; without the
++ * variable nothing here runs).
++ *
++ * A MapServer learns nothing from the DbServer until connectToDbserver, and on
++ * the Thor it spends about three quarters of its start (174 s of 227 s in
++ * 0.13.66) on data every zone shares. A spare does that shared loading before
++ * its zone has been asked for, then waits here, just before connectToDbserver,
++ * until the supervisor publishes the assignment file (written under another
++ * name and renamed):
++ *
++ *     ARMPORT_SPARE_ASSIGN_V1 map_id=<1..99999> cookie=<0..2147483647>\n
++ *
++ * It then takes the map id and cookie that -map_id and -cookie would have set
++ * and repeats the base map lookup staticMapInfosLoad made for the placeholder
++ * id. Nothing else before this point reads the map id. A malformed file ends
++ * the process; the supervisor then starts the zone the ordinary way.
++ */
++
++#include <stdlib.h>
++#include <string.h>
++
++#define ARMPORT_SPARE_LINE_MAX 96
++
++/* Console output as svr_init.c itself writes it: its printf, then
++ * fflush(fileGetStdout()) (connectToDbserver does the same). */
++
++static int armportSpareNumber(const char **cursor, const char *key, long maximum, long *value)
++{
++    const char *p = *cursor;
++    size_t length = strlen(key);
++    long number = 0;
++    int digits = 0;
++    if (strncmp(p, key, length) != 0)
++        return 0;
++    p += length;
++    while (*p >= '0' && *p <= '9' && digits < 10)
++    {
++        number = number * 10 + (*p - '0');
++        if (number > maximum)
++            return 0;
++        ++p;
++        ++digits;
++    }
++    if (!digits || (digits > 1 && (*cursor)[length] == '0'))
++        return 0;
++    *cursor = p;
++    *value = number;
++    return 1;
++}
++
++/* 1: a complete, valid assignment; 0: not there yet; -1: present and invalid. */
++static int armportSpareParse(const char *text, size_t length, long *map_id, long *cookie)
++{
++    static const char prefix[] = "ARMPORT_SPARE_ASSIGN_V1 ";
++    const char *p = text;
++    if (!length)
++        return 0;
++    if (length >= ARMPORT_SPARE_LINE_MAX || memchr(text, '\0', length) || text[length - 1] != '\n')
++        return -1;
++    if (strncmp(p, prefix, sizeof(prefix) - 1) != 0)
++        return -1;
++    p += sizeof(prefix) - 1;
++    if (!armportSpareNumber(&p, "map_id=", 99999, map_id) || *map_id < 1 || *p++ != ' ')
++        return -1;
++    if (!armportSpareNumber(&p, "cookie=", 2147483647L, cookie))
++        return -1;
++    return (p == text + length - 1) ? 1 : -1;
++}
++
++static int armportSpareRead(const char *path, long *map_id, long *cookie)
++{
++    char text[ARMPORT_SPARE_LINE_MAX + 1];
++    DWORD got = 0;
++    HANDLE file = CreateFileA(path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
++                              NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
++    if (file == INVALID_HANDLE_VALUE)
++        return 0;
++    if (!ReadFile(file, text, ARMPORT_SPARE_LINE_MAX, &got, NULL))
++    {
++        CloseHandle(file);
++        return -1;
++    }
++    CloseHandle(file);
++    text[got] = '\0';
++    return armportSpareParse(text, (size_t)got, map_id, cookie);
++}
++
++/* Called once, after every shared load and before connectToDbserver. */
++static void armportSpareWait(void)
++{
++    const char *path = getenv("ARMPORT_SPARE_FILE");
++    long map_id = 0, cookie = 0;
++    int placeholder = db_state.map_id, state;
++    DWORD started;
++    StaticMapInfo *info;
++    if (!path || !path[0])
++        return;
++    started = GetTickCount();
++    printf("ARMPORT_SPARE_V1 status=waiting pid=%lu placeholder_map_id=%d\n",
++           (unsigned long)GetCurrentProcessId(), placeholder);
++    fflush(fileGetStdout());
++    while ((state = armportSpareRead(path, &map_id, &cookie)) == 0)
++    {
++        Sleep(100);
++    }
++    if (state < 0 || db_state.local_server)
++    {
++        printf("ARMPORT_SPARE_V1 status=refused pid=%lu reason=%s\n",
++               (unsigned long)GetCurrentProcessId(), state < 0 ? "invalid_assignment" : "local_server");
++        fflush(fileGetStdout());
++        exit(3);
++    }
++    db_state.map_id = (int)map_id;
++    db_state.cookie = (int)cookie;
++    /* As staticMapInfosLoad does for a server that is not local. */
++    info = staticMapInfoFind(db_state.map_id);
++    if (info && info->baseMapID)
++    {
++        db_state.base_map_id = info->baseMapID;
++        db_state.instance_id = info->instanceID;
++    }
++    else
++    {
++        db_state.base_map_id = db_state.map_id;
++        db_state.instance_id = 0;
++    }
++    printf("ARMPORT_SPARE_V1 status=assigned pid=%lu map_id=%d base_map_id=%d instance_id=%d waited_ms=%lu\n",
++           (unsigned long)GetCurrentProcessId(), db_state.map_id, db_state.base_map_id, db_state.instance_id,
++           (unsigned long)(GetTickCount() - started));
++    fflush(fileGetStdout());
++}
++
++#endif
+diff --git a/MapServer/src/svr/svr_init.c b/MapServer/src/svr/svr_init.c
+index f5ec513..0a9f1e8 100644
+--- a/MapServer/src/svr/svr_init.c
++++ b/MapServer/src/svr/svr_init.c
+@@ -76,6 +76,7 @@
+ #include "dbcomm/staticMapInfo.h"            // for staticMapInfosReload()
+ #include "gridcoll/gridcache.h"
+ #include <utilitieslib/utils/wininclude.h>
++#include "armport_spare_server.h"
+ #include <utilitieslib/utils/DirMonitor.h>
+ #include "dbcomm/characterTransfer.h"
+ #include "dbcomm/characterInfo.h"
+@@ -2147,6 +2148,7 @@ int __cdecl main(int argc,char **argv)
+     if(!server_state.create_bins && !server_state.unpack_map)
+     {
+         cmdCfgLoad();
++        armportSpareWait();
+         armportServerStartupPhase("db_connect_begin", db_state.map_id);
+         connectToDbserver(NO_TIMEOUT);
+         armportServerStartupPhase("db_connected", db_state.map_id);

@@ -305,8 +305,37 @@ public class ReportsHost {
   try(ZipOutputStream zip=new ZipOutputStream(Files.newOutputStream(target))){zip.putNextEntry(new ZipEntry("android-client-report.json"));zip.write(wrapper.getBytes(StandardCharsets.UTF_8));zip.closeEntry();}
   String expected=mode.substring("status_".length());if(expected.equals("false_pass")||expected.equals("nested"))expected="unknown";need(ClientReports.reportStatus(target.toFile()).equals(expected));
  }
+ // 0.13.90: what ended the process travels in the recovered export, once, and is never required.
+ static void interruptionEvidence()throws Exception{
+  Path run=run();ClientReports.checkpoint(run.toFile(),"{\"phase\":\"login\"}".getBytes(StandardCharsets.UTF_8));
+  Files.write(run.resolve("operation.log"),"last line the guest said\n".getBytes(StandardCharsets.UTF_8));
+  final int[] calls={0};final byte[] evidence="{\"format\":1,\"exit_history\":{\"records\":[{\"reason\":4}]}}".getBytes(StandardCharsets.UTF_8);
+  ClientReports.setInterruptionEvidence(()->{calls[0]++;return evidence;});
+  ClientReports.recoverAll(root.toFile());List<File> reports=ClientReports.reports(root.toFile(),8);need(reports.size()==1&&calls[0]==1);
+  Map<String,byte[]> zip=unzip(reports.get(0));
+  need(zip.size()==4&&Arrays.equals(zip.get("android-interruption.json"),evidence)
+    &&new String(zip.get("operation.log"),StandardCharsets.UTF_8).contains("last line the guest said")
+    &&new String(zip.get("recovery-manifest.json"),StandardCharsets.UTF_8).contains("\"enrichment_status\":\"complete\"")
+    &&new String(zip.get("android-recovery-checkpoint.json"),StandardCharsets.UTF_8).contains("login"));
+  // A second recovery asks nothing again and makes no second carrier.
+  ClientReports.recoverAll(root.toFile());need(ClientReports.reports(root.toFile(),8).size()==1&&calls[0]==1);
+ }
+ static void interruptionEvidenceOptional()throws Exception{
+  Path run=run();ClientReports.checkpoint(run.toFile(),"{\"phase\":\"login\"}".getBytes(StandardCharsets.UTF_8));
+  ClientReports.setInterruptionEvidence(()->{throw new IllegalStateException("no exit records");});
+  ClientReports.recoverAll(root.toFile());List<File> reports=ClientReports.reports(root.toFile(),8);need(reports.size()==1);
+  Map<String,byte[]> zip=unzip(reports.get(0));
+  need(zip.size()==2&&!zip.containsKey("android-interruption.json")
+    &&new String(zip.get("recovery-manifest.json"),StandardCharsets.UTF_8).contains("\"enrichment_status\":\"complete\""));
+  // Too large or empty evidence is left out the same way.
+  id="1760111000001-0123456789ab";run=run();ClientReports.checkpoint(run.toFile(),"{\"phase\":\"world\"}".getBytes(StandardCharsets.UTF_8));
+  ClientReports.setInterruptionEvidence(()->new byte[ClientReports.MAX_INTERRUPTION_BYTES+1]);
+  ClientReports.recoverAll(root.toFile());reports=ClientReports.reports(root.toFile(),8);need(reports.size()==2);
+  for(File report:reports)need(!unzip(report).containsKey("android-interruption.json"));
+  need(!Files.exists(run.resolve("android-interruption.json")));
+ }
  public static void main(String[] a)throws Exception {
-  root=Paths.get(a[1]);if(a[0].startsWith("interrupted_"))interruptedOptional(a[0]);else if(a[0].equals("historicalInventory"))historicalInventory();else if(a[0].equals("omissionBound"))omissionBound();else if(a[0].equals("provenance"))provenance();else if(a[0].equals("corruptedInterrupted"))corruptedInterrupted();else if(a[0].equals("partialHistory"))partialHistory();else if(a[0].startsWith("status_"))status(a[0]);else switch(a[0]){case "foreignTerminal":foreignTerminal();break;case "optional_open":case "optional_read":case "optional_mutation":case "optional_identity":case "optional_enrichment":optionalFault(a[0]);break;case "corruptedTerminal":corruptedTerminal();break;case "terminalRestart":terminalRestart();break;case "corruptedCompleted":corruptedCompleted();break;case "terminalUnsafe":terminalUnsafe();break;case "timeout":case "capture_failure":case "failed_validation":terminal(a[0]);break;case "checkpoint":checkpoint();break;case "preserve":preserve();break;case "empty":empty();break;case "inventory":inventory();break;case "export":export();break;case "stream":stream();break;case "changed":changed();break;case "ancestor":ancestor();break;case "pngs":pngs();break;case "bounds":bounds();break;case "completed":completed();break;case "captureLimit":captureLimit();break;case "checkpointLink":checkpointLink();break;case "injected":injected();break;case "badIdentity":badIdentity();break;case "cancelled":cancelled();break;case "outputFailure":outputFailure();break;case "captureBytes":captureBytes();break;case "excessiveInventory":excessiveInventory();break;default:links(a[0]);}System.out.println("PASS");
+  root=Paths.get(a[1]);if(a[0].equals("interruptionEvidence"))interruptionEvidence();else if(a[0].equals("interruptionEvidenceOptional"))interruptionEvidenceOptional();else if(a[0].startsWith("interrupted_"))interruptedOptional(a[0]);else if(a[0].equals("historicalInventory"))historicalInventory();else if(a[0].equals("omissionBound"))omissionBound();else if(a[0].equals("provenance"))provenance();else if(a[0].equals("corruptedInterrupted"))corruptedInterrupted();else if(a[0].equals("partialHistory"))partialHistory();else if(a[0].startsWith("status_"))status(a[0]);else switch(a[0]){case "foreignTerminal":foreignTerminal();break;case "optional_open":case "optional_read":case "optional_mutation":case "optional_identity":case "optional_enrichment":optionalFault(a[0]);break;case "corruptedTerminal":corruptedTerminal();break;case "terminalRestart":terminalRestart();break;case "corruptedCompleted":corruptedCompleted();break;case "terminalUnsafe":terminalUnsafe();break;case "timeout":case "capture_failure":case "failed_validation":terminal(a[0]);break;case "checkpoint":checkpoint();break;case "preserve":preserve();break;case "empty":empty();break;case "inventory":inventory();break;case "export":export();break;case "stream":stream();break;case "changed":changed();break;case "ancestor":ancestor();break;case "pngs":pngs();break;case "bounds":bounds();break;case "completed":completed();break;case "captureLimit":captureLimit();break;case "checkpointLink":checkpointLink();break;case "injected":injected();break;case "badIdentity":badIdentity();break;case "cancelled":cancelled();break;case "outputFailure":outputFailure();break;case "captureBytes":captureBytes();break;case "excessiveInventory":excessiveInventory();break;default:links(a[0]);}System.out.println("PASS");
  }
 }
 '''
@@ -326,7 +355,7 @@ class ClientReportRecoveryJavaTests(unittest.TestCase):
             self.assertEqual(result.returncode,0,result.stdout+result.stderr)
             self.assertIn('PASS',result.stdout)
 
-for _name in ('interrupted_link','interrupted_oversize','interrupted_open','partialHistory','corruptedInterrupted','provenance','historicalInventory','omissionBound','status_successful','status_incomplete','status_failed','status_interrupted','status_finalization_failed','status_false_pass','status_nested','foreignTerminal','optional_open','optional_read','optional_mutation','optional_identity','optional_enrichment','corruptedTerminal','timeout','capture_failure','failed_validation','terminalUnsafe','corruptedCompleted','terminalRestart','checkpoint','preserve','empty','inventory','export','stream','changed','symlink','hardlink','directory','fifo','ancestor','pngs','bounds','completed','captureLimit','checkpointLink','injected','badIdentity','cancelled','outputFailure','captureBytes','excessiveInventory'):
+for _name in ('interruptionEvidence','interruptionEvidenceOptional','interrupted_link','interrupted_oversize','interrupted_open','partialHistory','corruptedInterrupted','provenance','historicalInventory','omissionBound','status_successful','status_incomplete','status_failed','status_interrupted','status_finalization_failed','status_false_pass','status_nested','foreignTerminal','optional_open','optional_read','optional_mutation','optional_identity','optional_enrichment','corruptedTerminal','timeout','capture_failure','failed_validation','terminalUnsafe','corruptedCompleted','terminalRestart','checkpoint','preserve','empty','inventory','export','stream','changed','symlink','hardlink','directory','fifo','ancestor','pngs','bounds','completed','captureLimit','checkpointLink','injected','badIdentity','cancelled','outputFailure','captureBytes','excessiveInventory'):
     setattr(ClientReportRecoveryJavaTests,'test_'+_name,lambda self,name=_name:self.scenario(name))
 
 if __name__=='__main__':unittest.main()

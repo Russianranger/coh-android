@@ -22,10 +22,99 @@ import character_server_data_cache as server_data_cache
 import server_cache_package
 import server_fx_catalog
 import native_character_events as character_events
+import external_map_supervisor as external_maps
 
 base, game, dbserver, require = login.base, login.game, login.dbserver, login.require
-PROFILE, ACCOUNT, CHARACTER = login.PROFILE, login.ACCOUNT, 'THORHERO'
+PROFILE, ACCOUNT = login.PROFILE, login.ACCOUNT
+# 0.13.62 (owner, 2026-11-08: "make it so ... I can name them something other
+# than Thorhero"; Thor 0.13.61 created the villain Ralakar, which this guest did
+# not recognize, so the app never unlocked walking or Save). The one local
+# character is the account's container ID 1 under whatever name its player gave
+# it. CHARACTER is THORHERO (CI's name) until the session reads the real name
+# from SQL: the saved row before Reopen starts Wine, or the row the DbServer
+# inserts at Enter Game (bind_character). The opt-in native console producers
+# (native_character_events, native_monorail_events) still report only THORHERO,
+# so any other name is observed through the stock entity logs.
+LEGACY_CHARACTER = 'THORHERO'
+CHARACTER = LEGACY_CHARACTER
+CHARACTER_BOUND = False
+# 0.13.87: the hero of this session is no longer always container 1 of the account. The account can
+# hold several heroes; the one that enters the game is the session's (bind_hero), and every check
+# that used to say "ID 1" reads this.
+HERO_ID = 1
+
+
+def state_inventory(root):
+    """Entry counts of the private state folder by name, with session and cache keys folded to *."""
+    counts = {}
+    with os.scandir(root) as entries:
+        for entry in entries:
+            name = re.sub(r'[0-9a-f]{16,}', '*', entry.name)[:64]
+            counts[name] = counts.get(name, 0) + 1
+    return dict(sorted(counts.items(), key=lambda item: (-item[1], item[0]))[:64])
+
+
+def valid_character_name(name):
+    """The game's own player-name rules (validate_name.c ValidateName, MAX_PLAYER_NAME_LEN 20)."""
+    return (type(name) is str and 3 <= len(name) <= 20 and all(32 <= ord(c) <= 126 for c in name)
+            and name == name.strip() and '  ' not in name)
+
+
+def reset_character():
+    """A new session starts unbound (THORHERO until its SQL row names the character)."""
+    global CHARACTER, CHARACTER_BOUND, HERO_ID
+    CHARACTER, CHARACTER_BOUND, HERO_ID = LEGACY_CHARACTER, False, 1
+
+
+def bind_character(name):
+    """Fix this session's character name from its SQL row; a session never renames it."""
+    global CHARACTER, CHARACTER_BOUND
+    require(valid_character_name(name),
+            'The character name is not one the game accepts (3-20 letters, spaces or punctuation); '
+            'preserve all data and export the report')
+    require(not CHARACTER_BOUND or name == CHARACTER,
+            'The character name changed during this session; preserve all data and export the report')
+    CHARACTER, CHARACTER_BOUND = name, True
+    return name
+
+
+def hero_id(value):
+    """A character container ID the database can hold."""
+    return type(value) is int and 0 < value <= 2147483647
+
+
+def bind_hero(name, identifier, *, replace=False):
+    """Fix this session's hero (name and container ID) from its SQL row.
+
+    replace: the player chose another hero of the account than the one the launch
+    expected, or created one; allowed only before the first connection (the caller checks).
+    """
+    global CHARACTER_BOUND, HERO_ID
+    require(hero_id(identifier), 'The character ID is not one the database holds; preserve all data and export the report')
+    require(replace or not CHARACTER_BOUND or identifier == HERO_ID,
+            'The character changed during this session; preserve all data and export the report')
+    if replace:
+        CHARACTER_BOUND = False
+    bind_character(name)
+    HERO_ID = identifier
+    return name
+
+
+def entity_name_prefix():
+    """This character's stock entity-log identity, "Name:COHLOCAL", as an exact regex."""
+    return '"' + re.escape(CHARACTER) + ':' + re.escape(ACCOUNT) + '"'
+
+
+def character_label():
+    """The character's name once this session has read it from SQL, else a neutral phrase."""
+    return CHARACTER if CHARACTER_BOUND else 'your character'
+
+
 POLL_SECONDS = 15
+# The game's own bound on one account's characters on a shard (AccountData.h MAX_SLOTS_PER_SHARD).
+HERO_LIMIT = 36
+# 0.13.81: how often the session looks for a zone start request between its inspections.
+TRAVEL_REQUEST_SECONDS = 0.5
 MAP_STARTUP_SECONDS = 2400
 SNAPSHOT_LIMIT = 2 * 1024 * 1024
 LOGOUT_RECEIPT_LIMIT = 512
@@ -42,6 +131,14 @@ SERVER_LOG_COUNT_LIMIT = 128
 NATIVE_FALL_FLOOR_Y = -2000.0
 FALL_FLOOR_CLEARANCE = 1.0
 MANUAL_ATLAS_ENVIRONMENT = 'COH_WINE_DB_MANUAL_ATLAS'
+# Every DbServer map start builds its MapServer command with
+# WeeklyTFCfg_getCurrentWeek (launchercomm.c:1619), which devasserts when
+# server/db/weeklyTF.cfg has no entry. The pinned data has no such file
+# (schema receipt: absent_in_pinned_data), so the external-maps DbServer's
+# first zone start stopped on a modal assertion (Thor, 0.13.55). One past week
+# with no tokens: the lookup succeeds and no -WeeklyTFTokens are passed.
+WEEKLY_TF_CONFIG_PATH = 'data/server/db/weeklyTF.cfg'
+WEEKLY_TF_CONFIG = 'WeeklyTF\n{\n\tEpochStartTime "2012-01-03" "00:00:00"\n}\n'
 MANUAL_ATLAS_ACK = ('COH_WINE_DB_MANUAL_ATLAS=1 active: unused Launcher connection wait skipped; '
                     'manual Atlas launch; ordinary DbServer readiness required')
 POWER_DELTA_LIMIT = 128
@@ -74,7 +171,84 @@ STOCK_DAYJOB_DATA_INPUTS = {
 # different future consumer keeps the complete mirror until separately proved.
 SERVER_TEXTURE_EXCLUSION_MAP = 'fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363'
 SERVER_TEXTURE_EXCLUSION_SOURCE = '2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d'
+# Shared read-only server data (armport/PERFORMANCE-PATH.md, "Shared read-only
+# server tree"). file.c addAppropriateDataDirs searches <cwd>/serverdata before
+# <cwd>/data once both data/ and tools/ exist; writes still go to data/. With it,
+# each MapServer's private tree omits SHARED_SERVER_FOLDERS, and runtime/serverdata
+# links one shared tree per data identity (real directories, per-file links,
+# read-only directories), used by Atlas and King's Row alike.
+# CI: scripts.loc alone passed with no side effects (41636702283). Sharing every
+# folder no guest proof reads (41648097743) rebuilt sequencers.bin and 21 power
+# and salvage bins on every start, so sequencers and player_library stay private.
+SHARED_SERVER_ENV = 'COH_SHARED_SERVER_DATA'
+SHARED_SERVER_FOLDERS = frozenset({'accountserver', 'aiscript', 'cloth', 'ent_types', 'fonts', 'fx', 'lods',
+                                   'menu', 'scenes', 'scripts', 'scripts.loc', 'shaders', 'sound', 'specs',
+                                   'texts'})
+# CI-only override: 1 = scripts.loc, 2 = every folder except SERVERDATA_PROBE_KEEP.
+SERVERDATA_PROBE_ENV = 'COH_SERVERDATA_PROBE'
+SERVERDATA_PROBE_ROOTS = ('scripts.loc',)
+# Private roots, folders a guest proof or cache identity reads, natively excluded textures.
+SERVERDATA_PROBE_KEEP = frozenset({'bin', 'geobin', 'server', 'defs', 'maps', 'object_library',
+                                   'tricks', 'texture_library'})
+SHARED_TREE_PREFIX = 'shared-server-data-'
+# 0.13.52: runtime/serverdata is a real directory of folder links (one per
+# shared folder) instead of one link to the shared tree. The engine checks
+# serverdata/ before data/ for every file it has not seen, so each private file
+# looked up one at a time (bin, geobin, server: never tree-scanned in the Atlas
+# console) first missed there; on the Thor `loading map` took 34-35 s with a cold
+# private copy against 29 s on 0.13.49. Linking those private folders here too
+# makes the first check hit; writes still land in data/ (the link targets).
+# Tree-scanned private folders (defs, maps, object_library, ...) are never linked:
+# FolderCacheRequestTree scans every data folder, so they would be listed twice.
+SERVERDATA_FIRST_LOOKUP_FOLDERS = ('bin', 'geobin', 'server')
+SERVERDATA_FIRST_LOOKUP_ENV = 'COH_SERVERDATA_FIRST_LOOKUP'
 
+
+def serverdata_first_lookup_enabled():
+    """On unless the environment sets it to 0 (CI A/B)."""
+    value = os.environ.get(SERVERDATA_FIRST_LOOKUP_ENV, '1')
+    require(value in ('0', '1'), SERVERDATA_FIRST_LOOKUP_ENV + ' must be 0 or 1')
+    return value == '1'
+
+
+def serverdata_probe_requested():
+    """0 (off), 1 (scripts.loc only) or 2 (every folder no guest proof reads)."""
+    value = os.environ.get(SERVERDATA_PROBE_ENV, '')
+    require(value in ('', '0', '1', '2'), SERVERDATA_PROBE_ENV + ' must be empty, 0, 1 or 2')
+    return int(value or 0)
+
+
+def shared_server_requested():
+    value = os.environ.get(SHARED_SERVER_ENV, '')
+    require(value in ('', '0', '1'), SHARED_SERVER_ENV + ' must be empty, 0 or 1')
+    return value == '1'
+
+
+def serverdata_probe_roots(level, source):
+    if level == 1:
+        return list(SERVERDATA_PROBE_ROOTS)
+    with os.scandir(source) as entries:
+        names = sorted(entry.name for entry in entries
+                       if entry.is_dir(follow_symlinks=False) and entry.name.casefold() not in SERVERDATA_PROBE_KEEP)
+    require(0 < len(names) <= 64, 'Wide serverdata probe folder set is empty or oversized')
+    return names
+
+
+def shared_server_selection(source):
+    """The shared-tree identity record for this start, or None (private mirror only)."""
+    level = serverdata_probe_requested()
+    if level:
+        return {'format': 1, 'selection': 'ci_probe', 'level': level,
+                'shared_top_level': serverdata_probe_roots(level, source)}
+    if not shared_server_requested():
+        return None
+    with os.scandir(source) as entries:
+        names = sorted(entry.name for entry in entries
+                       if entry.is_dir(follow_symlinks=False) and entry.name.casefold() in SHARED_SERVER_FOLDERS)
+    require(len({name.casefold() for name in names}) == len(names), 'Case-conflicting shared server folders')
+    if not names:
+        return None
+    return {'format': 1, 'selection': 'app_default_folders_v1', 'shared_top_level': names}
 
 
 def LOCAL_CLIENT_LINK_OPTIONS():
@@ -140,7 +314,7 @@ def stock_power_delta(previous, current, attributes):
         index = {}
         for row in rows:
             if not (type(row) is dict and set(row) == fields
-                    and type(row['containerid']) is int and row['containerid'] == 1
+                    and type(row['containerid']) is int and row['containerid'] == HERO_ID
                     and type(row['uniqueid']) is int and 0 < row['uniqueid'] <= 0x7fffffff
                     and row['uniqueid'] not in index
                     and type(row['subid']) is int and 0 <= row['subid'] < POWER_DELTA_LIMIT
@@ -217,7 +391,7 @@ def enhancement_semantics(boosts, powers, attributes):
     result, subids, locations = [], set(), set()
     for row in boosts:
         require(type(row) is dict and set(row) == set(BOOST_FIELDS)
-                and type(row['containerid']) is int and row['containerid'] == 1
+                and type(row['containerid']) is int and row['containerid'] == HERO_ID
                 and type(row['subid']) is int and 0 <= row['subid'] < 6010
                 and row['subid'] not in subids and type(row['powerid']) is int,
                 'Incomplete, duplicate or foreign enhancement row')
@@ -250,6 +424,320 @@ def enhancement_semantics(boosts, powers, attributes):
                     payload[key] = 0
         result.append({'location': location, 'payload': payload})
     return sorted(result, key=digest_json)
+
+
+SHARED_HEAP_ENVIRONMENT = 'COH_SHARED_HEAP'
+# Stock MapServer shared memory (SharedMemory.c, SharedHeap.c): the first map
+# server parses the shared definitions into named mappings at 0x80000000 and
+# later ones map them read-only instead of parsing. Off on the device until
+# measured; the native code falls back to private memory when it cannot map.
+SHARED_HEAP_LINES = (
+    ('disabled_by_option', 'Not using shared memory due to -nosharedmemory'),
+    ('reserve_started', 'reserving shared heap space...'),
+    ('first_caller', 'initSharedHeapMemoryManager: SMAR_FirstCaller'),
+    ('heap_disabled', 'Shared heap disabled: '),
+    ('address_outside_space', 'Program address space does not include our desired address'),
+    ('address_not_free', 'Our desired address is not free in this process space'),
+    ('manager_unavailable', 'Error acquiring shared memory for the memory manager'),
+)
+# loadend_printf appends the outcome to the "reserving" line, but anything the
+# reservation prints itself (the first caller announces SMAR_FirstCaller) moves
+# it to a later line, so the outcome is searched in a window after the marker.
+SHARED_HEAP_OUTCOME_WINDOW = 4096
+SHARED_HEAP_RESERVED = re.compile(r'\breserved (\d{1,6}) MB')
+SHARED_HEAP_FAILED = 'failed: no shared heap'
+
+
+def shared_heap_requested():
+    return os.environ.get(SHARED_HEAP_ENVIRONMENT) == '1'
+
+
+# 0.13.75: cooked collision meshes (patches/mapserver-physx-cache). A zone server cooked
+# every collision mesh of its zone at every start (2,265 meshes and 16.6 s of a 50.8 s Atlas
+# start in CI run 44398992652; 10.3 s on the Thor in 0.13.73). With ARMPORT_PHYSX_CACHE=<file>
+# the admitted server reads a mesh cooked at an earlier start back and cooks only what the
+# file does not hold. One file per server build, shared by every zone.
+PHYSX_CACHE_ENVIRONMENT = 'COH_PHYSX_CACHE'
+PHYSX_CACHE_VARIABLE = 'ARMPORT_PHYSX_CACHE'
+PHYSX_CACHE_FOLDER = 'physx-cooked'
+
+
+def physx_cache_requested():
+    return os.environ.get(PHYSX_CACHE_ENVIRONMENT) == '1'
+
+
+# 0.13.81 (patches/mapserver-deferred-load): a zone server reads its beacon file and starts PhysX
+# after "Server ready", while the client loads the zone. Thor 0.13.79: 4.7 s and 1.5 s of the
+# 18.8 s a spare zone server loads before a trip's client may connect, and the client then loads
+# for about 8 s during which the server waits. Opt-in; only the Fast server has the switch.
+DEFER_ZONE_LOADS_ENVIRONMENT = 'COH_DEFER_ZONE_LOADS'
+DEFER_ZONE_LOADS_VARIABLE = 'ARMPORT_DEFER_ZONE_LOADS'
+
+
+def defer_zone_loads_requested():
+    return os.environ.get(DEFER_ZONE_LOADS_ENVIRONMENT) == '1'
+
+
+# 0.13.79 (roadmap phase 3, item 1): emulator settings for the zone servers only. FEX 2510 ran on
+# its defaults. On the Thor (0.13.78) a zone start is 44 s and a spare's hand-over 17-20 s of
+# x86 code that reads no source folders any more: definitions, group files, beacons. Wine's
+# WoW64 FEX module reads FEX_* from the process environment (Source/Windows/WOW64/Module.cpp,
+# BTCpuProcessInit -> FEX::Config::LoadConfig(..., _environ, ...) at 320c5f18).
+#   tso: x86 store ordering is not emulated for the code of MapServer.exe itself; every other
+#        module (Wine's DLLs, the PhysX DLLs) keeps it (ExtendedVolatileMetadata, a module name
+#        alone "disables TSO in the module"; the name is the mapped file's base name).
+#   x87: x87 arithmetic in 64 bits instead of 80 bits in software (X87ReducedPrecision).
+# COH_SERVER_EMULATION is a comma-separated list of these names; anything else is ignored and
+# recorded. The DbServer, the launcher and the client never get these variables.
+SERVER_EMULATION_ENVIRONMENT = 'COH_SERVER_EMULATION'
+SERVER_EMULATION_SETTINGS = {
+    'tso': ('FEX_EXTENDEDVOLATILEMETADATA', 'MapServer.exe:mapserver.exe:MAPSERVER.EXE'),
+    'x87': ('FEX_X87REDUCEDPRECISION', '1'),
+}
+
+
+def server_emulation_requested():
+    """(known setting names in table order, the other tokens) from COH_SERVER_EMULATION."""
+    tokens = [token.strip() for token in os.environ.get(SERVER_EMULATION_ENVIRONMENT, '').split(',')]
+    tokens = [token for token in tokens if token]
+    return ([name for name in SERVER_EMULATION_SETTINGS if name in tokens],
+            sorted({token[:24] for token in tokens if token not in SERVER_EMULATION_SETTINGS})[:8])
+
+
+def apply_server_emulation(environment):
+    """Set the requested emulator variables in one zone server's environment; the report section.
+
+    The variables are removed first, so nothing inherited reaches a zone server unrequested.
+    """
+    for variable, _ in SERVER_EMULATION_SETTINGS.values():
+        environment.pop(variable, None)
+    requested, ignored = server_emulation_requested()
+    applied = {}
+    for name in requested:
+        variable, value = SERVER_EMULATION_SETTINGS[name]
+        environment[variable] = applied[variable] = value
+    return {'format': 1, 'requested': requested, 'ignored': ignored, 'environment': applied,
+            'scope': 'zone_servers_only', 'is_success_proof': False}
+
+
+def physx_cache_file(root, mapserver_sha256):
+    """The cooked mesh file for one MapServer build under the workspace, its folder made private."""
+    require(isinstance(mapserver_sha256, str) and re.fullmatch(r'[0-9a-f]{64}', mapserver_sha256) is not None,
+            'MapServer identity for the cooked mesh file is not a SHA-256')
+    folder = Path(root) / PHYSX_CACHE_FOLDER
+    require(not folder.is_symlink(), 'Cooked mesh folder is a link')
+    base.private_dir(folder)
+    path = folder / ('meshes-' + mapserver_sha256[:24] + '.bin')
+    require(not path.is_symlink() and (not path.exists() or path.is_file()), 'Cooked mesh file is not a plain file')
+    return path
+
+
+def mapserver_memory_arguments():
+    """['-nosharedmemory'] unless the shared-memory experiment is requested."""
+    return [] if shared_heap_requested() else ['-nosharedmemory']
+
+
+QUICK_START_ENVIRONMENT = 'COH_SERVER_QUICK_START'
+QUICK_START_CONFIG = 'armport-svrconfig.txt'
+# Two stock developer switches, read by serverStateLoad() (cmdserver.c) from the file that
+# -svrconfig names, before the sequencers load (svr_init.c, serverStateInit):
+#   quickLoadAnims 1: seqInitializePostLoad() no longer attaches every animation of every
+#     sequencer at start (seqload.c); a move's animation is attached when an entity first
+#     uses it (seqsequence.c, seqskeleton.c: "dev mode don't preload anims"). Thor 0.13.73:
+#     this step was 64.6 s of a 148 s zone server start (CI: 39.7 of 92.8 s).
+#   nofilechangecheck_server 1: no look-up of a source file's date each time a sequencer,
+#     animation, FX or behaviour is asked for (seqload.c, animtrack.c, fxinfo.c, fxbhvr.c).
+#     The installed data never changes while a server runs.
+# The first-use attach runs only in a development-mode server whose sequencers are not in
+# shared memory (isDevelopmentMode() && !isSharedMemory()), while the start-up attach is
+# skipped whenever the switch is set. Both servers this app ships are OptDebug builds (not
+# FINAL) without ./piggs/texts.pigg, which is development mode; the shared-memory
+# experiment (COH_SHARED_HEAP) puts sequencers in shared memory, so the config is not used
+# with it.
+QUICK_START_COMMANDS = ('nofilechangecheck_server 1', 'quickLoadAnims 1')
+
+
+def server_quick_start_requested():
+    return os.environ.get(QUICK_START_ENVIRONMENT) == '1' and not shared_heap_requested()
+
+
+def mapserver_quick_start_arguments(folder):
+    """['-svrconfig', <file>] with the file written in `folder`, or [] when not requested."""
+    if not server_quick_start_requested():
+        return []
+    path = Path(folder) / QUICK_START_CONFIG
+    text = ''.join(command + '\n' for command in QUICK_START_COMMANDS)
+    require(not path.is_symlink(), 'Server config is a link')
+    if not path.is_file() or path.read_bytes() != text.encode():
+        base.private_write(path, text)
+    windows = base.windows_path(path)
+    # svr_init.c copies nothing: the path is argv itself, opened through fileOpen (MAX_PATH).
+    require(len(windows) < 240 and ' ' not in windows, 'Server config path is unusable')
+    return ['-svrconfig', windows]
+
+
+def server_quick_start_record():
+    return {'format': 1, 'requested': server_quick_start_requested(),
+            'refused_with_shared_memory': os.environ.get(QUICK_START_ENVIRONMENT) == '1' and shared_heap_requested(),
+            'environment_variable': QUICK_START_ENVIRONMENT, 'config': QUICK_START_CONFIG,
+            'commands': list(QUICK_START_COMMANDS) if server_quick_start_requested() else []}
+
+
+def console_excerpt_line(line, limit=160):
+    return ''.join(c if ' ' <= c <= '~' else '?' for c in line.strip())[:limit]
+
+
+def shared_heap_console(text):
+    """Bounded evidence of the native shared-memory decision in one MapServer console."""
+    head = text[:1024 * 1024]
+    found = {name: head.count(marker) for name, marker in SHARED_HEAP_LINES}
+    marker = head.find('reserving shared heap space...')
+    window = head[marker:marker + SHARED_HEAP_OUTCOME_WINDOW] if marker >= 0 else ''
+    reserved = SHARED_HEAP_RESERVED.search(window)
+    failed = window.find(SHARED_HEAP_FAILED)
+    if reserved and 0 <= failed < reserved.start():
+        reserved = None
+    found['heap_reserved'] = 1 if reserved else 0
+    found['heap_unavailable'] = 1 if failed >= 0 and not reserved else 0
+    reasons = [console_excerpt_line(line.split('Shared heap disabled: ', 1)[1], 120)
+               for line in head.splitlines() if 'Shared heap disabled: ' in line][:3]
+    excerpt = [console_excerpt_line(line) for line in window.splitlines()[:6]]
+    return {'format': 2, 'requested': shared_heap_requested(), 'lines': found,
+            'reserved_mib': int(reserved.group(1)) if reserved else None,
+            'disabled_reasons': reasons, 'excerpt': excerpt,
+            'shared_heap_active': found['heap_reserved'] == 1 and not any(
+                found[name] for name in ('disabled_by_option', 'heap_disabled', 'address_outside_space',
+                                         'address_not_free', 'manager_unavailable'))}
+
+
+PROGRESS_POLICY = 'arm64_native_gameplay_progress_v1'
+PROGRESS_ENTS_FIELDS = frozenset({'level', 'experiencepoints', 'influencepoints', 'logincount'})
+MAX_INTERNAL_LEVEL = 49
+# Training assigns at most three enhancement slots per level (stock schedule).
+SLOTS_PER_LEVEL = 3
+
+
+def gameplay_progress(previous, current, attributes, purchases):
+    """ARM64: classify a reopen's saved changes as ordinary native play, or say why not.
+
+    Each accepted kind of change is one stock play makes on its own; the narrow
+    verifiers above accept them one at a time, ordinary play combines them
+    (Thor 0.13.53: training, a Day Job grant and experience in one session; the
+    grant's expiry and the auto-set normalization in the next):
+
+    - experience (never lower), influence, login count;
+    - a trained level, never lower, with exactly the stock BuyPower records of
+      the powers bought at the new levels (at most one per level gained), the
+      automatic Inherent powers available by then, and slots bought (at most
+      three per level gained);
+    - temporary powers granted or expired;
+    - the stock auto-set PowerSetLevelBought normalization of Inherent rows.
+
+    ents2, costume parts and every other selected field stay exact, and no
+    other prior power may disappear or change. Enhancements keep their own
+    preservation check. This reads SQL rows and logs only.
+    """
+    result = {'format': 1, 'policy': PROGRESS_POLICY, 'accepted': False,
+              'sql_game_mutations_performed': False, 'native_award_causality_verified': False}
+
+    def refuse(reason):
+        return dict(result, reason=reason)
+
+    if not (type(previous) is dict and type(current) is dict
+            and set(previous) == set(current) == set(evidence.SELECTED)):
+        return refuse('selected_tables')
+    for table in evidence.SELECTED:
+        if table not in ('ents', 'powers') and not evidence._same(previous[table], current[table]):
+            return refuse('changed_' + table)
+    if not (type(previous['ents']) is list and type(current['ents']) is list
+            and len(previous['ents']) == len(current['ents']) == 1):
+        return refuse('ents_rows')
+    before, after = previous['ents'][0], current['ents'][0]
+    if type(before) is not dict or type(after) is not dict or set(before) != set(after):
+        return refuse('ents_fields')
+    if any(not evidence._same(before[key], after[key]) for key in before if key not in PROGRESS_ENTS_FIELDS):
+        return refuse('ents_identity')
+    values = {}
+    for key in ('level', 'experiencepoints', 'influencepoints', 'logincount'):
+        pair = []
+        for row in (before, after):
+            value = row.get(key)
+            value = 0 if value is None else value
+            if type(value) is not int or not 0 <= value <= 0x7fffffff:
+                return refuse('ents_value_' + key)
+            pair.append(value)
+        values[key] = pair
+    (level0, level1), (xp0, xp1) = values['level'], values['experiencepoints']
+    if not level0 <= level1 <= MAX_INTERNAL_LEVEL:
+        return refuse('level')
+    if xp1 < xp0:
+        return refuse('experience_decreased')
+    if values['logincount'][1] < values['logincount'][0]:
+        return refuse('logincount')
+    delta = stock_power_delta(previous['powers'], current['powers'], attributes)
+    if delta.get('status') != 'observed' or delta.get('current_native_indexes_contiguous') is not True:
+        return refuse('power_rows')
+    names = {item['id']: item['name'] for item in attributes}
+
+    def resolve(row):
+        return '.'.join(names[row[key]] for key in ('categoryname', 'powersetname', 'powername'))
+
+    prior = {row['uniqueid']: row for row in previous['powers']}
+    saved = {row['uniqueid']: row for row in current['powers']}
+    expired = []
+    for uid in delta['deleted_uniqueids']:
+        power = resolve(prior[uid])
+        if not power.casefold().startswith('temporary_powers.'):
+            return refuse('prior_power_removed')
+        expired.append({'uniqueid': uid, 'power': power})
+    normalized, slots = [], 0
+    for change in delta['changed_prior_powers']:
+        uid, fields = change['uniqueid'], set(change['changed_fields'])
+        old, new = prior[uid], saved[uid]
+        if not fields <= {'powersetlevelbought', 'powernumboostsbought'}:
+            return refuse('prior_power_changed')
+        if 'powersetlevelbought' in fields:
+            value, was = new['powersetlevelbought'], old['powersetlevelbought'] or 0
+            if (not resolve(new).casefold().startswith('inherent.') or type(value) is not int
+                    or not was <= value <= level1):
+                return refuse('prior_power_set_level')
+            normalized.append(uid)
+        if 'powernumboostsbought' in fields:
+            value, was = new['powernumboostsbought'] or 0, old['powernumboostsbought'] or 0
+            if level1 == level0 or value < was:
+                return refuse('prior_power_slots')
+            slots += value - was
+    if slots > SLOTS_PER_LEVEL * (level1 - level0):
+        return refuse('slots_exceed_levels')
+    granted, automatic, purchased = [], [], []
+    owned = {(row['categoryname'], row['powersetname']) for row in previous['powers']}
+    for item in delta['added_powers']:
+        row, power = item['selected_row'], item['resolved_power']
+        folded, bought = power.casefold(), row['powerlevelbought'] or 0
+        if folded.startswith('temporary_powers.'):
+            granted.append(power)
+        elif folded.startswith('inherent.') and bought <= level1:
+            automatic.append(power)
+        elif (level0 < bought <= level1 and not row['powernumboostsbought'] and not row['buildnum']
+              and ((row['categoryname'], row['powersetname']) in owned or folded.startswith('pool.'))):
+            purchased.append({'power': power, 'internal_level': bought})
+        else:
+            return refuse('added_power_unclassified')
+    if len(purchased) > level1 - level0:
+        return refuse('purchases_exceed_levels')
+    if type(purchases) is not list:
+        return refuse('purchase_records_unavailable')
+    expected = sorted((item['power'].casefold(), item['internal_level'] + 1) for item in purchased)
+    observed = sorted((record['power'].casefold(), record['displayed_level']) for record in purchases)
+    if expected != observed:
+        return refuse('purchases_differ_from_native_records')
+    return dict(result, accepted=True, reason=None,
+        internal_level=[level0, level1], experience=[xp0, xp1], influence=values['influencepoints'],
+        purchased_powers=purchased, native_purchase_records=purchases, automatic_powers=sorted(automatic),
+        granted_temporary_powers=sorted(granted), expired_temporary_powers=expired,
+        normalized_set_level_uniqueids=sorted(normalized), slots_bought=slots,
+        before_power_rows_sha256=delta['before_power_rows_sha256'],
+        saved_power_rows_sha256=delta['after_power_rows_sha256'])
 
 
 def additive_inventory_enhancements(previous, current, attributes):
@@ -560,6 +1048,26 @@ def levelup_ui_repair_build_input(build_input, bundle):
  'runtime_validation': 'unverified'}
 
 
+EXTERNAL_MAPS_ROLE = 'manual_atlas_dbserver_external_maps'
+# The level-up DbServer the device runs (0.13.36 donor) and the exact receipt
+# of the on-demand zone layer above it (armport/server/package_external_maps_dbserver.py).
+EXTERNAL_MAPS_BASE_EXECUTABLE = {'bytes': 1664512, 'sha256': 'ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba'}
+EXTERNAL_MAPS_BASE_LEVELUP_SHA256 = '034734e976f55ad1cddb360126b4455a204b58f329a3ea5f364ce7f62bd849cc'
+EXTERNAL_MAPS_BUILD_INPUT_SHA256 = 'b9cb4391435b750e54889fd537006cb4574ef1e6956a21022eadfaba8e59b961'
+
+
+def external_maps_build_input(build_input, bundle, levelup, external):
+    """Accept only the qualified request layer above the exact shipped level-up layer."""
+    require(levelup == levelup_ui_repair_build_input(build_input, bundle)
+            and digest_json(levelup) == EXTERNAL_MAPS_BASE_LEVELUP_SHA256
+            and isinstance(external, dict) and digest_json(external) == EXTERNAL_MAPS_BUILD_INPUT_SHA256
+            and external.get('build_role') == EXTERNAL_MAPS_ROLE
+            and external.get('base_levelup_ui_repair_build_input_canonical_sha256') == EXTERNAL_MAPS_BASE_LEVELUP_SHA256
+            and external.get('request_contract', {}).get('disabled_by_default') is True,
+            'External map DbServer layer or its level-up ancestry differs')
+    return external
+
+
 def install_manual_atlas_dbserver(assets, runtime, package):
     """Replace only the fresh owned DbServer after verifying its donor closure."""
     binary = assets / 'startup-dbserver.exe'
@@ -570,7 +1078,8 @@ def install_manual_atlas_dbserver(assets, runtime, package):
             and not manifest.is_symlink(), 'Incomplete or linked manual Atlas DbServer supplement')
     value = dbserver.load_json(manifest, 2 * 1024 * 1024)
     require(value.get('format') == 1 and value.get('role') in
-            ('manual_atlas_dbserver_startup_supplement', STARTUP_BUNDLE_ROLE, LEVELUP_UI_REPAIR_ROLE)
+            ('manual_atlas_dbserver_startup_supplement', STARTUP_BUNDLE_ROLE, LEVELUP_UI_REPAIR_ROLE,
+             EXTERNAL_MAPS_ROLE)
             and dbserver.COMMIT.fullmatch(value.get('repository_commit', ''))
             and value.get('source_commit') == package['source_commit']
             and value.get('base_package_manifest_sha256') == dbserver.DEVICE_PACKAGE_MANIFEST
@@ -607,7 +1116,9 @@ def install_manual_atlas_dbserver(assets, runtime, package):
                                    *build_input['patched_sha256'].values(),
                                    *build_input['overlay_sha256'].values()]),
             'Manual Atlas DbServer source hashes differ')
-    if value['role'] in (STARTUP_BUNDLE_ROLE, LEVELUP_UI_REPAIR_ROLE):
+    layered = (STARTUP_BUNDLE_ROLE, LEVELUP_UI_REPAIR_ROLE, EXTERNAL_MAPS_ROLE)
+    reading = (LEVELUP_UI_REPAIR_ROLE, EXTERNAL_MAPS_ROLE)
+    if value['role'] in layered:
         require(value.get('base_startup_executable') == STARTUP_BUNDLE_BASE_EXECUTABLE
                 and dbserver.exact_contract(value.get('startup_bundle_build_input'),
                     startup_bundle_build_input(build_input)),
@@ -615,7 +1126,7 @@ def install_manual_atlas_dbserver(assets, runtime, package):
     else:
         require('startup_bundle_build_input' not in value,
                 'Legacy manual Atlas supplement contains an unqualified save layer')
-    if value['role'] == LEVELUP_UI_REPAIR_ROLE:
+    if value['role'] in reading:
         require(value.get('base_startup_bundle_executable') == LEVELUP_UI_REPAIR_BASE_EXECUTABLE
                 and dbserver.exact_contract(value.get('levelup_ui_repair_build_input'),
                     levelup_ui_repair_build_input(build_input, value['startup_bundle_build_input'])),
@@ -624,6 +1135,15 @@ def install_manual_atlas_dbserver(assets, runtime, package):
         require('levelup_ui_repair_build_input' not in value
                 and 'base_startup_bundle_executable' not in value,
                 'Legacy manual Atlas supplement contains an unqualified read layer')
+    if value['role'] == EXTERNAL_MAPS_ROLE:
+        require(value.get('base_levelup_ui_repair_executable') == EXTERNAL_MAPS_BASE_EXECUTABLE
+                and dbserver.exact_contract(value.get('external_maps_build_input'), external_maps_build_input(
+                    build_input, value['startup_bundle_build_input'], value['levelup_ui_repair_build_input'],
+                    value.get('external_maps_build_input'))),
+                'External map layer or retained executable differs')
+    else:
+        require('external_maps_build_input' not in value and 'base_levelup_ui_repair_executable' not in value,
+                'Manual Atlas supplement contains an unqualified external map layer')
     files = value.get('files', {})
     require(set(files) == {'DbServer.exe'}, 'Manual Atlas supplement contains another native target')
     record = files['DbServer.exe']
@@ -632,12 +1152,15 @@ def install_manual_atlas_dbserver(assets, runtime, package):
             and record['sha256'] != original['files']['DbServer.exe']['sha256']
             and value.get('dependency_report', {}).get('unresolved') == [],
             'Manual Atlas executable bytes or imports differ')
-    if value['role'] in (STARTUP_BUNDLE_ROLE, LEVELUP_UI_REPAIR_ROLE):
+    if value['role'] in layered:
         require(record['sha256'] != STARTUP_BUNDLE_BASE_EXECUTABLE['sha256'],
                 'Startup bundle executable is unchanged from the retained startup supplement')
-    if value['role'] == LEVELUP_UI_REPAIR_ROLE:
+    if value['role'] in reading:
         require(record['sha256'] != LEVELUP_UI_REPAIR_BASE_EXECUTABLE['sha256'],
                 'Level-up read executable is unchanged from the retained startup bundle')
+    if value['role'] == EXTERNAL_MAPS_ROLE:
+        require(record['sha256'] != EXTERNAL_MAPS_BASE_EXECUTABLE['sha256'],
+                'External map executable is unchanged from the shipped level-up DbServer')
     require(set(value.get('odbc_imports', [])) >= {'SQLDriverConnect', 'SQLExecDirect', 'SQLPrepare',
             'SQLGetDiagRecA', 'SQLGetInfoW', 'SQLColumnsW', 'SQLTablesW', 'SQLForeignKeysW'}
             and not set(value['odbc_imports']).intersection({'SQLDriverConnectA', 'SQLExecDirectA',
@@ -660,10 +1183,16 @@ def install_manual_atlas_dbserver(assets, runtime, package):
         'repository_commit': value['repository_commit'], 'contract': build_input['launcher_wait'],
         'base_package_archive_changed': False, 'other_native_targets_changed': False,
         'ordinary_fixed_inputs_loopback_dispatch_and_map_readiness_required': True}
-    if value['role'] in (STARTUP_BUNDLE_ROLE, LEVELUP_UI_REPAIR_ROLE):
+    if value['role'] in layered:
         installed['startup_bundle_save'] = value['startup_bundle_build_input']['save_contract']
         installed['startup_bundle_build_input_sha256'] = digest_json(value['startup_bundle_build_input'])
-    if value['role'] == LEVELUP_UI_REPAIR_ROLE:
+    if value['role'] == EXTERNAL_MAPS_ROLE:
+        # Present but inert: requests are published only when the supervisor sets
+        # COH_WINE_DB_EXTERNAL_MAPS=1; otherwise this is the level-up DbServer.
+        installed['external_maps'] = {'build_input_sha256': digest_json(value['external_maps_build_input']),
+                                      'request_contract': value['external_maps_build_input']['request_contract'],
+                                      'enabled': False}
+    if value['role'] in reading:
         installed['levelup_ui_repair_save'] = value['levelup_ui_repair_build_input']['save_contract']
         installed['startup_thread_name'] = value['levelup_ui_repair_build_input']['startup_thread_name_contract']
         installed['levelup_ui_repair_build_input_sha256'] = digest_json(value['levelup_ui_repair_build_input'])
@@ -718,7 +1247,7 @@ def read_logout_delivery(path, session, client_pid, character_id, ready_utc_ms, 
 def native_position_records(logs):
     """Read current owned Atlas entity physics observations, including bad Y."""
     number = r'-?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?'
-    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ PeriodicInfo pos=<('
+    pattern = re.compile('^' + entity_name_prefix() + r' -?\d+ PeriodicInfo pos=<('
         + number + '),(' + number + '),(' + number + r')> [^\r\n]+$')
     result = {}
     for message, record in entity_records(logs):
@@ -806,12 +1335,74 @@ def logout_record(logs, *, map_id=1):
     A normal CLIENT_DISCONNECT and a still-linked stalled client can both take
     this timer path. Explicit command delivery must be bound separately.
     """
-    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ \[Disconnect:Logout timer expired\] [^\r\n]+$')
+    pattern = re.compile('^' + entity_name_prefix() + r' -?\d+ \[Disconnect:Logout timer expired\] [^\r\n]+$')
     for message, record in entity_records(logs, map_id=map_id):
         if pattern.fullmatch(message):
             return dict(record, reason='Logout timer expired', account=ACCOUNT, name=CHARACTER,
                 source='current_owned_server_entity_log_live_client_logout_timer')
     return None
+
+
+STOCK_ARRIVAL_SOURCES = ('zone_console', 'stock_entity_log', 'stock_occupied_probe', 'dbserver_character_status')
+
+
+def stock_arrival_binds(proof, ready, map_id, now_utc_ms):
+    """The hero travelled on by the game's own travel after the ready record's zone.
+
+    0.13.86: Thor 0.13.85 (20261126-014613) slotted an enhancement, took a tunnel and saved;
+    the session's ready record was the first zone's (72) and the saved map the second (71), so
+    this binding was refused and the enhancement record failed the launch. The zoning server
+    records each arrival it accepted (character_zoning._stock_arrival); the latest one, of the
+    current travel epoch, binds the map the hero is in now.
+    """
+    arrival = proof.get('stock_arrival') if type(proof) is dict else None
+    return (type(arrival) is dict and type(arrival.get('map_id')) is int and arrival['map_id'] == map_id
+            and type(ready.get('utc_ms')) is int and type(arrival.get('observed_utc_ms')) is int
+            and ready['utc_ms'] <= arrival['observed_utc_ms'] <= now_utc_ms
+            and arrival.get('source') in STOCK_ARRIVAL_SOURCES
+            and type(arrival.get('epoch')) is int and arrival['epoch'] >= 1
+            and proof.get('zoning_epoch') == arrival['epoch'])
+
+
+def stock_zone_binding(proof, ready, session, client_pid, now_utc_ms):
+    """The same binding for a reopen connected in a zone the game's own travel started.
+
+    0.13.62: Thor 0.13.61 played Mercy Island; a reopen there that gains
+    experience has to be able to save, and accept_gameplay_progress needs this
+    binding. The ready record is that zone's own stock CLIENT_READY line
+    (character_zoning.stock_ready) on its embedded log route, which the zoning
+    server accepted only with the owned zone process, the DbServer's character
+    status and the current travel epoch. It recognizes no new readiness itself.
+    """
+    import stationary_contact_evidence as contact
+    map_id = proof.get('map_id') if type(proof) is dict else None
+    if not (type(session) is str and re.fullmatch(r'[0-9a-f]{32}', session)
+            and contact.positive_int(client_pid) and type(now_utc_ms) is int and now_utc_ms > 0
+            and proof.get('session_id') == session and type(proof.get('client_pid')) is int
+            and proof['client_pid'] == client_pid and type(proof.get('character_id')) is int
+            and proof['character_id'] == HERO_ID and type(map_id) is int and 1 <= map_id <= 999
+            and contact.positive_int(proof.get('auth_id'))
+            and proof.get('name') == CHARACTER and proof.get('account') == ACCOUNT
+            and all(proof.get(key) is True for key in ('connected_on_atlas', 'connected_on_supported_map',
+                'zoning_enabled', 'stock_travel', 'existing_character_verified',
+                'preserved_existing_identity', 'reopen_verified', 'native_client_ready_observed'))
+            and type(proof.get('client_ready_observed_utc_ms')) is int
+            and 0 < proof['client_ready_observed_utc_ms'] <= now_utc_ms
+            and type(ready) is dict and ready.get('loaded_world_assets') is True
+            and ready.get('name') == CHARACTER and ready.get('account') == ACCOUNT
+            and ready.get('log_route') in ('embedded_dbserver_logserver', 'owned_zone_server_console')
+            and type(ready.get('map_id')) is int
+            and (ready['map_id'] == map_id or stock_arrival_binds(proof, ready, map_id, now_utc_ms))
+            and type(ready.get('utc_ms')) is int
+            and 0 < ready['utc_ms'] <= proof['client_ready_observed_utc_ms']
+            and re.fullmatch(r'[0-9a-f]{64}', str(ready.get('line_sha256', '')))):
+        return None
+    return {'session_id': session, 'client_pid': client_pid, 'character_id': HERO_ID,
+            'auth_id': proof['auth_id'], 'map_id': map_id, 'name': CHARACTER, 'account': ACCOUNT,
+            'client_ready_observed_utc_ms': proof['client_ready_observed_utc_ms'],
+            'scope': 'previously_validated_current_session_stock_zone_connection',
+            'native_log_contains_character_db_id': False,
+            'native_log_contains_session_or_client_pid': False}
 
 
 def reopen_connection_binding(proof, session, client_pid, now_utc_ms):
@@ -823,13 +1414,15 @@ def reopen_connection_binding(proof, session, client_pid, now_utc_ms):
     """
     import stationary_contact_evidence as contact
     ready = proof.get('client_ready_evidence') if type(proof) is dict else None
+    if type(ready) is dict and ready.get('source') == 'current_target_stock_CLIENT_READY_resumeCharacter_success':
+        return stock_zone_binding(proof, ready, session, client_pid, now_utc_ms)
     if type(ready) is not dict or ready.get('source') != 'current_owned_mapserver_monorail_ready':
         return contact.binding(proof, session, client_pid, now_utc_ms)
     if not (type(session) is str and re.fullmatch(r'[0-9a-f]{32}', session)
             and contact.positive_int(client_pid) and type(now_utc_ms) is int
             and proof.get('session_id') == session and type(proof.get('client_pid')) is int
             and proof['client_pid'] == client_pid and type(proof.get('character_id')) is int
-            and proof['character_id'] == 1 and type(proof.get('map_id')) is int
+            and proof['character_id'] == HERO_ID and type(proof.get('map_id')) is int
             and proof['map_id'] in (1, 5) and contact.positive_int(proof.get('auth_id'))
             and proof.get('name') == CHARACTER and proof.get('account') == ACCOUNT
             and all(proof.get(key) is True for key in ('existing_character_verified',
@@ -844,7 +1437,7 @@ def reopen_connection_binding(proof, session, client_pid, now_utc_ms):
             and ready.get('kind') == 'ready' and ready.get('session_id') == session
             and ready.get('loaded_world_assets') is True and ready.get('name') == CHARACTER
             and ready.get('account') == ACCOUNT and ready.get('log_route') == 'immediate_owned_mapserver_console'
-            and type(ready.get('db_id')) is int and ready['db_id'] == 1
+            and type(ready.get('db_id')) is int and ready['db_id'] == HERO_ID
             and type(ready.get('auth_id')) is int and ready['auth_id'] == proof['auth_id']
             and type(ready.get('map_id')) is int and ready['map_id'] == proof['map_id']
             and contact.positive_int(ready.get('windows_pid')) and type(ready.get('pid')) is int
@@ -861,7 +1454,7 @@ def reopen_connection_binding(proof, session, client_pid, now_utc_ms):
             and 0 < ready['utc_ms'] <= proof['client_ready_observed_utc_ms']
             and re.fullmatch(r'[0-9a-f]{64}', str(ready.get('line_sha256', '')))):
         return None
-    return {'session_id': session, 'client_pid': client_pid, 'character_id': 1,
+    return {'session_id': session, 'client_pid': client_pid, 'character_id': HERO_ID,
         'auth_id': proof['auth_id'], 'map_id': proof['map_id'], 'name': CHARACTER, 'account': ACCOUNT,
         'client_ready_observed_utc_ms': proof['client_ready_observed_utc_ms'],
         'scope': 'previously_validated_current_session_monorail_and_dbserver_connection',
@@ -896,7 +1489,7 @@ def native_reward_windows(proof, current, logout_ms, *, session, client_pid, now
                 and prior['map_id'] != following['map_id']
                 and type(delivery) is dict and delivery.get('session_id') == session
                 and type(delivery.get('client_pid')) is int and delivery['client_pid'] == client_pid
-                and type(delivery.get('character_id')) is int and delivery['character_id'] == 1
+                and type(delivery.get('character_id')) is int and delivery['character_id'] == HERO_ID
                 and (delivery.get('from_map_id'), delivery.get('to_map_id')) == (prior['map_id'], following['map_id'])
                 and type(delivery.get('sent_utc_ms')) is int
                 and prior['client_ready_observed_utc_ms'] <= delivery['sent_utc_ms']
@@ -904,7 +1497,7 @@ def native_reward_windows(proof, current, logout_ms, *, session, client_pid, now
                 and type(depart) is dict and depart.get('source') == 'current_owned_mapserver_monorail_station_departure'
                 and depart.get('kind') == 'station_departure' and depart.get('session_id') == session
                 and depart.get('name') == CHARACTER and depart.get('account') == ACCOUNT
-                and type(depart.get('db_id')) is int and depart['db_id'] == 1
+                and type(depart.get('db_id')) is int and depart['db_id'] == HERO_ID
                 and type(depart.get('auth_id')) is int and depart['auth_id'] == current['auth_id']
                 and type(depart.get('pid')) is int and depart['pid'] == before_ready['windows_pid']
                 and type(depart.get('tid')) is int and depart['tid'] == before_ready['main_thread_id']
@@ -924,7 +1517,7 @@ def native_reward_credit_evidence(logs, proof, delivery, logout, *, session, cli
     """Bind exact stock point credits to the already validated owned connection.
 
     Native reward lines have neither a character DB ID nor a session/PID. Their
-    THORHERO:COHLOCAL identity and owned Atlas route are bound through the prior
+    Name:COHLOCAL identity and owned Atlas route are bound through the prior
     reopen/ready proof. This reads evidence only; it never awards game points.
     """
     import stationary_contact_evidence as contact
@@ -932,7 +1525,7 @@ def native_reward_credit_evidence(logs, proof, delivery, logout, *, session, cli
     identity = reopen_connection_binding(proof, session, client_pid, now_utc_ms)
     if (identity is None or type(delivery) is not dict
             or delivery.get('session_id') != session or delivery.get('client_pid') != client_pid
-            or type(delivery.get('client_pid')) is not int or delivery.get('character_id') != 1
+            or type(delivery.get('client_pid')) is not int or delivery.get('character_id') != HERO_ID
             or type(delivery.get('character_id')) is not int or delivery.get('action') != 'quittologin'
             or type(delivery.get('sent_utc_ms')) is not int
             or not identity['client_ready_observed_utc_ms'] <= delivery['sent_utc_ms'] <= now_utc_ms
@@ -972,14 +1565,14 @@ def native_reward_credit_evidence(logs, proof, delivery, logout, *, session, cli
             if not local and not embedded:
                 continue
             tail = text[text.rfind('\n') + 1:]
-            if re.search(r'"THORHERO:COHLOCAL" -?\d+ \[Tbl\]:Rcv:Points(?: |$)', tail):
+            if re.search(entity_name_prefix() + r' -?\d+ \[Tbl\]:Rcv:Points(?: |$)', tail):
                 return None  # A pending award line is not a complete credit inventory.
             for line in text[:text.rfind('\n') + 1].splitlines():
                 parsed = route_pattern.fullmatch(line)
                 if parsed is None or (parsed['local_level'] is not None) != local:
                     continue
                 message = parsed['message']
-                if not re.match(contact.PREFIX + r'\[Tbl\]:Rcv:Points(?: |$)', message):
+                if not re.match(contact.prefix() + r'\[Tbl\]:Rcv:Points(?: |$)', message):
                     continue
                 try:
                     stamp = int(time.mktime(time.strptime(parsed['timestamp'], '%y%m%d %H:%M:%S')) * 1000)
@@ -988,7 +1581,7 @@ def native_reward_credit_evidence(logs, proof, delivery, logout, *, session, cli
                 if not ready_ms <= stamp <= end_ms:
                     continue
                 candidate_count += 1
-                match = task.PATTERNS['reward'].fullmatch(message)
+                match = task.patterns()['reward'].fullmatch(message)
                 if (candidate_count > task.RECORD_LIMIT or match is None or len(message) > 2048
                         or parsed['local_level'] == '2'
                         or task._int(int(match['teamup']), -0x80000000) is None):
@@ -1039,9 +1632,9 @@ def native_logout_position(logs, delivery, ready_utc_ms, now_utc_ms):
     must agree; this observation alone never proves SQL commit or connection.
     """
     number = character_events.NUMBER
-    timer_pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ '
+    timer_pattern = re.compile('^' + entity_name_prefix() + r' -?\d+ '
         r'\[Disconnect:Logout timer expired\] [^\r\n]+$')
-    position_pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ '
+    position_pattern = re.compile('^' + entity_name_prefix() + r' -?\d+ '
         r'Logout location : map (?P<map_id>[1-9][0-9]*) '
         r'\((?P<x>' + number + r') (?P<y>' + number + r') (?P<z>' + number + r')\) [^\r\n]+$')
     observations = []
@@ -1081,7 +1674,7 @@ def ready_record(logs):
     The earlier DbServer connected flag only records map assignment. This
     current-session marker is emitted after resumeCharacter accepts CLIENT_READY.
     """
-    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ Connection:ResumeCharacter from '
+    pattern = re.compile('^' + entity_name_prefix() + r' -?\d+ Connection:ResumeCharacter from '
         r'127\.0\.0\.1:(?P<port>[1-9][0-9]{0,4}) AuthName "COHLOCAL"(?: [^\r\n]*)?$')
     for message, record in entity_records(logs):
         match = pattern.fullmatch(message)
@@ -1091,8 +1684,48 @@ def ready_record(logs):
     return None
 
 
+# 0.13.61: the row a new character keeps when its first zone never started.
+# At Enter Game the DbServer writes the created character to SQL
+# (handlePlayerContainerLoaded -> updateAuthUserData -> containerUpdate(..., TRUE)
+# clears just_created) before setNewMap asks for its zone. When that start
+# fails, doneWaitingChoosePlayerFailed therefore unloads it instead of deleting
+# it (Thor 0.13.59, Mercy Island: "Someone unloaded a player during map
+# transfer"), and the row stays: name, account and start zone, LoginCount NULL,
+# no class, origin, powers or costume. Only a MapServer writes those, so that
+# character never entered the game. Resume first character creation removes
+# exactly that row; anything else in the inventory is still refused.
+ENTS_TEMPLATE = 'data/server/db/templates/ents.template'
+UNENTERED_NULL_FIELDS = {
+    'ents': ('class', 'origin', 'level', 'experiencepoints', 'influencepoints',
+             'description', 'motto', 'datecreated', 'logincount'),
+    'ents2': ('curbuild', 'originalprimary', 'originalsecondary')}
+UNENTERED_RECORD_FIELDS = {
+    'ents': ('containerid', 'staticmapid', 'mapid', 'playertype', 'accesslevel', 'active'),
+    'ents2': ('containerid', 'subid', 'influencetype', 'praetorianprogress', 'playersubtype')}
+UNENTERED_REOPEN = ('{name} was created but never entered the game (its first zone did not start), so there is '
+                    'nothing to reopen. Use Resume first character creation: it removes that unfinished character '
+                    'so you can create it again.')
+STATION_TRAVEL_NAME = ("Station travel (Game's own zone travel off) follows only a character named THORHERO. "
+                       "Turn Game's own zone travel back on to play {name}.")
+
+
+def ents_family_tables(template, expected_tables):
+    """Every table of the DbServer's Ents template, Ents first (what sqlDeleteContainer clears)."""
+    require(isinstance(template, str) and len(template) <= 4 * 1024 * 1024 and isinstance(expected_tables, dict),
+            'Ents template is unreadable')
+    children = sorted({name.lower() for name in
+                       re.findall(r'^[ \t]*([A-Za-z_][A-Za-z0-9_]*)\[[^\]\r\n]+\]\.', template, re.M)})
+    tables = ('ents',) + tuple(children)
+    require('ents' not in children and {'ents2', 'powers', 'costumeparts'} <= set(children) and len(tables) <= 128
+            and all(dbserver.IDENTIFIER.fullmatch(table) and isinstance(expected_tables.get(table), list)
+                    and expected_tables[table][:2] == ['containerid', 'active' if table == 'ents' else 'subid']
+                    for table in tables),
+            'Ents template tables differ from the schema contract')
+    return tables
+
+
 def validate_character_rows(rows, baseline, inventory, attributes, auth_id, *,
-                            existing_identity=None, expected_login_count=1):
+                            existing_identity=None, expected_login_count=1, name=None):
     """Reject provisional rows and bind every child to the observed player."""
     require(isinstance(rows, dict) and set(rows) == set(evidence.SELECTED), 'Character snapshot tables differ')
     evidence.validate_attributes(attributes)
@@ -1110,7 +1743,7 @@ def validate_character_rows(rows, baseline, inventory, attributes, auth_id, *,
         require(evidence._same({key: parent[key] for key in evidence.IDENTITY_FIELDS}, existing_identity)
                 and sum(evidence._same(row, existing_identity) for row in baseline) == 1,
                 'Existing character identity differs from the preserved baseline')
-    require(parent.get('name') == CHARACTER and parent.get('authname') == ACCOUNT
+    require(parent.get('name') == (CHARACTER if name is None else name) and parent.get('authname') == ACCOUNT
             and parent.get('authid') == auth_id, 'Character/account SQL identity differs')
     if not parent.get('class') or not parent.get('origin') or not parent.get('logincount'):
         return None
@@ -1248,6 +1881,35 @@ def observe_owned_launch_memory(child, proc_root=Path('/proc')):
     return result
 
 
+def native_bin_writes(runtime, since_utc_ms, limit=48):
+    """Diagnostic: .bin files this MapServer wrote while starting (text re-parse).
+
+    A development-mode MapServer rewrites a .bin after parsing its source text
+    because the prepared .bin was missing or judged stale. Bounded; never gates.
+    """
+    if runtime is None or type(since_utc_ms) is not int:
+        return None
+    names, total = [], 0
+    for relative in ('data/bin', 'data/server/bin'):
+        try:
+            entries = list(os.scandir(Path(runtime) / relative))
+        except OSError:
+            continue
+        for entry in entries[:4096]:
+            if not entry.name.lower().endswith('.bin'):
+                continue
+            try:
+                info = entry.stat(follow_symlinks=False)
+            except OSError:
+                continue
+            if stat.S_ISREG(info.st_mode) and info.st_mtime_ns // 1000000 >= since_utc_ms:
+                total += 1
+                if len(names) < limit:
+                    names.append(relative[5:] + '/' + entry.name)
+    return {'format': 1, 'count': total, 'names': sorted(names), 'limit': limit,
+            'since_utc_ms': since_utc_ms}
+
+
 def observe_ready_fx_provider(runtime, prepared_runtime_identity, prepared_payload):
     """Once-only optional private FX byte observation after native readiness.
 
@@ -1313,12 +1975,41 @@ def observe_ready_fx_provider(runtime, prepared_runtime_identity, prepared_paylo
     return result
 
 
+# Wine leader/worker ownership sampling (health()). One observation reads the state of every
+# process and thread; CI run 43808003132 at 3 s still spent 328,000 of the supervisor's 464,000
+# file calls of a reopen session on these reads (527,000 unthrottled), so a scan costs about a
+# thousand calls and ran once in 2.6 s before.
+LINEAGE_OBSERVATION_SECONDS = 15
+
+
+def zone_tree_collision(missions):
+    """(names, data cache identity fields, mission leaf count) of the shared zone tree's collision leaves.
+
+    0.13.84, test option (COH_MISSION_MAPS=1): the mission maps' own leaves beside the zones'. A
+    tree with them has its own data cache identity, so the tree without them is kept as it is
+    and each is prepared once.
+    """
+    import zone_index
+    names = zone_index.COLLISION_FILES
+    identity = {'zone_collision_sha256': zone_index.COLLISION_FILES_SHA256}
+    if not missions:
+        return names, identity, 0
+    import mission_index
+    require(not set(mission_index.COLLISION_FILES) & set(names) and len(set(mission_index.COLLISION_FILES))
+            == len(mission_index.COLLISION_FILES), 'Mission collision leaves repeat zone leaves')
+    identity['mission_collision_sha256'] = mission_index.COLLISION_FILES_SHA256
+    return names + mission_index.COLLISION_FILES, identity, len(mission_index.COLLISION_FILES)
+
+
 class LocalCharacterServer(login.LocalLoginServer):
     require_empty_account = False
     requires_saved_character = False
     REPORT_KEY = 'character_creation'
+    # Maps this flow starts itself; external requests for them are left alone.
+    EXTERNAL_SESSION_MAPS = frozenset({1})
     def __init__(self, owner):
         request_at, request_utc_ms = time.monotonic(), int(time.time() * 1000)
+        reset_character()
         super().__init__(owner)
         self.map_process = None
         self.map_previous = None
@@ -1329,6 +2020,10 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.snapshot = None
         self.auth_id = None
         self.manual_atlas_startup = None
+        self.zone_travel_decided = False
+        self.external_maps = None
+        self.external_maps_query = None
+        self.external_maps_next = 0
         self.creation_report = {'session_id': owner.args.session_id, 'account': ACCOUNT,
             'name': CHARACTER, 'map_id': 1, 'verified': False, 'connected_on_atlas': False,
             'committed_sql_verified': False, 'requested_logout_observed': False, 'logout_timer_observed': False,
@@ -1337,6 +2032,45 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.ctx.report[self.REPORT_KEY] = self.creation_report
         self.initial_startup_timing = self.begin_startup_timing(
             'initial_guest_service_request', now=request_at, utc_ms=request_utc_ms)
+
+    def bind_session_character(self, identity):
+        """Name this session's character from its verified SQL row (bind_character).
+
+        The caller has already proved the row is this session's: the preserved
+        ID 1 (Reopen) or the account's newly created character (creation).
+        """
+        require(type(identity) is dict and type(identity.get('containerid')) is int
+                and identity['containerid'] > 0 and identity.get('authname') == ACCOUNT,
+                'The local character is not one of the COHLOCAL account; preserve all data and export the report')
+        name = bind_hero(identity.get('name'), identity['containerid'])
+        self.creation_report['name'] = name
+        events = self.creation_report.get('immediate_native_events')
+        if name != LEGACY_CHARACTER and isinstance(events, dict):
+            events.update(used=False, legacy_sorted_logs_used_for_ready_or_ground=True,
+                          reason='The native console producer reports only THORHERO; '
+                                 'this character is observed through the stock entity logs')
+        self.require_station_travel_name()
+        return name
+
+    def require_station_travel_name(self):
+        """Station travel (Game's own zone travel off) follows only THORHERO.
+
+        The native monorail producer reports only THORHERO. Which travel this
+        session uses is known once prepare_runtime has installed the DbServer
+        layer (the game's own travel needs the external-maps layer). Thor
+        0.13.62: Reopen binds the name in its baseline, before that layer;
+        asking then read "no layer" as station travel and refused Ralakar
+        with Game's own zone travel on.
+        """
+        if (CHARACTER_BOUND and CHARACTER != LEGACY_CHARACTER
+                and getattr(self, 'zone_travel_decided', False) is True
+                and getattr(self, 'monorail_enabled', lambda: False)()):
+            raise base.DiagnosticError(STATION_TRAVEL_NAME.format(name=CHARACTER))
+
+    def decide_zone_travel(self):
+        """The DbServer layer is installed: station or the game's own travel is fixed for this session."""
+        self.zone_travel_decided = True
+        self.require_station_travel_name()
 
     def begin_startup_timing(self, kind, *, map_id=None, epoch=None, resident=False, now=None, utc_ms=None):
         """Observe the existing lifecycle without granting readiness or a budget.
@@ -1441,7 +2175,9 @@ class LocalCharacterServer(login.LocalLoginServer):
 
         An initialized PostgreSQL profile is not evidence that native creation
         ever saved a character. Resuming that first creation is explicit and
-        never removes or replaces the persistent profile.
+        never removes or replaces the persistent profile; the only row it
+        removes is a character that never entered the game (unentered_creation,
+        0.13.61; any name since 0.13.62), and the report keeps that row.
         """
         timing = getattr(self, 'initial_startup_timing', None)
         if (timing is not None and timing.get('kind') == 'initial_guest_service_request'
@@ -1483,38 +2219,84 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.ctx.report['character_profile_eligibility'] = eligibility
         if self.requires_saved_character:
             require(inventory,
-                    'No saved THORHERO exists in this preserved profile. Use Resume first character creation, then save normally before Reopen.')
+                    'No saved character exists in this preserved profile. Use Resume first character creation, then save normally before Reopen.')
             require(all(type(row) is dict and set(row) == set(evidence.IDENTITY_FIELDS)
                         and type(row.get('name')) is str and type(row.get('authname')) is str
                         and type(row.get('containerid')) is int and row['containerid'] > 0
                         and type(row.get('authid')) is int and 0 < row['authid'] <= 4294967295
                         for row in inventory),
                     'Character inventory contains incomplete or invalid identities; preserve all data and export the report')
-            candidates = [row for row in inventory
-                          if row.get('name', '').casefold() == CHARACTER.casefold()
-                          or row.get('containerid') == 1]
-            require(len(candidates) == 1, 'Expected exactly the saved THORHERO ID 1; preserve all characters')
-            identity = candidates[0]
-            auth_id = identity.get('authid')
-            require(type(identity.get('containerid')) is int and identity['containerid'] == 1
-                    and identity.get('name') == CHARACTER and identity.get('authname') == ACCOUNT
-                    and type(auth_id) is int and 0 < auth_id <= 4294967295
-                    and [row for row in inventory if row.get('authid') == auth_id] == [identity],
-                    'Saved THORHERO identity differs from the accepted local character; preserve all characters')
-            rows = self.character_rows(1)
-            parents = rows.get('ents', [])
-            require(len(parents) == 1 and type(parents[0].get('logincount')) is int
-                    and 0 < parents[0]['logincount'] < 2**31 - 1,
-                    'Saved THORHERO has no committed login baseline; preserve all data and export the report')
-            snapshot = validate_character_rows(rows, inventory, inventory,
-                self.schema['expected_attributes'], auth_id,
-                existing_identity=identity, expected_login_count=parents[0]['logincount'])
-            require(snapshot is not None,
-                    'Saved THORHERO powers or costume are incomplete; preserve all data and export the report')
+            # 0.13.87: the account's heroes, whatever their names and IDs. The launch expects the one
+            # played last (hero_order); the player chooses in the game's own character list.
+            auth_ids = {row.get('authid') for row in inventory}
+            require(all(row.get('authname') == ACCOUNT for row in inventory) and len(auth_ids) == 1,
+                    'The saved game holds a character of another account than COHLOCAL; preserve all characters')
+            auth_id = inventory[0]['authid']
+            require(len({row['name'] for row in inventory}) == len(inventory)
+                    and len({row['containerid'] for row in inventory}) == len(inventory),
+                    'Two characters of the saved game share a name or an ID; preserve all characters')
+            # 0.13.88: a saved game that knows the Primalist class may hold a Primalist; its class
+            # name joins the expected names here, before the heroes' rows are checked against them
+            # (prepare_runtime, which adds it to this session's server tree, runs later).
+            eligibility['primalist_class_number'] = self.accept_stored_primalist()
+            all_rows = self.heroes_rows([row['containerid'] for row in inventory])
+            committed, unfinished = [], []
+            for identity in inventory:
+                rows = all_rows[identity['containerid']]
+                parents = rows.get('ents', [])
+                if (len(parents) == 1 and type(parents[0].get('logincount')) is int
+                        and 0 < parents[0]['logincount'] < 2**31 - 1):
+                    committed.append((identity, rows, parents[0]['logincount']))
+                else:
+                    unfinished.append((identity, rows))
+            if not committed and len(inventory) == 1:
+                # Thor 0.13.60: the row a failed first zone left was reported as
+                # an unexplained missing baseline. Nothing is changed here.
+                name = self.bind_session_character(inventory[0])
+                require(self.unentered_creation(inventory, all_rows[inventory[0]['containerid']]) is None,
+                        UNENTERED_REOPEN.format(name=name))
+                require(False, 'Saved ' + name + ' has no committed login baseline; preserve all data and export the report')
+            require(committed, 'No hero of this saved game has a committed login baseline; preserve all data and export the report')
+            eligibility['unfinished_characters'] = []
+            for identity, rows in unfinished:
+                # A hero created from the character list whose first zone never started: the game
+                # cannot enter it (it has no class or costume), so it is removed like the first one.
+                record = self.unfinished_hero(identity, rows)
+                require(record is not None, 'Saved ' + str(identity.get('name'))[:20] + ' has no committed login '
+                        'baseline and is not an unfinished creation; preserve all data and export the report')
+                eligibility['unfinished_characters'].append(self.remove_unfinished_hero(record))
+                eligibility['sql_game_mutations_performed'] = True
+            if unfinished:
+                inventory = self.inventory()
+                require(inventory == [identity for identity, _, _ in committed],
+                        'The saved game changed while an unfinished character was removed; export this report')
+                eligibility['character_count'] = len(inventory)
+            for identity, rows, count in committed:
+                require(valid_character_name(identity.get('name')),
+                        'A saved hero has a name the game does not accept; preserve all data and export the report')
+            order = self.hero_order([identity for identity, _, _ in committed])
+            identity, rows, count = next(item for item in committed if item[0]['containerid'] == order[0])
+            name = self.bind_session_character(identity)
+            eligibility.update(character_name=name, hero_count=len(committed),
+                               expected_character_id=identity['containerid'])
+            for other, other_rows, other_count in committed:
+                snapshot = validate_character_rows(other_rows, inventory, inventory,
+                    self.schema['expected_attributes'], auth_id,
+                    existing_identity=other, expected_login_count=other_count,
+                    name=other['name'])
+                require(snapshot is not None,
+                        'Saved ' + other['name'] + "'s powers or costume are incomplete; preserve all data and export the report")
             eligibility['committed_character_rows_verified'] = True
         else:
+            unentered = self.unentered_creation(inventory) if inventory and resume else None
+            if unentered is not None:
+                eligibility['unentered_character'] = dict(unentered, removed=False)
+                eligibility['unentered_character'] = self.remove_unentered_creation(unentered)
+                eligibility['sql_game_mutations_performed'] = True
+                inventory = self.inventory()
+                eligibility.update(character_count=len(inventory), empty_inventory_verified=not inventory)
             require(not inventory,
-                    'First character creation requires a completely empty inventory. Existing characters were preserved; use Reopen for saved THORHERO.')
+                    'First character creation requires a completely empty inventory. Existing characters were preserved; use Reopen for your saved character.')
             high_water = self.sql("SELECT dbo.coh_container_high_water('dbo.ents'::regclass);", game=True) if presence == 'present' else '0'
             require(high_water == '0',
                     'This empty profile has already allocated character IDs. Creation ID 1 cannot be qualified; preserve all data and export the report instead of resetting it.')
@@ -1523,13 +2305,11 @@ class LocalCharacterServer(login.LocalLoginServer):
 
     def payloads(self):
         super().payloads()
-        archive = self.owner.args.assets / 'game-package.tar.gz'
         receipt_path = self.owner.args.assets / 'native-responsiveness.json'
         candidate_receipt = dbserver.load_json(receipt_path, 4 * 1024 * 1024) if receipt_path.exists() else None
-        metrics = (self.owner.args.assets / 'armport-server-metrics-binding.json').exists()
-        runtime_manifest = self.owner.args.assets / 'runtime-manifest.json'
-        declared_metrics = runtime_manifest.is_file() and 'armport_server_metrics' in dbserver.load_json(runtime_manifest)
-        require(metrics == declared_metrics, 'Metrics admission and runtime inventory must be installed together')
+        archive, metrics, option = self.select_game_archive(self.owner.args.assets, os.environ)
+        if option is not None:
+            self.creation_report['server_option'] = option
         if metrics:
             import armport_server_metrics_contract as observer
             observer.verify_archive(archive)
@@ -1549,6 +2329,31 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.map_manifest_sha256 = base.file_hash(destination / 'game-package.json')
         self.map_contract = game.mapserver_progress_contract(self.map_package, destination / 'MapServer.exe')
         self.creation_report['mapserver_producer'] = self.map_contract['producer']
+
+    @staticmethod
+    def select_game_archive(assets, environ):
+        """Return (archive, metrics, option report) for this runtime inventory.
+
+        0.13.52: an APK may carry the admitted metrics server as a second archive
+        (armport_server_option). Without the launch option the unchanged
+        device-proven game-package.tar.gz runs and no metrics path is taken.
+        """
+        archive = assets / 'game-package.tar.gz'
+        metrics = (assets / 'armport-server-metrics-binding.json').exists()
+        runtime_manifest = assets / 'runtime-manifest.json'
+        inventory = dbserver.load_json(runtime_manifest) if runtime_manifest.is_file() else {}
+        require(metrics == ('armport_server_metrics' in inventory),
+                'Metrics admission and runtime inventory must be installed together')
+        if 'armport_server_option' not in inventory:
+            return archive, metrics, None
+        import armport_server_metrics_contract as observer
+        option = observer.admitted_archive_name(inventory)
+        require(metrics, 'Server option requires its runtime binding')
+        requested = environ.get(observer.OPTION_REQUEST) == '1'
+        if requested:
+            archive = assets / option
+        return archive, requested, {'format': 1, 'offered': True, 'requested': requested,
+            'archive': archive.name, 'default_archive': observer.GAME_ARCHIVE}
 
     @staticmethod
     def verify_map_payload(directory, candidate_receipt=None):
@@ -1595,7 +2400,21 @@ class LocalCharacterServer(login.LocalLoginServer):
             phases[name], phase_at = round(now - phase_at, 6), now
 
         super().prepare_runtime()
+        # 0.13.85: the Primalist's definition files, used when the archetype is on for this saved game.
+        import single_player_content
+        self.single_player_content = None
+        if getattr(self, 'primalist', False):
+            self.single_player_content = single_player_content.load(self.owner.args.assets)
+            require(self.single_player_content is not None, 'This app carries no Primalist content')
+            self.creation_report['single_player_content'] = self.single_player_content.summary()
+            self.ctx.report['single_player_content'] = self.creation_report['single_player_content']
         checkpoint('base_schema_and_native_runtime')
+        # 0.13.67, read-only: what earlier sessions left in the private state folder
+        # (Thor 0.13.66: 13.2 GB of state; zone sessions never returned their data tree).
+        try:
+            self.ctx.report['state_inventory'] = state_inventory(self.owner.root)
+        except OSError as failure:
+            self.ctx.report['state_inventory'] = {'error': type(failure).__name__}
         source = self.owner.work / 'data'
         require(source.is_dir() and not source.is_symlink(), 'Verified private client data is missing')
         receipt = self.ctx.report.get('client_worktree', {})
@@ -1652,6 +2471,13 @@ class LocalCharacterServer(login.LocalLoginServer):
                 'files': cache_native_package['files']})).hexdigest()}
         if required_geometry is not None:
             identity['required_geometry'] = required_geometry
+        if getattr(self, 'single_player_content', None) is not None:
+            # Trees with and without the replaced definition files never serve each other.
+            identity['single_player_content'] = self.single_player_content.identity
+        selection = shared_server_selection(source)
+        if selection is not None:
+            # A generation without these folders must never serve a private-only start.
+            identity['shared_server_data'] = selection
         projection = server_input_projection(self.map_package, self.map_package_dir / 'MapServer.exe')
         if projection is not None:
             identity['server_input_projection'] = {key: value for key, value in projection.items()
@@ -1676,17 +2502,21 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.manual_atlas_startup = install_manual_atlas_dbserver(self.owner.args.assets, self.runtime, self.package)
         if self.manual_atlas_startup is not None:
             self.creation_report['manual_atlas_startup'] = self.manual_atlas_startup
+        self.decide_zone_travel()
         checkpoint('native_dependencies_and_manual_atlas')
-        if initial_map == 5 or (initial_map == 1 and self.requires_saved_character
+        if initial_map is None or initial_map == 5 or (initial_map == 1 and self.requires_saved_character
                 and getattr(self, 'overlap_client_initialization', False) is True):
             # The saved location is authoritative before native startup. Both
             # supported saved worlds use the authenticated minimal DbServer
             # layout and their own map runtime. Atlas reuses the same cache
             # generation as an earlier real return trip; the live DbServer's
             # schema/configuration is never moved under the running process.
+            # None: no zone before Enter Game (the game's own travel); Atlas
+            # Park is prepared only if the game asks for it.
             self.atlas_preparation_deferred = True
             self.creation_report['atlas_preparation_deferred'] = {
-                'reason': ('saved_character_starts_in_kings_row' if initial_map == 5 else
+                'reason': ('character_zone_started_at_enter_game' if initial_map is None else
+                           'saved_character_starts_in_kings_row' if initial_map == 5 else
                            'saved_atlas_owned_map_client_initialization'), 'map_id': initial_map,
                 'dbserver_layout': 'authenticated_minimal_private_runtime',
                 'atlas_native_started': False, 'atlas_data_mirror_started': False,
@@ -1742,10 +2572,16 @@ class LocalCharacterServer(login.LocalLoginServer):
                           copied_private_files=0, preserved_schema_files=len(self.schema['files']))
             checkpoint('warm_schema_restore')
         else:
-            staged = self.stage_map_data(source, runtime / 'data', cache_recorder=self.data_cache)
+            probe_roots = identity['shared_server_data']['shared_top_level'] if 'shared_server_data' in identity else ()
+            staged = self.stage_map_data(source, runtime / 'data', cache_recorder=self.data_cache,
+                                         skip_top_level=probe_roots)
             checkpoint('cold_server_data_mirror')
             self.data_cache.seal(runtime / 'data', staged)
             checkpoint('cold_server_data_receipt_seal')
+        if 'shared_server_data' in identity:
+            self.creation_report['shared_server_data'] = self.link_shared_server_data(runtime, identity)
+            self.ctx.report['shared_server_data'] = self.creation_report['shared_server_data']
+            checkpoint('shared_server_data_link')
         if self.map_package.get('native_monorail') is not None:
             # A reviewed MapServer-only bridge must retain the exact parser and
             # schema ancestry before donor caches can accelerate a fresh install.
@@ -1763,6 +2599,8 @@ class LocalCharacterServer(login.LocalLoginServer):
             # existing generated bins and the ordinary loader fully in charge.
             self.creation_report['prepared_server_caches'] = {'format': 1,
                 'status': 'skipped_native_fallback', 'reason': str(failure)[:300], 'installed_files': 0}
+        self.drop_single_player_stale_bins(runtime / 'data', self.creation_report['prepared_server_caches'],
+                                           self.creation_report)
         checkpoint('prepared_server_definition_caches')
         self.creation_report['server_fx_catalog'] = server_fx_catalog.install(
             self.owner.args.assets, runtime, context=self.ctx,
@@ -1825,9 +2663,21 @@ class LocalCharacterServer(login.LocalLoginServer):
         if not getattr(self, 'atlas_preparation_deferred', False):
             return self.runtime
         if getattr(self, 'atlas_map_runtime', None) is not None:
+            # Name the first failure: on the Thor (20261127-035141) the reason was in one
+            # early-start field only and both later attempts said just "did not complete".
+            first = getattr(self, 'atlas_preparation_failure', None)
             require(getattr(self, 'atlas_runtime_prepared', False),
-                    'Earlier Atlas preparation did not complete; preserve data and export')
+                    'Earlier Atlas preparation did not complete' + (' (' + first + ')' if first else '')
+                    + '; preserve data and export')
             return self.atlas_map_runtime
+        try:
+            return self.prepare_atlas_runtime_once()
+        except Exception as failure:
+            if getattr(self, 'atlas_map_runtime', None) is not None:
+                self.atlas_preparation_failure = str(failure)[:300]
+            raise
+
+    def prepare_atlas_runtime_once(self):
         target = self.runtime.with_name(self.runtime.name + '-atlas-park')
         require(not target.exists() and not target.is_symlink(), 'Atlas session runtime already exists')
         target.mkdir(mode=0o700)
@@ -1962,6 +2812,12 @@ class LocalCharacterServer(login.LocalLoginServer):
                     native_ready_elapsed_seconds=round(now - child.started, 6),
                     native_ready_time_scope='sampled_upper_bound_after_owned_existing_protocol_tick_gate; observer_delay_not_bounded')
                 row['owned_launch_memory_at_first_native_ready'] = observe_owned_launch_memory(child)
+                row['native_bin_writes'] = native_bin_writes(runtime, row.get('launch_utc_ms'))
+                if getattr(self, 'single_player_content', None) is not None:
+                    # The server has loaded its definitions: the class list it used (rebuilt when
+                    # the stale one was dropped) must hold the Primalist.
+                    import single_player_content
+                    row['single_player_class_compiled'] = single_player_content.class_compiled(Path(runtime) / 'data')
                 row['server_fx_provider']['post_native_ready'] = observe_ready_fx_provider(
                     runtime, row['private_runtime_identity'], row['server_fx_provider']['actual_payload'])
                 changed = True
@@ -1970,9 +2826,150 @@ class LocalCharacterServer(login.LocalLoginServer):
 
     def dbserver_environment(self, environment):
         environment = super().dbserver_environment(environment)
+        environment.pop(external_maps.DB_ENVIRONMENT, None)
+        environment.pop(external_maps.DB_DIRECTORY_ENVIRONMENT, None)
         if self.manual_atlas_startup is not None:
             environment[MANUAL_ATLAS_ENVIRONMENT] = '1'
+            self.external_maps_environment(environment)
         return environment
+
+    def external_maps_environment(self, environment):
+        """On-demand zone requests (launch option), only with the exact DbServer layer.
+
+        Off unless COH_EXTERNAL_MAPS=1 and the installed DbServer is the
+        external-maps layer; otherwise the DbServer behaves as before.
+        """
+        report = getattr(self, 'creation_report', None)
+        if getattr(self, 'external_maps', None) is not None:
+            # One supervisor per DbServer process; a relaunch keeps Launcher behaviour.
+            report['external_maps']['later_dbserver_launch_without_requests'] = True
+            return
+        requested = os.environ.get(external_maps.ENABLE_ENVIRONMENT) == '1'
+        layer = (self.manual_atlas_startup or {}).get('external_maps')
+        record = {'format': 1, 'requested': requested, 'enabled': False,
+                  'dbserver_layer': None if layer is None else layer.get('build_input_sha256')}
+        if isinstance(report, dict):
+            report['external_maps'] = record
+        if not requested or layer is None or not isinstance(report, dict):
+            record['reason'] = ('not_requested' if not requested else 'dbserver_without_external_maps_layer'
+                                if layer is None else 'no_session_report')
+            return
+        parent = self.owner.args.state
+        name = 'external-map-requests-' + self.owner.args.session_id
+        windows = base.windows_path(parent / name)
+        if len(windows) > external_maps.DIRECTORY_LIMIT or '"' in windows:
+            record['reason'] = 'request_directory_path_too_long'
+            return
+        self.external_maps = external_maps.ExternalMapSupervisor.create(
+            parent, name, **self.external_maps_options())
+        environment[external_maps.DB_ENVIRONMENT] = '1'
+        environment[external_maps.DB_DIRECTORY_ENVIRONMENT] = windows
+        record.update(enabled=True, reason=None, supervisor=self.external_maps.report(),
+                      weekly_tf_config=self.write_weekly_tf_config())
+
+    def session_map_options(self):
+        """Extra arguments for every MapServer this session owns; none by default."""
+        return []
+
+    def write_weekly_tf_config(self):
+        """The one config every DbServer map start reads; absent from the pinned data."""
+        path = self.runtime / WEEKLY_TF_CONFIG_PATH
+        require(path.parent.is_dir() and not path.parent.is_symlink(), 'DbServer config folder is missing')
+        existing = path.exists() or path.is_symlink()
+        if not existing:
+            base.private_write(path, WEEKLY_TF_CONFIG)
+        require(path.is_file() and not path.is_symlink(), 'Weekly task force config is not a private file')
+        return {'path': WEEKLY_TF_CONFIG_PATH, 'written': not existing, 'sha256': base.file_hash(path)}
+
+    def external_maps_options(self):
+        """Supervisor options: the maps this flow starts itself; the zoning flow may add a start policy."""
+        return {'session_maps': self.EXTERNAL_SESSION_MAPS}
+
+    def serve_external_maps(self, supervisor):
+        """Start served requests and follow them (the game's own zone travel); nothing by default."""
+
+    def tick_travel_requests(self):
+        """Between the session's five-second inspections: take a new zone start request at once.
+
+        0.13.81. The session inspected its evidence, and with it the DbServer's zone start
+        requests, every five seconds (client_interactive_diagnostic.PROGRESS_POLL_SECONDS). A
+        trip's request therefore waited up to five seconds before a spare was handed the zone
+        or a server was started, and every measured "request to map ready" was a multiple of
+        five seconds: 10.1 and 15.1 s in CI, 20.2, 20.3 and 25.3 s on the Thor. Twice a second
+        this lists the request directory; only when it holds a request not decided yet, or a
+        started zone is not ready yet, the ordinary tick runs now (it still limits itself to
+        one run a second). The spare's idle work keeps the five-second cadence.
+        """
+        supervisor = getattr(self, 'external_maps', None)
+        if supervisor is None or getattr(self, 'process', None) is None:
+            return False
+        now = time.monotonic()
+        if now < getattr(self, 'travel_requests_next', 0):
+            return False
+        self.travel_requests_next = now + TRAVEL_REQUEST_SECONDS
+        unseen = supervisor.unseen_request()
+        if not unseen and not getattr(self, 'stock_starts', None):
+            return False
+        if unseen:
+            self.external_maps_next = 0
+        self.travel_tick_between_inspections = True
+        try:
+            self.tick_external_maps()
+        finally:
+            self.travel_tick_between_inspections = False
+        counts = self.creation_report.setdefault('travel_request_ticks', {'format': 1, 'for_new_request': 0,
+                                                                         'while_starting': 0})
+        counts['for_new_request' if unseen else 'while_starting'] += 1
+        return True
+
+    def tick_external_maps(self):
+        """Read new map requests; serve or delink them (one delink query at a time)."""
+        supervisor = getattr(self, 'external_maps', None)
+        if supervisor is None or getattr(self, 'process', None) is None:
+            return
+        now = time.monotonic()
+        if now < self.external_maps_next:
+            return
+        self.external_maps_next = now + 1
+        query = self.external_maps_query
+        if query is not None:
+            entry, child, deadline = query
+            if child.process.poll() is None or child.reader.is_alive():
+                if now < deadline:
+                    return
+                supervisor.delink_finished(entry, exit_code=None, timed_out=True,
+                                           elapsed_seconds=now - child.started)
+            else:
+                supervisor.delink_finished(entry, exit_code=child.process.poll(),
+                                           elapsed_seconds=now - child.started)
+                self.ctx.record(child)
+            self.external_maps_query = None
+        supervisor.poll(self.process.text(), now)
+        self.serve_external_maps(supervisor)
+        entry = supervisor.next_delink()
+        if entry is not None:
+            self.query_count += 1
+            require(self.query_count <= 160, 'Character protocol query budget exceeded')
+            child = self.ctx.start('external-map-delink-' + str(entry['map_id']), ['/usr/bin/env',
+                '--chdir=' + str(self.runtime), self.owner.args.wine, base.windows_path(self.runtime / 'MapServer.exe'),
+                '-nogui', '-db', '127.0.0.1', '-dbquery', '-timeout', '10000', '-delink', str(entry['map_id'])],
+                env=self.owner.wine_env)
+            self.external_maps_query = (entry, child, now + external_maps.DELINK_SECONDS)
+        self.creation_report['external_maps']['supervisor'] = supervisor.report()
+
+    def cleanup_external_maps(self):
+        supervisor = getattr(self, 'external_maps', None)
+        if supervisor is None:
+            return
+        try:
+            names = sorted(os.listdir(supervisor.directory))
+            if all(external_maps.FILE_NAME.match(name) or external_maps.TEMPORARY_NAME.match(name)
+                   for name in names) and len(names) <= external_maps.MAX_ENTRIES:
+                for name in names:
+                    (supervisor.directory / name).unlink()
+                supervisor.directory.rmdir()
+        except OSError:
+            pass
 
     def dbserver_startup_policy_ready(self, console):
         if self.manual_atlas_startup is None:
@@ -2071,10 +3068,19 @@ class LocalCharacterServer(login.LocalLoginServer):
 
     def cleanup_config(self):
         super().cleanup_config()
+        self.cleanup_external_maps()
         if hasattr(self, 'data_cache'):
             self.data_cache.release(getattr(self, 'atlas_map_runtime', self.runtime) / 'data', self.owner.cleanup_status)
         if hasattr(self, 'kings_row_data_cache'):
             self.kings_row_data_cache.release(self.kings_row_runtime / 'data', self.owner.cleanup_status)
+        if hasattr(self, 'zone_data_cache') and getattr(self, 'zone_tree_prepared', None) is not None:
+            # Thor 0.13.61-0.13.66: the shared zone tree's data was never returned, so
+            # every session mirrored it again (75 s) and left one more stranded copy.
+            # A refused return costs only the next session's mirror, as before.
+            try:
+                self.zone_data_cache.release(self.zone_runtime / 'data', self.owner.cleanup_status)
+            except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
+                self.zone_data_cache.summary['return_refused'] = str(failure)[:300]
 
     def copy_kings_native_dependencies(self, target):
         """Keep Atlas's qualified DbServer replacement scoped to Atlas only."""
@@ -2145,6 +3151,15 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.kings_row_runtime = target
         source_identity = (self.server_data_identity if hasattr(self, 'server_data_identity')
                            else self.data_cache.identity)
+        shared_selection = source_identity.get('shared_server_data')
+        shared_folders = tuple(shared_selection['shared_top_level']) if shared_selection else ()
+        if shared_folders:
+            # The engine searches serverdata/ only when both data/ and tools/ exist.
+            (target / 'tools').mkdir(mode=0o700)
+            overlay_roots = {name.split('/')[1].casefold() for name in self.zone_asset_document['kings_row_collision_files']
+                             if name.startswith('data/') and name.count('/') >= 2}
+            require(not overlay_roots & {name.casefold() for name in shared_folders},
+                    'Kings Row collision overlay would land in a shared server folder')
         identity = dict(source_identity,
             map_id=5, kings_collision_sha256=self.zone_asset_document['kings_row_collision_files_sha256'],
             kings_graph_manifest=self.kings_row_beacon_lock['manifest'])
@@ -2162,7 +3177,8 @@ class LocalCharacterServer(login.LocalLoginServer):
         if reused:
             staged = dict(cache.record['stats'], linked_immutable_files=0, copied_private_files=0)
         else:
-            staged = self.stage_map_data(self.owner.work / 'data', target / 'data', cache_recorder=cache)
+            staged = self.stage_map_data(self.owner.work / 'data', target / 'data', cache_recorder=cache,
+                                         skip_top_level=shared_folders)
         checkpoint('warm_schema_restore' if reused else 'cold_server_data_mirror')
         geometry = zone_asset_package.install(target, self.owner.args.assets, self.ctx, collision_only=True)
         checkpoint('required_original_collision_geometry')
@@ -2184,6 +3200,11 @@ class LocalCharacterServer(login.LocalLoginServer):
             staged['copied_private_files'] += len(targets)
             cache.seal(target / 'data', staged)
         checkpoint('server_data_receipt_seal')
+        shared_link = None
+        if shared_folders:
+            # Same tree as Atlas: keyed by the Atlas source identity.
+            shared_link = self.link_shared_server_data(target, source_identity, map_label='Kings Row')
+            checkpoint('shared_server_data_link')
         dependencies = self.copy_kings_native_dependencies(target)
         # Preserve the current private DbServer connection, including its stock
         # logging policy. Never reuse a cached session's credential file.
@@ -2195,6 +3216,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             mapserver_package=self.map_package)
         prepared_caches = server_cache_package.install(self.owner.args.assets / server_cache_package.ARCHIVE,
             target / 'data', donor, context=self.ctx)
+        stale_bins = self.drop_single_player_stale_bins(target / 'data', prepared_caches)
         checkpoint('prepared_server_definition_caches')
         fx_catalog = server_fx_catalog.install(self.owner.args.assets, target, context=self.ctx,
             mapserver_package=self.map_package)
@@ -2215,6 +3237,8 @@ class LocalCharacterServer(login.LocalLoginServer):
         report = {'runtime': target.name, 'geometry': geometry, 'graph': graph,
             'native_dependencies': dependencies,
             'server_data_cache': cache.summary, 'prepared_server_caches': prepared_caches,
+            'single_player_stale_bins': stale_bins,
+            'shared_server_data': shared_link,
             'server_cache_native_compatibility': cache_compatibility,
             'animation': animation, 'server_fx_catalog': fx_catalog,
             'phase_seconds': dict(phases), 'elapsed_seconds': round(time.monotonic() - started, 6)}
@@ -2232,16 +3256,291 @@ class LocalCharacterServer(login.LocalLoginServer):
             self.kings_collision_input_proof = None
         return self.kings_row_prepared
 
+    def prepare_zone_runtime(self):
+        """One owned tree for every static zone other than Atlas and King's Row.
+
+        Built like King's Row's (the same mirror, schema, prepared caches, FX
+        catalog, animation pack and shared server folders), with the union of
+        every zone's extra collision leaves (zone_index.py) from the pinned
+        zone archive and no beacon graph yet: NPCs there do not path until
+        their graphs are generated. Each zone writes its own geobin/maps/<world>.
+        """
+        if getattr(self, 'zone_tree_prepared', None) is not None:
+            return self.zone_tree_prepared
+        earlier = getattr(self, 'zone_tree_failure', None)
+        if earlier is not None:
+            # Its partial tree stays where its data cache receipt expects it.
+            raise base.DiagnosticError('The shared zone tree could not be prepared earlier in this session ('
+                                       + earlier + '); finish this session and start it again')
+        try:
+            return self._prepare_zone_runtime()
+        except base.Cancelled:
+            raise
+        except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
+            self.zone_tree_failure = str(failure)[:200]
+            raise
+
+    def _prepare_zone_runtime(self):
+        import zone_asset_package
+        import zone_index
+        require(getattr(self, 'zone_asset_document', None) is not None,
+                'The shared zone tree requires the pinned all-zone package')
+        started = time.monotonic()
+        phase_at, phases = started, {}
+
+        def checkpoint(name):
+            nonlocal phase_at
+            now = time.monotonic()
+            phases[name], phase_at = round(now - phase_at, 6), now
+
+        target = self.runtime.with_name(self.runtime.name + '-zones')
+        require(not target.exists() and not target.is_symlink(), 'Shared zone runtime already exists')
+        target.mkdir(mode=0o700); (target / 'data').mkdir(mode=0o700)
+        self.zone_runtime = target
+        source_identity = (self.server_data_identity if hasattr(self, 'server_data_identity')
+                           else self.data_cache.identity)
+        shared_selection = source_identity.get('shared_server_data')
+        shared_folders = tuple(shared_selection['shared_top_level']) if shared_selection else ()
+        missions = os.environ.get('COH_MISSION_MAPS') == '1'
+        collision_names, collision_identity, mission_leaves = zone_tree_collision(missions)
+        leaves = {name: self.zone_asset_document['files'][name] for name in collision_names}
+        if shared_folders:
+            (target / 'tools').mkdir(mode=0o700)
+            overlay_roots = {name.split('/')[1].casefold() for name in leaves if name.count('/') >= 2}
+            require(not overlay_roots & {name.casefold() for name in shared_folders},
+                    'Shared zone collision overlay would land in a shared server folder')
+        identity = dict(source_identity, map_scope='shared_static_zones_v1', **collision_identity)
+        receipt = getattr(self, 'server_data_receipt', self.ctx.report.get('client_worktree', {}))
+        cache = server_data_cache.ServerDataCache(self.owner.root, identity,
+            self.owner.args.session_id, self.ctx,
+            legacy_identity_validator=lambda old: self.legacy_data_identity_matches(old, identity, receipt))
+        self.zone_data_cache = cache
+        reused = cache.checkout(target / 'data')
+        checkpoint('server_data_cache_checkout')
+        for name in self.schema['files']:
+            destination = target / name
+            destination.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            server_data_cache.ServerDataCache.restore_schema(self.schema_dir / name, destination, target)
+        if reused:
+            staged = dict(cache.record['stats'], linked_immutable_files=0, copied_private_files=0)
+        else:
+            staged = self.stage_map_data(self.owner.work / 'data', target / 'data', cache_recorder=cache,
+                                         skip_top_level=shared_folders)
+        checkpoint('warm_schema_restore' if reused else 'cold_server_data_mirror')
+        geometry = zone_asset_package.install(target, self.owner.args.assets, self.ctx,
+                                              collision_names=collision_names)
+        checkpoint('shared_zone_collision_geometry')
+        if not reused:
+            known = set(cache.directory_names)
+            targets = world.resolve_targets(target, leaves, self.ctx)
+            for leaf in targets.values():
+                relative = leaf.relative_to(target / 'data')
+                for parent in reversed(relative.parents):
+                    name = '' if parent == Path('.') else parent.as_posix()
+                    if name not in known:
+                        cache.observe(parent, target / 'data' / parent, None, False); known.add(name)
+                        staged['directories'] += 1
+                cache.private_names.append(relative.as_posix())
+            staged['files'] += len(targets)
+            staged['bytes'] += sum(pin['bytes'] for pin in leaves.values())
+            staged['copied_private_files'] += len(targets)
+            cache.seal(target / 'data', staged)
+        checkpoint('server_data_receipt_seal')
+        shared_link = None
+        if shared_folders:
+            shared_link = self.link_shared_server_data(target, source_identity, map_label='shared zones')
+            checkpoint('shared_server_data_link')
+        dependencies = self.copy_kings_native_dependencies(target)
+        config = target / 'data/server/db/servers.cfg'
+        server_data_cache.ServerDataCache.restore_schema(self.runtime / 'data/server/db/servers.cfg', config, target)
+        checkpoint('native_dependencies_and_session_configuration')
+        cache_compatibility = server_cache_package.verify_mapserver_compatibility(target / 'MapServer.exe', self.map_package)
+        donor = server_cache_package.build_expected_identity(target / 'data', target / 'MapServer.exe',
+            mapserver_package=self.map_package)
+        prepared_caches = server_cache_package.install(self.owner.args.assets / server_cache_package.ARCHIVE,
+            target / 'data', donor, context=self.ctx)
+        stale_bins = self.drop_single_player_stale_bins(target / 'data', prepared_caches)
+        checkpoint('prepared_server_definition_caches')
+        fx_catalog = server_fx_catalog.install(self.owner.args.assets, target, context=self.ctx,
+            mapserver_package=self.map_package)
+        checkpoint('server_fx_catalog')
+        import server_animation_package
+        animation = server_animation_package.install(self.owner.args.assets / 'server-animations.pigg',
+            self.owner.args.assets / 'server-animation-manifest.json', target, context=self.ctx,
+            mapserver_package=self.map_package)
+        checkpoint('server_animation_pack')
+        # Each zone's graph is installed when that zone starts (install_zone_beacon_graph): with a
+        # graph for every zone (navigation map pack), checking all of them here would delay the first.
+        report = {'runtime': target.name, 'geometry': geometry, 'beacon_graph': {},
+            'native_dependencies': dependencies, 'server_data_cache': cache.summary,
+            'prepared_server_caches': prepared_caches, 'shared_server_data': shared_link,
+            'single_player_stale_bins': stale_bins,
+            'server_cache_native_compatibility': cache_compatibility,
+            'animation': animation, 'server_fx_catalog': fx_catalog,
+            'zone_index_sha256': zone_index.SOURCE_SHA256, 'collision_files': len(leaves),
+            'mission_collision_files': mission_leaves,
+            'phase_seconds': dict(phases), 'elapsed_seconds': round(time.monotonic() - started, 6)}
+        self.creation_report['zone_tree_preparation'] = report
+        self.ctx.report['zone_tree_preparation'] = report
+        self.zone_tree_prepared = {'runtime': target, 'preparation': report}
+        return self.zone_tree_prepared
+
+    def zone_graph_order(self, near):
+        """Every zone that has a navigation graph, in the order the check ahead takes them (0.13.80).
+
+        First the zones with a stored launch receipt (this install has started them before),
+        newest receipt first; then the rest by the distance of their map id from `near` (the
+        zone the hero is in: the Rogue Isles and Paragon City are numbered in the order a
+        character meets them). Names and one source listing: no input is read here.
+        """
+        import zone_beacon_package
+        navigation = os.environ.get('COH_NAVIGATION_MAPS')
+        require(navigation in (None, zone_beacon_package.NAVIGATION_ROOT), 'Unexpected navigation map location')
+        available = set(zone_beacon_package.sources(self.owner.args.assets, navigation))
+        found = []
+        try:
+            with os.scandir(self.owner.root / 'launch-receipts') as entries:
+                for entry in entries:
+                    match = re.fullmatch(r'zone_graph_([1-9][0-9]{0,4})\.json', entry.name)
+                    if match and int(match.group(1)) in available:
+                        found.append((entry.stat(follow_symlinks=False).st_mtime_ns, int(match.group(1))))
+        except OSError:
+            found = []
+        known = [map_id for _, map_id in sorted(found, reverse=True)]
+        rest = sorted(available.difference(known), key=lambda map_id: (abs(map_id - near), map_id))
+        return known + rest
+
+    def install_zone_beacon_graph(self, map_id, target, context=None, rows=None):
+        """This zone's navigation graph, verified against the shared zone tree before its MapServer starts.
+
+        Thor 0.13.63, Mercy Island: "Beacon file not loaded for map: ...", so pets and NPCs
+        could not walk to a target. Every zone's graph comes from the imported navigation map
+        pack (or, as in 0.13.65, from the APK). A graph that does not match the tree is not
+        installed: its zone still starts as before, without pathing. Once per zone and session;
+        collision inputs another zone already proved in this session are not hashed again.
+
+        `context` and `rows` (0.13.80) are the check ahead's (character_zoning._check_graph_ahead):
+        a context whose check() stops the work for a zone request, and the directory rows its
+        pass has already read.
+        """
+        import zone_beacon_package
+        prepared = getattr(self, 'zone_tree_prepared', None)
+        require(prepared is not None and Path(target) == prepared['runtime'], 'Zone graph outside the prepared shared zone tree')
+        graphs = prepared['preparation'].setdefault('beacon_graph', {})
+        key = str(map_id)
+        if key in graphs or map_id not in zone_beacon_package.WORLDS:
+            return graphs.get(key)
+        started = time.monotonic()
+        navigation = os.environ.get('COH_NAVIGATION_MAPS')
+        try:
+            require(navigation in (None, zone_beacon_package.NAVIGATION_ROOT), 'Unexpected navigation map location')
+            found = zone_beacon_package.sources(self.owner.args.assets, navigation)
+            if map_id in found:
+                result = self.zone_graph_with_receipt(zone_beacon_package, found[map_id], target, map_id, context, rows)
+            else:
+                result = {'format': 1, 'verified': False, 'map_id': map_id, 'status': 'no_graph'}
+        except base.Cancelled:
+            raise
+        except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError, zipfile.BadZipFile) as failure:
+            result = {'format': 1, 'verified': False, 'map_id': map_id,
+                      'status': 'not_installed', 'error': str(failure)[:300]}
+        result['navigation_map_pack'] = 'bound' if navigation else 'not_imported'
+        result['elapsed_seconds'] = round(time.monotonic() - started, 6)
+        graphs[key] = result
+        return result
+
+    def zone_graph_with_receipt(self, package, source, target, map_id, context=None, rows=None):
+        """One zone's graph, or its last full result while its launch receipt holds (0.13.70).
+
+        Thor 0.13.69 (20261113-015905): every start of Mercy Island's server re-read the state
+        of its 8,711 unchanged collision inputs (16.2 s, "reused_verified_graph"), and the first
+        start of Port Oakes spent 56.6 s on its 8,704. A receipt (launch_receipts.py) records
+        the directories that hold those inputs and the graph; a later start reads those
+        directories and no input. Anything a receipt cannot vouch for runs the step in full.
+
+        Thor 0.13.79 (20261121-202117, -203001): installing Cap au Diable's graph wrote its
+        marker into `data/server`, a directory every zone's receipt listed because its own
+        marker is there, so the next launch answered "directory_changed: server" for Mercy
+        Island and Port Oakes and ran both in full (11.0 s and 14.6 s, the second before a
+        trip). From 0.13.80 the marker is not one of the receipt's leaves: the receipt lists
+        the directories of the inputs and of the zone's own graph files, which another zone's
+        install does not touch. The marker stays what install() itself reuses.
+        """
+        import launch_receipts
+        context = self.ctx if context is None else context
+        step, store, started = 'zone_graph_%d' % map_id, self.owner.root / 'launch-receipts', time.monotonic()
+        record = {'status': 'ran_in_full', 'reason': None}
+        self.ctx.report.setdefault('launch_receipts', {})[step] = record
+        identity = None
+        try:
+            identity = package.receipt_identity(source, target, map_id)
+            # Rows start at the tree's `data`: `target` itself is new in every session (0.13.73).
+            root = package.receipt_root(target)
+            result, record['reason'] = launch_receipts.reusable(store, step, identity, root, context, rows=rows)
+            if result is not None and result.get('verified') is True and result.get('map_id') == map_id:
+                elapsed = time.monotonic() - started
+                record.update(status='reused', elapsed_seconds=round(elapsed, 6))
+                return dict(launch_receipts.as_reused(result, elapsed), status='reused_verified_graph',
+                            input_validation='unchanged_directory_receipt', input_payload_bytes_hashed=0,
+                            preparation_elapsed_seconds=round(elapsed, 6))
+        except base.Cancelled:
+            self.ctx.report['launch_receipts'].pop(step, None)
+            raise
+        except (launch_receipts.ReceiptError, base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
+            record['reason'], identity = str(failure)[:200], None
+        leaves = []
+        try:
+            result = package.install(source, target, map_id, context=context, imported_inputs_readonly=True,
+                                     proofs=self.owner.root / 'zone-collision-input-proofs.json', leaves=leaves,
+                                     shared_store=store)
+        except base.Cancelled:
+            self.ctx.report['launch_receipts'].pop(step, None)
+            raise
+        record['elapsed_seconds'] = round(time.monotonic() - started, 6)
+        if identity is not None and result.get('verified') is True:
+            try:
+                marker = Path(package.names(map_id)['marker']).name
+                record['directories'] = launch_receipts.record(store, step, identity, package.receipt_root(target),
+                    [leaf for leaf in leaves if Path(leaf).name != marker], result, context)
+                record['recorded'] = True
+            except base.Cancelled:
+                raise
+            except (launch_receipts.ReceiptError, base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
+                # A receipt only saves time; without one the step runs in full next time.
+                record.update(recorded=False, record_error=str(failure)[:200])
+        return result
+
+    def drop_single_player_stale_bins(self, data, prepared_caches, report=None):
+        """After the prepared caches are seeded: remove bins compiled from text the content replaced.
+
+        The server parses the text again for a missing bin (also when it trusts its bins) and
+        writes the new one, once per data tree. Returns the record, or None without content.
+        """
+        content = getattr(self, 'single_player_content', None)
+        if content is None:
+            return None
+        import single_player_content
+        installed = prepared_caches.get('installed_paths', ()) if isinstance(prepared_caches, dict) else ()
+        record = single_player_content.drop_stale_bins(content, data, installed)
+        if report is not None:
+            report['single_player_stale_bins'] = record
+        return record
+
     def copy_private_data(self, source, target):
         return self.stage_map_data(source, target, force_private=True)
 
-    def stage_map_data(self, source, target, *, force_private=False, cache_recorder=None):
+    def stage_map_data(self, source, target, *, force_private=False, cache_recorder=None,
+                       skip_top_level=(), only_top_level=None):
         """Mirror bounded verified inputs without directory links or source writes.
 
         The client worktree has real directories and immutable per-file links.
         Resolve those links only within its two verified roots; each writable
         cache, server file and dbidmap receives an independent regular copy.
+        skip_top_level/only_top_level (casefolded names) split the mirror for the
+        CI-only serverdata probe; both are empty for every normal start.
         """
+        skip = {name.casefold() for name in skip_top_level}
+        only = None if only_top_level is None else {name.casefold() for name in only_top_level}
         roots = (self.owner.work.resolve(strict=True), self.owner.args.game_data.resolve(strict=True))
         source, target = Path(source), Path(target)
         resolver = server_data_cache.CheckedInputResolver(roots, self.ctx)
@@ -2253,6 +3552,14 @@ class LocalCharacterServer(login.LocalLoginServer):
         max_bytes = device.DATA_BYTES + 1024**3 + world.PAYLOAD_BYTES + avatar.PAYLOAD_BYTES + visual.PAYLOAD_BYTES
         result = {'files': 0, 'bytes': 0, 'directories': 0, 'linked_immutable_files': 0,
                   'copied_private_files': 0, 'preserved_schema_files': 0}
+        # 0.13.85: only the mirror of the imported game text takes the single-player content.
+        content = getattr(self, 'single_player_content', None)
+        if content is not None and source != self.owner.work / 'data':
+            content = None
+        overlay = content.selected(skip, only) if content is not None else {}
+        if content is not None:
+            import single_player_content
+            result['single_player_files'] = 0
         projection = server_input_projection(getattr(self, 'map_package', None),
             getattr(self, 'map_package_dir', Path('.')) / 'MapServer.exe')
         excluded = set(projection['excluded_top_level_directories']) if projection else set()
@@ -2265,6 +3572,9 @@ class LocalCharacterServer(login.LocalLoginServer):
             current, destination = pending.pop()
             info = current.lstat()
             relative = current.relative_to(source)
+            if len(relative.parts) == 1 and (relative.parts[0].casefold() in skip
+                    or only is not None and relative.parts[0].casefold() not in only):
+                continue
             if len(relative.parts) == 1 and relative.parts[0].casefold() in excluded:
                 require(stat.S_ISDIR(info.st_mode), 'Native-excluded input is not a real directory')
                 # No leaf enumeration, hashing, copies or links for a folder
@@ -2308,6 +3618,17 @@ class LocalCharacterServer(login.LocalLoginServer):
                         'Private map data exceeded bound: files=' + str(result['files']) + '/' + str(max_files)
                         + ', bytes=' + str(result['bytes']) + '/' + str(max_bytes))
                 private = private or current.suffix.casefold() == '.dbidmap' or bool(resolved_info.st_mode & 0o222)
+                replacement = overlay.get(relative.as_posix().casefold())
+                if replacement is not None:
+                    # A private copy of the content's file in place of the link to the import. In
+                    # the shared read-only tree (no recorder) it is read-only like its folders.
+                    require(not replacement['new'], 'Single-player content adds a file the import has')
+                    if cache_recorder is not None:
+                        cache_recorder.observe(relative, destination, resolved, True)
+                    single_player_content.write_copy(destination, replacement['data'],
+                                                     read_only=cache_recorder is None and not force_private)
+                    result['single_player_files'] += 1
+                    continue
                 if cache_recorder is not None:
                     cache_recorder.observe(relative, destination, resolved, private)
                 try:
@@ -2331,11 +3652,299 @@ class LocalCharacterServer(login.LocalLoginServer):
             if time.monotonic() >= next_message:
                 self.ctx.event('stage', status='running', message='Preparing private map data directories', files=result['files'])
                 next_message = time.monotonic() + 5
+        if content is not None:
+            added = single_player_content.install_new(content, target, skip=skip, only=only,
+                                                      read_only=cache_recorder is None and not force_private)
+            if cache_recorder is not None:
+                cache_recorder.private_names.extend(added)
+            result['single_player_files'] += len(added)
+            require(result['single_player_files'] == len(overlay),
+                    'Single-player content file not found in the imported game text')
         # The helper is also used by isolated staging callers without a server
         # session report. Integrity verification still runs unconditionally.
         resolution = resolver.verify()
         getattr(self, 'creation_report', {})['cold_mirror_input_resolution'] = resolution
         return result
+
+    def link_shared_server_data(self, runtime, identity, *, map_label='Atlas'):
+        """Serve the selected folders from one shared read-only tree via runtime/serverdata.
+
+        The tree is keyed by the Atlas source identity, so Atlas and King's Row
+        share it. It is built once (real directories, per-file links, like the
+        private mirror), sealed with read-only directories and a marker, and
+        reused by later sessions. A tree left without its marker (a stopped
+        build) holds only directories and links and is rebuilt; trees of other
+        sources are removed when a new one is built (shared_tree_plan says which
+        trees serve one source with and without the content). runtime/serverdata is a
+        real directory holding one directory link per shared folder (and, from
+        0.13.52, links to the private bin, geobin and server folders); Wine
+        follows each link as a path component.
+        """
+        started = time.monotonic()
+        roots = list(identity['shared_server_data']['shared_top_level'])
+        removed = {'unsealed_trees': 0, 'other_identity_trees': 0}
+        self.restore_shared_seals(removed)
+        plan = self.shared_tree_plan(identity, roots)
+        providers, trees, stats, reused = {}, [], None, True
+        for group in plan['groups']:
+            shared, group_reused, group_stats = self.shared_tree(group, plan['known'], removed)
+            reused = reused and group_reused
+            trees.append({'tree': shared.name, 'roots': len(group['roots']), 'reused': group_reused,
+                          'kind': group['kind'], 'files': group_stats.get('files')})
+            stats = group_stats if stats is None else {
+                key: (stats.get(key) or 0) + (group_stats.get(key) or 0) for key in ('files', 'directories')}
+            for name in group.get('use', group['roots']):
+                providers[name] = shared
+        for name in roots:
+            shared = providers[name]
+            info = shared.lstat()
+            require(stat.S_ISDIR(info.st_mode) and stat.S_IMODE(info.st_mode) == 0o500
+                    and info.st_uid == os.getuid(), 'Shared server data tree is not owned and read-only')
+            require(not (runtime / 'data' / name).exists() and not (runtime / 'data' / name).is_symlink(),
+                    map_label + ' private data still holds a shared folder: ' + name)
+            require((shared / name).is_dir() and not (shared / name).is_symlink(),
+                    'Shared server data folder is missing: ' + name)
+        link = runtime / 'serverdata'
+        require(not link.exists() and not link.is_symlink(), map_label + ' runtime already has serverdata')
+        require((runtime / 'data').is_dir() and (runtime / 'tools').is_dir(),
+                'serverdata needs the data/ and tools/ layout')
+        # A real directory of folder links; Wine follows each as a path component.
+        link.mkdir()
+        for name in roots:
+            (link / name).symlink_to(providers[name] / name, target_is_directory=True)
+        first_lookup = []
+        if serverdata_first_lookup_enabled():
+            shared_names = {name.casefold() for name in roots}
+            private = {child.name.casefold(): child for child in (runtime / 'data').iterdir()}
+            for name in SERVERDATA_FIRST_LOOKUP_FOLDERS:
+                child = private.get(name)
+                if child is None or child.is_symlink() or not child.is_dir():
+                    continue
+                require(name not in shared_names, 'A first-lookup folder is also shared: ' + child.name)
+                # Relative, on-disk spelling: the link resolves inside this runtime only.
+                (link / child.name).symlink_to(Path('..') / 'data' / child.name, target_is_directory=True)
+                first_lookup.append(child.name)
+        return {'format': 2, 'policy': 'shared_readonly_serverdata_folder_links_v2',
+            'first_lookup_private_folders': first_lookup,
+            'selection': identity['shared_server_data'].get('selection'),
+            'level': identity['shared_server_data'].get('level'), 'shared_top_level': roots,
+            'shared_tree': trees[0]['tree'], 'shared_trees': trees, 'reused_shared_tree': reused, 'removed': removed,
+            'shared_files': stats.get('files'), 'shared_directories': stats.get('directories'),
+            'directories_read_only': True, 'private_copy_absent': True,
+            'engine_search_order': ['localdata', 'serverdata', 'data'],
+            'link_seconds': round(time.monotonic() - started, 6),
+            'native_resolution_verified': False, 'physical_gain_validated': False}
+
+    def shared_content_archive(self):
+        """The single-player content the APK carries (None when it carries none), whatever the options."""
+        if not hasattr(self, '_shared_content_archive'):
+            import single_player_content
+            active = getattr(self, 'single_player_content', None)
+            try:
+                self._shared_content_archive = active or single_player_content.load(self.owner.args.assets)
+            except (base.DiagnosticError, OSError, ValueError, KeyError, AttributeError, TypeError):
+                self._shared_content_archive = None
+        return self._shared_content_archive
+
+    def shared_tree_plan(self, identity, roots):
+        """Which shared tree serves which folder (0.13.86).
+
+        The Primalist content touches two of the fifteen shared folders (menu, texts: 10,700 of
+        128,765 files). Until 0.13.85 a session with the content built a whole second tree and
+        removed the other one: 335 s of file links on the Thor (export 20261126-035051), and
+        again on the way back. Now the folders the content does not touch come from whichever
+        sealed tree already has them, with or without the content, and only the touched folders
+        get a tree of their own. A tree of all folders keeps its old name, so trees made by
+        earlier versions are used as they are.
+        """
+        def full(value):
+            return hashlib.sha256(server_data_cache.canonical(value)).hexdigest()[:24]
+
+        def part(value, names):
+            return hashlib.sha256(server_data_cache.canonical(
+                {'format': 1, 'identity': value, 'roots': names})).hexdigest()[:24]
+
+        def sealed(key):
+            return (self.owner.root / (SHARED_TREE_PREFIX + key + '.json')).is_file()
+
+        archive = self.shared_content_archive()
+        folded = {name.casefold() for name in roots}
+        touched = sorted({archive.top_level(name) for name in archive.files} & folded) if archive is not None else []
+        touched = [name for name in roots if name.casefold() in touched]
+        untouched = [name for name in roots if name not in touched]
+        plain = {key: value for key, value in identity.items() if key != 'single_player_content'}
+        with_content = None if archive is None else dict(plain, single_player_content=archive.identity)
+        active = 'single_player_content' in identity
+        if active:
+            require(with_content is not None and identity['single_player_content'] == archive.identity,
+                    'The single-player content of this session is not the packaged one')
+        whole = {'key': full(identity), 'roots': roots, 'kind': 'all_folders'}
+        if not touched or not untouched:
+            return {'groups': [whole], 'known': {whole['key']}}
+        mine = with_content if active else plain
+        known = {full(plain), full(with_content), part(plain, touched), part(plain, untouched),
+                 part(with_content, touched)}
+        if sealed(whole['key']):
+            return {'groups': [whole], 'known': known}
+        other_whole = full(plain if active else with_content)
+        # A tree of all folders made with an earlier version's content (0.13.89): an update that
+        # changes the content must not cost the 118,000 file links of the folders it never touched.
+        import single_player_content
+        earlier = next((key for key in (full(dict(plain, single_player_content=value))
+                                        for value in reversed(single_player_content.IDENTITY_HISTORY)
+                                        if value != archive.identity) if sealed(key)), None)
+        any_tree = any(sealed(key) for key in known) or earlier is not None
+        if not active and not any_tree:
+            return {'groups': [whole], 'known': known}        # nothing kept yet: one tree, as before
+        if sealed(full(plain)):
+            rest = {'key': full(plain), 'roots': roots, 'kind': 'all_folders_without_content', 'use': untouched}
+        elif sealed(other_whole):
+            rest = {'key': other_whole, 'roots': roots, 'kind': 'all_folders_other_content_state', 'use': untouched}
+        elif earlier is not None:
+            rest = {'key': earlier, 'roots': roots, 'kind': 'all_folders_earlier_content', 'use': untouched}
+            known = known | {earlier}
+        else:
+            rest = {'key': part(plain, untouched), 'roots': untouched, 'kind': 'untouched_folders'}
+        own = {'key': part(mine, touched), 'roots': touched,
+               'kind': 'content_folders' if active else 'content_folders_without_content'}
+        return {'groups': [own, rest], 'known': known}
+
+    def shared_tree(self, group, known, removed):
+        """One sealed shared tree (built when missing): (path, reused, stats)."""
+        key, roots = group['key'], group['roots']
+        shared = self.owner.root / (SHARED_TREE_PREFIX + key)
+        marker = self.owner.root / (shared.name + '.json')
+        reused = marker.exists() or marker.is_symlink()
+        if reused:
+            info = marker.lstat()
+            require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1 and info.st_size <= 4096,
+                    'Invalid shared server data marker')
+            record = json.loads(marker.read_text())
+            require(isinstance(record, dict) and record.get('key') == key and record.get('roots') == roots
+                    and isinstance(record.get('stats'), dict), 'Shared server data marker differs')
+            stats = record['stats']
+        else:
+            if shared.exists() or shared.is_symlink():
+                self.remove_shared_tree(shared)
+                removed['unsealed_trees'] += 1
+            for other in sorted(self.owner.root.iterdir()):
+                if not other.name.startswith(SHARED_TREE_PREFIX) or other in (shared, marker):
+                    continue
+                if other.name.endswith('.json'):
+                    # A marker whose tree is gone (or another identity's) carries no data.
+                    if not (self.owner.root / other.name[:-len('.json')]).exists():
+                        other.unlink(missing_ok=True)
+                    continue
+                if other.is_symlink() or not other.is_dir():
+                    continue                      # never ours; leave it alone
+                if (other.name[len(SHARED_TREE_PREFIX):] in known
+                        and (self.owner.root / (other.name + '.json')).is_file()):
+                    continue                      # the same source with or without the content: kept
+                self.remove_shared_tree(other)
+                (self.owner.root / (other.name + '.json')).unlink(missing_ok=True)
+                removed['other_identity_trees'] += 1
+            report = getattr(self, 'creation_report', {})
+            previous = report.get('cold_mirror_input_resolution')
+            stats = self.stage_map_data(self.owner.work / 'data', shared, only_top_level=roots)
+            stats = dict(stats, input_resolution=report.pop('cold_mirror_input_resolution', None))
+            if previous is not None:
+                report['cold_mirror_input_resolution'] = previous
+            require(stats['copied_private_files'] == 0, 'Shared server data tree needs private copies')
+            for current, _directories, _files in os.walk(shared, followlinks=False):
+                os.chmod(current, 0o500)
+            base.private_write(marker, json.dumps({'format': 1, 'key': key, 'roots': roots,
+                'stats': stats}, sort_keys=True) + '\n')
+        return shared, reused, stats
+
+    def inspect_shared_tree(self, root):
+        """Count a shared tree's folders, links and content files; refuse anything else. Changes nothing."""
+        import single_player_content
+        counts, folders = {'directories': 0, 'links': 0, 'content_files': 0}, []
+        for current, directories, files in os.walk(root, followlinks=False):
+            self.ctx.check()
+            info = os.lstat(current)
+            require(stat.S_ISDIR(info.st_mode) and info.st_uid == os.getuid(),
+                    'Shared server data tree holds a folder that is not ours')
+            folders.append(current)
+            counts['directories'] += 1
+            for name in files:
+                leaf = os.path.join(current, name)
+                info = os.lstat(leaf)
+                if stat.S_ISLNK(info.st_mode):
+                    counts['links'] += 1
+                else:
+                    # The content's files are regular files (0.13.85). remove_shared_tree refused
+                    # them until 0.13.88, so the first update that changed the content could not
+                    # replace the tree and no zone started (Thor export 20261127-035141).
+                    require(single_player_content.own_copy(name, info),
+                            'Shared server data tree holds a regular file: ' + leaf)
+                    counts['content_files'] += 1
+            for name in directories:
+                require(not os.path.islink(os.path.join(current, name)),
+                        'Shared server data tree holds a linked folder')
+        return counts, folders
+
+    def restore_shared_seals(self, removed):
+        """Before the trees are chosen: a marker stands only beside a tree that can be used.
+
+        A marker whose tree was opened and cannot be sealed again (or is gone) is removed, so
+        the plan does not count on that tree: it is then an unsealed tree like one from a
+        stopped build, removed when the next tree is built.
+        """
+        for marker in sorted(self.owner.root.glob(SHARED_TREE_PREFIX + '*.json')):
+            tree = marker.with_name(marker.name[:-len('.json')])
+            try:
+                info = marker.lstat()
+                if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_size > 4096:
+                    continue                    # shared_tree refuses it if it is ever asked for
+                record = json.loads(marker.read_text())
+                stats = record.get('stats') if isinstance(record, dict) else None
+            except (OSError, ValueError):
+                continue
+            if tree.is_symlink() or (tree.exists() and not tree.is_dir()):
+                continue                        # never ours; leave it alone
+            if not isinstance(stats, dict) or not self.shared_tree_sealed(tree, stats, removed):
+                marker.unlink()
+
+    def shared_tree_sealed(self, shared, stats, removed):
+        """Whether a marked tree can be used as it is, or after its folders are made read-only again.
+
+        A sealed tree's folders are read-only. A removal that was stopped half-way (0.13.88 on a
+        tree with content files) leaves some of them writable and everything else as it was:
+        when the tree still holds exactly what its marker counted, it is sealed again.
+        """
+        try:
+            info = shared.lstat()
+        except FileNotFoundError:
+            return False
+        require(stat.S_ISDIR(info.st_mode) and info.st_uid == os.getuid(),
+                'Shared server data tree is not an owned directory')
+        if stat.S_IMODE(info.st_mode) == 0o500:
+            return True
+        counts, folders = self.inspect_shared_tree(shared)
+        if not (counts['directories'] == stats.get('directories')
+                and counts['links'] == stats.get('linked_immutable_files')
+                and counts['content_files'] == (stats.get('single_player_files') or 0)):
+            return False
+        for folder in folders:
+            os.chmod(folder, 0o500)
+        removed['opened_trees_sealed_again'] = removed.get('opened_trees_sealed_again', 0) + 1
+        return True
+
+    def remove_shared_tree(self, path):
+        """Remove a shared tree: owned folders, links and the content's own files, never data.
+
+        Everything is checked before anything is changed, so a refused tree stays as it was.
+        """
+        root = Path(path)
+        info = root.lstat()
+        require(stat.S_ISDIR(info.st_mode) and info.st_uid == os.getuid()
+                and root.parent == self.owner.root and root.name.startswith(SHARED_TREE_PREFIX),
+                'Refusing to remove an unexpected shared server data path')
+        _counts, folders = self.inspect_shared_tree(root)
+        for folder in folders:
+            os.chmod(folder, 0o700)
+        shutil.rmtree(root)
 
     def start(self):
         timing = self.map_startup_timing(None)
@@ -2365,12 +3974,92 @@ class LocalCharacterServer(login.LocalLoginServer):
     def map_metrics_environment(self, environment, runtime):
         environment = dict(environment)
         environment.pop('ARMPORT_SERVER_METRICS', None)
+        environment.pop('ARMPORT_TRUSTED_BINS', None)
+        environment.pop(PHYSX_CACHE_VARIABLE, None)
+        environment.pop(DEFER_ZONE_LOADS_VARIABLE, None)
+        for name in ('ARMPORT_UNLOCK_ALL', 'ARMPORT_PRIMALIST'):
+            environment.pop(name, None)
+        unlock = {'format': 1, 'unlock_all_requested': os.environ.get('COH_UNLOCK_ALL') == '1',
+                  'primalist_active': bool(getattr(self, 'primalist', False)),
+                  'applied': [], 'reason': None, 'scope': 'zone_servers'}
+        emulation = apply_server_emulation(environment)
+        deferred = {'format': 1, 'requested': defer_zone_loads_requested(), 'applied': False,
+                    'environment_variable': DEFER_ZONE_LOADS_VARIABLE, 'scope': 'zone_servers_only',
+                    'reason': None if defer_zone_loads_requested() else 'not_requested', 'is_success_proof': False}
         enabled = 'armport_server_metrics' in self.map_package
+        requested = os.environ.get('COH_TRUSTED_BINS') == '1'
+        trusted = False
+        cooked = {'format': 1, 'requested': physx_cache_requested(), 'applied': False,
+                  'environment_variable': PHYSX_CACHE_VARIABLE, 'file': None, 'bytes_before_start': None,
+                  'reason': None if physx_cache_requested() else 'not_requested'}
         if enabled:
             import armport_server_metrics_contract as metrics
             metrics.verify_current_map(Path(runtime) / 'MapServer.exe', self.map_package)
             environment['ARMPORT_SERVER_METRICS'] = '1'
+            # Opt-in: a CRC-matching prepared .bin skips the source tree scan
+            # and date check (patch 0120). Off unless requested and present.
+            trusted = requested and metrics.trusted_bins_available()
+            if trusted:
+                environment['ARMPORT_TRUSTED_BINS'] = '1'
+            if cooked['requested']:
+                # Never a reason to stop a start: without the file the server cooks as before.
+                try:
+                    if not metrics.physx_cache_available():
+                        cooked['reason'] = 'switch_not_in_admitted_build'
+                    else:
+                        path = physx_cache_file(self.owner.root, self.map_package['files']['MapServer.exe']['sha256'])
+                        environment[PHYSX_CACHE_VARIABLE] = base.windows_path(path)
+                        cooked.update(applied=True, file=path.name,
+                                      bytes_before_start=path.stat().st_size if path.exists() else 0)
+                except (OSError, ValueError, KeyError, TypeError, base.DiagnosticError) as error:
+                    cooked['reason'] = 'error'
+                    cooked['error_type'] = type(error).__name__
+        elif cooked['requested']:
+            cooked['reason'] = 'no_metrics_mapserver'
+        if deferred['requested']:
+            # Never a reason to stop a start: without the switch the server loads as it always did.
+            try:
+                if not enabled:
+                    deferred['reason'] = 'no_metrics_mapserver'
+                elif not metrics.deferred_load_available():
+                    deferred['reason'] = 'switch_not_in_admitted_build'
+                else:
+                    environment[DEFER_ZONE_LOADS_VARIABLE] = '1'
+                    deferred['applied'] = True
+            except (OSError, ValueError, KeyError, TypeError, base.DiagnosticError) as error:
+                deferred['reason'] = 'error'
+                deferred['error_type'] = type(error).__name__
+        if unlock['unlock_all_requested'] or unlock['primalist_active']:
+            # Never a reason to stop a start: a server without the switches keeps every lock.
+            try:
+                if not enabled:
+                    unlock['reason'] = 'no_metrics_mapserver'
+                elif not metrics.account_unlock_available():
+                    unlock['reason'] = 'switch_not_in_admitted_build'
+                else:
+                    if unlock['unlock_all_requested']:
+                        environment['ARMPORT_UNLOCK_ALL'] = '1'; unlock['applied'].append('ARMPORT_UNLOCK_ALL')
+                    if unlock['primalist_active']:
+                        environment['ARMPORT_PRIMALIST'] = '1'; unlock['applied'].append('ARMPORT_PRIMALIST')
+            except (OSError, ValueError, KeyError, TypeError, base.DiagnosticError) as error:
+                unlock['reason'] = 'error'
+                unlock['error_type'] = type(error).__name__
+        else:
+            unlock['reason'] = 'not_requested'
         self.server_metrics_enabled = enabled
+        report = getattr(self, 'creation_report', None)
+        if report is None and getattr(self, 'ctx', None) is not None:
+            report = self.ctx.report
+        if report is not None:
+            report['trusted_bins'] = {'format': 1,
+                'requested': requested, 'applied': trusted,
+                'environment_variable': 'ARMPORT_TRUSTED_BINS',
+                'reason': None if trusted or not requested else
+                    ('no_metrics_mapserver' if not enabled else 'switch_not_in_admitted_build')}
+            report['physx_cache'] = cooked
+            report['server_emulation'] = emulation
+            report['deferred_zone_load'] = deferred
+            report['account_unlock'] = unlock
         return environment
 
     def start_map(self):
@@ -2398,9 +4087,13 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.mark_startup_timing(timing, 'map_spawn_requested')
         self.map_process = self.ctx.start('local-character-atlas', ['/usr/bin/env', '--chdir=' + str(self.runtime),
             self.owner.args.wine, base.windows_path(self.runtime / 'MapServer.exe'),
-            '-nogui', '-db', '127.0.0.1', '-nosharedmemory', '-nostats', '-udp', '7001', '-tcp', '0', '-map_id', '1',
-            '-donotautogroup', *LOCAL_CLIENT_LINK_OPTIONS()],
+            '-nogui', '-db', '127.0.0.1', *mapserver_memory_arguments(), '-nostats', '-udp', '7001', '-tcp', '0',
+            '-map_id', '1', '-donotautogroup', *LOCAL_CLIENT_LINK_OPTIONS(), *self.session_map_options(),
+            *mapserver_quick_start_arguments(self.runtime)],
             env=environment)
+        self.creation_report['server_quick_start'] = server_quick_start_record()
+        self.creation_report['shared_heap'] = {'format': 1, 'requested': shared_heap_requested(),
+            'environment_variable': SHARED_HEAP_ENVIRONMENT, 'native_option_omitted': shared_heap_requested()}
         # Use the native production grouping policy. The stock world packet
         # delivers this same flag to the client before it loads Atlas; geometry,
         # collision initialization and CLIENT_READY validation remain required.
@@ -2475,8 +4168,13 @@ class LocalCharacterServer(login.LocalLoginServer):
         # unchanged worker identity. Sampling is bounded and observational.
         wine_owner = getattr(self.owner, 'wine_owner', None)
         observe = getattr(wine_owner, 'observe_live_lineage', None)
-        if observe is not None:
-            observe(min(self.ctx.deadline, time.monotonic() + 1),
+        # 0.13.72: at most once in LINEAGE_OBSERVATION_SECONDS. This ran on every health() call
+        # and reads /proc files of every process and thread each time: CI run 43401783716 counted
+        # 404,000 of the supervisor's 527,000 file calls of a reopen session in these readers.
+        now = time.monotonic()
+        if observe is not None and now >= getattr(self, 'next_lineage_observation', 0.0):
+            self.next_lineage_observation = now + LINEAGE_OBSERVATION_SECONDS
+            observe(min(self.ctx.deadline, now + 1),
                     prefix=self.owner.wine_env.get('WINEPREFIX'))
         if self.map_process is not None:
             crash = self.map_crash_observation()
@@ -2516,6 +4214,19 @@ class LocalCharacterServer(login.LocalLoginServer):
             self.auth_id = proof['auth_id']
         return proof
 
+    def session_identity(self, inventory):
+        """The row of the character this session created: the one that was not there at its start."""
+        known = {row['containerid'] for row in self.baseline}
+        created = [row for row in inventory if row.get('containerid') not in known]
+        if not created: return None
+        require(len(created) == 1 and len(inventory) == len(self.baseline) + 1,
+                'More than one character exists; preserve all characters and export the report')
+        return created[0]
+
+    def observe_chosen_hero(self):
+        """Only a session that reopens saved heroes follows the player's choice (LocalCharacterReopenServer)."""
+        return False
+
     def verify_current_identity(self, identity, inventory):
         identifier = identity['containerid']
         require(type(identifier) is int and identifier > 0 and identity.get('authname') == ACCOUNT
@@ -2527,6 +4238,194 @@ class LocalCharacterServer(login.LocalLoginServer):
         return {table: self.sql_rows(table, tuple(fields) + (('logincount',) if table == 'ents' else ()),
                 evidence.ROW_KEYS[table], 'containerid=' + str(identifier))
                 for table, fields in evidence.SELECTED.items()}
+
+    def heroes_rows(self, identifiers):
+        """The selected rows of each of the account's heroes, by container ID (read-only)."""
+        identifiers = sorted(set(identifiers))
+        require(identifiers and len(identifiers) <= HERO_LIMIT and all(hero_id(value) for value in identifiers),
+                'The saved game holds more characters than this app follows; preserve all data and export the report')
+        return {identifier: self.character_rows(identifier) for identifier in identifiers}
+
+    def hero_order(self, identities):
+        """Container IDs, the hero played last first (ents.LastActive), then by ID.
+
+        The launch expects the first one: its zone is the one started beside the client. The
+        player's choice in the game's character list decides which hero the session follows.
+        """
+        identifiers = sorted(row['containerid'] for row in identities)
+        require(identifiers and all(hero_id(value) for value in identifiers), 'Invalid saved hero identities')
+        seen = {}
+        if len(identifiers) > 1 and 'lastactive' in self.schema.get('expected_tables', {}).get('ents', ()):
+            rows = self.sql_rows('ents', ('containerid', 'lastactive'), ('containerid',),
+                                 'containerid IN (' + ','.join(str(value) for value in identifiers) + ')')
+            seen = {row.get('containerid'): row.get('lastactive') for row in rows
+                    if type(row) is dict and type(row.get('lastactive')) is str and len(row['lastactive']) <= 64}
+        return sorted(identifiers, key=lambda value: (value not in seen, [-ord(c) for c in seen.get(value, '')], value))
+
+    def unfinished_hero(self, identity, rows):
+        """A hero of the account whose first zone never started, beside saved heroes, or None (read-only).
+
+        The same row unentered_creation describes (name, account and start zone; every field a
+        MapServer writes still NULL; rows only in Ents and Ents2[0]), under any container ID.
+        """
+        if not (type(identity) is dict and set(identity) == set(evidence.IDENTITY_FIELDS)
+                and hero_id(identity.get('containerid')) and valid_character_name(identity.get('name'))
+                and identity.get('authname') == ACCOUNT and hero_id(identity.get('authid'))):
+            return None
+        identifier = identity['containerid']
+        ents, ents2 = rows.get('ents'), rows.get('ents2')
+        if not (type(ents) is list and len(ents) == 1 and type(ents[0]) is dict
+                and all(ents[0].get(field) is None for field in UNENTERED_NULL_FIELDS['ents'])
+                and {key: ents[0].get(key) for key in evidence.IDENTITY_FIELDS} == identity
+                and type(ents2) is list and len(ents2) <= 1
+                and all(type(row) is dict and row.get('subid') == 0
+                        and all(row.get(field) is None for field in UNENTERED_NULL_FIELDS['ents2']) for row in ents2)
+                and rows.get('powers') == [] and rows.get('costumeparts') == []):
+            return None
+        tables = self.ents_tables()
+        counts = self.container_row_counts(tables, identifier)
+        if not (counts['ents'] == 1 and counts['ents2'] == len(ents2)
+                and all(count == 0 for table, count in counts.items() if table not in ('ents', 'ents2'))):
+            return None
+        kept = {table: self.sql_rows(table, fields, evidence.ROW_KEYS[table], 'containerid=' + str(identifier))
+                for table, fields in UNENTERED_RECORD_FIELDS.items()}
+        return {'format': 1, 'policy': 'unfinished_hero_beside_saved_heroes_v1', 'identity': dict(identity),
+                'row_counts': {table: count for table, count in counts.items() if count},
+                'tables_checked': len(tables), 'rows': kept,
+                'start_map_id': kept['ents'][0].get('staticmapid') if len(kept['ents']) == 1 else None}
+
+    def remove_unfinished_hero(self, record):
+        """Delete exactly that hero's two rows in one statement (it rolls back whole); its ID stays used."""
+        tables = self.ents_tables()
+        identity = record['identity']
+        identifier, auth_id, name = identity['containerid'], identity['authid'], identity.get('name')
+        ents2_rows = record['row_counts'].get('ents2', 0)
+        require(hero_id(identifier) and hero_id(auth_id) and ents2_rows in (0, 1) and valid_character_name(name),
+                'Invalid unfinished character record')
+        where = ' WHERE containerid=' + str(identifier)
+        others = ''.join(' OR EXISTS (SELECT 1 FROM dbo.' + table + where + ')'
+                         for table in tables if table not in ('ents', 'ents2'))
+        self.ctx.event('stage', status='running', message=(
+            'Removing the unfinished ' + name + ': it was created, but its first zone never started, so it never '
+            'entered the game. The report keeps a copy of its rows.'))
+        statement = (
+            'DO $$DECLARE removed_ents integer; removed_ents2 integer; BEGIN '
+            'DELETE FROM dbo.ents2' + where + ' AND subid=0'
+            + ''.join(' AND ' + field + ' IS NULL' for field in UNENTERED_NULL_FIELDS['ents2']) + '; '
+            'GET DIAGNOSTICS removed_ents2 = ROW_COUNT; '
+            # The player chose the name, so it enters SQL only as its digest.
+            'DELETE FROM dbo.ents' + where + " AND md5(name)='" + hashlib.md5(name.encode()).hexdigest()
+            + "' AND authname='" + ACCOUNT + "' AND authid=" + str(auth_id)
+            + ''.join(' AND ' + field + ' IS NULL' for field in UNENTERED_NULL_FIELDS['ents']) + '; '
+            'GET DIAGNOSTICS removed_ents = ROW_COUNT; '
+            'IF removed_ents <> 1 OR removed_ents2 <> ' + str(ents2_rows) + ' OR EXISTS (SELECT 1 FROM dbo.ents'
+            + where + ')' + others + " THEN RAISE EXCEPTION 'The unfinished character rows changed'; END IF; END$$;")
+        try:
+            output = self.sql(statement, game=True)
+        except base.DiagnosticError as failure:
+            raise base.DiagnosticError('The unfinished ' + name + ' could not be removed and nothing was changed ('
+                                       + str(failure)[-300:] + '); export this report') from failure
+        require(output == 'DO', 'Unexpected result removing the unfinished ' + name + '; export this report')
+        return dict(record, removed=True)
+
+    def ents_tables(self):
+        path = Path(self.schema_dir) / ENTS_TEMPLATE
+        require(ENTS_TEMPLATE in self.schema['files'] and path.is_file() and not path.is_symlink(),
+                'The verified schema has no Ents template')
+        return ents_family_tables(path.read_text(encoding='utf-8'), self.schema['expected_tables'])
+
+    def container_row_counts(self, tables, identifier):
+        require(type(identifier) is int and identifier > 0 and tables and all(
+            dbserver.IDENTIFIER.fullmatch(table) for table in tables), 'Invalid character row count request')
+        union = ' UNION ALL '.join("SELECT '" + table + "' AS t, count(*)::integer AS n FROM dbo." + table
+                                   + ' WHERE containerid=' + str(identifier) for table in tables)
+        counts = json.loads(self.sql("SELECT coalesce(json_object_agg(t, n),'{}'::json) FROM (" + union + ') x;',
+                                     game=True))
+        require(isinstance(counts, dict) and set(counts) == set(tables)
+                and all(type(count) is int and count >= 0 for count in counts.values()),
+                'Character row counts are unreadable')
+        return counts
+
+    def unentered_creation(self, inventory, rows=None):
+        """The row of a character whose first zone never started, or None (read-only).
+
+        Its identity is the accepted local one (ID 1, any name the game accepts
+        since 0.13.62), its rows exist only in Ents and Ents2[0], every field a
+        MapServer writes is still NULL (LoginCount included), it has no powers or
+        costume, and ID 1 is the only ID ever allocated. Any other inventory is a
+        character this never touches.
+        """
+        if not (type(inventory) is list and len(inventory) == 1 and type(inventory[0]) is dict):
+            return None
+        identity = inventory[0]
+        if not (set(identity) == set(evidence.IDENTITY_FIELDS) and type(identity.get('containerid')) is int
+                and identity['containerid'] == 1 and valid_character_name(identity.get('name'))
+                and identity.get('authname') == ACCOUNT and type(identity.get('authid')) is int
+                and 0 < identity['authid'] <= 2147483647):
+            return None
+        rows = self.character_rows(1) if rows is None else rows
+        ents, ents2 = rows.get('ents'), rows.get('ents2')
+        if not (type(ents) is list and len(ents) == 1 and type(ents[0]) is dict
+                and all(ents[0].get(field) is None for field in UNENTERED_NULL_FIELDS['ents'])
+                and {key: ents[0].get(key) for key in evidence.IDENTITY_FIELDS} == identity
+                and type(ents2) is list and len(ents2) <= 1
+                and all(type(row) is dict and row.get('subid') == 0
+                        and all(row.get(field) is None for field in UNENTERED_NULL_FIELDS['ents2']) for row in ents2)
+                and rows.get('powers') == [] and rows.get('costumeparts') == []):
+            return None
+        tables = self.ents_tables()
+        counts = self.container_row_counts(tables, 1)
+        if not (counts['ents'] == 1 and counts['ents2'] == len(ents2)
+                and all(count == 0 for table, count in counts.items() if table not in ('ents', 'ents2'))):
+            return None
+        if self.sql("SELECT dbo.coh_container_high_water('dbo.ents'::regclass);", game=True) != '1':
+            return None
+        kept = {table: self.sql_rows(table, fields, evidence.ROW_KEYS[table], 'containerid=1')
+                for table, fields in UNENTERED_RECORD_FIELDS.items()}
+        return {'format': 1, 'policy': 'unentered_first_creation_row_v1', 'identity': dict(identity),
+                'row_counts': {table: count for table, count in counts.items() if count},
+                'tables_checked': len(tables), 'character_id_high_water': 1, 'rows': kept,
+                'start_map_id': kept['ents'][0].get('staticmapid') if len(kept['ents']) == 1 else None}
+
+    def remove_unentered_creation(self, unentered):
+        """Delete that row and give ID 1 back in one statement (it rolls back whole)."""
+        tables = self.ents_tables()
+        auth_id = unentered['identity']['authid']
+        name = unentered['identity'].get('name')
+        ents2_rows = unentered['row_counts'].get('ents2', 0)
+        require(type(auth_id) is int and 0 < auth_id <= 2147483647 and ents2_rows in (0, 1)
+                and valid_character_name(name), 'Invalid unfinished character record')
+        others = ''.join(' OR EXISTS (SELECT 1 FROM dbo.' + table + ' WHERE containerid=1)'
+                         for table in tables if table not in ('ents', 'ents2'))
+        self.ctx.event('stage', status='running', message=(
+            'Removing the unfinished ' + name + ': it was created, but its first zone never started, so it never '
+            'entered the game. The report keeps a copy of its rows.'))
+        statement = (
+            'DO $$DECLARE removed_ents integer; removed_ents2 integer; BEGIN '
+            'DELETE FROM dbo.ents2 WHERE containerid=1 AND subid=0'
+            + ''.join(' AND ' + field + ' IS NULL' for field in UNENTERED_NULL_FIELDS['ents2']) + '; '
+            'GET DIAGNOSTICS removed_ents2 = ROW_COUNT; '
+            # The player chose the name (0.13.62), so it enters SQL only as its digest.
+            "DELETE FROM dbo.ents WHERE containerid=1 AND md5(name)='" + hashlib.md5(name.encode()).hexdigest()
+            + "' AND authname='" + ACCOUNT + "' AND authid=" + str(auth_id)
+            + ''.join(' AND ' + field + ' IS NULL' for field in UNENTERED_NULL_FIELDS['ents']) + '; '
+            'GET DIAGNOSTICS removed_ents = ROW_COUNT; '
+            'IF removed_ents <> 1 OR removed_ents2 <> ' + str(ents2_rows) + ' OR EXISTS (SELECT 1 FROM dbo.ents)'
+            + others + " THEN RAISE EXCEPTION 'The unfinished character rows changed'; END IF; "
+            # setval is not transactional (001-coh-compat.sql); it runs only after every check passed.
+            "PERFORM setval(pg_get_serial_sequence('dbo.ents', 'containerid'), 1, false); "
+            "IF dbo.coh_container_high_water('dbo.ents'::regclass) <> 0 THEN "
+            "RAISE EXCEPTION 'Character ID 1 stayed allocated'; END IF; END$$;")
+        try:
+            output = self.sql(statement, game=True)
+        except base.DiagnosticError as failure:
+            raise base.DiagnosticError('The unfinished ' + name + ' could not be removed and nothing was changed ('
+                                       + str(failure)[-300:] + '); export this report') from failure
+        require(output == 'DO', 'Unexpected result removing the unfinished ' + name + '; export this report')
+        require(self.inventory() == [] and self.sql("SELECT dbo.coh_container_high_water('dbo.ents'::regclass);",
+                                                     game=True) == '0',
+                'The unfinished ' + name + ' is still present after its removal; export this report')
+        return dict(unentered, removed=True, character_id_high_water_after=0)
 
     def validate_saved_rows(self, rows, inventory):
         return validate_character_rows(rows, self.baseline, inventory,
@@ -2556,6 +4455,10 @@ class LocalCharacterServer(login.LocalLoginServer):
         return native_logout_position(self.current_logs(), delivery, ready_utc_ms, now_utc_ms)
 
     def immediate_event_contract(self):
+        if CHARACTER != LEGACY_CHARACTER:
+            # The native producer (wine_character_events.c) reports only THORHERO;
+            # any other name is read from the stock entity logs (0.13.62).
+            return None
         package = getattr(self, 'map_package', {})
         return package.get('inputs', {}).get('mapserver_progress', {}).get('events_contract')
 
@@ -2587,6 +4490,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             positions=None if values is None else character_events.positions_after_ready(values))
 
     def character_evidence(self):
+        self.tick_external_maps()
         if self.creation_report['verified']: return self.creation_report
         now = time.monotonic()
         if now < self.character_next: return None
@@ -2595,6 +4499,9 @@ class LocalCharacterServer(login.LocalLoginServer):
         if self.auth_id is None: return None
         if (getattr(self.owner, 'MANUAL_SESSION', False) and self.requires_saved_character
                 and not self.creation_report['connected_on_atlas']):
+            # 0.13.87: the player may enter with another saved hero than the launch expected, or
+            # with one made in the character list (observe_chosen_hero follows that choice; a
+            # created hero turns this session into a creation and leaves this branch).
             # Baseline SQL already authenticated the existing identity. Waiting
             # at character selection must not repeatedly spawn translated status
             # probes until their operation-count limit expires. A current native
@@ -2607,7 +4514,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                     and type(baseline.get('auth_id')) is int and baseline['auth_id'] == self.auth_id,
                     'Manual connection wait lacks the verified saved character identity')
             self.creation_report['character_id'] = baseline['character_id']
-            if self.native_ready_record() is None:
+            if self.native_ready_record() is None and not self.observe_chosen_hero():
                 policy = self.ctx.report.setdefault('character_observer_metrics', {}).setdefault(
                     'manual_login_wait', {'policy': 'native_ready_triggers_full_sql_and_protocol_proof',
                         'translated_status_probes_skipped': 0, 'sql_inventory_reads_skipped': 0,
@@ -2649,12 +4556,15 @@ class LocalCharacterServer(login.LocalLoginServer):
         before = self.sample_progress(force=True)
         if not self.live_progress(before): return None
         inventory = self.inventory()
-        candidates = [row for row in inventory if row.get('name') == CHARACTER]
-        if not candidates: return None
-        require(len(candidates) == 1, 'Ambiguous THORHERO identity')
-        identity = candidates[0]
+        # 0.13.62: the session's character is the account's one row under
+        # whatever name the player gave it in the creator (the DbServer inserts
+        # it at Enter Game); verify_current_identity checks it is this session's
+        # (new, or the preserved ID 1), and its name binds the session.
+        identity = self.session_identity(inventory)
+        if identity is None: return None
         identifier = identity['containerid']
         self.verify_current_identity(identity, inventory)
+        self.bind_session_character(identity)
         sample = evidence.parse_character_status(self.query(['-getstatus', '3', str(identifier)], 'player-status'),
             identifier, CHARACTER, ACCOUNT, allow_missing=True)
         after = self.sample_progress(force=True)
@@ -2705,7 +4615,17 @@ class LocalCharacterServer(login.LocalLoginServer):
             row_counts={name: len(value) for name, value in rows.items()},
             evidence_scope='fresh_graphical_character_ready_on_atlas_then_requested_logout_timer_and_committed_full_character_rows')
         self.creation_report.update(self.saved_metadata(snapshot))
+        self.creation_report['class_name'] = self.saved_class_name(rows)
         return self.creation_report
+
+    def saved_class_name(self, rows):
+        """The saved hero's archetype as the database names it (0.13.88; for the report only)."""
+        try:
+            number = rows['ents'][0]['class']
+            return next((row['name'] for row in self.schema['expected_attributes']['attributes']
+                         if row['id'] == number), None)
+        except (KeyError, IndexError, TypeError):
+            return None
 
     def collect(self, target):
         self.sample_startup_observation(force=True)
@@ -2727,6 +4647,8 @@ class LocalCharacterServer(login.LocalLoginServer):
             raw = base.redact(self.map_process.text(), self.ctx.secrets).encode()
             require(len(raw) <= 16 * 1024 * 1024, 'Atlas console evidence exceeded export bound')
             base.private_write(target / 'character-atlas-console.txt', raw.decode())
+            heap = self.creation_report.setdefault('shared_heap', {'format': 1, 'requested': shared_heap_requested()})
+            heap['active_console'] = shared_heap_console(raw.decode())
         if self.snapshot is not None:
             base.private_write(target / 'character-saved-snapshot.json', json.dumps(self.snapshot, indent=2) + '\n')
         self.collect_server_logs(target)
@@ -2958,54 +4880,162 @@ class LocalCharacterReopenServer(LocalCharacterServer):
 
     def capture_baseline(self):
         self.baseline = self.inventory()
-        candidates = [row for row in self.baseline
-                      if row.get('name', '').casefold() == CHARACTER.casefold()
-                      or row.get('containerid') == self.CHARACTER_ID]
-        require(len(candidates) == 1, 'Expected exactly the existing THORHERO ID 1; preserve all characters')
-        identity = candidates[0]
-        auth_id = identity.get('authid')
-        require(type(identity.get('containerid')) is int and identity['containerid'] == self.CHARACTER_ID
-                and identity.get('name') == CHARACTER and identity.get('authname') == ACCOUNT
-                and type(auth_id) is int and 0 < auth_id <= 4294967295,
-                'Preserved THORHERO identity differs from the accepted local character')
-        require([row for row in self.baseline if row.get('authid') == auth_id] == [identity],
-                'Reopen requires exactly the existing COHLOCAL character')
+        heroes = [row for row in self.baseline if row.get('authname') == ACCOUNT]
+        require(heroes and heroes == self.baseline and len({row.get('authid') for row in heroes}) == 1
+                and all(hero_id(row.get('containerid')) for row in heroes),
+                'Reopen requires the saved heroes of the one COHLOCAL account; preserve all characters')
+        auth_id = heroes[0].get('authid')
+        require(type(auth_id) is int and 0 < auth_id <= 4294967295
+                and len({row.get('name') for row in heroes}) == len(heroes)
+                and len({row['containerid'] for row in heroes}) == len(heroes),
+                'Preserved character identity differs from the accepted local account (COHLOCAL)')
         account = self.sql("SELECT containerid || '|' || authname FROM dbo.shardaccounts "
             "WHERE lower(authname)=lower('COHLOCAL') ORDER BY containerid;", game=True)
         require(account == str(auth_id) + '|' + ACCOUNT, 'Preserved character account differs from SQL')
-        rows = self.character_rows(self.CHARACTER_ID)
-        parents = rows.get('ents', [])
-        require(len(parents) == 1 and type(parents[0].get('logincount')) is int
-                and 0 < parents[0]['logincount'] < 2**31 - 1,
-                'Existing character has no accepted committed login baseline')
-        count = parents[0]['logincount']
-        snapshot = validate_character_rows(rows, self.baseline, self.baseline,
-            self.schema['expected_attributes'], auth_id, existing_identity=identity, expected_login_count=count)
-        require(snapshot is not None, 'Existing character powers/costume are incomplete; do not synthesize them')
+        order = self.hero_order(heroes)
+        all_rows = self.heroes_rows(order)
+        enhancements = native_producer_matches(self.creation_report.get('mapserver_producer', {}))
+        self.hero_baselines = {}
+        for identity in heroes:
+            identifier = identity['containerid']
+            rows = all_rows[identifier]
+            parents = rows.get('ents', [])
+            require(len(parents) == 1 and type(parents[0].get('logincount')) is int
+                    and 0 < parents[0]['logincount'] < 2**31 - 1,
+                    'Existing character has no accepted committed login baseline')
+            count = parents[0]['logincount']
+            snapshot = validate_character_rows(rows, self.baseline, self.baseline,
+                self.schema['expected_attributes'], auth_id, existing_identity=identity,
+                expected_login_count=count, name=identity.get('name'))
+            require(snapshot is not None, 'Existing character powers/costume are incomplete; do not synthesize them')
+            entry = {'identity': identity, 'rows': rows, 'snapshot': snapshot, 'login_count': count,
+                     'saved_position': self.saved_position_row(identifier)}
+            if enhancements:
+                entry['boosts'] = self.sql_rows('boosts', BOOST_FIELDS, ('containerid', 'subid'),
+                                                'containerid=' + str(identifier))
+            self.hero_baselines[identifier] = entry
+        # Every saved hero is read before the client can log in; the one played last is expected.
+        self.creation_report['heroes'] = {'format': 1, 'count': len(heroes), 'order': order,
+            'expected_character_id': order[0], 'chosen_character_id': None, 'choice': None,
+            'policy': 'the_hero_that_enters_the_game_is_the_session_hero_v1',
+            'sql_game_mutations_performed': False}
+        self.use_hero_baseline(order[0])
+        if self.stock_power_diagnostics_enabled():
+            self.creation_report['stock_power_lifecycle_before_login'] = self.stock_power_lifecycle(
+                self.hero_baselines[order[0]]['rows'])
+        self.ctx.event('existing_character_ready', session_id=self.owner.args.session_id,
+            character_id=self.CHARACTER_ID, auth_id=auth_id, account=ACCOUNT, name=CHARACTER,
+            existing_character_verified=True, before_login_count=self.baseline_snapshot['login_count'],
+            hero_count=len(heroes))
+
+    def saved_position_row(self, identifier):
+        values = self.sql_rows('ents', ('containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'),
+                               ('containerid',), 'containerid=' + str(identifier))
+        require(len(values) == 1 and set(values[0]) == {'containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'},
+                'Existing character position snapshot differs')
+        return values[0]
+
+    def use_hero_baseline(self, identifier, *, chosen=False, entered_map_id=None):
+        """Make one saved hero the session's: its ID, name and the rows read before login.
+
+        chosen: the player entered with another hero than the launch expected. That is only
+        possible before the first connection, and nothing about the first hero was changed.
+        """
+        entry = self.hero_baselines[identifier]
+        identity, rows, snapshot, count = entry['identity'], entry['rows'], entry['snapshot'], entry['login_count']
+        require(not chosen or not self.creation_report.get('connected_on_atlas'),
+                'The hero cannot change after it entered the game; preserve all data and export the report')
+        self.CHARACTER_ID = identifier
+        if chosen:
+            self.creation_report['name'] = bind_hero(identity.get('name'), identifier, replace=True)
+            self.require_station_travel_name()
+        else:
+            self.bind_session_character(identity)
         self.baseline_snapshot = snapshot
-        position = self.character_position(allow_unassigned_active_map=True)
+        position = self.character_position(allow_unassigned_active_map=True, value=dict(entry['saved_position']),
+                                           activate=not chosen)
         self.creation_report.update(existing_character_verified=True,
+            before_character_id=identifier, baseline_character_id=identifier,
             baseline_character_count=len(self.baseline), baseline_identity_sha256=digest_json(self.baseline),
             before_login_count=count,
-            baseline={'character_id': self.CHARACTER_ID, 'auth_id': auth_id,
+            baseline={'character_id': identifier, 'auth_id': identity['authid'],
                 'identity_sha256': digest_json(identity), 'snapshot_sha256': digest_json(snapshot),
                 'table_sha256': {name: digest_json(value) for name, value in rows.items()},
                 'row_counts': {name: len(value) for name, value in rows.items()},
                 'login_count': count, 'captured_utc': base.utc(), 'saved_position': position},
             sql_game_mutations_performed=False)
-        if native_producer_matches(self.creation_report.get('mapserver_producer', {})):
-            boosts = self.sql_rows('boosts', BOOST_FIELDS, ('containerid', 'subid'), 'containerid=1')
+        self.baseline_enhancements = None
+        self.creation_report.pop('enhancement_baseline', None)
+        if 'boosts' in entry:
+            boosts = entry['boosts']
             semantic = enhancement_semantics(boosts, rows['powers'], self.schema['expected_attributes']['attributes'])
             self.baseline_enhancements = {'rows': boosts, 'semantic': semantic}
             self.creation_report['enhancement_baseline'] = {'row_count': len(boosts),
                 'rows_sha256': digest_json(boosts), 'semantic_sha256': digest_json(semantic),
                 'attachment_identity': 'native_PowerID_resolved_to_stable_power_UniqueID',
                 'sql_game_mutations_performed': False}
-        if self.stock_power_diagnostics_enabled():
-            self.creation_report['stock_power_lifecycle_before_login'] = self.stock_power_lifecycle(rows)
-        self.ctx.event('existing_character_ready', session_id=self.owner.args.session_id,
-            character_id=self.CHARACTER_ID, auth_id=auth_id, account=ACCOUNT, name=CHARACTER,
-            existing_character_verified=True, before_login_count=count)
+        if chosen:
+            self.creation_report.pop('stock_power_lifecycle_before_login', None)
+        return entry
+
+    def entered_heroes(self):
+        """(name, map) of heroes of the account that resumed on an owned zone server (the zoning server reads them)."""
+        return []
+
+    def created_hero_supported(self):
+        return False
+
+    def observe_chosen_hero(self):
+        """Follow the player's choice in the game's character list (before the first connection).
+
+        The launch expected the hero played last. A resume line under another name is another
+        saved hero of the account (its rows were read before login: use_hero_baseline), or a
+        hero made in the character list (adopt_created_hero). Returns True when the session's
+        hero changed, so the ordinary full inspection runs now.
+        """
+        if (getattr(self, 'hero_baselines', None) is None or self.creation_report.get('connected_on_atlas')
+                or getattr(self, 'created_in_session', False)):
+            return False
+        entered = {name: map_id for name, map_id in self.entered_heroes() if name != CHARACTER}
+        names = sorted(entered)
+        if not names:
+            return False
+        require(len(names) == 1 and valid_character_name(names[0]),
+                'Two heroes entered the game in one session; preserve all data and export the report')
+        inventory = self.inventory()
+        rows = [row for row in inventory if row.get('name') == names[0] and row.get('authname') == ACCOUNT]
+        require(len(rows) == 1 and hero_id(rows[0].get('containerid'))
+                and rows[0].get('authid') == self.baseline_snapshot['identity']['authid'],
+                'The hero that entered the game is not one of the COHLOCAL account; preserve all data and export')
+        identity = rows[0]
+        heroes = self.creation_report['heroes']
+        if identity['containerid'] in self.hero_baselines:
+            require(evidence._same(identity, self.hero_baselines[identity['containerid']]['identity'])
+                    and evidence._same(inventory, self.baseline),
+                    'A saved hero changed before it entered the game; preserve all data and export the report')
+            self.use_hero_baseline(identity['containerid'], chosen=True, entered_map_id=entered[names[0]])
+            heroes.update(chosen_character_id=identity['containerid'], choice='another_saved_hero')
+        else:
+            require(identity['containerid'] not in {row['containerid'] for row in self.baseline}
+                    and self.created_hero_supported(),
+                    'More than one character exists; preserve all characters and export the report')
+            self.adopt_created_hero(identity, inventory, entered[names[0]])
+            heroes.update(chosen_character_id=identity['containerid'], choice='created_in_the_character_list')
+        self.ctx.event('session_hero', format=1, session_id=self.owner.args.session_id,
+            character_id=identity['containerid'], name=CHARACTER, account=ACCOUNT,
+            created_in_session=heroes['choice'] == 'created_in_the_character_list',
+            expected_character_id=heroes['expected_character_id'])
+        return True
+
+    def adopt_created_hero(self, identity, inventory, entered_map_id=None):
+        raise base.DiagnosticError('More than one character exists; preserve all characters and export the report')
+
+    def session_identity(self, inventory):
+        """The session's saved hero among the account's heroes."""
+        rows = [row for row in inventory if row.get('containerid') == self.CHARACTER_ID]
+        require(len(rows) == 1 and len(inventory) == len(self.baseline),
+                'More than one character exists; preserve all characters and export the report')
+        return rows[0]
 
     def stock_power_diagnostics_enabled(self):
         """Supplemental reads belong only to the fully verified new Game lane."""
@@ -3030,15 +5060,16 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         try:
             require(type(rows.get('powers')) is list and 0 < len(rows['powers']) <= POWER_DELTA_LIMIT,
                     'Stock lifecycle power count exceeds finite scope')
-            parent = self.sql_rows('ents', ('containerid', 'lastactive'), ('containerid',), 'containerid=1')
+            where = 'containerid=' + str(self.CHARACTER_ID)
+            parent = self.sql_rows('ents', ('containerid', 'lastactive'), ('containerid',), where)
             extension = self.sql_rows('ents2', ('containerid', 'subid', 'lastdayjobsstart'),
-                                      ('containerid', 'subid'), 'containerid=1')
+                                      ('containerid', 'subid'), where)
             fields = ('containerid', 'subid', 'uniqueid', 'numcharges', 'usagetime', 'availabletime', 'creationtime')
-            powers = self.sql_rows('powers', fields, ('containerid', 'subid'), 'containerid=1')
+            powers = self.sql_rows('powers', fields, ('containerid', 'subid'), where)
             require(len(parent) == 1 and set(parent[0]) == {'containerid', 'lastactive'}
-                    and type(parent[0]['containerid']) is int and parent[0]['containerid'] == 1
+                    and type(parent[0]['containerid']) is int and parent[0]['containerid'] == self.CHARACTER_ID
                     and len(extension) == 1 and set(extension[0]) == {'containerid', 'subid', 'lastdayjobsstart'}
-                    and type(extension[0]['containerid']) is int and extension[0]['containerid'] == 1
+                    and type(extension[0]['containerid']) is int and extension[0]['containerid'] == self.CHARACTER_ID
                     and type(extension[0]['subid']) is int and extension[0]['subid'] == 0,
                     'Stock lifecycle parent identity differs')
             timestamps = {'lastactive': parent[0]['lastactive'], 'lastdayjobsstart': extension[0]['lastdayjobsstart']}
@@ -3070,7 +5101,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         if proof is not None:
             require(self.baseline_snapshot is not None
                     and proof['auth_id'] == self.baseline_snapshot['identity']['authid']
-                    and proof['character_count'] == 1,
+                    and proof['character_count'] == len(self.baseline),
                     'Current graphical login differs from the preserved character account')
         return proof
 
@@ -3087,12 +5118,9 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         return {'reopen_verified': True, 'existing_character_verified': True,
                 'preserved_existing_identity': True, 'native_client_ready_observed': True}
 
-    def character_position(self, *, allow_unassigned_active_map=False):
-        values = self.sql_rows('ents', ('containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'),
-                              ('containerid',), 'containerid=' + str(self.CHARACTER_ID))
-        require(len(values) == 1 and set(values[0]) == {'containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'},
-                'Existing character position snapshot differs')
-        value = values[0]
+    def character_position(self, *, allow_unassigned_active_map=False, value=None, activate=True):
+        # value: the row read before login (capture_baseline reads every saved hero's).
+        value = self.saved_position_row(self.CHARACTER_ID) if value is None else value
         # Before login, MapId is an active assignment and may be SQL NULL.
         # StaticMapId retains the saved Atlas destination. Only the read-only
         # baseline accepts that unassigned state; connected save still needs 1.
@@ -3164,7 +5192,8 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             return None
         location = self.observe_saved_location()
         if self.baseline_enhancements is not None:
-            boosts = self.sql_rows('boosts', BOOST_FIELDS, ('containerid', 'subid'), 'containerid=1')
+            boosts = self.sql_rows('boosts', BOOST_FIELDS, ('containerid', 'subid'),
+                                   'containerid=' + str(self.CHARACTER_ID))
             comparison = {'verified': False, 'status': 'incomplete',
                 'before_rows': self.baseline_enhancements['rows'], 'saved_rows': boosts,
                 'before_semantic_sha256': digest_json(self.baseline_enhancements['semantic']),
@@ -3188,8 +5217,17 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             if additive is not None:
                 comparison.update(scope='prior_enhancements_preserved_with_bounded_inventory_additions',
                                   additive_inventory=additive)
-            require(accepted, 'Character diagnostic incomplete: saved enhancements changed outside the '
-                    'verified preservation policy. This does not establish a failed native save.')
+            if not accepted and self.enhancement_change_in_ordinary_play():
+                # 0.13.83. Thor 0.13.82, export 20261124-181441: two enhancements dropped in play; the
+                # definition look-up raised FileNotFoundError in a shared zone tree and the launch was
+                # marked failed, although its logout, disconnect and saved location were all verified.
+                # A played character gains, slots, combines and sells enhancements; the comparison is
+                # kept as a record and no longer decides the launch.
+                comparison.update(status='changed_in_play', play_change_recorded=True,
+                    reason='Enhancements changed during ordinary play; recorded, not judged')
+            else:
+                require(accepted, 'Character diagnostic incomplete: saved enhancements changed outside the '
+                        'verified preservation policy. This does not establish a failed native save.')
         if self.stock_power_diagnostics_enabled():
             self.creation_report['stock_power_lifecycle_after_logout'] = self.stock_power_lifecycle(rows)
         # Only the typed current reader repair permits the finite first-training
@@ -3220,6 +5258,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
                     client_pid=self.creation_report.get('client_pid'), now_utc_ms=now_ms)
         if not evidence._same(before['rows']['powers'], after['rows']['powers']):
             self.native_stock_power_preservation = self.stock_power_preservation_evidence(before, after)
+        progress = False
         for table in evidence.SELECTED:
             previous = before['rows'][table]
             current = after['rows'][table]
@@ -3228,6 +5267,14 @@ class LocalCharacterReopenServer(LocalCharacterServer):
                 current = [{key: value for key, value in row.items() if key != 'logincount'} for row in current]
             if (table == 'powers' and not self.saved_selected_rows_match(table, previous, current)
                     and self.accept_added_temporary_powers(before, after)):
+                continue
+            if table in ('ents', 'powers') and not self.saved_selected_rows_match(table, previous, current):
+                if progress is False:   # evaluated once, for both tables together
+                    progress = self.accept_gameplay_progress(before, after)
+                if progress:
+                    continue
+            if (not self.saved_selected_rows_match(table, previous, current)
+                    and self.unlock_all_change_recorded(table)):
                 continue
             if not self.saved_selected_rows_match(table, previous, current):
                 # A typed SQL snapshot after logout is evidence of the observed
@@ -3254,6 +5301,64 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             committed_native_position_verified=True,
             committed_safe_position_verified=location['requested_recovery_verified'])
         return after
+
+    def unlock_all_change_recorded(self, table):
+        """0.13.85, "Unlock all content": the game itself grants what the account now owns.
+
+        At login the map server awards store and veteran badges and their powers, and the
+        DbServer writes the granted account bits into the character. These are the game's own
+        saves, not ordinary play the progress policy knows, so with the option on (and the same
+        preconditions as that policy) a changed table is recorded and not judged.
+        """
+        if os.environ.get('COH_UNLOCK_ALL') != '1' or not self.enhancement_change_in_ordinary_play():
+            return False
+        record = self.creation_report.setdefault('unlock_all_changes', {
+            'format': 1, 'status': 'changed_with_unlock_all', 'tables': [],
+            'save_comparison_skipped': True, 'sql_game_mutations_performed': False})
+        if table not in record['tables']:
+            record['tables'].append(table)
+        return True
+
+    def enhancement_change_in_ordinary_play(self):
+        """The preconditions of the inventory and progress policies: ARM64 client, no task
+        profile, an ordinary logout observed, the disconnect before the SQL read, no forced stop."""
+        proof = self.creation_report
+        if (os.environ.get('COH_CLIENT_ARCH', 'x86') != 'arm64'
+                or proof.get('task_gate_required') is True
+                or not all(proof.get(key) is True for key in
+                           ('disconnected_before_sql', 'requested_logout_observed', 'logout_timer_observed'))
+                or proof.get('forced_stop_before_save') is not False):
+            return False
+        return reopen_connection_binding(proof, self.owner.args.session_id, proof.get('client_pid'),
+                                         int(time.time() * 1000)) is not None
+
+    def accept_gameplay_progress(self, before, after):
+        """ARM64: accept a reopen whose saved changes are only ordinary native play.
+
+        Same preconditions as the inventory policy (ordinary logout observed,
+        disconnect before the SQL read, no forced stop, no task profile). The
+        result is recorded either way; only an accepted one changes the outcome.
+        """
+        proof = self.creation_report
+        if (os.environ.get('COH_CLIENT_ARCH', 'x86') != 'arm64'
+                or proof.get('task_gate_required') is True
+                or not all(proof.get(key) is True for key in
+                    ('disconnected_before_sql', 'requested_logout_observed', 'logout_timer_observed'))
+                or proof.get('forced_stop_before_save') is not False):
+            return None
+        now_ms = int(time.time() * 1000)
+        binding = reopen_connection_binding(proof, self.owner.args.session_id, proof.get('client_pid'), now_ms)
+        if binding is None:
+            return None
+        import native_training_save
+        start = proof.get('client_ready_observed_utc_ms')
+        purchases = (native_training_save.session_purchases(self.current_logs(), start, now_ms)
+                     if type(start) is int else None)
+        result = gameplay_progress(before['rows'], after['rows'],
+                                   self.schema['expected_attributes']['attributes'], purchases)
+        result['connection'] = binding
+        proof['gameplay_progress'] = result
+        return result if result['accepted'] else None
 
     def accept_added_inventory_enhancements(self, semantic):
         """ARM64: accept committed additions without asserting their loot cause.

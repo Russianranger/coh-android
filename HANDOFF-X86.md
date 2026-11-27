@@ -273,3 +273,4387 @@ into main as part of the handoff.
 
 After posting the final source/tree, local results, port/skip list and CI request
 and closing the four draft PRs, this agent stops. Claude continues development.
+
+## 0.13.50: ARM64 client primary, King's Row and client start (Claude, 2026-11-03)
+
+User decision (2026-11-03 11:38 CST): keep the ARM64 client, shelve x86 as the
+reversion path. Test sheet: [THOR-TEST-0.13.50.md](THOR-TEST-0.13.50.md).
+
+- **ARM64 is the default client**; `x86 client (fallback)` stays selectable.
+- **Shared read-only server data** (option, on): both zone servers omit 15
+  folders from their private trees and read them from one tree per Atlas data
+  identity through `runtime/serverdata` (King's Row's runtime now has `tools/`).
+  `sequencers` and `player_library` stay private: the wide CI probe rebuilt
+  `sequencers.bin` and 21 power/salvage bins with them shared. A tree without
+  its marker is rebuilt; older identities' trees are removed (directories and
+  links only, checked first). The overlay's 52 files are all `object_library`.
+- **Stranded-cache recovery race fixed** (0.13.49 session 1's 360 s cold mirror).
+- **Client folder scan**: ArmPort patch 0120 (`ARMPORT_FOLDER_CACHE_SKIP`); the
+  guest skips `scripts.loc` and `server/` for the ARM64 client (option, on). The
+  ARM64 client is a production-mode client reading loose files (patch 0042), so
+  it scans every folder upfront; switching it to the on-demand dev mode was
+  rejected (different mode). The client source never reads either folder.
+- **Client asset installs**: an unchanged reused install does one leaf pass, not
+  two (visual 27.7 s, zones 47.6 s, audio 4.1 s on 0.13.49).
+- Correction to the 0.13.49 priority note: the ARM64 client is in production
+  mode, so the 7 nice-19 threads are threads it sets to idle priority itself,
+  not an IDLE process class.
+- Chain: build 41689729437 (client with 0120), runtime 41704290931 at
+  `0bf0c1c4b` (shipping servers, fast mode, shared data and skip on; passed).
+  APK 41711575113 failed: `zone_asset_package.py` and `client_visual_assets.py`
+  were missing from `build_thor_apk.CHANGED_RUNTIME` (the only guest files changed
+  since 0.13.49 that were not listed). Added; the APK is rebuilt from the same
+  runtime, since guest payloads are byte-identical to `0bf0c1c4b`.
+- **Published:** [coh-atlas-gameplay-v0.13.50](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.50)
+  (pre-release), APK 41712293048 at `ef7d2d3dc`, 80,956,326 bytes, sha256
+  `a789355404a594a34eb5146eba2efb6c560a8afd784743b53b10bae21bb00472`, version code 65.
+- Runtime 41704290931 evidence: 15 folders shared (128,765 files, 3,524
+  read-only directories), reused on reopen (link 0.004 s); reopen bin writes 0;
+  story arcs 470/957/3528 both sessions; sequencer gap 40.7 s (level-1 probe
+  40.8 s, 0.13.49 runtime 36.8 s; the wide set was 240 s). Creation: private
+  mirror 31 s (was 99.5-106 s) plus 79 s to build the shared tree once.
+  Client: `phase=skip folders=2`, scan 123,633 files in 44 s; client start
+  81.7 → 71.8 s against runtime 41642095387. Reopen Atlas 129.6 s (unchanged).
+  CI has no imported supplements, so the asset-pass trim is unmeasured there.
+- Known: `test_classify_storage_cleanup_change` keys on the last commit's file
+  list and fails for multi-area commits; not a behaviour regression.
+
+## 0.13.51: cache reuse fix, station frame cap, thermal and tick evidence (Claude, 2026-11-03)
+
+User follow-up to 0.13.50: in King's Row, NPCs, cars and the monorail train
+jump from spot to spot; Atlas is fluid on first load and on return. The 76 °C is
+the device's own reading (it idles at 40-43 °C). User approved the cache fix,
+the station cap and evidence, and an earlier client start. Test sheet:
+[THOR-TEST-0.13.51.md](THOR-TEST-0.13.51.md).
+
+- **Cache reuse** (`38cb5dee8`): `verify_changed_directories` skips the shared
+  top-level folders at the root when the generation did not record them; a
+  private copy of one is still refused. Atlas and King's Row tests reproduce the
+  0.13.50 refusal without the fix.
+- **Station frame cap** (ArmPort patch 0121, `2f893d9b8`): the client polls
+  `ARMPORT_FPS_CAP_FILE` once a second with Win32 calls; zoning writes 10 in the
+  `baseline` and `map_ready` phases (before the blocking Python preparation) and
+  removes it at ready, arrival, failure and cleanup. `/maxfps` changes during
+  the cap are kept. Native behaviour test with stubs; ARM64 syntax check.
+- **Evidence:** `android_thermal_samples` (30 s, API 30 headroom);
+  `character_zoning.tick_probe` (every 30 s, 4 s at 50 Hz of completed-tick gaps
+  for the occupied map); `wine_priorities` now 12 samples every 120 s with
+  `last_cpu` per program and `cpu_max_khz`.
+- **NPC jumping, source reading** (Ouroboros, file:line in the review notes of
+  this round): the server sends entity updates 4 times a second, and NPCs and
+  cars are simulated and sent only every 15th tick (2 per second,
+  entaiInstance.c:1605-1646, entsend.c:1284). The client draws them 2 x
+  `auto_delay` (0.3 s) in the past (entrecv.c:4086, 4153), so 0.1 s of slack; a
+  late update freezes them and they catch up (entrecv.c:4019). Ticks over 2/30 s
+  also drop game time (svr_init.c:212) and make the client re-sync its clock
+  (entrecv.c:3673). Likely: the King's Row NPC/car tick overruns under FEX, or
+  FEX is still compiling that code right after the zone starts (the visit began
+  within a minute of ready). No send rate or delay setting exists; the ARM64
+  patches change none of this.
+- **Not built: earlier client preparation.** With the cache reused, the 0.13.49
+  and 0.13.50 phases put the client (about 311 s to login) and Atlas (about
+  311 s to ready) within about 15 s of each other. The client's asset installs
+  write into the x86 client-work tree that the server's data copy reads, so an
+  overlap needs a new concurrency proof for at most 15 s. Next big items instead:
+  Atlas MapServer start (228-242 s) and a saved client folder scan (105-114 s).
+- Chain: build 41734472082 failed in "ArmPort zoning guards":
+  `test_prepares_off_thread_then_spawns_and_observes_first_tick` used fake time
+  124 s, read as a reversed clock on a runner up for under 124 s (reproduced with
+  a 60 s monotonic clock; fixed in `e5c15c3b4`, test-only). Build 41735032151
+  (client with 0121) passed; runtime 41745666658 at `e5c15c3b4` passed (shipping
+  servers, fast mode, shared data, skip on, seccomp).
+- Runtime 41745666658 evidence: reopen bin writes 0; story arcs 470/957/3528 both
+  sessions; reopen data cache checkout 1.4 s with no cold mirror; shared tree
+  reused (link 0.004 s); reopen Atlas spawn → ready 133.6 s; client scan
+  123,633 files in 47 s, `phase=skip folders=2`. CI takes no monorail trip, so
+  the frame cap and the tick probe are covered by unit tests only.
+- **Published:** [coh-atlas-gameplay-v0.13.51](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.51)
+  (pre-release), APK 41750489814 at `e5c15c3b4`, 80,960,422 bytes, sha256
+  `7ce19258a588de3c2d740ffd6b9713c28f785c99fe8811aabc12aeb6fe5dc7ce`, version
+  code 66, client run 41735032151. The package record's
+  `armport_client.default_architecture: x86` is a stale label from
+  `stage_app_assets.py`; the app's default has been ARM64 since 0.13.50
+  (`ClientRuntime.clientArchitecture`).
+
+## Other zones: start-up anatomy and on-demand starts (study, Claude, 2026-11-04)
+
+User, 23:57 CST: "1 and 2 are approved for development"; memory must stay well
+under 16 GB (their PC "start everything" script exceeds 30 GB). Two
+source-reading studies (upstream/ouroboros, with file:line evidence):
+
+- **Zone server start-up splits cleanly.** The MapServer learns its map only at
+  `connectToDbserver` → `dbRegister` (svr_init.c:2137; dbcomm.c:250-289), after
+  every shared phase. The map name, static flag and mission info arrive in the
+  DbServer's reply (dbcontainer.c:152-197). Device times (0.13.51 exports):
+  shared 211 s (Atlas) / 198 s (King's Row) — sequencers 52-67 s, FX 43-49 s,
+  story arcs 49 s, object library 15-18 s, config 12-17 s; map-specific 49 s /
+  33 s (`groupLoadMap` 17-22 s, PhysX setup 6-17 s, collision, beacons, initMap).
+  A pre-loaded spare can block before `connectToDbserver`, receive its map id
+  and cookie, re-run the `base_map_id`/`instance_id` lookup
+  (staticMapInfo.c:590-605) and continue: ready about 33-49 s after assignment
+  instead of 231-260 s. Precedent: `-tsr` parks after the shared loads. A
+  spare holds a full private copy of the shared data under `-nosharedmemory`;
+  the stock shared-memory path (`ParserLoadFilesShared`) is untested under Wine.
+- **DbServer map starts have one choke point.** Login (`findBestMapByBaseId`),
+  zone doors/trains (`handleMapXferRequest` → `startMapIfStatic`), instances
+  and missions (`teamStartMap` → `handleContainerSet`) all call
+  `launcherCommStartProcess` (launchercomm.c:1496-1642), which builds
+  `mapserver.exe -db <host> -udp -1 -map_id <id> -launcher -cookie <n>` and
+  sends it to a Launcher. With no Launcher (our case) a static zone's
+  container is deleted (mapxfer.c:312), so that zone is gone until restart;
+  missions fail. Proposed hook: an overlay gated by an environment variable
+  publishes a request record (map id, cookie, base map, name, mission info,
+  command) instead, keeps `starting=1`, and never deletes a static container;
+  the supervisor starts (or assigns a spare to) the map with that id and
+  cookie, and delinks it (`-dbquery -delink`) on failure. The DbServer then
+  waits as it does for a Launcher (waiting list, cookie-checked register,
+  ready-for-players). maps.db has 901 containers (66 base maps + 835 clones).
+- **Risks noted:** character select waits 90 s for a map (client `-notimeout`
+  or pre-starting the saved zone); mission doors and contact lookups need door
+  records from every static zone (`Doors.db`, none shipped); no upstream start
+  timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
+  process to `server-metrics.jsonl`).
+
+## 0.13.83 (98): menu tabs and option categories, arrival acted on at once, missions scoped
+
+Owner, 2026-11-24 (with exports 20261124-181424 setup, -181441 A, -182926 B of
+0.13.82): "null" is fixed (it was the chat line of a rescued citizen); both
+tests passed; the third zone server "edges pretty close to the limit of the
+device" and should be "in its own category of optional"; recommended options
+in their own category, experimental "for ones that had no apparent benefit",
+a "test" category "for ones we are actively testing"; the menu cleaned up with
+"the actively used commands towards the top and options be in a separate
+tab"; then the roadmap: "server start and zoning is in a good place, the next
+would be missions".
+
+- **Thor 0.13.82.** `ready_records` 30 and 38 from the console, 0 from the
+  entity log. `native_ready_to_observation_ms` 7,174 (A) and 8,945 (B); by
+  the lifecycle the FPS buttons opened 9.4 s and 11.3 s after `ready.sent`
+  (73-74 s in 0.13.81). Trips, client `xfer.wait` to `ready.sent`: 24.8,
+  25.9, 21.2 s through a warm spare (11.8-14.5 s to the address, 2.0-2.2 s
+  to `map.start`, 7.3-8.9 s load); 30.9 s with a spare loaded 17 s before;
+  10.0 and 9.4 s back to the kept zone (0.5 s to the address).
+  `keep_previous_zone.kept` 1, one eviction when a third spare needed room.
+  Lowest `MemAvailable` 3,460 MiB with three servers (4,942 without),
+  `SwapFree` 1,719 MiB (2,084). One arrival was recorded 9.7 s after its
+  `resume_utc_ms`. `ARMPORT_GROUP_LOAD_V1`: `full_ms` 3,939-5,327, of it
+  `read_ms` 1,357-2,516 and `geoload_ms` 247-542.
+- **Launch A "failed"** only by `enhancement_preservation`: two inventory
+  enhancements gained in play; `observed_inventory_boost_definitions` raised
+  FileNotFoundError (the runtime it looks in is not the shared zone tree).
+  `local_character_server.enhancement_change_in_ordinary_play()` (ARM64, no
+  task profile, ordinary logout observed, session binding) now records
+  `status: changed_in_play` instead of failing; malformed rows and the x86
+  client keep the strict policy (`armport/tests/test_enhancement_additions.py`).
+- **Arrival acted on at once.** The console line was read immediately but
+  only at the next inspection: `character_evidence` and `_poll_stock_logs`
+  each run every `POLL_SECONDS` 15 s inside the five-second loop.
+  `character_zoning.ready_line_peek()` (called from
+  `character_creation_diagnostic.between_polls`, throttled to 0.5 s) finds a
+  new `ARMPORT_CLIENT_READY_V1 utc_ms=` in an owned console with one
+  `bytearray.rfind`, makes both inspections due and the loop runs
+  `observe_console()` now; two repeats 2 s apart while the first connection
+  is not established. Report: `character_zoning.ready_peeks`.
+- **Menu** (`ClientActivity.java`): state lines above a tab row; pages built
+  by `buildPlayPage`, `buildOptionsPage`, `buildSetupPage`; `selectTab`
+  remembers the tab (`coh.tab`) and the menu opens on Play during a game.
+  Options: `category()` headings Recommended (19), Optional
+  (`keepPreviousZone`), Test (none), Experimental (`prestartNextZone`,
+  `idleResidentMaps`, `sharedHeap`, `glDirect`, `clientGroupBins`).
+  `optionalOptions()` are named on the status line, never counted as a
+  difference, and left alone by "Restore recommended options"; the report's
+  `options_off_recommended` still lists them. `optionsNotice` repeats the
+  line above the tabs when something differs. Local compile check (new):
+  the app's sources against `android-33/android.jar` from a sparse clone of
+  Sable/android-platforms, 162 classes; no Android run.
+  `tools/android/test_recommended_options.py` (`OptionCategories`).
+- **Missions, scoped.** A mission is `teamStartMap` creating a non-static
+  map container with `MapName` and `MissionInfo`; the external-maps layer
+  already publishes it and `zone_travel.decide` delinks it (`not_static`).
+  The supervisor's entry now keeps `mission_info` (240 characters). What a
+  mission map needs that a zone has: (1) assets: 5,105 map files under
+  `maps/missions` in 503 folders; one map of each folder audited
+  (`docs/android-evidence/mission-asset-audit-20261124.json`): 1,686
+  geometry files named, 488 of them outside the retained baseline and all
+  488 in the zones supplement the Thor has imported, so no new asset pack;
+  the shared zone tree installs only the zones' collision leaves
+  (`zone_index.COLLISION_FILES`) and needs the missions' as well; 48 of the
+  503 maps have unresolved source edges; textures are not checked;
+  (2) a zone-layer path for a dynamic map id (`MAPS`, `register_zone`,
+  `supported`, console route, arrival, eviction; while in a mission the zone
+  the hero came from should be kept instead of a spare); (3) navigation
+  graphs for mission maps: the pack covers the 66 zones, and a map without
+  a file gets "Beacon file not loaded for map" and no pathing
+  (`beaconFile.c` `beaconReload`); `armport-zone-beacons.yml` generates one
+  map per Windows job (a whole zone took up to 2 h 20 min with one worker;
+  mission maps are far smaller but there are 5,105);
+  (4) door lists: each static map sends its doors to the DbServer
+  (`DBCLIENT_SEND_DOORS`), so only zones that have run are known. Debug
+  commands for CI and the Thor (everyone has access level 9):
+  `startmission <task> *` (assign and enter without a door),
+  `missionxmap`, `gotomission`, `exitmission`, `completemission`.
+- **Mission maps, written for 0.13.84 (on x86/perf-round3 after the 0.13.83 build; not in
+  0.13.83, not yet run anywhere).** Test option "Start mission maps" (`COH_MISSION_MAPS=1`,
+  Test category, off). `zone_travel.ZoneTravelPolicy(mission=, mission_tree=)`: a non-static
+  request the owner admits (`character_zoning.admit_mission_request`: a file under
+  `maps/missions`, mission info, hero in the world, zone pack imported, not already in a
+  mission) starts in the shared zone tree like a zone; `register_mission` gives it a `MAPS`
+  entry (no navigation graph). Arrival events carry `mission_map` / `from_mission_map`
+  (`ClientZoning.missionMap`). No spare while inside (`in_a_mission`); a mission map the hero
+  left is evicted first and may end by itself (`_tick_missions`, `health`). Collision
+  leaves: full audit of all 5,105 maps
+  (`armport/evidence/mission-asset-audit-all-20261124.json`): 501 files outside the
+  baseline, 378 already zone leaves, 123 (24.4 MB) in `android/guest/mission_index.py`,
+  installed with the option under a second data cache identity
+  (`local_character_server.zone_tree_collision`). **Lock-out fixed:** a hero saved inside
+  a mission has `mapid` = the mission's id, and `character_position` refused the reopen;
+  it now follows `staticmapid`, as the DbServer does (`findBestMapByBaseId`). Session
+  bounds raised (requests 256, starts 128, delinks 64, spares 48). CI probe:
+  `armport-app-runtime.yml -f mission_probe=true` types `/startmission
+  L1_P_Clockwork_Mission1 *` then `/exitmission` (`character_reopen_host_smoke.travel_trips`);
+  CI has no zone pack, so `COH_MISSION_MAPS_TREE=atlas` starts the map in the Atlas tree.
+  Unknown until it runs: whether CI's data holds the mission map file, what a mission
+  server prints as its ready line, saving inside a mission (expected: verdict failed,
+  character kept).
+- **Chain** (published: APK 45503102987 at `de54a1b54`). Build 45466729870:
+  its first attempt failed in `server-run` on a download timeout
+  (`prepare_assets.py fetch`, `TimeoutError`), the re-run of the failed jobs
+  passed. Zone change 45485919306 passed (object-file load 6.3-7.6 s, as
+  before). Trusted 45492202751: zone server start 365.1 s new, 23.9 s
+  reopened, map load 4,762 ms. Spare 45497903372 with `defer_zone_loads` and
+  `keep_previous_zone`: `ready_records` 5 console / 0 log, arrivals recorded
+  19.5 s and 10.8 s after the typed command (27.1 and 24.1 in 0.13.82),
+  spare warm after 20.0 s and assigned to map 101, zone 101 ready 9.3 s
+  after its request. Release verified: 93,618,442 bytes, sha256
+  `c0e9843e61ef8c028b83643debfefacbb811c5ed1bce747dd09c853ccb3437dc`, signer
+  92:95:53:53..., 51 guest files equal the commit, the dex holds the new
+  menu's strings. The menu itself has not run on Android.
+
+## 0.13.86 (101): fixes from the Thor test of 0.13.85; plain menu wording
+
+Owner, 2026-11-25, after seven exports of 0.13.85 (20261126-011040 ... -035051
+UTC): the app closed while a screenshot of the character list was taken; with
+"Start mission maps" the other zones lost their navigation data; the Primalist
+has no graphics; its first launch took long; one account should hold several
+heroes without "Switch hero slot"; the checks ("check complete/incomplete")
+belong in the report, not the menu; Show FPS belongs on the Options tab.
+
+What the exports showed (`<scratch>/thor85/<stamp>`, `tools/thor85c.py`):
+
+- 011040/011056: recovery exports of a reopen started 01:06:03 and stopped by
+  Android at 01:09:46 with exit reason 3 (low memory, foreground, pss 208 MB).
+  16.0 GB device, 11.0 GB available at setup; nothing recorded at the stop.
+- 011853 (recommended options): passed; world 154 s, zone server 93.0 s, trip
+  through the warm spare 13.5 s.
+- 014613 (mission maps): the new zones tree (503 collision files) had every
+  navigation graph refused, "Actual zone N source inventory has no qualified
+  native profile"; the launch failed on "saved enhancements changed outside
+  the verified preservation policy" after an enhancement was slotted and the
+  hero took a tunnel (72 to 71).
+- 030959 (mission maps): zone server 376 s (no graph; it built its own).
+- 031914 (unlock on Ralakar): world 143.8 s; `unlock_all_changes` ents,
+  powers, costumeparts; failed only in cleanup ("Wine descendant cleanup:
+  Cannot inspect same-UID Wine ownership"), a known intermittent fault.
+- 035051 (creation, unlock, Primalist): created and played to level 2. World
+  902.9 s: about 3.5 min in the creator, then 457 s of preparation (shared
+  tree link 335.0 s for 128,765 files, which also removed the other setting's
+  tree; cold mirror 67.7 s; beacon graph 46.5 s) and zone server 126.2 s
+  (classes.bin and powers.bin rebuilt).
+
+Changes:
+
+- **Navigation graphs in a zone tree with mission collision files.**
+  `atlas_beacon_package.collision_input_snapshot(..., allowed_extra=())`: the
+  actual inventory may exceed the declared one by exactly the allowed leaves;
+  `zone_beacon_package` passes `mission_index.COLLISION_FILES`. Three tests in
+  `test_zone_beacons.py`. CI has no zone asset pack: the Thor confirms.
+- **Binding after a trip.** `character_zoning._stock_arrival` records
+  `creation_report['stock_arrival']` (map, time, epoch, source);
+  `local_character_server.stock_arrival_binds` lets `stock_zone_binding`
+  accept a ready record of the zone the hero left when that record shows the
+  later arrival (epoch equal to `zoning_epoch`, source one of
+  `STOCK_ARRIVAL_SOURCES`). `client_ready_observed_utc_ms` is not moved
+  (`session_purchases` reads it as the session start).
+- **Shared server data.** `link_shared_server_data` plans per folder
+  (`shared_tree_plan`): folders the content changes (menu, texts) get their
+  own tree per content state; the others come from any sealed tree of the same
+  source, including the whole tree 0.13.85 made (old key kept); nothing of the
+  same source is removed. Report: `shared_trees`.
+- **Primalist icon.** `armport/content/single-player/client/data/
+  texture_library/GUI/Icons/Archetype/archetypeicon_primalist.texture` (32x32
+  BGRA with mips, drawn by `tools/make_primalist_icon.py`; the supplied zip's
+  icon is not used). `armport_client_package.package(client_data=)` carries
+  up to 16 files of 1 MiB under `data/texture_library`; the runtime workflow
+  passes the folder; the import's folder and the package's are merged.
+- **Menu.** `ClientZoning.plainStatus/plainTiming` (pure Java, run by
+  `test_plain_status_java.py` over every `stage("...")` name): the two lines
+  above the tabs show plain words unless Setup's "Show test details and
+  tools" is ticked (preference `test_details`); that box also shows the
+  counters, the log and the test buttons (`testTools`). Show FPS and the caps
+  are built by `addFpsControls` at the top of Options. "Play", "Finish";
+  "Resume first character creation" on Setup.
+- **Memory samples.** `ClientRuntime.systemMemorySample` adds
+  `system_memory_available_bytes`, `_threshold_bytes`, `_low` to each 30 s
+  sample, and each sample is written to the checkpoint (the recovery export of
+  a stopped app then has them).
+
+Not in 0.13.86: several heroes per account. Findings and the design are in
+"0.13.87 (102)" below.
+
+CI at `fafe21a12` (build 45757162842), all passed: probe with both options, the
+trusted server and the spare 45766784376 (`shared_trees`: `content_folders` 2
+roots, 10,715 files and `untouched_folders` 13 roots, 118,050 files, both new;
+link 93.7 s; the reopened session reused both in 0.009 s; zone server 167.9 s
+new, 23.9 s reopened; trip zone ready 9.5 s; 5 console ready records, 0 from
+the log); zone change on the stock server 45770545583 (211.8 s / 86.5 s, trip
+80.2 s); trusted 45774932914 (372.1 s / 23.9 s); spare 45779358365 (172.9 s /
+23.3 s, trip 9.5 s). APK 45784045022 (93,942,274 bytes,
+sha256 `733014e9b563d2638c9990a74985d70f7e230b73b736626ff98b68bc41625c1e`,
+signer unchanged; downloaded and hashed; 53 guest files equal the commit;
+the icon is in the client package, the menu texts and the memory field in
+the dex). Test sheet: `THOR-TEST-0.13.86.md`.
+
+Not shown: graphs in a mission-maps tree (no zone pack in CI), the untouched
+folders taken from a 0.13.85 whole tree (CI starts empty), the icon on screen,
+a Primalist created or played, `stock_arrival` after an enhancement (the CI
+notices do not carry the record), anything in Java on Android.
+
+The workspace has PostgreSQL 16 (`pg_ctlcluster 16 main start`, then the two
+`psql`/`createdb` lines of `armport/scripts/pg_fixture.sh` through
+`runuser -u postgres --`): `test_character_profile_eligibility` runs all its
+real-database cases locally with the build workflow's environment line.
+
+## 0.13.90 (105): evidence for an app that Android ends (no fix for the close)
+
+Thor test of 0.13.89, 2026-11-27 13:10 CST (owner): "Prima opened without
+issue, i was able to see the fps options. Ralakar on the otherhand crashed
+the app to android home when trying to enter world with him". Exports
+`20261127-190208` (setup), `-190231` (Prima), `-190853` (recovery checkpoint)
+and `-190904` (the previous guest's `latest-report.json`).
+
+What the exports show:
+
+- Prima (190231) passed: `removed.opened_trees_sealed_again` 1, the two
+  content folders built again (10,715 links, 104 s), 13 folders reused; zone
+  server 134.7 s; in the world 420.6 s after Play; save verified. The FPS
+  buttons were enabled (owner). The 0.13.89 fix holds on the phone.
+- Ralakar (190853, 190904): session start 19:05:29 UTC. Expected hero Prima
+  (played last), so Atlas Park (map 1) was the early zone. The guest saw the
+  login at 19:07:40.39 and Atlas `map_ready_observed` at 19:07:40.46. Ralakar
+  is saved on Mercy Island (map 71): `admit_zone_request` takes its activated
+  branch and starts map 71 beside the loaded Atlas. The app's last checkpoint
+  is the 120 s sample (19:07:29.1; `system_memory_available_bytes` 7.9 GB,
+  threshold 226 MB, `system_memory_low` false); the app was open again at
+  19:07:59. The process ended in between.
+- The cause is not in the exports. A recovered export of 0.13.89 held no
+  `android_process_exit_history` and no trace. The guest report is persisted
+  only at map-ready (`persist_startup_observation`), so it cannot bound the
+  time further. The app's handlers on this path (`client_login_ready`,
+  `session_hero`, `character_initial_zone`) run inside `catch (Exception)`,
+  and nothing in the app ends its own process.
+- Two candidates. (1) Android stopped the app for memory: the close at the
+  character list on 0.13.85 (2026-11-26 01:09:46 UTC) was exit reason 3
+  `LOW_MEMORY` at importance 100 with about 11 GB free at setup, so free
+  memory seconds earlier does not exclude it. (2) An `Error` or an unguarded
+  thread in the app's code.
+- Never run before: a saved hero chosen from another zone than the prepared
+  one. `test_several_heroes` covers the decision; CI's two heroes are both in
+  Atlas Park. The activated branch worked on the Thor for a new hero (0.13.87,
+  export 160620).
+
+Changes (all evidence; `is_success_proof` false everywhere):
+
+- `ClientCrash` (new): `install` in `ClientService` and `ClientActivity`
+  keeps Android's own handler and first writes `android-crash.json` (thread,
+  exception chain, 48 frames per cause, under 48 KiB). `evidence()` builds
+  `android-interruption.json` for a recovered export: `last_crash`,
+  `exit_history.records` (`reason`, `reason_name`, `status`, `importance`,
+  `description`, `pss_kib`, `rss_kib`, `timestamp_utc_ms`) and, for the newest ANR (6)
+  or native crash (5), Android's own trace (text to 256 KiB, binary to 96 KiB
+  as base64, `trace_truncated`).
+- `ClientReports.InterruptionEvidence`: a recovered export carries
+  `android-interruption.json` (to 768 KiB) and `operation.log` (to 4 MiB).
+- `ClientRuntime.line` writes `operation.log` as it grows (`openLiveLog`,
+  `liveLogLine`, `LIVE_LOG_LIMIT` 1200 KiB of characters, flushed per line),
+  so the log survives the process.
+- `ClientRuntime.EXIT_HISTORY_RECORDS` = 16 (4 before) in every export's
+  `android_process_exit_history`, each with Android's `description` (to 240
+  characters). Android keeps 16 records per app, and four might not have
+  reached back to the close on 0.13.89 after an update and some restarts.
+- `ClientService.onTrimMemory` writes lifecycle `trim_memory level=…
+  available_mib=… low=…` (the same level at most once in 10 s).
+- `recordLifecycle` writes a checkpoint also at `local_login_observed`,
+  `session_hero …`, `initial_zone_…` and `trim_memory …`.
+- `character_zoning.tick_memory_trace` prints each 10 s sample as a
+  `guest_memory_sample` event (MemAvailable, Cached, swap, PSI), which lands
+  in the live `operation.log`.
+
+Tests: `test_client_crash_java` (5; record, handler order, live log, 16
+records, checkpoint triggers and `trimMemoryEvent` run as shipped),
+`test_process_exit_history` (4), `test_client_report_recovery_java`,
+`test_several_heroes` (14, `MemorySampleLineTests`), `test_startup_ci_chain`.
+Local: armport/tests 734 OK, tools/android 203 OK, app Java compiles against
+android-33 (167 classes).
+
+Not shown anywhere: all of the app-side evidence. The Android app does not
+run in CI; `ApplicationExitInfo`, `onTrimMemory`, the uncaught-exception
+handler and the recovered export's two new files are exercised by javac
+harnesses with stubs and by the Thor only.
+
+Not done, on purpose: stopping the idle loaded zone when another hero's zone
+is asked for (no CI coverage, and the cause is not known); a CI probe for a
+saved hero chosen from another zone (needs a scripted hero saved outside
+Atlas Park; CI cannot reproduce an Android process death either way).
+
+Stopped runs: runtime 46057798110 (first try, cancelled for the trace
+change), build 46058321213 at `ba23f4bde` with runtime 46068309251 (cancelled
+before the APK step for the 16 records and memory records; nothing was
+published from it).
+
+CI at `1b4ade867` (build 46069408779):
+
+| Run | Form | Zone server new / reopened |
+| --- | --- | --- |
+| 46079013570 | trusted (APK source) | 361.0 s / 23.7 s |
+
+One runtime run only: the change on the game side is one output line, and
+the rest is app code that CI cannot run. The job log prints selected marks,
+not the guest's event lines, so `guest_memory_sample` is not visible there;
+the run passing shows that sending it disturbs nothing.
+
+APK 46082470173 at `1b4ade867`: 93,958,658 bytes, sha256
+`fd3774d3dd1c215421e2b93866e2b940430ded5bcacb38a3640f8826c361031d`, signer
+unchanged, downloaded and hashed; 53 guest files equal the commit;
+`character_zoning.py` in the file holds `guest_memory_sample`; the dex holds
+`ClientCrash`, `ClientCrash$ExitRecords`, `ClientReports$InterruptionEvidence`,
+`android-interruption.json`, `android-crash.json`, `trim_memory level=`,
+`getTraceInputStream`, `onTrimMemory`. Sheet: `THOR-TEST-0.13.90.md`.
+
+Next, from the owner's export: the exit record at about 2026-11-27 19:07:45
+UTC (`reason`, `description`). `LOW_MEMORY`: stop the idle loaded zone before
+the chosen hero's zone starts, or do not start the early zone when more than
+one hero is saved; with CI coverage first. `CRASH` / `CRASH_NATIVE` / `ANR`:
+the trace names the code.
+
+## 0.13.89 (104): the zone starts again after an update that changes the Primalist's files
+
+Thor test of 0.13.88, 2026-11-26 21:53 CST (owner): "Tried launch A - stated
+map failed to load when trying to select Prima". Exports `20261127-035125`
+(setup) and `-035141` (launch A).
+
+What the export shows:
+
+- Eligibility passed (`eligible`, `hero_count` 2, `primalist_class_number`
+  56412): the 0.13.88 fix for a saved Primalist worked on the phone.
+- The early start of Atlas Park failed after 63.9 s:
+  `initial_zone.early_start.failure` = "Shared server data tree holds a
+  regular file: /state/diagnostic/shared-server-data-0209cdcf4dd35a9b06cd6bf5/
+  texts/english/menumessages.ms". Both Enter Game attempts then failed with
+  "Earlier Atlas preparation did not complete; preserve data and export"
+  (the half-made Atlas tree is never retried), and the game showed "Map
+  failed to start".
+- Cause: 0.13.88 changed the content identity (the icon's name in
+  `pc_primalist.def`; `3fa56ed5…` to `2215c556…`). The phone's only shared
+  tree, `0209cdcf…` (all 15 folders, 128,765 files, made by 0.13.85 with the
+  old content; reused by 0.13.87 in export 160620), was not among the keys
+  `shared_tree_plan` knows for the new identity, so `shared_tree` went to
+  remove it. `remove_shared_tree` allowed links only, and a tree with the
+  content holds the content's own files as regular files (0.13.85,
+  `write_copy`). Its walk had made the root and some folders writable before
+  it met the first one. Deterministic: every launch of 0.13.88 fails there.
+- No CI run could find it: each starts on an empty machine, so no run had
+  met a tree of another content identity. The first content change since the
+  Primalist shipped was 0.13.88's.
+
+Changes:
+
+- `single_player_content.IDENTITY_HISTORY` lists every content identity
+  shipped (a test ties its last entry to the manifest). `shared_tree_plan`
+  takes a sealed tree of all folders made with an earlier content for the
+  folders the content does not touch (`all_folders_earlier_content`), as it
+  already did for the tree without the content: the update makes 10,715
+  links, not 128,765.
+- `inspect_shared_tree` walks a tree and changes nothing: owned real
+  folders, links, and the content's own files (`single_player_content.
+  own_copy`: single-link, owned, read-only with the content's fixed time, or
+  a pending file of a stopped write). `remove_shared_tree` checks first, then
+  opens and removes; a tree it refuses stays as it was.
+- `restore_shared_seals` runs before the plan: a marked tree whose root is
+  not read-only is sealed again when it holds exactly what its marker
+  counted (`directories`, `linked_immutable_files`, `single_player_files`);
+  otherwise the marker is dropped and the tree is an unsealed one. A borrowed
+  tree is therefore never built again under a key of another content state.
+- `prepare_atlas_runtime` keeps the first failure and later attempts say
+  "Earlier Atlas preparation did not complete (<first failure>)".
+
+Tests (`armport/tests/test_single_player_content.py`, on the real staging
+code): the phone's state (a whole tree of the earlier content, root and one
+folder opened) is sealed again and serves the untouched folders; a content
+tree of the earlier version is removed with its content files and a pending
+file; an opened tree that lost a link is dropped, not refilled; a file that
+is nobody's copy (wrong mode, wrong time, or a hard link) still stops the
+removal with every folder mode unchanged. Three of them fail on 0.13.88 with
+the phone's message. `tools/android/interactive/test_saved_map_preparation`
+covers the named first failure.
+
+CI's update probe (`single_player_probe=update`, `COH_UPDATE_PROBE`):
+`interactive_host.earlier_content_folder` rebuilds the content folder of
+0.13.87 from this one (one line of one file; the result must be the identity
+that version shipped), `stage_app_assets.stage(content_root=)` stages a second
+assets folder with it, and `exchange_staged_files` exchanges by rename the two
+files that differ (the content archive and the runtime manifest that pins it)
+before the creation session and puts them back after it; the reopen runs with
+this version's on the same kept state. One folder is bound in both sessions:
+the first try (45947520586 at `297d58521`) bound the second folder, both guest
+sessions finished, and the host refused the reopen ("World preparation metrics
+differ from complete fresh/reused staging") because the guest had verified the
+world archive again, being another file than its receipt named.
+`update_probe_validate` requires the two identities, a replaced content tree
+(`removed.other_identity_trees`) and reused untouched folders;
+`ARMPORT_UPDATE_PROBE_V1` carries the trees. It replaces the Primalist probe
+in the chain (it makes and reopens a Primalist too).
+
+CI at `ba4f0bc5d` (build 45951872879; `297d58521` was build 45938386864):
+
+| Run | Form | Zone server new / reopened | Trip |
+| --- | --- | --- | --- |
+| 45962174259 | spare + update probe: Primalist made with the 0.13.87 content, reopened with this one's (`class_primalist` twice) | 214.0 s / 167.8 s | 10.3 s |
+| 45966947122 | trusted (APK source) | 368.0 s / 23.6 s | |
+| 45971549887 | heroes probe | 197.5 s / 86.1 s | 80.2 s |
+| 45979451178 | spare | 167.7 s / 23.5 s | 9.3 s |
+
+`ARMPORT_UPDATE_PROBE_V1` in 45962174259: creation built `content_folders`
+(10,715 files) and `untouched_folders` (118,050) in 97.1 s; the reopen removed
+one tree of another identity, built `content_folders` again and reused
+`untouched_folders`, 12.9 s. `ARMPORT_UPDATE_FILES_V1` names the two exchanged
+files. The reopen's zone server compiled the class and power lists again
+(167.8 s; request to ready 330 s).
+
+APK 45984057354 at `ba4f0bc5d`: 93,954,562 bytes, sha256
+`6be15dfb2dd28d48bc104222b0d98d314a94f5384ea4f132dbe7b4e915298e50`, signer
+unchanged, downloaded and hashed; 53 guest files equal the commit;
+`local_character_server.py` and `single_player_content.py` in the file hold
+`restore_shared_seals`, `inspect_shared_tree`, `IDENTITY_HISTORY`; the content
+archive in the file has `files_sha256` `2215c556…`. Sheet:
+`THOR-TEST-0.13.89.md`.
+
+Not shown: the phone's exact state in a real session (one tree of all folders,
+half opened; unit tests only), the app-side fixes of 0.13.88 on Android,
+mission-map navigation on the Thor, a chosen hero saved in another zone, a
+villain second hero.
+
+## 0.13.88 (103): a saved Primalist opens again; a hero made in the character list is accepted
+
+Thor test of 0.13.87, 2026-11-26 (owner): "I was able to create a second
+character alongside Ralakar, primalist icon did not show in character
+creation, when attempting to start with mission maps ticked it failed twice.
+… on the new character, the FPS settings were greyed out for its duration in
+the world". The Primalist-only saved game is not needed (owner) and is left
+as it is.
+
+Exports `20261126-160606` (setup), `-160620` (the hero made in the list),
+`-160736`, `-160749` (the two failed starts):
+
+- **The saved game could not be opened once it held a Primalist.** Both
+  failed starts stop in eligibility with "Character attribute is absent from
+  the accepted mapping: ents.class". Eligibility reads every hero before
+  `prepare_runtime` appends `Class_Primalist` to the accepted names, so a
+  saved hero of that class had a class number nothing accepted. Mission maps
+  had no part in it. No Primalist had been reopened before: the CI hero of
+  0.13.85 to 0.13.87 was a Blaster with the option on, and the 0.13.87 sheet
+  and issue comment were wrong to say CI "created and reopened a Primalist".
+  Fix: `local_login_server.primalist_stored_number()` reads the one stored
+  `class_primalist` row; `single_player_content.accept_stored_class_attribute`
+  accepts it only if it is the number this version would append
+  (`expect_class_attribute`), otherwise the session stops with "The saved
+  game holds the Primalist class under another number than this version
+  expects". `LocalCharacterServer.initialize` calls it before the heroes are
+  read (`eligibility['primalist_class_number']`).
+- **The app reported the created hero's session as failed** ("The guest
+  completed, but its current-session client evidence did not match this
+  APK") although the guest had proved the save. `clientObservationAccepted`
+  wants a session budget for a manual session; a created hero has none.
+  Fix: `ClientAcceptance.createdHeroObservationAccepted` (manual session,
+  finish requested, no budget rows) used by `ClientRuntime.guestAccepted`
+  when `heroCreatedInSession`.
+- **FPS buttons greyed for the created hero.** Two gates:
+  `performanceCommandInputAllowed` needed `sessionBudget.canMove`, and the
+  activity enables the buttons on `sessionPhase` connected/grounded. Fix:
+  `heroCreatedInSession ||` in the first, `ClientRuntime.menuPhase()`
+  ("connected" once a created hero is in the world) for the second; the
+  report keeps `sessionBudget.phase()`.
+- **No Primalist icon in the creator.** `pc_primalist.def` named
+  `archetypeicon_primalist.texture`; the client strips only `.tga` (and
+  three-letter suffixes) when it looks an icon up. Now `.tga`; the build
+  checks the compiled class list. The content identity changes, so the first
+  launch after the update links the content folder and compiles the class
+  and power lists once more. The creator's three showcase pictures
+  (`archetypeshots_<class>_0..2`) do not exist for the Primalist.
+
+Checking the app side without a device: a small harness
+(`Replay.java`, kept outside the repo) runs `ClientAcceptance` over a real
+export. On `-160620` every predicate is true except the 0.13.87 observation
+rule; with the new rule all are.
+
+CI now makes a real Primalist: with `single_player_probe=true`
+`interactive_host.PrimalistCharacterInteraction` picks the Melee play style
+and finds "Primalist" in the archetype list by OCR; the save proof names the
+hero's class (`creation_report['class_name']`), printed as
+`ARMPORT_HERO_CLASS_V1`, and the probe fails unless creation and reopen both
+say `class_primalist`.
+
+Tests: `test_character_profile_eligibility.test_pg_saved_primalist_reopen`
+(real PostgreSQL; fails with the device's message when the fix is disabled),
+`test_single_player_content`, `test_client_zoning_java` "heroes",
+`test_client_sidebar_runtime`, `test_several_heroes`,
+`armport/tests/test_primalist_probe.py`.
+
+CI at `f48a8a244` (build 45879536548). The first probe, 45875126986 at
+`8c9f88ed4`, made and saved a Primalist and failed only in the host:
+`armport_validate_observer` compared the steps with the first hero's script
+(now it takes the interaction that ran; `primalist_projection`).
+
+| Run | Form | Zone server new / reopened | Trip |
+| --- | --- | --- | --- |
+| 45889160018 | spare + Primalist probe: Primalist created, saved, reopened (`class_primalist` twice) | 172.7 s / 23.6 s | 9.6 s |
+| 45893114240 | trusted (APK source) | 389.5 s / 23.9 s | |
+| 45897435657 | heroes probe: HEROTWO made in the list, then THORHERO chosen | 198.1 s / 86.4 s | 78.8 s |
+| 45903889193 | spare | 162.7 s / 23.1 s | 9.2 s |
+
+`ARMPORT_PRIMALIST_FRAME_V1` in 45889160018 carries the creator's archetype
+list as drawn when the bar was found: the Primalist's bar shows its paw icon
+between Scrapper and Brute.
+
+APK 45907324995 from 45893114240, tag `coh-atlas-gameplay-v0.13.88` at
+`f48a8a244`: 93,950,466 bytes (the same size as 0.13.87, another file),
+sha256 `73b5f7e753dcb6ca68d4e04717fa920bbef902fb5d6bea948064f4d0b27a1af0`,
+signer unchanged; downloaded and hashed; 53 guest files equal the commit; the
+dex holds `createdHeroObservationAccepted` and `menuPhase` and no "Switch
+hero slot"; `data/bin/classes.bin` in the client package names
+`archetypeicon_primalist.tga`. Sheet: `THOR-TEST-0.13.88.md`.
+
+Not shown: the app-side fixes on Android (harness and replay only), the icon
+on the Thor, a chosen hero saved in another zone than the expected one, a
+villain second hero, navigation with mission maps on the Thor, travel by a
+hero made in the character list.
+
+## 0.13.87 (102): several heroes in the one account, chosen in the game's own character list
+
+Owner, 2026-11-25: "every account can create multiple characters - I don't
+like the whole 'switch hero' method. Ideally, multiple characters should be
+able to be created per account without that."
+
+Before: a session followed exactly container 1 of COHLOCAL. A second hero made
+in the game's character list stopped the session ("More than one character
+exists") and every later reopen refused that saved game. The account's slot
+count is account data (`ShardAccountCon.slot_count`), so empty slots cannot be
+hidden for a session; a creation inside "Play" has to be followed.
+
+Design (guest; the three layers are the server, the session orchestrator and
+the app):
+
+- **The session's hero** is `local_character_server.HERO_ID` beside
+  `CHARACTER` (`bind_hero(name, id, replace=)`); every check that said ID 1
+  reads it, or checks that the IDs of one record agree
+  (`character_session_budget`, the app's `sameHero`).
+- **Start.** Eligibility accepts N committed heroes of the one account with
+  distinct names. A hero whose first zone never started (name, account, start
+  zone; every MapServer field NULL; rows only in Ents and Ents2[0]) is removed
+  like the first one, under any ID and without touching the ID sequence
+  (`unfinished_hero`, `remove_unfinished_hero`); the single such row keeps the
+  explicit "Resume first character creation".
+- **Baseline.** `capture_baseline` reads every hero before the client can log
+  in (`hero_baselines`: identity, rows, snapshot, login count, saved position,
+  enhancements) and expects the one played last (`hero_order`,
+  `ents.LastActive`); its zone is the one started beside the client.
+- **Choice.** While the session waits at the character list it reads the
+  resume lines of its zone servers for any hero name (`entered_heroes`). A
+  name other than the expected one is another saved hero
+  (`use_hero_baseline(chosen=True)`: ID, name, baseline, saved position; only
+  before the first connection) or a new row (`adopt_created_hero`). Guest
+  event `session_hero`.
+- **A hero made in the character list** turns the running session into
+  `LocalCharacterZoningCreatedHeroServer` (the creation's checks: the new row
+  is the only change to the inventory, its committed rows at save). The proof
+  stays under `character_reopen`, says `created_in_session`, and carries no
+  reopen field; the orchestrator and the app read it as a creation (no
+  session budget, Save available at once).
+- **Zones before the first connection.** Only the expected hero's zone,
+  another saved hero's zone, or the start zone of a row that was not there at
+  the start may start (`other_hero_zone`; the row is awaited up to 10 s). The
+  expected hero's zone, if still loading and never asked for, is stopped; if
+  already loaded it stays and the chosen hero's zone becomes the session's
+  when the hero resumes there (`enter_chosen_zone`). At connection a saved
+  hero must be in its own saved zone (`connection_metadata`).
+- **App.** `ClientAcceptance.sameHero`, `heroCreatedConnectedEvent`,
+  `heroCreatedVerified`, `heroCreatedAccepted`; `ClientRuntime`
+  `heroCreatedInSession`, `reopenedHero()`, `heroId()`, the `session_hero`
+  event sets the expected name; `ClientSessionBudget.character(id)`,
+  `ClientZoning.character(id)`. Play's hint and Setup's "Swap to the other
+  saved game" (the 0.13.85 second slot; saved games are not merged).
+- **Not supported:** deleting a hero in the character list (the inventory
+  check stops the session); two heroes in one launch (Finish, then Play).
+
+Tests: `test_several_heroes.py` (guest), `test_client_zoning_java.py`
+"heroes" (app acceptance), `armport/tests/test_heroes_probe.py`. CI probe:
+`single_player_probe=heroes` adds two sessions to a zc-form run: the script
+makes HEROTWO in the second slot of the character list during a reopen, then
+a reopen enters with the first hero while HEROTWO is the expected one.
+
+CI for several heroes (probe `single_player_probe=heroes`, zc form):
+
+- 45784712557 at `a0430a4cb`: failed in the first creation, "More than one
+  character exists": `LocalCharacterZoningCreationServer` inherited the
+  reopen class's `session_identity` (a saved hero among an unchanged
+  inventory). Fixed in `de0406b28` (the creation rule, and
+  `observe_chosen_hero` False); `test_several_heroes.py` gained the case.
+- 45788558779: all four guest sessions passed; the host's legacy check of the
+  last session expected a one-character profile.
+  `character_reopen_host_smoke.validate_report(heroes=)` (`e55222c2b`).
+- 45798191917 at `e55222c2b`: passed. `second-hero`: ID 2 HEROTWO, heroes
+  count 1, expected 1, chosen 2, `created_in_the_character_list`. `first-hero`:
+  ID 1, count 2, order [2, 1], expected 2, chosen 1, `another_saved_hero`.
+- 0.13.87 chain at `e55222c2b`: build 45807264231; heroes probe 45821035737
+  (same result; zone server 216.9 s new, 87.0 s reopened, trip zone 84.0 s);
+  trusted 45830386270 (372.7 / 24.0 s); spare 45836206662 (157.6 / 23.5 s,
+  trip 9.7 s); spare with both options 45841519885 (188.1 / 23.0 s, trip
+  9.5 s; shared trees content_folders 10,715 + untouched_folders 118,050);
+  APK 45847002904 (93,950,466 bytes, sha256
+  `dab3e731d3c39b6eef7cf23a875ab3cb782e67f41f57c3d5b47d1126a5c22628`, signer
+  unchanged; downloaded and hashed; 53 guest files equal the commit).
+
+Not shown in CI: the app's acceptance of a created hero (the host observer
+runs the second-hero session without an event validator and reads only the
+guest's proof; the Java predicates are unit-tested against hand-written
+records, and were read against `connected_event_data`/`saved_event_data` and
+`adopt_created_hero`, which agree); a chosen hero saved in another zone than
+the expected one (both in Atlas Park); a villain or Praetorian second hero;
+more than two heroes; the awaited-row path (`NEW_HERO_ROW_SECONDS`).
+
+Local PostgreSQL 16 runs in the session container (`pg_ctlcluster 16 main
+start`, database `coh_test_startup_bundle`, `COH_REQUIRE_POSTGRESQL=1`):
+`test_character_profile_eligibility` 41 tests including 22 real-database
+cases, three of them for several heroes (`667cdb541`).
+
+Known leftover in the published APK: `ClientZoning.switchHeroFolders` still
+answers "...; Switch hero slot brings this one back." when the other saved
+game is empty (the button is "Swap to the other saved game"); corrected in
+the source after the release. Test sheet: `THOR-TEST-0.13.87.md`.
+
+## 0.13.85 (100): the Primalist archetype, unlocked content, a second hero slot
+
+Owner, 2026-11-25 (after a review of the "SoloExperienceMod" and a Primalist
+definition zip the owner supplied): "Full implementation of the primalist;
+unlocking of any power sets that state they need to be unlocked; identify
+anything else that is locked and unlock it." 0.13.83 and 0.13.84 are still
+untested on the Thor. Both new features are Test options, off by default; with
+both off the session takes none of the new paths.
+
+- **What the mod review found.** SoloExperienceMod is compiled i25/SCoRE
+  programs and `Parse7` bins; this build is the Issue 24 lineage with `Parse6`.
+  Nothing of it is used. Its trial scripts are plain text and differ from ours
+  by small edits (noted for later: trials without a player minimum).
+- **Locks.** Account locks in the data (1,079 `ProductOwned?`, 1,531 loyalty,
+  837 `auth>` lines; 69 `SetAccountRequires` power set entries, 28 names) all
+  end in `Common/account/AccountData.c`. `accesslevel char> 0 >=` (298 lines)
+  is always true; `> 0` (24) is open to this build's access level 9 account;
+  only 13 temporary test powers need more (`> 9`), and stay locked.
+- **Unlock (COH_UNLOCK_ALL=1).** Client patch 0136 and server patch
+  `patches/mapserver-single-player/0002-unlock-account-content.patch` are the
+  same diff: with `ARMPORT_UNLOCK_ALL=1` in the process environment,
+  `AccountHasStoreProduct`, `AccountIsVIP` and the loyalty node/tier/level
+  functions answer yes; `AccountGetStoreProductCount` is untouched. The
+  DbServer config gains 65 `OverrideAuthBit` lines (`game_diagnostic.
+  UNLOCK_AUTH_BITS`; every name is one `authUserSetFieldByName` accepts).
+  Server claim: `CONTRACT['account_unlock']`, `account_unlock_changed`,
+  `account_unlock_available` (old fast servers keep every lock). The game
+  then grants store and veteran badges and powers at login and the DbServer
+  writes the bits into the character, so a reopen's changed tables are
+  recorded (`unlock_all_changes`), not judged.
+- **Primalist (COH_PRIMALIST=1).** `armport/content/single-player` (39 files,
+  `manifest.json`; never `upstream/`): `defs/classes.def` with the include on,
+  the class file (new; its `ctatprim` store lock kept, so the class shows as
+  locked without the option), the 18 Primalist power files of the
+  zip (own animation bindings, tuned numbers), 17 new `.pfx` files, the class
+  name text, a text for its locked tooltip and `PrimalEnergyTip`. The zip's shared files (inherent, pool,
+  pets, catalog) carry unrelated changes and are not taken; every text key
+  and keyword the files use exists in our data and parser.
+  - Client: the content folder is the first data root when CI compiles the
+    client's bins (`armport-build.yml`, check: `classes.bin` holds
+    `Class_Primalist`). The archetype's product (`ctatprim`) is owned only
+    with `ARMPORT_PRIMALIST=1`, never through unlock-all.
+  - Device server: `single-player-content.zip` in the app (packed by
+    `stage_app_assets.single_player_content`), `android/guest/
+    single_player_content.py`. `stage_map_data` writes a private copy in place
+    of the link to the import (read-only in the shared tree), the tree
+    identity gains the content's identity (trees are prepared again once),
+    and after each prepared-cache install the Parse6 bins under
+    `data/server/bin` whose file table names a replaced file are removed
+    (`drop_stale_bins`; the fast server parses text for a missing bin and
+    writes it). `data/bin` is never touched: those are the client's copies,
+    staged from the import and listed in the kept tree's receipt. Message bins
+    have no file table and are left: the server lacks three display strings.
+  - Database: `vars.attribute` gets `56412 "Class_Primalist"` appended in the
+    session's runtime copy before the DbServer starts, and the expected rows
+    gain it (`append_class_attribute`); the DbServer inserts a trailing new
+    name itself. The archetype is active when requested **or when
+    `dbo.attributes` already holds the name**: a session without the line
+    would fail its schema check. Versions before 0.13.85 fail that check on
+    such a saved game (one-way; said in the option's label).
+- **Second hero slot.** The app holds one hero (profile folder
+  `client/state/diagnostic/android-local-login`). `ClientZoning.
+  switchHeroFolders` renames it to and from `.other-hero` (Setup tab,
+  "Switch hero slot"); with an empty saved slot "Create fresh character" is
+  offered. Run for real in `test_hero_slots_java`.
+- **CI probe.** `armport-app-runtime.yml -f single_player_probe=true` (also
+  `unlock` or `primalist` for one of the two): both sessions with
+  `COH_PRIMALIST=1` and `COH_UNLOCK_ALL=1`; its own notice "single player
+  <session>" (`primalist`, `content`, `single_player_stale_bins`,
+  `account_unlock`, `class_compiled`, `kept_data_trees`, `unlock_all_changes`,
+  `single_player_database`). Use a form with `external_maps_run_id` (the app's
+  DbServer), never the bare trusted form: see the first item below.
+- **Found by the probe, in order (four builds).**
+  1. *CI's 0.10.0 donor DbServer cannot reopen an unlocked hero* (runs
+     45587687203, 45599411952): unlock gives a hero 24+ reward tokens; that
+     DbServer reads child rows in heap order and then inserts row (1, 0) again
+     (`pk_rewardtokens`). The level-up repair layer orders by SubId
+     (`patches/levelup-ui-repair/0001-pg-empty-row-witness.patch`) and the app
+     always ships it under the external-maps DbServer. Not an app fault.
+  2. *The creator script stayed on the Body page* in two of five runs with
+     unlock (45582592008, 45595038618; words on screen: Body, HUGE, the
+     name). The Next click is sent again after 3 and 8 checks
+     (`COSTUME_RECLICK_AT`); not seen again since.
+  3. *Every launch with the Primalist prepared the zone data anew* (run
+     45627352623: reopen compiled 95 files, zone server 167.5 s instead of
+     23 s). Cause one: the mirror's `single_player_files` count was an unknown
+     key in the kept tree's receipt ("Atlas cache inventory differs") — now
+     `OPTIONAL_STATS`. Cause two (run 45651572658): the first pass removed
+     `data/bin/classes.bin` and `powers.bin`, receipt-listed files — now
+     `BIN_ROOTS = ('server/bin',)`. Both refusals were silent by design (an
+     unusable cache must not block a session); `kept_data_trees` in the
+     probe's notice now shows them. `test_a_kept_tree_with_the_content_is_
+     taken_again_by_the_next_session` runs the real seal, release, checkout.
+  - Diagnostics kept: a failed session prints `ARMPORT_FAILURE_WIDE_V1` (the
+    DbServer's first failed statement, the creator's screen words) and
+    `ARMPORT_FAILURE_FRAME_V1` (a 32-colour copy of the last screen check,
+    base64) as plain log lines; every creation logs
+    `ARMPORT_CREATOR_COSTUME_V1`. A notice is cut at 4096 characters.
+- **Not covered by CI.** Creating or playing a Primalist (CI's creation clicks
+  a Blaster), the menus with unlocks, the hero slot on Android, the rebuild
+  time of `powers.bin` on the Thor.
+- **Known gaps.** No archetype icon or selection screenshots (the icon in the
+  zip is not installed: the client's data view takes bins only), no ancillary
+  pools for the class, balance untested.
+- **The APK packer's inventory bound.** The first APK run (45700074655, after
+  a full passing chain at `6bbb472c3`) stopped in `stage_app_assets`: 97 client
+  inventory entries for a bound of 96 that the device checks too
+  (`client_startup_diagnostic.verify_assets`). The archive is staged outside
+  that inventory (like the zone graphs); the bound is 128 on both sides
+  (`CLIENT_INVENTORY_LIMIT`), and `client_startup_diagnostic.py` is in
+  `CHANGED_RUNTIME`. The published APK has 96 entries and 106 runtime files.
+- **Chain.** Release commit `6bb8db37e`: build 45701470085; trusted
+  45715767338 (zone server 387.0 s new, 23.8 s reopened, 0 files compiled on
+  reopen); both options with the spare server and the app's DbServer
+  45720659785 (172.8 s new, 23.4 s reopened, kept tree reused, 0 files
+  compiled on reopen, trip's zone ready 9.3 s, 2 arrivals, save verified);
+  APK 45724776095 (93,934,082 bytes, sha256
+  `b2dae94d0502a65087481ed4991120989ec537252dd410e9009dde1e038524af`, same
+  signer, 53 guest modules equal the commit, content archive members equal
+  the repository's, client `classes.bin` holds `Class_Primalist`, both
+  switches in the client and the fast server). With the options off, one
+  commit earlier (`6bbb472c3`, build 45659793098; the two commits differ in
+  the inventory bound, the staging of the archive, tests and notes): zone
+  change 45683248678 (trip's zone ready 81.3 s on the 0.13.36 server), trusted
+  45689127387, spare 45694752114 (22.9 s reopened, trip's zone 9.3 s), both
+  options 45677583511. Earlier builds: 45568455266 (`66fc30b61`), 45612110480
+  (`b8bb32c6a`), 45635506344 (`01fa7953e`).
+
+## 0.13.84 (99): mission maps as a test option
+
+Follows 0.13.83 by hours (2026-11-24); neither has been on the Thor. The
+design is in the 0.13.83 section's "Mission maps" bullet. What the CI probes
+(`armport-app-runtime.yml -f mission_probe=true`, zone-change form: stock
+server, no zone pack, mission map in the Atlas tree) added:
+
+- **Probe 45503799391 (failed, arrival not read).** `/startmission
+  L1_P_Clockwork_Mission1 *` made the DbServer ask for map 915 (`is_static`
+  0, `maps/Missions/Office/Office_30/Office_30_Layout_03_01.txt`, mission
+  info `1:0:0:284:284:36:...`): mission ids start right above maps.db's
+  static ids, inside the app's 1-999 "static zone" range. The request was
+  admitted, the server ready in 67.7 s, the game loaded the map
+  (`ready.sent` 0.7 s: 45 group files). The arrival was looked for under
+  the log route `<world>_1`; a map outside maps.db logs as `<file name>_0`
+  (`staticMapInfo.c` instance 0, `logcomm.c s_getInstNameForLogging`).
+  `register_mission` now sets instance 0.
+- **Probe 45510289790 (failed after the arrival).** Arrival recorded 146 s
+  after the request (the stock server's late log). The next
+  `interaction_deadline` ended the session: `SessionBudget.identity` knew
+  static zones only. The zoning server now marks the proof (`mission_map`,
+  cleared on the way out) and the budget accepts it. The same class of
+  defect as Thor 0.13.56 (King's Row); `test_manual_session` now walks a
+  mission arrival and return through the deadline check.
+- **Probe 45514604480 (passed).** In (`office_30_layout_01_02`), out with
+  `/exitmission` to Atlas Park, `/stuck`, save verified. The mission's
+  server ended by itself after the hero left (`mission_maps.ended`, exit
+  code -11: the process died on a signal while shutting down); it is
+  forgotten, as designed.
+- **Probe 45544977220 (passed; trusted server, spare, deferred loading: the
+  Thor's set).** The warm spare (20.2 s to warm, loaded 50.6 s before the
+  request) was assigned map 915 and had it ready 2.1 s after the request
+  (server map load 888 ms; deferred beacons 43 ms, PhysX 162 ms). The
+  client loaded it in 1,239 ms (`group_load` 867 ms, 51 files) after a
+  3.7 s transfer; arrival recorded 5.6 s after the command, the return to
+  Atlas Park 10.4 s. The emptied mission server was stopped for the next
+  spare (`evictions`: `room_for_the_spare`) before it ended by itself, so
+  no -11 exit here. `ready_route` `embedded_dbserver_logserver`,
+  `mission_maps` `arrivals` 1, `returns` 1, `refused` [].
+- **Not covered by CI.** The shared zone tree with the mission leaves
+  (`zone_tree_collision(True)`; CI has no zone pack), a mission entered by
+  its door, enemies and objectives, the app's side (`ClientZoning`
+  accepts the marked arrival in the Java harness only), saving inside a
+  mission, a second mission in one session.
+- **Chain.** Build 45521275964 at `ec0c2c48c` (third attempt: 45519716880
+  and 45520472353 failed in `libraries`, whose sparse checkout has neither
+  the untracked pack manifest nor `docs/`; the audit evidence moved to
+  `armport/evidence/`). Zone change 45532798713; trusted 45537091983
+  (370.8 s new, 23.9 s reopened, map load 4,843 ms); spare 45541284416
+  (arrivals 19.4 s and 10.7 s after the command; 19.5 and 10.8 in 0.13.83);
+  mission 45544977220; APK 45549409571 (93,622,615 bytes, sha256 df82f6ae...69f4c7, signer unchanged, 52 guest files equal the commit).
+
+## 0.13.82 (97): citizen names, the hero's arrival read at once, a third zone server
+
+From the Thor test of 0.13.81 (exports 20261124-043617 A defaults, -044655 B
+`client_group_bins`, -045740 C both options; all passed) and two owner notes.
+
+- **Thor 0.13.81.**
+  - Trips, request to arrival: A 39.8 s (spare loaded 15.8 s before the
+    request, not warm), 50.4 and 42.8 s cold (no spare: see below); B 20.0 s
+    (warm spare, ready 18.0 s); C 29.0 s (spare loaded 20.9 s before) and a
+    warm spare with deferred loading: `db_connect_begin` to `ready_published`
+    10.86 s, `ARMPORT_DEFERRED_LOAD_V1 trigger=world_sent waited_ms=3235
+    beacons_ms=3938 physx_ms=271`, the client's `map.start` about 10 s and
+    `ready.sent` about 16 s after the request by its tick clock.
+  - Client group loads, `full_ms`: A 4296/5056/4056/5024; B 9010 (wrote 428),
+    5121, 5133; C (all from .bin) 2471/3666/4020.
+  - Request pick-up: the game logged "moving to map" in the same second the
+    request was seen (`travel_request_ticks.for_new_request` 2).
+  - **The session read the hero's arrival 45-74 s late.**
+    `native_ready_to_observation_ms` 73 s (A), 74 s (C); C's second trip was
+    recorded at 61.3 s, by the two-minute room probe. The record is the
+    entity log's "Connection:ResumeCharacter"; `logcomm.c` batches for
+    `SECS_LOG_RESEND` 30 s and `log.c` holds lines `LOG_WINDOW` 60 s to sort
+    them. Waiting on it: the app's "connected" phase (FPS buttons, Save),
+    `_spare_wait_reason` (`character_not_in_the_world`, then 30 s settle), and
+    after a trip `_make_room_for_spare`, whose own probe found the arrival
+    and then waited `SPARE_ROOM_PROBE_SECONDS` 120 s (eviction 121.9 s after
+    arrival in C).
+- **Server layer `patches/mapserver-single-player`** (always on, no switch;
+  `NpcNames.c`, `parseClientInput.c`, both pristine in the baseline closure).
+  - `ReadNameFile` split lines at CR only; `upstream/i24` name lists are LF,
+    so `s_NPCNamesMale/Female` and every `RandomNameFile` list were empty and
+    `npcAssignName` set nothing. Now `strcspn(s, "\r\n")`. Native cases
+    `npc_names`, `npc_names_crlf`; the unpatched control fails `count == 4`.
+    The literal "null" the owner saw was not located.
+  - `resumeCharacter` prints `ARMPORT_CLIENT_READY_V1 utc_ms= map_id= port=
+    name="" auth=""` at its last return. Evidence only.
+- **Guest.** `character_zoning.console_ready` builds the same record shape as
+  `stock_ready` (`log_route: owned_zone_server_console`, same `source`);
+  `stock_ready_now` reads the zone's console first, the entity log otherwise
+  (`character_zoning.ready_records` counts both); used for the first
+  connection on a non-Atlas zone and for arrivals (`_poll_stock_logs`,
+  `arrival_source: zone_console_resume_character`). `stock_zone_binding`
+  accepts either route. Atlas Park (map 1) keeps its legacy record.
+- **App.** No typed `/maxfps 60` for the ARM64 client (`gameplay_60fps_auto
+  skipped=client_starts_at_60`; `sendChatCommand` takes 3.2 s with input
+  held). `zone-load-after-ready` defaults on. New `keep-previous-zone`
+  (off): `COH_KEEP_PREVIOUS_ZONE`, only with the spare; policy capacity 3,
+  `_make_room_for_spare` keeps the zone left last, `_assign_spare` and
+  `_spawn_map` allow a third server. 25 options: 19 ticked, 6 unticked.
+- **Client** patches 0134 (group-load split) and 0135 (transfer boundaries)
+  are in this build.
+- **Chain** (published: APK 45382486718 at `4953444f6`).
+  - Two failures before it. Build 45334270110 (`70f7a048c`): zoning guards,
+    `stock_ready_now` assumed `zoning_report`. Build 45335083041
+    (`2acf2f643`) passed and its trusted run 45352283396 failed, "Atlas
+    exited during character creation": `fflush(stdout)` in
+    `parseClientInput.c` is `x_fflush((FileWrapper *)stdout)` there (`file.h`
+    through `storyarcutil.h`; MSVC only warns) and asserted at the first
+    `resumeCharacter`. Now `fflush(fileGetStdout())`;
+    `armport/tests/test_server_console_flush.py` checks every map server
+    layer, the native check requires the new flush.
+  - Build 45356454107. Trusted 45371360117: zone server start 371.1 s for a
+    new character, 23.9 s reopened (358.8, 23.4), map load 4,770 ms.
+  - Spare 45377119759 with `defer_zone_loads` and `keep_previous_zone`:
+    `ready_records` 5 from the console, 0 from the entity log. Trip to 101:
+    zone ready 10.7 s after the request; client `xfer.wait` to `map.start`
+    11.9 s, load 7.9 s. Trip back to map 1, still running: `xfer.wait` to
+    `map.start` 2.45 s, no start, no eviction. Arrivals recorded 27.1 s and
+    24.1 s after CI typed the command (0.13.81: 78.8 s for the second; its
+    first, 13.0 s after the request, was before the client's `CLIENT_READY`
+    could have been sent and is not explained). `_poll_stock_logs` still runs
+    every `POLL_SECONDS` 5 s. `keep_previous_zone.kept` 0 and one spare
+    start: the run ended before a second spare, so three servers together
+    are unit-tested only.
+  - Zone change 45347675663 (build 45335083041, same client), patch 0134:
+    `full_ms` 5,756-6,391, of it `read_ms` 1,586-2,039 and 166 geometry
+    loads 492-684 ms; about 4 s is building the definitions. Patch 0135, a
+    trip to a running zone: `xfer.wait` to address 0.5 s, disconnect 10 ms,
+    connected 0.2 s after the address, `map.start` 1.9 s after that.
+  - APK: 93,614,346 bytes, sha256 `625c6cbc...b76eff8a`, signer unchanged,
+    51 guest files equal the commit; the client holds the 0134 and 0135
+    strings, the trusted MapServer `ARMPORT_CLIENT_READY_V1`.
+- **Next.** Read arrivals from the console twice a second (5 s now); a
+  console line for logout; Atlas Park's first connection still uses the
+  legacy record; where the 4 s of definition building and the 1.9 s between
+  connecting and `map.start` go.
+
+## 0.13.81 (96): faster request pick-up, two experimental options (Claude, 2026-11-23)
+
+0.13.81 is 0.13.80 with the request pick-up below (always on), client
+patches 0132 (CI switch only) and 0133 (app option), and the server layer
+`mapserver-deferred-load` (app option), described in the sections below.
+Version, notes and `THOR-TEST-0.13.81.md` at the chain's head.
+
+- **The five-second grid.** `request_to_map_ready_seconds` was 10.08, 10.09,
+  10.14 and 15.1 s in CI and 20.21, 20.25, 20.33 and 25.29 s on the Thor:
+  always a multiple of five plus the tick's own time. The session inspects
+  its evidence every `PROGRESS_POLL_SECONDS` = 5 s
+  (`client_interactive_diagnostic`), and `tick_external_maps` (the DbServer's
+  request files, the spare's hand-over, a start's readiness) ran only inside
+  that inspection. A trip's request waited 0-5 s before anything was started,
+  and the recorded request time was the inspection's, so the wait was not in
+  any measurement. (Readiness was also only *observed* on that grid, which
+  is what made the figures multiples of five; observing costs a trip
+  nothing. The one Thor 0.13.79 trip with both ends recorded, 73 to 71 in
+  export 20261121-202117: the game logged the move in second 1795292295, the
+  request was seen at ...298.270, 2.3-3.3 s.) The DbServer and the source zone server do not wait
+  (`waitingEntitiesCheck` runs every `msgScan`).
+- **Fix.** `LocalCharacterServer.tick_travel_requests`, called from the
+  session loop's 0.1 s pass (`between_polls`) while the character plays:
+  twice a second one listing of the request directory
+  (`ExternalMapSupervisor.unseen_request`); only for an undecided request,
+  or while a started zone is not ready, the ordinary tick runs at once. The
+  spare's idle work (`tick_spare`, graphs ahead) keeps the five-second
+  cadence. Report: `travel_request_ticks`. Tests: `test_stock_travel`.
+- **First measurement of the layers** (run 45153845159 at `4d4dc1043`, both
+  options on): the deferred steps ran (creation session: `waited_ms=1290
+  beacons_ms=22`; CI's Atlas beacon work is small); creation zone start
+  188.3 s to 167.8 s (the mesh cooking moved after ready), reopen stamped
+  span 20.15 s to 18.52 s; the trip's "ready" stayed on the grid (10.14 s).
+  CI now prints every zone server console's numbers (`zone server loads
+  <session>` notice, `interactive_host.zone_server_loads`).
+
+- **Chain** at `ca58343c8` (build 45160491073; runtime runs with
+  `server_emulation=x87`).
+  - Zone change 45175868959, `client_group_bins=true`: creation
+    `text=541 wrote=541 full_ms=9861`, ready.sent 12.2 s; three reopen loads
+    `bin=541 text=0 full_ms=5567..5668`, ready.sent 7.15-7.35 s (0.13.80:
+    6352..7539 and 8.2-9.5 s). So parsing was about 1 s of `full_ms` and the
+    write costs about 3 s once per zone. Zone starts 192.5 / 81.3 / 78.3 s.
+  - Trusted 45181648415 (defaults): creation 358.8 s, reopen 23.4 s, map load
+    17,823 / 4,523 ms. Its client `full_ms` is 12.4 / 10.4 s (0.13.80's
+    trusted run 45125692618: 13.7 / 11.3 s): that run has no
+    `proot_ioctl_filter`, the other two do.
+  - Spare 45187469113, `defer_zone_loads=true client_group_bins=true`:
+    `client_group_bins` absent before creation, present before reopen;
+    deferred records, all `trigger=world_sent`: creation `waited_ms=1301
+    beacons_ms=23 physx_ms=2717`, reopen `1227 / 19 / 253`, zone 101 through
+    the spare `2877 / 14 / 237`. Trip: ready 9.28 s after the request
+    (observed within a second now), `request_to_client_world_ready` 12.96 s,
+    arrivals 13.2 / 78.8 s (0.13.80: 11.7 / 74.2), no resends. **3.7 s
+    between a ready zone and the client's new world is unexplained**
+    (suspect: `netSendDisconnect(&comm_link, 5.f)` in `commServerMapXfer`).
+  - APK 45193693577: pre-release `coh-atlas-gameplay-v0.13.81`, 93,606,154
+    bytes, sha256 `74648e103162bbb2b8b1c0b613097160af0e5cc77757e339dc368eb8790f8ba7`,
+    signer unchanged, 51 guest files equal the commit, client holds
+    `ARMPORT_GROUP_BINS`, trusted server `ARMPORT_DEFER_ZONE_LOADS`.
+- **Prepared for the next build** (round3 only, not in 0.13.81): client
+  patch 0134 (`read_ms write_ms geoload geoload_ms` on the group-load line:
+  what the 5.6 s left of `full_ms` is; `geoLoad(..., GEO_INIT_FOR_DRAWING)`
+  per library file is the suspect) and 0135 (`xfer.wait/address/
+  disconnected/connect.begin/connected/scene.done` in the quiet log; the host
+  reports them as `transfer_ms_before`). Tests `test_group_load_split`,
+  `test_transfer_boundaries`.
+
+## 0.13.81: the client keeps prepared group files (patch 0133; Claude, 2026-11-23)
+
+- **Why 0132 was not enough** (CI run 45148219890, `client_library_bounds=true`,
+  see the next section): the kept bounds worked (`kept=341`, then
+  `cached=282 / 480 / 506`, `full=147 / 18 / 0`), and `groups.files.done` fell
+  from about 7.0 s to 2.3 s after `map.start`. But `ready.sent` only fell from
+  8.2-9.5 s to 7.9-8.4 s: the files are loaded anyway, later, by the map
+  file (`map_ms` 0.28 s to 2.2 s) and by `finishLoadMap` (0.33 s to 4.6 s:
+  `vistrayDetailTrays`, `groupWeldAll` open every tracker). This client
+  needs every referenced library file at a zone load; loading them later
+  gains nothing. 0132 stays a CI switch (`client_library_bounds`), without
+  an app option.
+- **The cost is the form they are read in.** The client is a production
+  client on loose data (patch 0042); `tools/android/game/prepare_game_data.py`
+  forbids `.bin` in imported data; only a development client writes
+  `geobin/<file>.bin` after parsing (`groupLoadInternal`). So each library
+  file is parsed from `.txt` at every zone load, about 20 ms each. The x86
+  server writes and reads these bins: its map load is 18.5 s in the session
+  that writes them and 4.8 s after (CI 45125692618).
+- **Patch `0133-armport-group-bins-kept.patch`** (`Common/group/groupfileload.c`;
+  totals in `armport_group_load_log.h`, `groupnetrecv.c`). With
+  `ARMPORT_GROUP_BINS=<absolute folder>`: `makeBinName` names the bin under
+  that folder instead of `geobin/`, and a file that had to be parsed is
+  written there (`groupWriteGroupAndRootnameToBin`, the development
+  client's own writer). Absolute paths bypass the folder cache
+  (`fileExists`: one stat). A production client accepts a bin by signature
+  and parse-table checksum only (`ParserIsPersistNewer`), no source dates,
+  hence the folder per data identity. Totals line: `bin= text= wrote=`.
+- **Why not `geobin/`.** The data view's identity (`merge_links`,
+  `tree_sha256`) covers every source directory with its times, the private
+  `geobin` included. Writing bins there would change it at each launch that
+  wrote one: all links revalidated and the saved file list thrown away
+  (about 110 s each on the Thor).
+- **Guest.** `COH_CLIENT_GROUP_BINS=1` →
+  `armport_interactive.client_group_bins_environment`: folder
+  `armport-group-bins-<identity[:24]>` beside the saved file list, folders
+  of other identities removed, report key `client_group_bins`. CI input
+  `client_group_bins`. App option "Keep prepared zone object files
+  (experimental, ARM64 client; faster zone loading)", pref
+  `client-group-bins`, default off (lists: 18 ticked, 6 unticked).
+- **Tests.** `armport/tests/test_group_bins_kept.py`.
+- **Not known before the chain's runs:** whether the production client can
+  write and read back these files, and how much faster a zone load is.
+
+## 0.13.81: the client keeps object library bounds (patch 0132; CI switch only)
+
+Built and run in CI; a CI switch without an app option (see above).
+
+- **What 0.13.80's measurement showed** (CI run 45121536099, patch 0131's
+  line, four loads of Atlas Park by the ARM64 client): `total_ms=6705..7939
+  files=508 known=166 bounds=0 full=341 full_ms=6352..7539 map_ms=270..334
+  defs=111 defs_ms=0`. Of a zone's 508 group files, 341 object library files
+  are loaded in full at every zone load, about 20 ms each, 95 % of the span.
+  The engine's shortcut (`objectLibraryLoadBoundsFile`: a `geobin` `.bounds`
+  file whose checksum equals the server's lets the file stay unloaded, its
+  public definitions only get bounds and are loaded when first needed) is
+  refused for all 341. The server's checksum is over bounds its x86 build
+  computed; the client has its own private `geobin` and no matching files.
+  Whether it has any `.bounds` files at all is not known.
+- **Client patch `0132-armport-library-bounds-kept.patch`.** With
+  `ARMPORT_LIBRARY_BOUNDS_CACHE=<file>`: after `groupLoadFull` of a library
+  file the public definitions' names and bounds are kept (what
+  `objectLibraryWriteBoundsFile` would write), in memory and in the file at
+  the end of the zone's group files (own format, Win32 file calls, checksum,
+  temporary file and rename). At a later zone load a kept file is not loaded:
+  `objectLibrarySetBounds` for each kept definition, as the engine's shortcut
+  does. The engine's own check still runs first. An entry holds the library
+  file's `fileLastChanged` and is not used when that differs. Totals line:
+  `cached= cached_ms= kept=`. `groupfileload.c`, `groupfilelib.c` untouched.
+- **Guest.** `COH_CLIENT_LIBRARY_BOUNDS=1` → `armport_interactive.
+  client_library_bounds_environment`: the file is
+  `armport-library-bounds-<identity[:24]>.bin` beside the saved file list,
+  named by the data view's identity (`folder_cache_identity`), files of other
+  identities are removed; report key `client_library_bounds`. CI input
+  `client_library_bounds`; no app option.
+- **Not known.** Whether the world is drawn complete and without long
+  first-frame stalls when library files load on first need: the retail game
+  worked this way, this client never has. CI can show the load times and
+  that the session passes; the picture must be looked at on the Thor.
+- **Tests.** `armport/tests/test_library_bounds_kept.py` (the store runs on
+  the host over POSIX stand-ins in `armport/tests/library_bounds/`, with
+  sanitizers when the compiler has them), `test_client_routing.py`.
+- **Next.** Build; a stock-travel run with `-f client_library_bounds=true`:
+  the creation session keeps (`kept=341`), the reopen session's loads must
+  say `cached=341 full=0` and show what `ready.sent` becomes.
+
+## Prepared for 0.13.81: a zone server finishes its load after it is ready (Claude, 2026-11-23)
+
+Not built and not run anywhere yet: written while the 0.13.80 chain ran, host
+tests only. Off by default at every level.
+
+- **Why.** Thor 0.13.79, a trip through the spare zone server (zone 72,
+  console tail of export 20261121-202117): the server loads 18.8 s after the
+  request (map 8.4 s, `loading beacons` 4.7 s, encounter groups 2.1 s,
+  collision triangles 1.7 s, `Starting novodex` 1.5 s), is ready, and the
+  client connects 0.3 s later, has its world 77 ms after that and then loads
+  the zone for about 8 s while the server waits.
+- **What.** Server layer `patches/mapserver-deferred-load/0001-finish-zone-load-after-ready.patch`
+  (`armport_deferred_load.h`, `groupnetdb.c`, `groupnetsend.c`,
+  `beaconFile.c`, one call in `svr_init.c`'s main loop). With
+  `ARMPORT_DEFER_ZONE_LOADS=1` the first map load of a process leaves two
+  steps for the main loop: the beacon file (until then `beaconReload` runs
+  without the file: the state of a zone that has none) and the PhysX world
+  with the geometry free after it. They run before a tick, 500 ms after the
+  first full world update went to a client, or after 3 s without one, or
+  before a later map load. They are the server's own reload paths
+  (`beaconreadfile`: `beaconReload`; `beaconCheckBlocksNeedRebuild` pairs a
+  rebuild with `dbDoorCreateBeaconConnections`; `nxs_init_world`:
+  `nwInitializeNovodex`; every PhysX use is behind `nwEnabled()`). Record:
+  `ARMPORT_DEFERRED_LOAD_V1 status=ok trigger= waited_ms= beacons_ms= physx_ms=`.
+  Expected: about 6 s off a trip and off a zone start a client waits for.
+- **Not known.** Whether NPCs, pets, pedestrians and cars behave the same
+  after a late read: no CI check sees them move. The audit of beacon users
+  outside `beacon/` and `ai/` found only the door connections (re-made),
+  `validate_spawn_points` (off) and a developer banner on the client (the
+  world update says "loaded" while the read is pending). It must be played.
+- **Switches.** Guest `COH_DEFER_ZONE_LOADS=1` (sets the server variable only
+  for an admitted build that has the layer; report key `deferred_zone_load`);
+  CI input `defer_zone_loads`; app option "Finish zone loading while the
+  game loads the zone (experimental, needs Fast server)", pref
+  `zone-load-after-ready`, default off. `START_OPTIONS_V1.deferred_zone_load`,
+  `atlas_mapserver_phases.deferred_load`.
+- **Tests.** Native fixture cases `deferred_load*` (six, with the unpatched
+  control) and call-site checks in `armport/tests/server_metrics_native.py`;
+  evidence regenerated with `tools/regen_host_checks.py` of the scratchpad
+  (stage `retained_progress` from the baseline root, run the fixture with
+  `--negative-control`, write `armport/evidence/mapserver-startup-retained-host-checks.json`).
+  The MSVC build of the layer happens first in the next `armport-build.yml` run.
+- **Next.** Build; A/B the spare run with and without `-f defer_zone_loads=true`
+  (compare `request_to_client_world_ready_seconds` and the Atlas console's
+  record); then a Thor test with the option ticked that watches NPCs and a pet.
+
+## Thor test of 0.13.79 and what 0.13.80 does about it (Claude, 2026-11-22)
+
+Exports `coh-atlas-gameplay-20261121-174319` (setup), `-174331` (first launch
+after the update), `-202117` (launch A, recommended options, three trips) and
+`-203001` (launch B, `server-x87-64bit` off, one trip and back). All 0.13.79,
+all `passed`; `ARMPORT_FRAME_RATE_V1` median 61 in the world in each.
+
+- **Trips** (request to the client's "Established successful MapServer
+  connection"), all through a spare:
+  - A, 71 to 72 (known): 30.7 s. Request to hand-over 7 ms
+    (`graphs_checked_ahead` had done 72's receipt check, 1.9 s, ahead);
+    spare `group_load_done` 18.79 s (it cooked 1,138 meshes new to the
+    0.13.79 server, `cook_ms` 1,118); client 10.9 s.
+  - A, 72 to 73 (never visited): **67.7 s**. Request 20:14:38.9, hand-over
+    20:15:16.3: 37.4 s in `install_zone_beacon_graph(73)`
+    (`launch_receipts.zone_graph_73`: `ran_in_full`, `no_receipt`, 35.6 s),
+    then 19.3 s and 10.2 s.
+  - A, 73 to 71 (known): 25.6 s (hand-over 3 ms, 15.1 s, 9.4 s).
+  - B, 71 to 72: **49.4 s**. Hand-over 16.5 s after the request:
+    `zone_graph_72` `ran_in_full`, reason `directory_changed: server`,
+    14.6 s; and `zone_graph_71` the same at launch, 11.0 s.
+- **Why B's receipts failed.** A receipt lists every directory that holds one
+  of the step's leaves, with its listing. `zone_beacon_package.install`
+  returned the zone's marker (`data/server/zone-beacons-<id>-installed.json`)
+  among the leaves, so every zone's receipt listed `data/server`, and A's
+  install of zone 73 added a marker there. Each new zone therefore cost every
+  other zone one full run in the next session.
+- **Why a full run takes 35 s.** `install` inventories the zone's inputs
+  three times (before, after the proofs, before the marker); each inventory
+  walks the object library and tricks (8,700 inputs: lstat and stat of every
+  entry, stat of every target) for about 9.5 s through PRoot. The scopes are
+  the same for every zone.
+- **x87 option on the Thor** (A with, B without, 0.13.78 without): Mercy
+  Island cold `definitions_done` 22.1 / 18.7 / 19.5 s, `group_load_done`
+  17.3 / 17.5 / 17.7 s; Port Oakes on a spare `group_load_done` 18.8 (with
+  1.1 s of cooking) / 19.7 / 19.8 s. No difference outside run-to-run
+  variation. Cooking: 1,868 meshes in 2.08 s (`cook_ms`) against 9.7 s in
+  0.13.78. CI's gain was cooking and does not carry to a start with a cache.
+- **B's spare was assigned before the session had marked it warm**
+  (`warm: false`, `db_connect_begin` 21.6 s: it had been waiting 21.6 s when
+  the assignment came, 51.7 s after its launch). The hand-over was late
+  because of the graph install above, not because the spare was loading.
+- **The spare starts late after login**: launched 73-76 s after the client's
+  connection, because the session records "connected" 69-76 s after the
+  client (`observer_seconds_after_client`), then waits 30 s. Not changed.
+- **Client zone load** (patch 0130, four loads in A): `map.start` to
+  `ready.sent` 6.8-8.2 s; `groups.files.done` at 5.5-6.8 s; then
+  `map.finish.done` +0.6 s, `collision.done` +0.35 s, textures +0.4 s.
+- **The 174331 launch** connected 452 s after the guest started: the client
+  window appeared at 163 s (`texture_header_index` 67.3 s, once after an
+  update) and the login was made 272 s later (the login screen was shown
+  throughout). The zone server reached its main loop in 48.8 s.
+
+### 0.13.80 (95): what changed
+
+- **The marker is not a receipt leaf**
+  (`local_character_server.zone_graph_with_receipt`). The receipt lists the
+  directories of the inputs and of the zone's own graph files only.
+  `test_a_launch_receipt_spares_a_later_start_the_input_walk` now writes
+  another zone's marker and world folder and fails without the change.
+- **The shared inputs are walked once**
+  (`zone_beacon_package.shared_inventory`, used by `inventory(...,
+  shared_store=)` and so by all three inventories of `install`).
+  `scope_rows` reads every directory of `data/object_library` and
+  `data/tricks`: identity, times and listing, one `lstat` and one `scandir`
+  each, no file `stat`. First time: rows, the unchanged
+  `atlas.collision_input_snapshot` over the two scopes, rows again (must be
+  equal); the fingerprints and rows are kept in memory and in
+  `launch-receipts/zone-shared-inputs-<names hash>.json` (identity: the
+  declared names and the code of two files; 30 days). Later: rows only, and
+  the kept fingerprints if they are equal. The zone's own map folder is
+  walked every time. If `scope_rows` cannot run, the plain walk decides as
+  before. Not seen by the kept result: an input rewritten in place; a full
+  install still stats every input against its proof
+  (`test_an_input_rewritten_in_place_is_still_caught_by_a_full_install`).
+  A tree of 8,887 linked inputs in 3,242 directories (scratch `bench/`):
+  one inventory makes 43,000 path system calls as a plain walk and 6,600
+  with the kept result; both return equal values.
+- **Receipt checks of several zones share the directory rows**
+  (`launch_receipts.reusable(rows=)`): the caller's dict; dropped after 60 s
+  and after any install.
+- **Every zone is made ready ahead** (`character_zoning._check_graph_ahead`,
+  `zone_graph_order`, `GraphsAheadContext`): while a warm spare waits, no
+  zone is starting and no request is waiting, one zone a tick: the zones
+  with a stored receipt first, then the rest by the distance of their map id
+  from the hero's zone. The step is the trip's own
+  (`install_zone_beacon_graph`); its `context.check()` also asks every
+  0.25 s whether a `map-<id>-<cookie>.json` request the session has not
+  taken, or `character-logout.json`, exists, and then raises
+  `GraphsAheadStopped` (a `Cancelled`): nothing is remembered, and the zone
+  is tried again 20 s later. A full install is followed by a pause of twice
+  its length. A result that is not a verified graph is forgotten, so the
+  trip decides for itself. Report: `spare_zone.graphs_checked_ahead` (first
+  80), `graphs_ahead_done`, `graphs_ahead_stopped`.
+- **The receipt identity changes** (two of its three hashed files changed),
+  so each zone runs in full once after the update: by the marker, about 4 s
+  with the kept shared inventory, and about 15 s for the first one, which
+  builds it.
+- **None of this runs in CI**: CI's zones (1 and 101) are in the Atlas tree,
+  which has no zone graphs. Unit tests and the scale check only; the Thor's
+  launch A is the first run.
+- **The client measures its group-file span** (client patch
+  `0131-armport-group-load-totals.patch`; evidence only). Between
+  `map.start` and `groups.files.done` the client runs `clientLoadMapStart`,
+  then per library file `groupFileFind`, `objectLibraryLoadBoundsFile` (a
+  `geobin/....bounds` read) and, if that is refused, `groupLoadFull`; then
+  `groupLoadTo` for the map file and its layers; and `receiveDef` for every
+  definition the server sends (`groupLoadRequiredLibsForDef` reads geometry
+  files at once). `Game/src/group/groupnetrecv.c` makes the same calls in
+  the same order and adds up their time (`armport_group_load_log.h`,
+  `QueryPerformanceCounter`); one line per new world, only with
+  `ARMPORT_STDIO_LOG`: `ARMPORT_GROUP_LOAD_V1 total_ms= start_ms= files=
+  sent= known= bounds= bounds_ms= full= full_ms= map_ms= defs= defs_ms=
+  libs_ms= geo= geo_ms=`. In the quiet log the four `library.` records of
+  files under `maps/` are kept as well (`armport_zone_trace.h`), which
+  splits `map_ms` into reading the bin, adding the definitions and the rest;
+  `groupfileload.c` is not touched. CI: `interactive_host.client_zone_loads`
+  prints each session's last three loads as the notice "client zone loads
+  <session>" (read it in the job log). Tests:
+  `armport/tests/test_group_load_totals.py`; the header's two pieces were
+  compiled and run with the host compiler against stubs, not with the
+  client's toolchain before the chain.
+- **Chain** at `eacf78602` (the first build, 44972567765 at `6acb1b18a`,
+  was cancelled to add patch 0131): build 44973346854; stock-travel runtime
+  45121536099 passed (208.5 / 86.5 / 86.1 s); trusted runtime 45125692618
+  passed (creation 358.3 s, reopen spawn to ready 23.6 s, group load 7.28 s,
+  map load 4,775 ms); spare runtime 45129721358 passed (trip ready 10.08 s,
+  client 10.63 s, reopen arrivals 11.7 s and 74.2 s, no resends); APK
+  45133831884 published as pre-release `coh-atlas-gameplay-v0.13.80`
+  (93,589,770 bytes, sha256
+  `ae01acae65d12267f0b7688739cfab04bcf64021e48cde6ddb357263291f55ec`, signer
+  unchanged; downloaded, hashed, 51 guest files equal the commit, the client
+  holds 0131's line). The navigation changes did not run in CI (Atlas tree).
+- **What 0131 showed in CI** (eight loads of Atlas Park in runs 45121536099
+  and 45129721358): `files=508 known=166 bounds=0 full=341
+  full_ms=6352..7539 map_ms=267..334 defs=111 defs_ms=0`,
+  `groups.files.done` 6.7-7.9 s and `ready.sent` 8.2-9.5 s after `map.start`.
+  The span is the 341 full library loads. See "Prepared for 0.13.81".
+- Ideas not started: the client's group files (5.5-6.8 s of every trip;
+  0.13.80 measures them, see above); the spare's late start after login
+  (the 70 s connection observer); the previous zone kept as a third server
+  (owner decision, asked on 2026-11-21, no answer yet).
+
+## Thor test of 0.13.78 and what 0.13.79 does about it (Claude, 2026-11-21)
+
+Exports `coh-atlas-gameplay-20261121-051945` (setup), `-051955` (launch A,
+recommended options) and `-053448` (launch B, spare zone server). All three
+are 0.13.78; both launches `passed`; `options_off_recommended` is empty in A
+and `spare-zone-server` in B. Read with the scratch tools `sum.py` and
+`mapserver_phases.summary` over the consoles in `guest-report.zip`.
+
+- **Goals on the Thor** (0.13.75 in brackets):
+  - Start to playing (5 min): the client connected to its zone 126.9 s after
+    the launch request in B and 168.6 s in A, the first launch after the
+    update (117-126 s). The zone server no longer gates it: in B its main
+    loop began at +88 s and the login screen was reached at +117 s.
+  - 30+ FPS: `ARMPORT_FRAME_RATE_V1` 61-62 at the 60 cap in the world in
+    both launches (81 and 145 five-second records; 10 is the menu and loading
+    cap), also while a spare loaded. Every recommended option was on.
+  - Zone server cold start (1 min), server's own clock
+    (`elapsed_to_main_loop`): Mercy Island 44.3 s in B; 58.3 s in A and Port
+    Oakes 50.6 s in A, which cooked collision meshes once for the new server
+    build (9.7 s and 5.4 s; `physx_cooked` hits 0 then 1,348; B: 1,868 and
+    2,486 hits, 0 misses). (55-76 s.) `start_trees_not_read_ahead` true,
+    `message_bins_trusted` 4, `trusted_bins_reported` 255,
+    `object_library_trusted` true in every start.
+  - Zoning (30 s), request to the client's "Established successful MapServer
+    connection": through the spare 33.9 s (Port Oakes) and 27.7 s (back to
+    Mercy Island, second spare); without the spare (launch A) 65.8 s to a
+    zone that was not running and 11 s back to a running one (71 s / 10 s).
+- **The initial zone's `process_spawn_to_map_ready_seconds` (100.3 s in A,
+  70.9 s in B) is not the server's start.** The server printed its first
+  line 0.6 s after the spawn and reached its main loop after 58.3 s / 44.3 s;
+  the supervisor recorded "ready" 41 s / 26 s later, while it started the
+  client. For a travelled-to zone the two agree within 2 s. Nothing waits on
+  that record (the client asked for its zone 29-46 s after the server's main
+  loop), but the figure must not be read as a server start. The same applies
+  to the "14 s of Wine starting its first program" I wrote for 0.13.75.
+- **Spare zone server on the Thor** (`spare_zone.starts`): spare 1 launched
+  beside Mercy Island with 7,559 MiB available, warm in 35.2 s (6,439 MiB
+  available), assigned to Port Oakes after 264 s loaded; Mercy Island's
+  server gave way 122 s after the arrival (`room_for_the_spare`); spare 2
+  warm in 30.0 s (6,422 MiB), assigned to Mercy Island after 51 s loaded.
+  Baseline available memory 10,986 MiB.
+- **Where a trip through the spare goes** (Port Oakes, 33.9 s): request to
+  assignment 2.3 s (5 ms on the second trip: the supervisor's tick); the
+  spare's own work after the hand-over 19.8 s (`group_load_done`): map load
+  9.28 s, beacons 5.27 s, encounter groups 2.40 s, collision triangles
+  2.17 s, PhysX objects 0.25 s; then the client: `map.start` to
+  `textures.done` 8.3 s and 2.6 s more to the connection. Mercy Island:
+  16.9 s (map load 6.62 s) and 6.8 s.
+- **Map load profile on the Thor** (`ARMPORT_MAP_LOAD_V1`): Mercy Island
+  `total_ms` 8,204-8,336 cold and 6,623 on a spare, `other_ms` 5,060-5,098
+  (4,145), `model_find_ms` 3,009-3,165 (2,386) for 8,897 look-ups,
+  `bounds_files_ms` 23-24 for 403 files; Port Oakes 8,379 / 9,277 with
+  `other_ms` 5,137 / 6,029, `model_find_ms` 3,136 for 10,574 look-ups,
+  `bounds_files_ms` 27-29 for 475 files. So 0.13.78's change holds on the
+  phone, and what is left is x86 code: group files and model headers.
+- **A cold zone start by phase** (Mercy Island, B, 44.3 s): definitions
+  19.5 s (story arcs 4.7, spawn definitions 3.8, `done loading defs` 4.0,
+  reward tables 2.9, encounter groups 2.5, message stores 2.3), group load
+  17.7 s (map load 8.2, beacons 5.0, collision triangles 1.2), encounter
+  scripts 3.8 s, sequencer info 2.2 s.
+- PRoot: 2,419,366 stops in 555 s (A) and 2,937,309 in 854 s (B);
+  `socket_stops` false; path cache 25,748 of 26,624 calls fast.
+- The one observation note, "Cache inventory: Linked private cache directory
+  refused", is in four of the five 0.13.75 exports too.
+- **Correction.** CI's runtime jobs run on `ubuntu-24.04-arm` with FEX, like
+  the phone. Two entries below called a CI figure "x86-64"; they now say
+  "CI ARM64 runner".
+
+### 0.13.79 (94): what changed
+
+- **Emulator settings for the zone servers (roadmap phase 3, item 1).** FEX
+  2510 (320c5f18) ran on its defaults. Wine's WoW64 FEX module reads `FEX_*`
+  from the process environment (`Source/Windows/WOW64/Module.cpp`,
+  `BTCpuProcessInit` → `FEX::Config::LoadConfig(..., _environ, ...)`), so the
+  guest can set them for one program. `COH_SERVER_EMULATION` (guest, and CI
+  input `server_emulation`) takes `tso`, `x87` or both, for zone servers
+  only (`local_character_server.apply_server_emulation`, called from
+  `map_metrics_environment`, which every zone server start goes through);
+  the report section `server_emulation` and `START_OPTIONS_V1` record what
+  was set.
+  - `x87` → `FEX_X87REDUCEDPRECISION=1`: x87 arithmetic in 64 bits instead
+    of 80 bits in software.
+  - `tso` → `FEX_EXTENDEDVOLATILEMETADATA=MapServer.exe:…`: x86 store
+    ordering is not emulated for the code of `MapServer.exe` itself; Wine's
+    and PhysX's DLLs keep it (`Source/Common/VolatileMetadata.cpp`: a bare
+    module name "disables TSO in the module").
+- **Measured at `2c458d270`** (build 44872928560; trusted runtime, reopen
+  session, Atlas Park; baselines 44727685589 and 44739226760 at `d27dbb7c9`,
+  same server sources):
+
+  | | baseline | `x87` (44882642501) | `tso,x87` (44879930368) |
+  |---|---|---|---|
+  | `elapsed_to_main_loop` | 21.45 / 21.04 | 20.03 | 18.99 |
+  | `definitions_done` | 9.76 / 9.71 | 9.53 | 8.88 |
+  | `group_load_done` | 8.31 / 8.13 | 7.2 | 7.1 |
+  | map load `total_ms` | 5,179 | 4,709 | 4,780 |
+  | creation session, `elapsed_to_main_loop` | 391.96 | 358.32 | 362.08 |
+
+  `x87` gives the group load (the part a trip through the spare pays) and
+  the first start of a new game folder ("Starting novodex", 16.8 s of the
+  baseline's creation start, is no longer among its six slowest steps);
+  `tso` adds about 7% on the definitions. `START_OPTIONS_V1` in both runs
+  shows the variables set.
+- **`x87` is in the app, on by default** ("Faster number emulation in zone
+  servers", `server-x87-64bit`, `COH_SERVER_EMULATION=x87`). The game server
+  does not compute the map's beacon checksum when it loads a navigation file
+  (`beaconGetMapCRC` is called by the beacon server and client and by two
+  debug commands only), so slightly different rounding cannot refuse a
+  navigation map.
+- **`tso` is not in the app.** `libs/UtilitiesLib/src/utils/log.c` hands log
+  messages from the writers to `logBackgroundWriter` through a queue whose
+  reader takes no lock (`peekMsg`/`getMsg` read `msg_queue_end` and then the
+  message): it relies on x86 store ordering, and both sides are
+  `MapServer.exe` code. Adopting `tso` needs that queue fenced first (a
+  server source layer) and gives about 1.4 s of a 44 s cold start on the
+  Thor, nothing on a trip. The guest and CI keep the name for that work.
+- **The spare zone server is recommended** (`spare-zone-server` default
+  true; the recommended lists are 18 ticked, 4 unticked).
+- **Navigation graph receipts checked ahead**
+  (`character_zoning._check_graph_ahead`): while a warm spare waits and no
+  zone is starting, one zone with a stored `zone_graph_<id>` receipt a tick,
+  at most six a session, receipt only
+  (`install_zone_beacon_graph(..., receipt_only=True)`); recorded in
+  `spare_zone.graphs_checked_ahead`.
+- **Client patch 0130** (patchwork): the quiet device log keeps the
+  once-per-load zone stages (`groups.*`, `map.finish.*`, `collision.*`,
+  `scene.*`, `allents.*`, `textures.*`, `geometry.wait`,
+  `texmodels.welded.*`, `texmodels.done`).
+- **CI travel**: a trip that has not arrived is asked for again
+  (`c39935abb`, "For 0.13.78" below).
+- **Chain** (one at a time, all at `3c9812a41`, every runtime with
+  `server_emulation=x87`): build 44885921669 (Java, the ARM64 client with
+  0130) → stock travel on the default server 44894164205 (passed; 198.3 /
+  85.9 / 86.4 s; 208.8 / 95.8 / 101.0 for 0.13.78) → trusted 44897019107
+  (passed; reopen `elapsed_to_main_loop` 20.13, `definitions_done` 9.59,
+  `group_load_done` 7.32, map load 4,828 ms; creation 377.35) → spare zone
+  44899910978 (passed) → APK 44902543863.
+- **Spare run 44899910978, reopen**: `warm_seconds` 20.055, `assigned` to
+  map 101 after 35.3 s loaded; trip `request_to_map_ready_seconds` 10.09
+  (15.15 in 44739226760), client in the zone 10.65 s (16.06); 2 arrivals;
+  `TRAVEL_INPUT_V1` `resends` `[]`; reopen `PROOT_STOP_COUNTS_V1` 1,744,481
+  stops in 610 s. CI's map 101 has no cooked collision meshes when the trip
+  asks for it, so part of those 5 s is PhysX cooking under 64-bit x87; the
+  Thor reads its meshes from the cache. `graphs_checked_ahead` is absent:
+  CI's spare runs the Atlas tree. Its first run is the Thor's launch A.
+- **Published**: pre-release `coh-atlas-gameplay-v0.13.79` at `3c9812a41`,
+  `COH-Atlas-Gameplay-0.13.79.apk` 93,581,578 bytes, sha256
+  `3af3a9ccf1d92f275856f5eaf62e55f77ea5f2673925e12d0003daed664a812d`, signer
+  `92955353…a776c282` (unchanged), version 0.13.79 (94). Downloaded and
+  checked: checksum, 51 guest files equal the commit, the app's dex holds
+  `COH_SERVER_EMULATION=` and `server-x87-64bit`, `CityOfHeroes.exe` holds
+  0130's kept stages (0.13.78's does not). Not yet on the Thor.
+- Ideas not started: the previous zone kept beside the current one and the
+  spare (three servers, about 1.2 GB more; an owner decision); beacons
+  (5.3 s of a hand-over) and the group files (5-6 s) need a profile inside
+  them before any change; the client's zone load once 0130 has run on the
+  Thor.
+
+## For 0.13.78: library bounds files under the trusted-bin switch (Claude, 2026-11-20; not in 0.13.77)
+
+Written while the 0.13.77 chain ran. Version 0.13.78 (93), release notes and
+`THOR-TEST-0.13.78.md` followed 0.13.77's publication; the app and guest are
+0.13.76's.
+
+- **Chain** (one at a time, all at `d27dbb7c9`): build 44708966474 (MSVC
+  compiled 0004; no warning names `groupfilelib.c`) → stock travel on the
+  default server 44722714926 (passed; 208.8 / 95.8 / 101.0 s) → trusted
+  44727685589 (passed, 1,683 s) → spare zone 44732475821 (failed, below) →
+  spare zone again 44739226760 (passed) → APK 44744229704.
+- **Trusted run 44727685589, reopen** (0.13.77's 44698417683 in brackets):
+  `map_load_profile` `total_ms` 5179 (6635): `bounds_files_ms` 20 (1837) for
+  the same 504 files, other 3336 (3101), model_find 1769 (1647), recalc 30,
+  spawn areas 17, scene 2, unbalanced 0. `group_load_done` 8.31 (9.66),
+  `elapsed_to_main_loop` 21.45 (22.45), `definitions_done` 9.76 (9.53),
+  `process_spawn_to_map_ready_seconds` 24.1 (23.6: the second saved in the
+  map load is inside run-to-run variation of the whole start). Creation
+  session: map load 19,786 ms (25,623), bounds files 21 ms (7,297).
+- **Spare run 44739226760, reopen**: `warm_seconds` 25.232 and 20.096 (the
+  second spare), `assigned` to map 101 after 40.5 s loaded; trip
+  `request_to_map_ready_seconds` 15.15, client in the zone 16.06 s; 2
+  arrivals; reopen `PROOT_STOP_COUNTS_V1` 1,747,255 stops in 615 s
+  (1,844,039 in 619 s for 0.13.77).
+- **Spare run 44732475821 failed after its measured part** ("Zone travel to
+  map 1 did not arrive within 900 seconds"). The hand-over and the trip to
+  map 101 passed (spare warm 20.194 s, zone ready 15.07 s, client in the zone
+  16.0 s, arrival 12:30:46). The return `/mapmove 1`, typed about 25 s later,
+  is not in the server command log (only `mapmove 101`, 12:30:29); the
+  DbServer got no third map request; the client stayed on map 101 (the
+  server kept spawning there until 12:41) at about 1.5 FPS, 0.32 FPS at the
+  end; map 1 was stopped for the second spare 120 s after the arrival, as
+  designed. So the typed command was lost in the CI client, not the trip.
+  CI change for the next chain (`c39935abb`, not in this one): a trip that
+  has not arrived is asked for again, Enter alone after 300 s, the command
+  and Enter after 450 s, recorded in `stock_travel_resends`, the failure
+  detail and a `TRAVEL_INPUT_V1` log line.
+- **Published**: pre-release `coh-atlas-gameplay-v0.13.78` at `d27dbb7c9`,
+  `COH-Atlas-Gameplay-0.13.78.apk` 93,585,674 bytes, sha256
+  `ffc6e7bcd1d5460965a0b0fbd4dcf3cb0f07609514a577b82021269559a87c04`, signer
+  `92955353…a776c282` (unchanged), version 0.13.78 (93). Downloaded and
+  checked: checksum, 51 guest files equal the commit, the trusted
+  `MapServer.exe` (sha256 `db1b0ecee2dd4719…`) holds the three 0.13.77
+  record prefixes, the binding names patch 0004's hash. Not yet on the Thor.
+
+
+- **What the first map load profile showed** (0.13.77 trusted run
+  44698417683, CI ARM64 runner, Atlas Park reopen): `ARMPORT_MAP_LOAD_V1`
+  `total_ms=6635 other_ms=3101 model_find_ms=1647 model_finds=9562
+  bounds_files_ms=1837 bounds_files=504 recalc_bounds_ms=29 scene_ms=2
+  spawn_areas_ms=15 ref_activate_ms=0 unbalanced=0`. 28% of the map load is
+  `objectLibraryWriteBoundsFileIfDifferent`: for each of the 504 library
+  files a map loads, `geobin/<file>.bounds` is read and parsed only to be
+  compared with the bounds just loaded (creation session, cold file cache:
+  7,297 ms of 25,623).
+- **`patches/mapserver-trusted-bins/0004-trusted-bounds-files.patch`**, under
+  `ARMPORT_TRUSTED_BINS=1`: the checksum of the loaded defs is still
+  computed; the library entry's `bounds_checksum` and each public def's
+  bounds (`objectLibrarySetBounds`) are set from the loaded defs, which is
+  what a matching bounds file sets; the bounds file is neither read nor
+  written. Reopen sessions already write no bounds file (`bin writes reopen`
+  0 in every trusted run). The checksum the server sends to the client
+  (`groupnetsend.c`) is the loaded defs' as before.
+- **Wiring.** Receipt `bounds_files_patch`, contract `trusted_bounds_files`,
+  guest admission `bounds_files_changed` (the receipt, the entry and the
+  object library claim together), host fixture cases `bounds_files` and
+  `bounds_files_disabled` (the shipping function over recorded shims; the
+  unpatched control fails `bounds_reads == 0 && bounds_writes == 0 &&
+  bounds_set == 2`), evidence regenerated.
+- **Still in the map load:** `other` 3.1 s (reading and assembling 500 group
+  files) and `model_find` 1.6 s (9,562 look-ups); not broken down further.
+
+## For 0.13.77: start folders under the trusted-bin switch, map load profile (Claude, 2026-11-19; not in 0.13.76)
+
+Written while the 0.13.76 chain ran. Version 0.13.77 (92), release notes and
+`THOR-TEST-0.13.77.md` followed 0.13.76's publication; the app and guest are
+0.13.76's.
+
+- **Chain** (one at a time, all at `3e78d005e`): build 44683537682 (MSVC
+  compiled both layers; no warning names their files) → stock travel on the
+  default server 44693667939 (passed; 233.0 / 106.7 / 101.0 s) → trusted
+  44698417683 (passed, 1,640 s) → spare zone 44703232069 (passed) → APK
+  44708151316.
+- **Trusted run 44698417683, reopen** (0.13.76's 44673984201 in brackets):
+  `process_spawn_to_map_ready_seconds` 23.6 (32.4), `elapsed_to_main_loop`
+  22.45 (26.48), `definitions_done` 9.53 (13.15), `group_load_done` 9.66
+  (10.01); `start_trees_not_read_ahead` true, `message_bins_trusted` 4,
+  `map_load_profile` `total_ms` 6635 (other 3101, model_find 1647 for 9,562
+  look-ups, bounds_files 1837 for 504 files, recalc 29, spawn areas 15,
+  scene 2, ref_activate 0, unbalanced 0). Creation session (bins built
+  there): `message_bins_trusted` 0 (the text fallback, as designed),
+  spawn to ready 386.3 s (369.9), map load 25,623 ms (bounds files 7,297).
+- **Spare run 44703232069, reopen**: `warm_seconds` 19.927 (24.978 in
+  0.13.76's 44678714431), `assigned` to map 101 after 35.0 s loaded; trip
+  `request_to_map_ready_seconds` 15.16 (15.07),
+  `request_to_client_world_ready_seconds` 15.83 (16.88);
+  `PROOT_STOP_COUNTS_V1` reopen 1,844,039 stops in 619 s (2,131,961 in
+  613 s), creation 10,901,950 in 950 s (10,876,252 in 891 s). No sign of
+  repeated failed look-ups from the folders no longer read ahead.
+- **Published:** [coh-atlas-gameplay-v0.13.77](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.77)
+  (pre-release, target `3e78d005e`), 93,581,578 bytes, sha256
+  `dd8beb337ca77f3ce254125ea23be903dcaf9fa0b616613ab89e017f2271d042` (equal
+  to the `.sha256` asset; downloaded and hashed), version 0.13.77 (92),
+  signer unchanged; 51 guest Python files equal to the commit; the
+  `MapServer.exe` in `game-package-trusted.tar.gz` holds the three new
+  record prefixes.
+
+- **Where the time is.** Thor 0.13.75 launch B, Port Oakes start (54.4 s to
+  the main loop, console `character-zoning-map-72-console.txt`): `Caching
+  relevant folders` 7.83 s (`Defs` 2.9 s, `Menu` 3.6 s, four animation
+  folders 1.3 s) and the first message store 2.53 s, 2.45 s of it the first
+  listing of `texts`. Mercy Island in the same launch: 13.2 s of folder
+  read-ahead. After the read-ahead the console requests no tree but `texts`
+  (every request prints its name): with trusted bins nothing lists `Defs` or
+  `Menu`.
+- **`patches/mapserver-trusted-bins/0003-trusted-start-trees.patch`**, under
+  `ARMPORT_TRUSTED_BINS=1` (the Fast server option; no new option):
+  - `cacheRelevantFolders` (server only) does not request `Defs` and `Menu`
+    and prints `ARMPORT_START_TREES_V1 status=not_read_ahead trees=Defs,Menu`.
+    The four animation folders are still read ahead. A loader that lists
+    either folder still requests its tree in `fileScanAllDataDirs`, and a
+    single file not in the tree is looked up on disk (`FolderCacheQuery`,
+    dynamic mode), as `object_library` files have been since 0.13.75.
+  - `LoadMessageStore` reads a prepared bin that `msReadBin` accepts (version,
+    two string tables, message count) without `msGetDirFilesList` and the
+    date comparison, and prints `ARMPORT_MESSAGE_BIN_V1 status=trusted
+    bin=...`. A missing or refused bin, a reload, forced bins and a load with
+    no bin list the folders and load the text files as before (the list is
+    then read in the fallback).
+- **Wiring.** Producer receipt `start_trees_patch`, contract entries
+  `trusted_start_trees` and `trusted_message_bins`, guest admission
+  `start_trees_changed` (both files, the pinned patch hash, both entries off
+  by default on the trusted-bin variable). Host fixture: the shipping
+  `cacheRelevantFolders` and `LoadMessageStore` bodies over recorded shims,
+  five cases (`start_trees`, `start_trees_disabled`, `message_bins`,
+  `message_bins_disabled`, `message_bins_fallback`), unpatched control fails
+  `requests == 4 && listings == 0 && date_checks == 0`; evidence regenerated
+  (`armport/evidence/mapserver-startup-retained-host-checks.json`). Phase
+  summary fields `start_trees_not_read_ahead`, `message_bins_trusted`.
+  `armport/tests` 624 pass.
+- **`patches/mapserver-load-profile/0001-map-load-profile.patch`** (measurement
+  only, with `ARMPORT_SERVER_METRICS=1`, which the guest already sets for this
+  server). `loading map` was 11.66 s of the 22.1 s after the DbServer
+  connection in that Port Oakes start (beacons 5.12 s, encounter groups
+  2.35 s, collision triangles 2.14 s), and a spare zone server still has all
+  of it to do when a trip begins. One record after the load:
+  `ARMPORT_MAP_LOAD_V1 status=ok total_ms= other_ms= model_find_ms=
+  model_finds= ref_activate_ms= ref_activates= recalc_bounds_ms=
+  bounds_files_ms= bounds_files= scene_ms= spawn_areas_ms= unbalanced=`
+  (exclusive time per step; `other` is the group files' own reading and
+  assembly). State and functions in the new
+  `Common/group/armport_map_load_profile.h`, compiled into `groupnetdb.c`;
+  calls in `groupLoadMap`, `groupModelFind` (`group.c`) and
+  `groupRefActivate` (`groupgrid.c`). `groupfileload.c` is a pinned collision
+  source of the navigation map lineage and is not touched. Receipt
+  `load_profile_patch`, contract `map_load_profile`, guest admission
+  `load_profile_changed`, host fixture cases `map_load_profile` and
+  `map_load_profile_disabled` (the shipping header over a recorded clock,
+  call sites checked in the staged sources, unpatched control), phase summary
+  field `map_load_profile`. `armport/tests` 625 pass.
+- **Not measured.** How many single-file lookups under `Defs` miss on disk
+  during play (a miss is not remembered, so each repeats). Compare the zone
+  server's stop counts and `ARMPORT_SERVER_METRICS_V1` tick times with
+  0.13.76's in CI before a release. `FolderCache.c` is a pinned retained
+  source of the startup certificate, so no counter was added there.
+- **Seen on the way, not changed.** `defs`, `maps` and `object_library` are
+  private folders that are not linked in `runtime/serverdata` because tree
+  scans would list them twice. `object_library` (since 0.13.75) and `Defs`
+  (with this patch) are no longer scanned on the trusted path, so each of
+  their files is first looked up and missed in `serverdata/`. Linking them
+  there would save one failed lookup per file if no fallback scan lists them
+  twice; that needs its own CI comparison.
+
+## 0.13.76 and the Thor test of 0.13.75 (Claude, 2026-11-19)
+
+Owner, 2026-11-19 19:40 CST, with exports 20261120-004147 (setup), -004204
+(A), -005042 (B), -012349 (C), -013715 (D): "I did all the tests, the results
+are positive, no apparent issues with animations".
+
+- **One option was off in every launch.** `proot_socket_filter_requested`
+  false, `armport_proot_ioctl.socket_stops` true in A to D. The last 0.13.73
+  launch (20261118-171828, its launch C) unticked "Do not monitor ordinary
+  socket traffic" and the preference stayed. Launch C (1,815 s): 26,858,195
+  stops, 18,467,622 of them `sendto` (call 206), 17,767,593 by `Xtigervnc`.
+  Client `ARMPORT_FRAME_RATE_V1`: 35-61 in A, 40-60 in B, 23-34 for most of
+  C, 27-43 in D (0.13.73 with the option: 60 at the cap).
+- **Zone server start** (`process_spawn_to_map_ready_seconds`; main loop in
+  brackets; 0.13.73: about 150): A Mercy Island 97.4 (70.9), Port Oakes 64.0
+  (59.3); B 75.8 (61.7) and 55.1 (54.4); C, letter-case option off, 64.3
+  (51.5) and 63.9 (58.5); D, animations at start, 88.9 (86.4) and 84.1
+  (82.0), `sequencer_info_done` 38.2 and 29.7 s against 2.1-2.2 s. The first
+  zone's spawn-to-ready is about 14 s above its main loop time (Wine's first
+  program of the session); a trip's is under 1 s above.
+- **Cooked meshes.** A: Mercy Island `misses` 1868, `cook_ms` 9321, 7,163,008
+  bytes added; Port Oakes `hits` 1348, `misses` 1138, `cook_ms` 5186,
+  3,772,378 bytes added. B to D: `hits` 1868 and 2486, `misses` 0, `refused`
+  0, `bad_records` 0, `create_ms` 46-75, file 10,935,410 bytes.
+  `object_library_trusted` true in all eight starts.
+- **What is left of a start on the phone** (B, Mercy Island, 61.7 s):
+  `definitions_done` 31.5 s, of which folder caching 13.2 s (`Menu` 5.8 s,
+  `Defs` 4.4 s, the animation folders 3.0 s; 7.3 s in C and 6.8 s in D, so it
+  varies), message stores 3.0 s; `encounter_scripts_done` 3.6 s;
+  `group_load_done` 23.1 s, of which the map load 12.8 s and beacons 5.3 s.
+  `cacheRelevantFolders` (Common/gameComm/initCommon.c:44) only pre-loads
+  trees for the dynamic folder cache, and nothing else requests `Menu` or
+  `Defs` in the console: a candidate to skip under trusted bins.
+- **Letter case (launch C against B).** No gain on a warm start: C was not
+  slower (51.5 s against 61.7 s to the main loop for Mercy Island, 58.5
+  against 54.4 for Port Oakes; within the run-to-run spread).
+  `casefold_replaced` 50,946, `casefold_absent` 29,071 in B.
+- **Start and travel.** The client connected to its zone 159.6 s (A), 125.8 s
+  (B), 116.6 s (C) and 135.6 s (D) after the guest started
+  (`armport_client_timeline`; 0.13.73: 206.1-259.2 s); it began connecting as the zone became ready
+  (B: ready at 117.0 s, connecting at 116.6 s), so the zone server is still
+  what the start waits for. B's zone was spawned 41.2 s in: DbServer 10.4 to
+  26.6 s, then the zone tree's preparation. A trip to Port Oakes: the
+  DbServer's request 3 s after the transfer began, zone ready 55-66 s later,
+  client connected about 71 s after the transfer began (B: 00:46:23 to
+  00:47:33.8; 0.13.73, 20261118-165518: 170 s); the trip back to the resident zone: 10 s. The supervisor's own
+  arrival time (`request_to_arrival_ms` 141-163 s; `character_connected`
+  203.5 s in B) comes from the entity log and is 65-76 s late
+  (`observer_seconds_after_client` 64.7-72.7; MapServer `SECS_LOG_RESEND` 30
+  s plus the log server's own batching), as noted for 0.13.56. It delays
+  only what the supervisor does after an arrival (a spare's start).
+- **Memory** (B, MiB available of 15,255): 10,552 at the first sample, about
+  7,700 with Mercy Island and the client, about 5,800 with both zones.
+
+0.13.76:
+
+- **App: the options that differ from a new install's are named.** A status
+  line above the first option ("Options: all at the recommended settings." or
+  the count and the names, "unticked: …" / "ticked: …") and a button
+  "Restore recommended options" (through each box's own listener; refused
+  during an operation). `ClientRuntime.optionsOffRecommended` gives the
+  preference keys; the report carries them as `options_off_recommended`
+  (read at launch). `tools/android/test_recommended_options.py` holds the
+  three statements of the set together: each getter's stored default, the
+  report's table, the screen's two lists (16 ticked, 5 unticked).
+- **Spare zone server: `-transient` no longer decides the match.**
+  `_spare_serves` compared the spare's start options with the request's as
+  they are. The DbServer adds `-transient` to some requests (Thor 0.13.75:
+  map 72, `transient: 1`) and the zone at Enter Game starts without a request,
+  so the two differ by that token alone in ordinary play; CI run 43394425425
+  dropped a warm spare for a request of its own tree and did not record which
+  condition failed. The server reads the flag in one place
+  (MapServer/src/svr/svr_player.c:473), only together with an idle exit
+  timeout above zero or `-preloadtransient`; every zone server here starts
+  with `-idleExitTimeout 0`. `_spare_option_key` leaves `-transient` out of
+  the comparison and gives no key for a request with `-preloadtransient`
+  (never served by a spare). CI's notice now carries a spare row's
+  `refused_request` and memory fields. Still off by default; no hand-over
+  has run anywhere before this chain.
+- **Not done.** Skipping the `Menu`/`Defs` pre-load under trusted bins (a
+  server patch); starting the zone tree's preparation beside the DbServer;
+  the entity log delay.
+- **Tests.** armport/tests 623 pass; tools/android 200 (4 new); dbserver as
+  before; interactive suite 3318 run / 86 failures / 14 errors / 36 skips: the 86 and 13 of
+  before, and `test_client_gpu_profile…escaped_output_worker…` once on a
+  `/proc/<pid>/environ` race with another exiting process (it passes alone,
+  three of three, and on the unchanged tree). Java: compiled
+  against no Android classes here, the only new errors are the missing
+  Android symbols of the new lines (`CheckBox`, `TextView`, `Color`,
+  `Toast`, `Context`); CI's app-sources job compiles it for real.
+- **Chain** (one at a time, all at `df7719461`): build 44659040591 (Java
+  compiled by app-sources) → stock travel on the default server 44669805331
+  (passed; `process_spawn_to_map_ready_seconds` 233.0 creation, 101.5 and
+  101.1 reopen and trip; trip `request_to_client_world_ready_seconds` 181.8)
+  → trusted 44673984201 (passed, 1,645 s; reopen 32.4 s spawn to ready,
+  `elapsed_to_main_loop` 26.48, `definitions_done` 13.15, `group_load_done`
+  10.01; `physx_cooked` creation misses 2265 `cook_ms` 16436 file
+  12,815,846 bytes, reopen hits 2265 misses 0) → spare zone 44677885801
+  (failed in 5.5 s: "The CI zoning flow needs the CI external-maps
+  DbServer"; my dispatch had no `external_maps_run_id`) → spare zone again
+  with it, 44678714431 (passed, 1,573 s) → APK 44682583963.
+- **First hand-over to a spare** (44678714431, reopen session, CI ARM64 runner):
+  `spare_zone.starts[0]` `warm_seconds` 24.978, `outcome` `assigned`,
+  `map_id` 101, `loaded_seconds_before_request` 40.064, available memory
+  10,350 MiB at its start and 9,138 when warm; the trip's `map_startup`
+  entry `request_to_map_ready_seconds` 15.07 and
+  `request_to_client_world_ready_seconds` 16.88 (default server, no spare,
+  44669805331: 101.1 and 181.8; a cold Fast server start is 27-32 s spawn to
+  ready). A second spare loaded in 30.4 s and was dropped at session end.
+  The creation session's spare (20.1 s) was never asked for. No
+  `refused_request`.
+- **Published:** [coh-atlas-gameplay-v0.13.76](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.76)
+  (pre-release, target `df7719461`), `COH-Atlas-Gameplay-0.13.76.apk`
+  93,577,482 bytes, sha256
+  `ad05ca47e996b7a148339fee4f4303b5e0c15f58297992e092cde2633610f0be` (equal
+  to the `.sha256` asset; downloaded and hashed), version 0.13.76 (91),
+  signer `92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`
+  (unchanged). In the APK: 51 guest Python files equal to the commit
+  (`character_zoning.py` with `_spare_option_key`), `classes.dex` holds
+  `options_off_recommended`, "Restore recommended options" and the status
+  line text.
+
+## 0.13.75 (Claude, 2026-11-18)
+
+No new owner test: 0.13.74 was published the same evening and is with the
+owner. 0.13.75 comes from 0.13.74's CI runs (section below, **Chain**).
+
+- **What is left of a zone server start in CI** (trusted run 44398992652,
+  reopen session, 50.83 s to the main loop): PhysX objects 16.6 s, object
+  library 9.1 s, the gap after the `server/db/commands.cfg` callback 5.9 s,
+  folder caching 4.1 s. In the stock-travel run 44392083121 the MapServer's
+  `newfstatat` is the largest stop row (2,027,296 of 4,856,390 in the reopen
+  session), then wineserver's `readlinkat` (503,004) and the MapServer's
+  `getxattr` (366,294).
+- **Object library (x86 server, `patches/mapserver-trusted-bins/0002`).**
+  `UpdateObjectLibraryBin` (`Common/group/groupfilelib.c`) scanned the
+  `object_library` tree in development mode and compared every file's date
+  with the list inside `bin/defnames.bin` (`FileListIsBinUpToDate`); the
+  trusted-bins switch of patch 0001 covers only `ParserIsPersistNewer`. With
+  `ARMPORT_TRUSTED_BINS=1` a `defnames.bin` whose signature and parse CRC
+  match is now read without the scan and the comparison, and the server
+  prints `ARMPORT_OBJECT_LIBRARY_BIN_V1 status=trusted bin=bin/defnames.bin`.
+  A missing bin, a CRC mismatch, an unreadable file list or unreadable data,
+  and `force_rebuild`, scan and rebuild as before (the scan moved into the
+  rebuild path). Production mode is unchanged. No new option: it follows
+  "Fast server" (`COH_TRUSTED_BINS`).
+  - Why trusting the shipped bin is the stock result: in the stock runs
+    (no trusted bins) the creation session's object library gap is not above
+    the reopen session's (it is not among the six largest gaps, all at least
+    15.9 s, in 44392083121; reopen 13.2 s), so the stock date check accepts
+    the shipped `defnames.bin` at a first start and does not rebuild it.
+  - Plumbing as for the spare layer: `prepare_server_metrics_source.py`
+    (`OBJECT_LIBRARY_PATCH`, `GROUPFILELIB` in `FILES`, receipt
+    `object_library_patch`, contract `trusted_object_library`); the host
+    fixture (`armport/tests/server_metrics_native.py`) compiles the shipping
+    `UpdateObjectLibraryBin` over shims: trusted read with no scan and no
+    date check, forced rebuild still scans and compares, production
+    unchanged, disabled as before, and missing bin, CRC mismatch and
+    unreadable data each scan and rebuild from a real list; the unpatched
+    source fails `scans == 0 && date_checks == 0`. Host-check evidence
+    regenerated (`armport/evidence/mapserver-startup-retained-host-checks.json`);
+    guest admission `object_library_changed` pins the patch
+    (501b4a1f…). `mapserver_phases` reports `object_library_trusted`.
+- **PRoot patch 0008 (letter-case fallback), on by default in the second
+  build.** When a path component is missing and the calling program is one
+  of `PROOT_CASEFOLD_PROGRAMS` (`wine`, `wine64`, `wineserver` and the two
+  preloaders), `substitute_binding_stat` looks for a directory entry that
+  differs only in ASCII letter case and continues with it
+  (`src/path/casefold.c`), so Wine's first whole-path `stat` succeeds and it
+  does not walk the path component by component. Counters in the stop-count
+  header: `casefold_replaced`, `casefold_absent`, `casefold_listed`. App
+  option "Find files in any letter case in one step (needs Lighter
+  system-call monitor)" (`proot-casefold`, default on; guest
+  `COH_PROOT_CASEFOLD`); CI sets it with `proot_ioctl_filter`. Local x86-64
+  prototype: `stat`, `open`, `lstat`, `rename`, `unlink` and `chdir` reach a
+  file under any letter case for a named program and `ENOENT` for others.
+  A missing file still costs Wine its walk; the phone's server folder is
+  three folders below the drive root, so a drive letter for it was dropped
+  (PERFORMANCE-PATH "After Thor 0.13.73").
+- **Cooked collision meshes (x86 server, `patches/mapserver-physx-cache/0001`).**
+  `createNxWorldShapes` cooks every collision mesh of the zone at every
+  start (`nwCookAndLoadMeshShape`: `NxCookTriangleMesh` into a stream, then
+  `createTriangleMesh` from it). With `ARMPORT_PHYSX_CACHE=<file>` the
+  function first looks the mesh up in that file by two 64-bit hashes of
+  exactly what the cooker would get (counts, strides, vertex and triangle
+  bytes); a hit reads the stored stream into the stream buffer and calls
+  `createTriangleMesh`; a miss cooks as before and appends the stream to
+  `<file>.new`. `nwFreeStreamBuffer` (the end of the world load) appends the
+  records of the file as it is then and renames `.new` over it; with no
+  miss nothing is written. Only an index of record heads is in memory
+  (`Common/NovodeX/armport_physx_cache.h`). Each record has a checksum; a
+  record that fails it, or that `createTriangleMesh` refuses, is cooked
+  again and its new record comes earlier in the next file. A foreign or cut
+  file is used up to its last whole record or replaced; a file that cannot
+  be written leaves the game and the old file as they were. The server
+  prints `ARMPORT_PHYSX_COOKED_V1 status=ok loaded= hits= misses= refused=
+  added= bad_records= old_bytes= added_bytes= written= load_ms= key_ms=
+  cook_ms= create_ms=` (the first numbers of how the 16.6 s divide between
+  cooking and creating).
+  - Guest: `COH_PHYSX_CACHE=1` (app option "Reuse prepared collision meshes
+    (faster zone start, needs Fast server)", `physx-cooked-cache`, default
+    on); `map_metrics_environment` names
+    `state/diagnostic/physx-cooked/meshes-<MapServer sha, 24 hex>.bin`, one
+    file for every zone of one server build, only when the admitted build
+    carries the layer (`physx_cache_available`); report `physx_cache`. Any
+    failure to name the file leaves the start as it was.
+  - Two zone servers adding at once: the second `.new` cannot be created
+    (no sharing) and that server writes nothing; Wine refuses to rename over
+    a file another process has open, so a publish during another server's
+    load fails the same way. Either costs one more cooking of those meshes.
+  - Plumbing as for the other layers: producer `PHYSX_PATCH`, `NWWRAPPER` and
+    `PHYSX_HEADER` in `FILES`, receipt `physx_cache_patch`, contract
+    `physx_cache`; guest admission `physx_cache_changed` (5f75cfbc…). Host
+    fixture: the shipping `nwCookAndLoadMeshShape`, `nwFreeStreamBuffer` and
+    header in C++ over a stand-in cooker and Win32 file shims with short
+    reads and writes: first start cooks four and stores three (one model
+    used twice), second start cooks none and writes nothing; disabled; a
+    changed byte, a refused stream, a file cut in a stream and in a record
+    head, a foreign file, a failing write. The unpatched source fails
+    `cooks == 0 && creates == 4`.
+  - CI asks for it in both sessions of every run (`BOTH_SESSION_OPTIONS`),
+    so the trusted run's reopen session reads what its creation session
+    cooked; `START_OPTIONS_V1` carries the guest's record and
+    `atlas_mapserver_phases.physx_cooked` the server's counts.
+  - Not known before the chain: the file's size (the Atlas file is in
+    `added_bytes`; at most 1 GiB is kept), and whether MSVC accepts the
+    header (the host fixture is GCC).
+- **Not done:** the spare zone hand-over; the late arrival log.
+- **Not validated:** anything in 0.13.74 or 0.13.75 on a device.
+- **Chain at b270ff434** (one chain on x86/perf-round1). Build 44424804176;
+  stock-travel runtime 44436543449 (`early_zone=true`,
+  `proot_ioctl_filter=true`, sampler; one trip; the letter-case option in both
+  of its sessions); trusted runtime 44441077783 (interactive job 1762 s,
+  THORHERO; its app-sources job compiled the changed Java). Two earlier builds
+  did not finish: 44408167189 at e04c1851c (object library only) was cancelled
+  to add the mesh file to the same release, and 44413294971 at 6518d87c7 failed
+  in `server-metrics-source` because that job's sparse checkout did not list
+  `patches/mapserver-physx-cache`; b270ff434 lists it in both metrics jobs and
+  tests for it. APK 44445389436 published `coh-atlas-gameplay-v0.13.75`
+  (93577482 bytes, sha256
+  47b40206e4e139661442f5b919d06ba1feec2fb90c2962dc2ddda1530f0fcc63, signer
+  92955353…, the same as 0.13.50-0.13.73); its guest files match the commit and
+  it carries the navigation map pack's descriptor byte for byte. Trusted
+  runtime 44441077783, against 0.13.74's 44398992652 (reopen session, Atlas
+  Park): the zone server reached its main loop in 26.26 s (50.83) and was ready
+  27.3 s after its spawn (56.5); `definitions_done` 13.01 s (21.99) with
+  `ARMPORT_OBJECT_LIBRARY_BIN_V1 status=trusted` in both sessions;
+  `group_load_done` 9.90 s (25.54). Cooked meshes: the creation session cooked
+  2,265 meshes in 16.45 s and wrote 2,014 records, 12,815,870 bytes; the reopen
+  session read all 2,265 (`hits` 2265, `misses` 0, `refused` 0, `bad_records`
+  0, `create_ms` 50). The Windows build compiled both changes in both server
+  variants. Runtime 44436543449 (stock server, so only the letter-case option),
+  against 0.13.74's 44392083121: the first zone start, which builds its caches,
+  213.7 s (299.9); later zone starts 101.2 and 95.8 s (106.2 and 100.8); PRoot
+  served 11.48 million stops in the 943 s creation session and 4.41 million in
+  the 775 s reopen session (14.18 and 4.86 million); MapServer's `newfstatat`
+  stops 1,540,303 in creation and 1,793,380 in reopen (3,430,953 and
+  2,027,296); `casefold_replaced` 426,349 and 127,173. These are CI times; the
+  phone's zone start was 1.6 times CI's in 0.13.73.
+
+## 0.13.74 and the Thor test of 0.13.73 (Claude, 2026-11-18)
+
+Owner, 2026-11-18, with exports 20261118-165501 (setup), -165518 (A),
+-170550 (B: performance graphics unticked) and -171828 (C: socket option
+unticked): "Ive conducted the 3 tests, i noticed that when ticking the do not
+montitor socket traffic off, fps was cut in half. With it on, both
+performance and non performance graphics were much higher. I looked up at
+the sky into the horizon for one hold and ground level in the opposite
+direction for the other".
+
+**What the exports show (0.13.73 on the Thor)**
+
+| | A (defaults, one trip) | B (game's own effects) | C (socket option off) |
+|---|---|---|---|
+| Client connected after the guest started | 259.2 s | 210.1 s | 206.1 s |
+| Zone server spawn to ready (Mercy Island) | 177.0 s | 153.3 s | 150.4 s |
+| of which attaching animations (`sequencer_info`) | 74.6 s | 64.6 s | 61.8 s |
+| Client frame rate, the two holds | 60-62 / 60-62 (the cap) | 52-61 / 54-57 | 28-31 / 48-52 |
+| PRoot stops (per second) | 8.26 M in 1,297 s (6,365) | 4.00 M in 593 s (6,749) | 9.77 M in 701 s (13,935) |
+| Probe: one send and receive | 4.4-5.1 us, not stopped | the same | 91.65 us, stopped |
+
+- All three passed. `armport_graphics_profile.client_confirmed` true in A and
+  C (`effects_off`); B ran `standard`. Socket filter used in A and B
+  (`socket_stops` false, rtnetlink descriptor 960; 32,196 and 13,306 sockets
+  moved, none refused); in C the descriptor was 4.
+- **The owner's observation is what the reports show.** The socket
+  monitoring was the frame-rate limit: without it the game holds the 60 cap
+  in both directions (its main thread sleeps in `pselect6` about 44 % of the
+  time, so there is room above 60). The game's own effects cost a few frames
+  (B). In C the display server was stopped in PRoot at `sendto` in 24 % of
+  the wait samples and the client's swapchain thread waited in `ppoll` in
+  26 % (3 % in A and B); `sendto` from Xtigervnc was 37 % of C's stops.
+- **Start.** About 3 min 35 s from the tap to the world in B and C (5 s tap
+  to guest start). A was the first launch after the update: the zone graph
+  receipts ran once in full (`inputs_changed`, the identity format changed;
+  12.3 s and 9.9 s) and were `reused` in B and C (1.5 s).
+- **Trip in A.** Port Oakes, cold: the DbServer's request 4.9 s after the
+  transfer began, the server launched 11.8 s later (the first graph check),
+  ready 149.5 s after that (spawn to ready 137.8 s); the arrival is read from
+  a log that is written late and came 245 s after the transfer began. Back
+  to Mercy Island: 16 s.
+- **Where a 148 s zone server start goes (B, the server's own phase
+  lines):** `sequencer_info` 64.6 s, `definitions` 44.7 s (object library
+  18.0 s, folder scans 8.3 s), `group_load` 33.6 s (map 12.4 s, PhysX 10.3 s,
+  beacons 5.5 s), `encounter_scripts` 3.9 s.
+- **Stops by program in B (593 s, one zone start):** wineserver 1,219,208
+  (`readlinkat` 1,011,078, which is 505,539 calls, for 27,423 `openat`);
+  Python 1,111,346; MapServer 935,242 (`newfstatat` 715,278, `openat` 68,214,
+  `getxattr` 41,202, `fchdir` 29,500); `wine_sechost_se` 334,518 (about 25
+  rtnetlink sockets a second, phone only; the asker is not identified);
+  client 170,793. MapServer's counts were the same in C: a per-start cost.
+- Python call profile (B): the process ownership scan 82.7 thousand opens
+  (139 a second; `game_device_diagnostic.py:627/630`), the texture list
+  about 57 thousand calls once, the client package check about 29 thousand
+  once, `Popen.poll` 24.5 thousand.
+
+**Goals after 0.13.73:** start under 5 minutes met (3 min 35 s); 30 frames a
+second met (60, capped); zoning with the destination running met (16-17 s).
+Not met: a zone server's cold start (about 150 s; goal 60 s) and therefore
+cold zoning.
+
+**Changes in 0.13.74**
+
+- **Zone servers attach animations on first use** (`COH_SERVER_QUICK_START`,
+  app option "Load zone server animations when first used", on by default).
+  The servers are OptDebug builds without `./piggs/texts.pigg`, which the
+  game calls development mode, and they run with `-nosharedmemory`. In that
+  mode `seqPreloadSeqInfos` attaches every animation of every sequencer at
+  start (`seqAttachAnimations`, more than 5,000 files) and every sequencer, animation
+  and FX request looks up its source file's date. The game has two developer
+  switches for exactly this, read by `serverStateLoad` from the file that
+  `-svrconfig` names, before the sequencers load: `quickLoadAnims 1` (an
+  animation is attached when an entity first uses the move:
+  `seqsequence.c`, `seqskeleton.c`) and `nofilechangecheck_server 1`. The
+  guest writes `armport-svrconfig.txt` in the session's server folder and
+  passes it at all three MapServer starts (Atlas, zones, the spare). No
+  server rebuild. Not used with the shared-memory experiment: the first-use
+  attach is skipped for sequencers in shared memory.
+- **wineserver remembers resolved folders**
+  (`COH_WINESERVER_PATH_CACHE`, app option "Remember folder locations in the
+  Wine server", on by default). Wine's server calls `realpath()` for every
+  file it opens (`server/fd.c`, `open_fd`), glibc resolves a path with one
+  `readlink` per component, and PRoot stops twice for each. The game's own
+  `_AltStat` is a `CreateFile` plus `GetFileInformationByHandle`, so even a
+  look-up of a file's date is an open in the server. Wine is prebuilt here,
+  so `armport/wineserver/realpath_cache.c` is an `LD_PRELOAD` library (built
+  for the guest's Debian bookworm like the audio plugin, checked against
+  glibc in the same container, shipped in the client package as
+  `armport-native/libarmport_realpath.so`). In a process named `wineserver`
+  it resolves a path as glibc does, one `readlink` per component and
+  following links, but takes a folder resolved in the last 60 s from a
+  table; the last component is always probed; a missing file, a path or
+  link target with `.`, `..` or an empty component (other than leading `./`
+  and `../` in a link), and any error go to glibc. The session extracts the
+  library (checked against the package manifest) before its first Wine
+  process. CI builds it and compares it with glibc on a fixed list and on
+  60 random trees of folders, files and links (answers and `errno`). Local
+  x86-64 PRoot (patches 0001-0007): 20,000 calls on a plain file 21 folders
+  deep, 840,209 stops and 25.0 s with glibc, 40,299 and 1.35 s with the
+  library; 10,000 calls on files that are links into a store (how the
+  server folders are built), 700,044 stops and 20.7 s against 40,118 and
+  1.48 s.
+- **Early run 44367156833** (stock travel, at c366cffb7 with 0.13.73's build
+  44117115718; both options in both sessions; passed: creation, a trip,
+  reopen). The reopen session's Atlas server console spans 109.0 s (158.2 s
+  in 0.13.73's 44136706377) and the 58.5 s animation gap is gone; PRoot
+  served 5.88 M stops in that session (8.52 M). The library's first version
+  left links to glibc and answered only 11,615 of 37,888 calls, because the
+  server folders are trees of links; it follows links since. The sampler's
+  265 MapServer `newfstatat` samples: more than half are the folders above
+  the server's own (`state`, `diagnostic`, `local-login-server-...`,
+  `dosdevices/z:/state`), which is Wine walking a path component by
+  component from the drive root when its first whole-path `stat` fails
+  (the samples hold both `Scripts.loc` and `scripts.loc` under
+  `serverdata`).
+- **CI sampler: which paths.** For MapServer, wineserver, DbServer and the
+  client the host sampler now reads the path of a stopped `newfstatat`,
+  `openat` or `readlinkat` and whether it was found. MapServer's 357
+  thousand `newfstatat` calls per start (about 13 per file opened) are the
+  next target and the counts do not say which look-ups fail.
+- CI sessions: the stock-travel run uses both options in both sessions; the
+  other runs keep the creation session without them, so one run shows the
+  same Atlas start both ways.
+- The ownership scan reads each `/proc` file with one open and one close
+  (`read_proc_text`; `Path.read_text` also asked for the descriptor's
+  status, two more stops a file; 82.7 thousand such opens in launch B).
+- Not done: the 25 rtnetlink look-ups a second; the late arrival log; the
+  spare zone hand-over. Next for the server start: a drive letter mapped to
+  the server's folder (the walk then starts there) and a case-insensitive
+  fallback in PRoot's path translation.
+- **Chain at 2b0ade277** (one chain on x86/perf-round1). Build 44375365630;
+  stock-travel runtime 44392083121 (`early_zone=true`,
+  `proot_ioctl_filter=true`, sampler; one trip; both new options in both of its
+  sessions); trusted runtime 44398992652 (interactive job 1842 s, THORHERO; its
+  app-sources job compiled the changed Java). An earlier stock-travel runtime,
+  44367156833 at c366cffb7 with build 44117115718, ran the first realpath
+  library (it answered 11,615 of 37,888 calls, because the server folders are
+  trees of links); 2b0ade277 resolves links itself. APK 44405347043 published
+  `coh-atlas-gameplay-v0.13.74` (93561098 bytes, sha256
+  0470c429c7531516c4ba5e72b25fe95f722f0f4d7b9e7e7bb03f55820ef84f98, signer
+  92955353…, the same as 0.13.50-0.13.73); its guest files match the commit and
+  it carries the navigation map pack's descriptor byte for byte. Runtime
+  44392083121, against 0.13.73's 44136706377: zone servers ready 106.2 and
+  100.8 s after their spawn (162.4 and 161.2), the first start, which builds
+  its caches, 299.9 s (443.1); PRoot served 14.2 million stops in the 1,056 s
+  creation session and 4.86 million in the 773 s reopen session (20.6 and 8.52
+  million); wineserver's `readlinkat` stops in the reopen session 503,004
+  (2,255,096); the realpath library answered 117,400 of 133,120 calls in
+  creation and 24,347 of 37,888 in reopen. Trusted runtime 44398992652 uses
+  both options only in its reopen session: `sequencer_info_done` 39.43 s in
+  creation and 0.99 s in reopen (0.13.73's 44144475202: 39.18 and 39.68), and
+  the reopen Atlas start reached its main loop in 50.83 s (92.76) and was ready
+  56.5 s after its spawn (95.5). Of that start: PhysX objects 16.6 s, object
+  library 9.1 s. These are CI times; the phone's start was 1.6 times CI's in
+  0.13.73.
+
+## 0.13.73 and the Thor test of 0.13.72 (Claude, 2026-11-17)
+
+Owner, 2026-11-17, with exports 20261117-130710 (setup), -130723 (A),
+-131522 (B), -132616 (C, "Draw on the game's own thread") and a storage
+report: "Finalized testing of 72. See reports, then continue development.
+Load times were decent, frame rate seemed to be in the 20s when looking in
+one direction but increased while looking around".
+
+**What the exports show (0.13.72 on the Thor)**
+
+| | A (first after update, one trip) | B | C (GL direct) |
+|---|---|---|---|
+| Client connected after the guest started (its own log) | 256.7 s | 225.8 s | 219.6 s |
+| Tap to guest start | about 4 s | 5.1 s | 5.1 s |
+| Zone server spawn to ready | 168.1 s | 154.4 s | 149.4 s |
+| Observer later than the client | 61.7 s | 70.0 s | 65.0 s |
+| Client frame rate, steady / best 5 s window | 19-26 / 59 | 20-24 / 54 | 19-26 / 54 |
+| PRoot stops (per second) | 11.16 M in 802 s (13,915) | 6.44 M in 447 s (14,403) | 8.17 M in 607 s (13,454) |
+
+- All three passed; second PRoot build, probe `listed_commands_only`,
+  `getsockopt_stops` false (0.95, 1.17, 0.47 microseconds).
+- **Save after travel is confirmed** (A: Mercy Island, Port Oakes, back; saved
+  event on map 71, app epoch 2). Trip out 245.7 s by the observer, back 17 s.
+- **Frame rate.** `ARMPORT_WORKER_V1` beside each frame-rate line: at 22
+  frames a second the client used 4.6 s of CPU per 5 s (0.93 of a core, all
+  threads); at 54 it used 9.5 s (1.9 cores). So a frame costs about 35-40 ms
+  of CPU across threads either way, and in the slow direction the threads run
+  one after another. The 120 s thread samples agree: main 18 %, `gdrv0` 18 %,
+  `gl0` 16 %, another 28 % of a core. Not CPU-bound; what they wait on is not
+  in the report. C equals B. Game resolution 800 by 600; the display server
+  sends each frame Raw in about 130 `sendto` calls (331 rectangles a frame).
+- **Stops by call:** `newfstatat` 23-28 %, `sendto` 24-34 %, `readlinkat`
+  13-17 %, `recvmsg` 12 %, `close` 4-5 %, `openat` 4 %, `wait4` 3-4 %,
+  `recvfrom` 2-3 %. **By program:** Xtigervnc 25-34 % (its `sendto` alone
+  22-32 %, 3,000-4,200 a second), Python 19-21 %, wineserver 15-19 %,
+  MapServer 12-17 %, client 8-9 %, audio 4-5 %. CI never showed Xtigervnc: its
+  viewer reads few frames. The tracer thread used 33-40 % of a core in the
+  world and 50-84 % while the zone loaded.
+- **Defect: the zone graph receipt (0.13.70) was never reused.**
+  `launch_receipts.zone_graph_71`: `no_receipt` in A, `inputs_changed` in B
+  and C (12.9 and 14.6 s; 17.0 s in A, 15.3 s for map 72). Its identity held
+  the device and inode of the zone tree, and that folder is named after the
+  session; only its `data` survives, handed back by rename.
+- Memory: about 6.9 GiB available in the world of 14.9 GiB (launch B, lowest
+  sample 6,869 MiB). Storage: 51.5 GB allocated, 21.8 GB reclaimable (six
+  older runtimes).
+- Still in every launch: `observation_failures` "Cache inventory: Linked
+  private cache directory refused". Harmless: `cache_inventory`
+  (`client_startup_diagnostic.py`) is an evidence-only listing written for the
+  x86 client's private cache folders, and the ARM64 work tree links those
+  folders, which the listing refuses to follow. Nothing depends on it.
+
+**Changes in 0.13.73**
+
+- **The performance graphics option never reached the ARM64 client.**
+  `ClientRuntime` sent `COH_CLIENT_GRAPHICS_PROFILE=standard` for `arm64`
+  whatever the tick box said, the guest set `standard` again, and the series
+  held no profile patch (the x86 one is `patches/client-graphics`). So every
+  ARM64 launch ran the game's own settings; its defaults
+  (`gfxGetRecommendedAdvancedSettings`) are WATER_MED (refraction with a depth
+  test), bloom, depth of field, desaturation and stencil shadows (the
+  client's start log marks WATER, WATER_DEPTH, SHADOWMAP and
+  WATER_REFLECTIONS as enabled when the renderer starts, before settings are
+  applied). Each of them draws the scene again or copies the frame buffer in
+  the middle of a frame. That fits a client that
+  waits in one direction on an island, but it is a lead: nothing measured it.
+  **ArmPort patch 0129** (`armport/patches`, through `patchwork.py`): with
+  `ARMPORT_GRAPHICS_PROFILE=effects_off` `gfxApplySettings` sets water,
+  planar reflections, bloom, depth of field, desaturation, shadows, cubemaps,
+  ambient occlusion, vertical sync and antialiasing off for the launch, keeps
+  the first settings it saw for `gfxGetSettingsForNextTime`, and logs
+  `ARMPORT_GRAPHICS_PROFILE_V1 effects_off ...` once. Detail, textures and
+  resolution are untouched (the x86 profile is minimum detail at 0.75 scale).
+  The app sends `COH_ARMPORT_GRAPHICS_PROFILE=effects_off` for the ARM64
+  client when the option is ticked (the default). Its own variable names:
+  `armport-launcher.exe` is built from `android/native/client-launcher.c`,
+  which resets `COH_CLIENT_GRAPHICS_PROFILE` to the two values it knows, and
+  that file's hash is pinned by other tracks. CI: the creation session runs
+  `standard`, the reopen session `effects_off`; log line
+  `ARMPORT_GRAPHICS_PROFILE_V1 {requested, client_confirmed}`. Report
+  `armport_graphics_profile`. `armport/tests/test_graphics_effects_profile.py`
+  runs the patch's header on the host.
+- **PRoot patch 0007** (`android/native/proot/README.md`). PRoot asks for
+  `sendto`, `recvfrom` and `recvmsg` only to serve rtnetlink sockets: the ones
+  it substitutes where the host refuses AF_NETLINK (Android), and real ones of
+  a tracee that believes it owns a network namespace. With
+  `PROOT_NETLINK_HIGH_FDS=1` each such socket is duplicated to a descriptor
+  number from 960 before `socket` returns (chained `fcntl(F_DUPFD[_CLOEXEC],
+  960)` then `close`), and the filter traces the three calls only from that
+  number, for the default ABI. A failed move (soft limit below 961) closes the
+  low descriptor and returns EMFILE. `sendmsg` and `close` stay traced
+  (fake-id credentials; pipe shadow). Off with `-p`. Chained calls gain a
+  result handler (`register_chained_syscall_with_result`).
+  Local x86-64 (pinned tree, patches 0001-0007, both with real netlink and
+  with it refused to PRoot through a preload so the substituted path runs):
+  `if_nameindex`, `getifaddrs`, a hand-made RTM_GETADDR dump, 3,000
+  open-and-close rounds (no leak), six threads under a 2 kHz timer signal, a
+  child that inherits the socket, a limit of 256 (EMFILE, nothing leaked), a
+  full band (lands at 1024) and ordinary sockets at 970/971 all behave as
+  with patch 0006 except for the number. A `send`+`recv` pair costs 0.9
+  microseconds (52-61 before).
+- The stop-count file's first line gains `fd_stats` (stat calls with
+  `AT_EMPTY_PATH`: glibc's `fstat`, no path to translate), `moved_netlink_fds`
+  and `failed_netlink_moves`.
+- **App.** New option "Do not monitor ordinary socket traffic" (pref
+  `proot-socket-filter`, default on, used only with the second build); report
+  `proot_socket_filter_requested/used`. Guest probe adds `send_recv`,
+  `socket_stops`, `netlink_descriptor`. `COH_CALL_PROFILE=1` is now set on the
+  phone too, and the profile counts `Popen.poll` (which kept its own
+  reference to `waitpid`; the phone made 418-581 `wait4` stops a second).
+- **Zone graph receipt.** Identity format 2 without the tree's identity; rows
+  start at `data` (`zone_beacon_package.receipt_root`). The test now renames
+  `data` into a new session folder, and proves a rebuilt `data` runs in full.
+- **Thread wait sampler** (`character_zoning_scheduler.thread_wait_burst`,
+  started with zoning). Every 30 s in the world, 40 reads 50 ms apart of each
+  thread of the client and of Xtigervnc: state, the system call it is in
+  (`syscall`; the kernel may refuse it to a non-ancestor) and the kernel
+  function it sleeps in (`wchan`). Files are opened once per burst and read
+  with `pread`, so a round makes no stopped call. Report
+  `character_zoning.thread_waits`.
+- **Server health at most every 0.05 s.** `LoginContext.check()` ran the
+  whole health chain on every call, and every loop calls `check()`; the chain
+  polls PostgreSQL and the DbServer (`Popen.poll`, two `wait4`, each stopped
+  twice). The profile's new `Popen.poll` row (run 44103181482): 527,457 polls
+  in the creation session, 68,830 in the reopen session. Cancellation and the
+  deadline are still checked on every call.
+- **First runtime with patch 0007 on ARM64** (44103181482 at 094430eab, build
+  43812957778, before the client patch): probe `socket_stops` false (a send
+  and a receive 1.52 microseconds together, `getppid` 0.35),
+  `netlink_descriptor` 960; 6 rtnetlink sockets moved per session, none
+  refused. Reopen session 8.54 million stops in 892 s (0.13.72: 10.41 million
+  in 887 s), creation 21.6 million in 1,220 s (25.8 million in 1,164 s);
+  `sendto` and `recvfrom` gone, `recvmsg` 8. Reopen by program: MapServer
+  48 %, wineserver 31 %, Python 16 %, client 4 %. `fd_stats`: 599,155 and
+  1,101,174, so with their exit stops a stat of a descriptor is 14 % and 10 %
+  of what is left. The wait sampler ran 19 bursts in the reopen session; the
+  kernel refused the client's `syscall` files (the supervisor is not its
+  ancestor) and allowed Xtigervnc's; `wchan` was readable for both.
+- **CI log lines:** `LAUNCH_RECEIPTS_V1`, `THREAD_WAITS_V1`; the gate with
+  `proot_ioctl_filter` also requires `socket_stops` false and a rtnetlink
+  descriptor of 960 or more when the guest could open one.
+- **Tests.** armport/tests 596 pass; tools/android 187; dbserver 97.
+  `tools/android/test_proot_socket_fd_filter.py` runs the new statements
+  through a BPF interpreter. Interactive suite 3317 run: the same 99 as
+  0.13.67-0.13.72 plus `test_client_gpu_profile...escaped_output_worker`
+  (the /proc race seen before; passes alone).
+- **Chain at bc90fb8b1** (one chain on x86/perf-round1). Build 44117115718;
+  stock-travel runtime 44136706377 (`early_zone=true`,
+  `proot_ioctl_filter=true`, sampler and call profile; one trip; its reopen
+  session with `effects_off`); trusted runtime 44144475202 (interactive job
+  1824 s, THORHERO; its app-sources job compiled the changed Java). Build
+  44115020828 at 5544de92b stopped in its unit test step (a new test read a
+  file outside that job's checkout; 595 of 596 passed), fixed in bc90fb8b1. An
+  earlier stock-travel runtime, 44103181482 at 094430eab with build
+  43812957778, passed patch 0007 before the client patch. APK 44151200472
+  published `coh-atlas-gameplay-v0.13.73` (93552906 bytes, sha256
+  55451e6acb2170bf26babd619be09716ac90fc13b9509009521ca503432a3dc0, signer
+  92955353…, the same as 0.13.50-0.13.72); its guest files match the commit and
+  it carries the navigation map pack's descriptor byte for byte. Runtimes
+  44136706377 and 44144475202: the client confirmed `effects_off` in the reopen
+  session (creation runs `standard`). Runtime 44136706377: probe `socket_stops`
+  false, rtnetlink descriptor 960, 6 sockets moved per session and none
+  refused; PRoot served 20.6 million stops in the 1,194 s creation session and
+  8.5 million in the 891 s reopen session (0.13.72's 43823341031: 25.8 and 10.4
+  million), with `sendto`, `recvfrom` and `recvmsg` gone from the counts.
+  Reopen by program: MapServer 48 %, wineserver 31 %, the guest's Python 15 %,
+  client 4 %. The supervisor's process polls in the creation session: 41,734
+  (527,457 before the health interval).
+- **Not validated:** patch 0007 has not run on a device. CI's hosts grant
+  AF_NETLINK, so CI exercises the move with real sockets, not the substituted
+  ones the phone uses; that path ran only locally on x86-64. Patch 0129's
+  effect on the frame rate is unmeasured; CI draws in software.
+- **Open.** What the client waits on in the slow direction (launch A against B
+  on the next test sheet, and the sampler); `newfstatat` and `readlinkat` (now
+  the two largest); Python's stops on the phone (twice CI's rate); the 60-90 s
+  server log delay; the spare zone hand-over.
+
+## 0.13.72: the supervisor's own /proc scans (Claude, 2026-11-15)
+
+No owner message since 2026-11-12; 0.13.70 and 0.13.71 are published and not
+yet tested on the Thor. This continues "pursuing the goals".
+
+- **Why.** PRoot's counts by program (0.13.71, run 43383782947): the guest's
+  Python supervisor makes 22 % of all stops in a reopen session and 34 % in a
+  creation session. A CI-only counter by caller (`python_call_profile`, on
+  with `trap_sampler`; `install_call_profile` in `armport_interactive.py`)
+  ran in 43401783716 at 02e6a710d: 527,031 wrapped calls in the reopen
+  session, of them `open` 322,845, `readlink` 99,265, `stat` 81,472. By
+  caller: `diagnostic.py:326` and `:335` (`status` and `stat` of a process)
+  227,721; `game_device_diagnostic.py:636` (`ns/pid` link) 90,322; `:244` and
+  `:253` 70,016; `diagnostic.py:395` (`environ`) 15,566: 403,625 in all, from
+  `observe_live_lineage`, which `LocalCharacterServer.health()` called on
+  every tick (about three full /proc scans a second).
+- **Change.** `health()` observes the lineage at most once in
+  `LINEAGE_OBSERVATION_SECONDS` (15). `memory_observation` samples every 15 s
+  (5 before); each sample is a full ownership scan. Risk taken: a Wine process
+  whose leader exits within 15 s of starting while workers live on is not
+  authenticated for cleanup; that is a crash path.
+- **First attempt, 3 s (build 43798775261, runtime 43808003132 at 6d296ae4e;
+  not published).** It moved little: the reopen session's wrapped calls fell
+  from 527,031 to 463,868 and PRoot's stops from 11.8 to 11.4 million (Python
+  22 % to 19.6 %). The same readers still made 327,602 calls, so one scan
+  costs about a thousand calls (every thread of every process) and had been
+  running once in about 2.6 s, not on every tick as I had read it. The
+  profile now records up to three callers above each line (`format` 2).
+- **Creation session** (2,227,812 calls) is mostly one-time checks:
+  `character_server_data_cache.py:227/236` 381,754, `local_character_server.py:3193/3244`
+  360,971, `armport_client_package.py:186/195/197` 519,015,
+  `atlas_world_assets.py:160` 123,669. Not changed here.
+- **Tests.** armport/tests 587 pass. Interactive suite 3307 run: the same 99
+  as 0.13.67-0.13.71 plus `test_client_gpu_profile...escaped_output_worker`
+  once (a /proc race on a process that had just exited; passes alone 3 of 3).
+- **Chain at e9f375739** (one chain on x86/perf-round1). Build 43812957778;
+  stock-travel runtime 43823341031 (`early_zone=true`,
+  `proot_ioctl_filter=true`, sampler and call profile; one trip); trusted
+  runtime 43828305781 (interactive job 1892 s, THORHERO; its app-sources job
+  compiled the changed Java). An earlier build of this version with a 3 s
+  interval (43798775261, runtime 43808003132 at 6d296ae4e) was not published.
+  APK 43833348924 published `coh-atlas-gameplay-v0.13.72` (93540618 bytes,
+  sha256 4ab62eccbb78bc12759bccdb9032752358d4234801260a3239e15eb587281583,
+  signer 92955353…, the same as 0.13.50-0.13.71); its guest files match the
+  commit and it carries the navigation map pack's descriptor byte for byte.
+  Runtime 43823341031: PRoot served 25.8 million stops in the 1,164 s creation
+  session and 10.4 million in the 887 s reopen session (0.13.71's 43383782947:
+  27.9 and 11.8 million). Reopen by program: MapServer 40 %, wineserver 25 %,
+  the guest's Python 12 % (22 % before), audio bridge 9 %, client 8 %. The
+  supervisor's wrapped file calls in that session: 267,606 (527,031 before).
+- **Open.** The spare's match (`refused_request`) and a hand-over in CI; the
+  60-90 s server log delay; socket reads and writes, `readlinkat`, the second
+  stop of `stat`. The PR description is 62.8 kB of GitHub's 65.5 kB.
+
+## 0.13.71: accept is not stopped; stop counts by program (Claude, 2026-11-13)
+
+Continues the owner's "continue the roadmap and pursuing the goals" of
+2026-11-12. 0.13.70 is published and not yet tested on the Thor; 0.13.71 is
+0.13.70 plus PRoot patch 0006.
+
+- **Why.** PRoot's own counts (patch 0005, CI run 43363707492, reopen
+  session): 14.2 million stops in 912 s; `accept` 2,447,700 of them (17 %),
+  1,340 calls a second. PRoot stops `accept` and `accept4` only to rewrite, at
+  exit, the path in a Unix-socket peer's address (`translate_socketcall_exit`).
+- **Patch 0006** (`android/native/proot`, in `PATCH_NAMES`).
+  `PROOT_ACCEPT_UNTRACED=1` leaves both calls out of the seccomp filter. Local
+  x86-64 build with the app's options: an empty non-blocking `accept` 2.4-4
+  microseconds with the switch, 52-56 without; a TCP peer unchanged; a
+  Unix-socket peer bound under a binding reads as the host path with the
+  switch (`/opt/gb/.../c` without). The stop-count file gains
+  `P <thread name> <call number> <stops>` rows (thread name from
+  `/proc/<tid>/comm`, re-read every 256 stops; pairs under one stop in 2,000
+  are not written).
+- **Where it is set.** With the second PRoot build only: the app (now its
+  default launch) and CI's `proot_ioctl_filter` input. The host parser reads
+  the program rows (`programs` in `PROOT_STOP_COUNTS_V1 {json}`).
+- **Tests.** armport/tests 584 pass; dbserver 97; Java as before against the
+  local stubs.
+- **Chain at ade9f7cde** (one chain on x86/perf-round1). Build 43373369060;
+  stock-travel runtime 43383782947 (`early_zone=true`,
+  `proot_ioctl_filter=true` with patches 0005 and 0006, sampler reading as
+  root; one trip); trusted runtime 43389182271 (interactive job 1847 s,
+  THORHERO; its app-sources job compiled the changed Java). APK 43393932170
+  published `coh-atlas-gameplay-v0.13.71` (93536522 bytes, sha256
+  5b15b2ad747f5f252444343e183dc9405e55f4267f560361195440ed3e1f8d0a, signer
+  92955353…, the same as 0.13.50-0.13.70); its guest files match the commit and
+  it carries the navigation map pack's descriptor byte for byte. Runtime
+  43383782947 with `accept` untraced: 27.9 million stops in the 1,225 s
+  creation session and 11.8 million in the 913 s reopen session (0.13.70's run
+  43363707492: 32.3 and 14.2 million), none for `accept`. Reopen session by
+  program: MapServer 36 % (`newfstatat` 26 %), wineserver 22 % (`readlinkat` 19
+  %), the guest's Python 22 % (`newfstatat` 13 %), the audio bridge 8 %, the
+  client 7.5 %; creation: Python 34 %, wineserver 25 %, MapServer 19 %, client
+  15 %.
+- **Spare zone server, first CI run (43394425425 at ade9f7cde; failed, not a
+  release gate).** Inputs: `server_run_id`, `trusted_bins`, `stock_travel`,
+  `spare_zone`, `proot_ioctl_filter`. Creation passed. In the reopen session a
+  spare for the Atlas tree started beside the running Atlas Park, loaded the
+  shared part and waited after 100.8 s (`warm`): the first time the spare
+  layer has run. The trip to map 101 did not use it: the spare was dropped
+  with `request_for_another_tree` although 101's tree is also `atlas`
+  (`_spare_serves` also compares the start options; which of the two failed
+  was not recorded, and now is, as `refused_request` in the spare's row).
+  Map 101 then started cold in 121.3 s. A second spare was warm after 160.7 s,
+  but the scripted trip back never began: the client ran at 3.8 FPS using 3.5
+  cores (three MapServers and the software-rendered client on a 4-core
+  runner), and the session hit its 20-minute bound. No hand-over to a spare
+  has run anywhere yet. PRoot's counts with the fast server (reopen, 1,356 s):
+  14.6 million stops; MapServer 31 %, wineserver 24 %, Python 24 %, audio
+  bridge 10 %, client 7 %.
+- **Open.** The Android build with 0005 and 0006 has not run on a device
+  (0004 alone has: Thor 0.13.69). Socket reads and writes (15 %), the second
+  stop of every `stat` (fake id), `readlinkat` and `close` are untouched.
+
+## 0.13.70 and the Thor test of 0.13.69 (Claude, 2026-11-12)
+
+Owner, 2026-11-12 20:01 CST, with four exports: "I did A, B and C tests.
+Definitely some improvement, but not quite there yet. Continue the roadmap and
+pursuing the goals plus any fixes from observations in the logs".
+
+- **Exports.** 20261113-012742 (setup), -012755 (A, defaults), -013835 (B,
+  ioctl option), -015905 (C, ioctl option and fast server; cancelled by hand).
+  All Reopen of Ralakar in Mercy Island (map 71), 0.13.69.
+- **Times, from the client's own log** (`armport_stdio.txt`, "Established
+  successful MapServer connection", seconds after the guest started; the app
+  starts the guest 4-5 s after the tap): A 338.7, B 360.7, C 235.0. The
+  observer's `connected` came at 405.0, 436.0 and 306.8, so the app's
+  `ui_action_to_client_world_ready_seconds` (408.8, 441.1, 311.9) are 66-75 s
+  too long. 0.13.67 was 923 s by the same late clock.
+- **Why the observer is late.** It reads the entity log. The MapServer sends
+  log lines to the DbServer in batches (`SECS_LOG_RESEND` 30 s,
+  `MapServer/src/dbcomm/logcomm.c`) and the DbServer's log server holds every
+  line 60 s to sort it (`LOG_WINDOW`, `libs/UtilitiesLib/src/utils/log.c`;
+  `disable_sort_log` has no switch). The same delay sits between a logout and
+  "Saved character verified" (B: logout 01:36:18, saved 01:37:22; C: 01:52:08,
+  01:53:15) and between a zone arrival and its event (62 s and 67 s in C).
+  Not fixed: both ends are compiled in, and the DbServer is a layered build of
+  its own (armport-external-maps-dbserver.yml).
+- **Early start.** Started 89.3/67.1/63.2 s after the guest; the game asked
+  at 206.4/181.3/154.4; ready at 322.3/343.2/219.7. Spawn to ready 233.0,
+  276.1 and 156.5 s (C is the CI-built server with trusted bins).
+  `ready_before_the_game_asked` false in all three.
+- **ioctl probe.** A `every_ioctl_stops`: FIONREAD 46.8, TCGETS2 66.7
+  microseconds per call (getppid 0.4). B `listed_commands_only`: 0.81 and
+  45.96. C: 1.82 and 92.1. So one stop costs about 23 microseconds on the
+  Thor and the filter works there.
+- **Tracer CPU** (busiest threads, 45 s and 120 s samples): PRoot 74-83 % of
+  a core while loading in all three; in the world 47 % (A), 41 % (B), 41-43 %
+  (C), 53 % with two zone servers. wineserver 24-29 % throughout, the guest's
+  Python 9-12 %, DbServer's main thread 13-15 %. The ioctl filter did not
+  move the in-play tracer share: those stops were not its main load.
+- **Frame rate** (client's 5 s lines, in Mercy Island): A 30-42 (mean 35), B
+  31-54 (mean 39), C 50-61 for 3 min, then 21-37 in Port Oakes and 23-29 back
+  in Mercy Island. `ARMPORT_WORKER_V1`: at 25-35 FPS the worker never sleeps
+  and the client uses 6-8 s of CPU per 5 s; at 60 it sleeps 200-300 times.
+  The rate follows the scene, and the client is CPU-bound, not capped. Lines
+  of 10 FPS are the login screen and loading screens (the menu cap).
+- **Travel in C.** Mercy Island to Port Oakes: transfer begun 01:46:55, client
+  connected 01:50:40 (224 s): navigation map install 56.6 s
+  (`installed_verified_graph`, 8,704 inputs walked three times), server start
+  145.8 s (sequencer info 52.9, definitions 42.9, the map itself 44.4), client
+  load 19 s. Back to the running Mercy Island: 17 s.
+- **Defect, fixed in 0.13.70.** In C the owner pressed Save 33 s after
+  arriving back in Mercy Island. The guest verified the save (01:53:15,
+  `zoning_epoch` 2) but the app never showed it: the arrival event for epoch 2
+  came at 01:52:42, after Save, and `ClientRuntime` dropped every
+  `character_zoning` event once `saveLogoutRequested` was set; its zone stayed
+  72 and the saved event for map 71 failed
+  `event.map_id == zoning.currentMap()`. The owner waited 8 min at the login
+  screen ("player 0 of 0") and stopped the operation. Now a stock-travel
+  arrival is applied after Save (it starts nothing), and under stock travel a
+  saved event is accepted for any static zone it names.
+- **0.13.70, code.**
+  - App: the fix above; "Fast server" (pref `fast-server`, was
+    `trusted-bins-test-server`) and "Lighter system-call monitor" (pref
+    `proot-call-filter`, was `proot-ioctl-filter`) are on by default under new
+    keys, so a stored "off" from the 0.13.69 test does not hide the default.
+  - PRoot patch 0005 (`android/native/proot`): `PROOT_STOP_COUNTS=<file>`
+    counts translation rounds per call number; `PROOT_GETSOCKOPT_PEERCRED_ONLY=1`
+    stops `getsockopt` only for `SOL_SOCKET`/`SO_PEERCRED`. Local x86-64:
+    0.3-0.4 against 48-51 microseconds; `SO_PEERCRED` still returns 1000:1000.
+    The app sets both with the second build and puts the file's text in
+    `proot_stop_counts`; CI sets both with `proot_ioctl_filter`, prints
+    `PROOT_STOP_COUNTS_V1 {json}` per session and fails without the file.
+    The guest probe adds a `getsockopt` timing (`getsockopt_stops`).
+  - `armport_client_timeline` in the report: the client's own connection
+    times and `observer_seconds_after_client`.
+  - `launch_receipts.zone_graph_<map>`: a zone's navigation map is reused on
+    its launch receipt (directory rows) instead of re-reading every input
+    (16.2 s per start of Mercy Island on the Thor).
+- **Tests.** armport/tests 584 pass (`test_client_timeline.py` new;
+  `test_proot_ioctl_probe.py` 13); tools/android 185; dbserver 97; interactive suite 3307 run, the same 99 failing as 0.13.67-0.13.69;
+  `test_zone_beacons.py` 40 (receipt reuse, a replaced input, removed graph).
+  Java: `javac` against the local stubs gives the same 77 error kinds and
+  counts before and after.
+- **Chain at a774abd0d** (one chain on x86/perf-round1). Build 43353706777;
+  stock-travel runtime 43363707492 (`early_zone=true`,
+  `proot_ioctl_filter=true` with patch 0005, sampler reading as root; one
+  trip); trusted runtime 43368553729 (interactive job 1862 s, THORHERO; its
+  app-sources job compiled the changed Java). APK 43372592357 published
+  `coh-atlas-gameplay-v0.13.70` (93532426 bytes, sha256
+  aefd2c8c5abc54c401945bb2c20963855f7151885cd1c5aee007aaccd0381b80, signer
+  92955353…, the same as 0.13.50-0.13.69); its guest files match the commit and
+  it carries the navigation map pack's descriptor byte for byte. Runtime
+  43363707492 with the filter: ioctl probe `listed_commands_only`, `getsockopt`
+  0.51 microseconds per call (29.59 and `getsockopt_stops` true in the trusted
+  runtime, which runs without the switches); PRoot's own counts: 32.3 million
+  stops in the 1,244 s creation session and 14.2 million in the 912 s reopen
+  session, of the latter `newfstatat` 36 %, `readlinkat` 17 %, `accept` 17 %
+  (1,340 calls a second), `recvmsg`/`sendto`/`recvfrom`/`sendmsg` 15 %, `close`
+  5 %, `openat` 5 %. Atlas Park's MapServer, spawn to ready: 175.7 s stock,
+  94.8 s with trusted bins.
+- **Open.** The 60-90 s log delay (needs MapServer and DbServer changes). A
+  second idle zone server raises the tracer's share from 41-43 % to 53 %; an
+  idle tick is not built. The early start begins 63-89 s into the launch and
+  could begin about 30 s earlier. `observation_failures`: "Cache inventory:
+  Linked private cache directory refused" in B and C, not looked at yet.
+  Launches D (GL-direct) and E (spare zone) were not run.
+
+## 0.13.69, PRoot part: ioctl stops only for the commands PRoot acts on (Claude, 2026-11-11)
+
+Folded into 0.13.69 because its build had to restart at a new head anyway
+(the runner package outage below; build 43057175572 then failed in
+`client-run1`, where `install_wine_runtime.sh` still called apt directly).
+
+- **Why.** Thor 0.13.67: PRoot's one tracer thread used 647 s of CPU before
+  the world appeared and half a core in play. Android builds of the pinned
+  PRoot stop every `ioctl` of every guest task twice; the renderer talks to
+  the GPU through ioctls.
+- **Patch.** `android/native/proot/0004-ioctl-command-filter.patch`, now in
+  `tools/android/build_proot.py` `PATCH_NAMES`. Switch:
+  `PROOT_IOCTL_COMMANDS_ONLY=1`; without it nothing changes.
+- **Local proof (x86-64, this session).** talloc 2.4.3 from the Samba
+  repository's tag, the pinned PRoot tree with patches 0001-0004, built with
+  gcc, run with `--link2symlink --kill-on-exit --sysvipc -i 1000:1000`. The
+  kernel accepted the filter. Per call: FIONREAD 0.16 microseconds with and
+  without the switch; TCGETS2 0.13 without, 49.8 with (two stops). Terminal
+  attributes through a pty, SIOCGIFINDEX and `ln` behaved the same.
+- **Probe.** `armport_interactive.proot_ioctl_probe` times getppid, FIONREAD
+  and TCGETS2 on a private pipe at each launch (400 calls each) and records
+  `armport_proot_ioctl` (`reading`, microseconds per call). On a phone without
+  the option it should read `every_ioctl_stops` and give the Thor's cost per
+  stop.
+- **CI.** armport-app-runtime input `proot_ioctl_filter`
+  (`COH_PROOT_IOCTL_FILTER=1`, needs `proot_seccomp`): the isolation launcher
+  sets the switch for PRoot, the network receipt records it, and
+  `require_proot_ioctl_filter` fails a session whose probe does not read
+  `listed_commands_only`. The Linux build traces no ioctl without the switch,
+  so CI shows the filter works, not the phone's gain.
+- **APK.** armport-thor-apk input `proot_ioctl`: builds this head's PRoot for
+  Android (NDK 27.2.12479018, two jobs) and `build_thor_apk.py --proot-ioctl`
+  adds it as `lib/arm64-v8a/libproot-ioctl.so` and `libproot-ioctl-loader.so`
+  with its receipt, licence files and corresponding source under
+  `assets/proot-ioctl/`. The receipt must name this checkout's patches and
+  recipe byte for byte. The donor's `libproot.so` stays byte-identical and is
+  the default.
+- **App.** Launch option "Graphics calls skip the system-call monitor (frame
+  rate experiment)" (pref `proot-ioctl-filter`, off): starts the second
+  program with the switch when the fast PRoot mode is on and both files are
+  present; report fields `proot_ioctl_filter_requested` and
+  `proot_ioctl_filter_used`.
+- **First CI reading (run 43065755111 at 094a50a37, ARM64 runner, Linux
+  PRoot with the switch).** `listed_commands_only`: getppid 0.39, FIONREAD
+  0.58, TCGETS2 29.74 microseconds per call. The run then failed in the
+  character creator's automation ("Costume page ... not reached after
+  body_next", seen before in r58 and r62 first attempts) before the gate ran;
+  the gate would also have failed, because it compared PRoot's own switch,
+  which the guest's cleared environment does not show. The launcher now
+  passes `COH_PROOT_IOCTL_FILTER=1` into the guest and the gate reads the
+  probe's `requested`.
+- **Second CI reading (run 43069396512 at ef6f8ce7c, passed; client from
+  build 42945013269, the same client patches).** Creation and reopen both
+  read `listed_commands_only` with `requested` true (FIONREAD 0.58 and 0.63,
+  TCGETS2 30.71 and 30.8 microseconds). Sampler, 35 lines, 7640 rounds: 0
+  ioctl stops among 4185 sampled stops. Early start: started, preparation
+  2.0 s, ready 176.2 s after it began, the game asked after 115.3 s, so the
+  zone was ready 60.9 s after Enter Game.
+- **Build 43076418815 at ef6f8ce7c failed in 77 s:** the `libraries` job's
+  sparse checkout did not hold `android/native/proot/`, which
+  `test_thor_apk_proot.py` pins. The path is in the list now; the unit tests
+  pass in a local checkout with exactly that job's 24 patterns (578).
+- **Tests.** `armport/tests/test_proot_ioctl_probe.py` (10),
+  `armport/tests/test_thor_apk_proot.py` (6),
+  `tools/android/dbserver/test_host_dbserver_smoke.py` (one new).
+- **Android build (APK run 43104941674, the first).** NDK 27.2.12479018,
+  clang 18.0.3: `libproot-ioctl.so` 264,144 bytes, sha256 d1715661…cf26e78,
+  16 KiB segments, needs only libdl and libc; its loader came out byte for
+  byte the donor's (95a47c09…f0745c). In the published APK the second build
+  holds the switch's name and the default `libproot.so` does not; both default
+  files have the 0.13.36 hashes; receipt, patches, recipe, source bundle and
+  licences match the commit (`verify69.sh`).
+- **Root sampler (run 43091944698 at 22d90d987).** Read as root, Wine's
+  processes are readable: of 4,325 sampled stops none is an ioctl;
+  `newfstatat` 966, `readlinkat` 475 (wineserver 429), `accept` 371
+  (wineserver), `getsockopt` 197, `recvmsg`/`sendto`/`recvfrom` 373; 1,001
+  left the stop before the call could be read. Table and next steps:
+  `armport/PERFORMANCE-PATH.md`, "What PRoot intercepts".
+- **Open.** The Android build of the patched PRoot has never run on a device.
+  Socket, `close` and fake-id traps are untouched. Drafted, not in the
+  repository: patch 0005 (stop counts per call number written to a file;
+  `getsockopt` stopped only for `SO_PEERCRED`; local x86-64: 0.3-0.4 against
+  48-51 microseconds, the rewritten ids still returned).
+
+## 0.13.69: the early zone start runs on ARM64; fixes from Thor 0.13.67 (Claude, 2026-11-10)
+
+Owner, 2026-11-10 21:56 CST: "Check the logs to confirm and continue
+progressing the project to the goals i laid out before". The log is in "Thor
+test of 0.13.67" below; 0.13.68's defect is in its own section.
+
+- **Early zone start.** `armport_interactive.start_wine` calls
+  `start_early_zone` after `prepare_client_visual_inputs` (0.13.68 called it
+  only from the x86 sequence). `interactive_host.require_early_zone_decision`:
+  with the `early_zone` input a reopened session without an `early_start`
+  record, or with a refusal other than memory, fails the run
+  (`armport/tests/test_early_zone_gate.py`).
+- **Quick check before the chain.** Run 42964556839 at aad238554 with 0.13.68's
+  build 42945013269 (`early_zone=true`, `trap_sampler=true`) passed. Reopen:
+  `early_start` `started` true, preparation 1.936 s, ready 170.5 s after its
+  start; the game asked for the zone 109.8 s after the start and that request
+  was `session_flow` (the zone-servers notice lists a start only for map 101),
+  so the zone was ready 60.7 s after Enter Game (0.13.68's run 42955090151:
+  141.7 s after the request). The MapServer took 170.5 s from spawn to ready
+  beside the client's start, 139.3 s alone: the two share PRoot's tracer.
+  MemAvailable 13975 MiB at the decision, 10870 MiB at ready. Creation:
+  refused, `new_character_zone_unknown`. Both trips and the save passed; the
+  job compiled the changed Java.
+- **Stranded cache recovery.** `character_server_data_cache.proot_helper`: an
+  untraced process named `exe` whose parent is init is our PRoot's own helper
+  when its program file is the tracer's and it started no earlier than the
+  tracer; then it is not foreign. Thor 0.13.67 recorded `{"name": "exe",
+  "parent": "1", "tracer": "0"}`. Anything unreadable or different stays
+  foreign, with the check's facts in
+  `stranded_recovery_survivors[].helper_check`. Not yet seen on the phone.
+- **Animation step receipt.** `client_animation_pack` runs through
+  `receipted_step('client_animation', ...)`: pins
+  `client_animation_package.py`, the pigg, its manifest and
+  `client-runtime.zip`; bound to the import generation; leaves are the 5878
+  loose links (Thor 0.13.67: 13.6 s on every launch, before the saved zone may
+  start). `receipted_step` takes leaf paths and `bound` facts.
+- **Read-only records.** `wine_priorities.loading_samples` (up to 8, 45 s
+  apart, while a zone server loads before the character is in the world) and
+  voluntary/involuntary context switches for each program's busiest threads
+  (`busiest_threads` rows gain two numbers).
+- **Experiment, off.** App option "Draw on the game's own thread (frame rate
+  experiment)" (`client-gl-direct`, `COH_CLIENT_GL_DIRECT`):
+  `mesa_glthread=false` for the GPU renderer (`armport_gl_threads`). Thor
+  0.13.67: the game's two threads and Mesa's `gl0` and `gdrv0` at about 30%
+  each, their busy time adding up to the frame time.
+- **CI sampler.** `armport/app/trap_sampler.py`, input `trap_sampler` on
+  `armport-app-runtime`: on the host, outside PRoot, bursts of /proc reads of
+  every guest task; one `TRAP_SAMPLER_V1` line per minute in the job log with
+  task states per program and the system calls of tasks in a tracing stop.
+- **What the sampler showed (run 42964556839, 35 one-minute lines, 7471
+  rounds).** Tasks found in a tracing stop, by program and call: wineserver
+  1316 and the client 615 (their /proc `syscall` files are not readable),
+  MapServer `newfstatat` 414, guest Python `newfstatat` 388 (and 323 outside a
+  call), `getsockopt` 153 (MapServer 77, DbServer 76), `recvmsg` 134 (Xtigervnc
+  59, MapServer 40, DbServer 30), `openat` 116, `close` 72, `readlinkat` 54,
+  `wait4` 46, `getxattr` 43. The tracer was running in 60-70% of samples while
+  a MapServer loaded and 22-32% with the character in the world. wineserver,
+  one thread that every Wine process waits for, is the task most often stopped.
+- **Why those calls stop (PRoot source, pinned commit 7266fb3e,
+  `src/syscall/seccomp.c`).** Besides path calls the base filter traces `close`
+  (pipe shadow), `recvfrom`, `recvmsg`, `sendmsg`, `sendto`, `socket`, `clone`,
+  `prctl`, `getxattr`, `wait4` and, in Android builds only, every `ioctl` on
+  entry and exit (terminal and SIOCGIFINDEX fix-ups); `-i 1000:1000` (fake_id0)
+  adds `fstat`, `getsockopt`, `sendmsg` and the id calls. On the phone that
+  includes each GPU (KGSL) ioctl of the renderer, each datagram of the servers
+  and each X11 reply. CI's Linux build does not trace `ioctl`, so the phone's
+  tracer load in the world (52% of a core) is higher than CI's. The first
+  such patch (ioctl) is in this release as an option: see "0.13.69, PRoot
+  part" above. The socket, `close` and fake-id traps are unchanged.
+- **Local evidence.** `armport/tests` 551 pass with
+  `ARMPORT_SERVER_BASELINE_ROOT`. Interactive suite: 3304 run, 86 failures, 13
+  errors, 36 skips before the last additions, the same 99 as at 0.13.67 (`comm`
+  of the sorted lists); the modules changed afterwards (`test_launch_receipts`
+  13, `test_character_zoning_scheduler` 19, `test_client_sidebar_runtime`,
+  `test_client_controller_java`, `test_server_worktree_reuse`,
+  `test_character_zoning`) pass. Java: `javac` against the local stubs reports
+  no new kind of error; CI's app-sources job compiled it (42964556839).
+
+- **Chain at 22d90d987** (one chain on x86/perf-round1). Build 43077376317;
+  stock-travel runtime 43091944698 (`early_zone=true`,
+  `proot_ioctl_filter=true`, sampler reading as root; one trip); trusted
+  runtime 43099656030 (interactive job 1856 s, THORHERO; its app-sources job
+  compiled the changed Java). Earlier attempts: builds 43038600688,
+  43040165696, 43045034484, 43049997166 and 43054851770 stopped because
+  ports.ubuntu.com did not resolve on the runners (now `apt_install.sh` with
+  signed mirrors); 43057175572 in an install script that still called apt
+  directly; 43076418815 in the unit tests (the libraries job's partial checkout
+  lacked `android/native/proot/`); runtime 43065755111 at a character creator
+  automation step, and its gate compared a variable the cleared guest
+  environment cannot see (fixed in ef6f8ce7c; 43069396512 passed there). APK
+  43104941674 published `coh-atlas-gameplay-v0.13.69` (93528330 bytes, sha256
+  37b0cf1e27ed4ab51b3e690b3991d9d2fc4cc78b954049b496002aea90a9e2bb, signer
+  92955353…, the same as 0.13.50-0.13.68); its guest files match the commit and
+  it carries the navigation map pack's descriptor byte for byte. Runtime
+  43091944698: early start `started`, the game's request 115.4 s later, zone
+  ready 60.6 s after it; ioctl probe `listed_commands_only` in both sessions
+  (FIONREAD 0.6, TCGETS2 31 microseconds per call) and no ioctl among 4,325
+  sampled stops; the trusted runtime, without the switch, reads
+  `no_ioctl_stops` (CI's Linux PRoot does not trace ioctl; Android's does).
+  Atlas Park's MapServer, spawn to ready: 176.0 s stock, 99.0 s with trusted
+  bins.
+- **Runner package outage (2026-11-11).** Builds 43038600688, 43040165696,
+  43045034484, 43049997166 and 43054851770 at 27aac4c12 all stopped in the
+  `libraries` job's "ArmPort test apt": GitHub's ARM64 runners could not resolve
+  Canonical's `ports.ubuntu.com` between 14:27Z and 16:14Z (pip and checkout
+  worked in the same jobs). `armport/scripts/apt_install.sh` now does the
+  update and install for armport-build and armport-app-runtime: when an archive
+  host in the runner's sources does not resolve, or the install fails, it
+  points the sources at a mirror (MIT, OCF Berkeley, TU Chemnitz), installs,
+  and puts the sources back. apt still checks the Ubuntu archive signature, so
+  a mirror cannot substitute a package. Tests: `armport/tests/test_apt_install.py`
+  (8, with stand-ins for apt-get and getent). Build 43057175572 at 563ca622b
+  used the mirror in three jobs (notice "apt mirror": all four ubuntu.com
+  archive hosts failed to resolve) and then failed in `client-run1`:
+  `armport/scripts/install_wine_runtime.sh` still called apt directly and
+  spent 20 minutes on the dead host. It now installs through the helper.
+
+## Thor test of 0.13.67 (user, 2026-11-10; export 20261111-035325)
+
+Owner, 21:56 CST, with exports 20261111-035325 (session) and -035317 (setup):
+"I can confirm that mercy island finally had map data and pets could move.
+Check the logs to confirm and continue progressing the project to the goals i
+laid out before". One launch: the first on 0.13.67, Reopen of Ralakar in Mercy
+Island, played about 10 minutes, saved (`committed_sql_verified`, powers,
+costume and position preserved).
+
+- **Navigation map.** `zone_tree_preparation.beacon_graph.71`:
+  `installed_verified_graph`, origin `navigation_map_pack`, 407059 combat
+  beacons, 8711 inputs (565 MB) hashed in 66.5 s (0.13.66: refused after 20.6
+  s). The 0.13.67 fix is confirmed on the phone.
+- **Tap to world.** Android's receipt: 993.9 s (0.13.66: 845.3 s). The client's
+  own line `Established successful MapServer connection`: 918.7 s after the
+  guest started (0.13.66: 765.4 s); the guest's `character_connected` follows
+  it by 72 s (79 s in 0.13.66), so Android's figure overstates both. The 153 s
+  more than 0.13.66: 106 s at the login and character screens (the client was
+  ready at 388 s, 380 s in 0.13.66; Enter Game came 136 s later, 30 s in
+  0.13.66), 46 s for the texture list (rebuilt because the client executable
+  changed: 65.4 s, 19.8 s when reused) and 46 s more for the graph (hashed and
+  installed instead of refused); the install steps were 24 s shorter and the
+  server data mirror 10 s shorter (65.3 s).
+- **One-time work was done and recorded.** `launch_receipts`: all four steps
+  `ran_in_full`, `no_receipt`, `recorded` (69 s together). Client file list:
+  `index result=miss reason=header`, scan 132.3 s, `index result=written`.
+  `server_data_cache.returned_after_owned_cleanup` true (first time on the
+  phone). The second launch has not been run; its gains are still unmeasured.
+- **Stranded cache recovery is still refused.** `stranded_recovery_survivors`:
+  `{"pid": 17807, "name": "exe", "parent": "1", "tracer": "0"}`: PRoot's helper
+  detaches, so 0.13.67's parent-chain rule does not reach it. `state_inventory`
+  holds 6 `local-login-server-*`, 4 `-zones` and 3 `character-server-data-*-*`
+  trees from earlier sessions.
+- **Zone start.** Request to ready 378.7 s: preparation 146.7 s (mirror 65.3 s,
+  graph 66.5 s), MapServer `Server ready. (took 229.45 s)` (0.13.66: 223.26 s).
+  While the client waited it drew 41 frames in 402 s.
+- **Frame rate in the world** (cap 60 in effect: `maxfps=60`,
+  `worker_sleeps=0`). The client's own 5 s windows: 25-30 FPS for the first 5.5
+  minutes, then 20-54 while moving; Android delivered a mean of 30.1 and a
+  median of 27.7 over 142 windows (0.13.66, cap 30: 23.7 and 28.6 over 47). The
+  client used about 1.3 cores (`cpu_user_ms` about 6100 and `cpu_kernel_ms`
+  about 600 per 5 s) across four threads of about 30% each (`CityOfHeroes.ex`,
+  `:gl0`, `:gdrv0` and a second client thread): no thread is saturated, so the
+  limit is the hand-off between them or waiting, not one core's speed. Their
+  last cores were 2-6; core 7 (3187 MHz) is allowed for most threads and almost
+  unused.
+- **PRoot's tracer.** `wine_priorities` (6 samples, 120 s apart, all in the
+  world): the thread named `libproot.so` had used 647 s of CPU at the first
+  sample, 990 s after the guest started, and 316 s more over the next 607 s
+  (52% of a core). In the same 607 s: wineserver 25%, the DbServer's main
+  thread 17%, the guest Python 11%, the MapServer 9%. One thread serves every
+  filtered system call of every traced task, so the launch is bound by it;
+  which calls keep it busy in the world is not in the report.
+- **Memory and server tick.** MemAvailable never below 6527 MiB (11091 before
+  the client, 7631 when the zone was ready, about 7000 in the world), pressure
+  0.00, swap unchanged. 18 tick probes: 116-118 ticks per 4 s, largest gap 66
+  ms.
+- **Read for 0.13.68.** Its early start runs the zone's preparation and
+  MapServer beside the client's start; both are bound by the same tracer
+  thread, so the overlap may save less than the 113 s + 227 s that 0.13.66
+  suggested. The phone decides.
+
+## 0.13.68: the saved zone starts beside the client; spare zone server built (Claude, 2026-11-10)
+
+Continues "execute all recommended steps" (owner, 2026-11-10 16:26 CST). Step 9
+of the evaluation ([armport/PERFORMANCE-PATH.md](armport/PERFORMANCE-PATH.md))
+split in two when the DbServer's own code showed that a static zone needs no
+cookie to register; design in
+[armport/notes/ON-DEMAND-ZONES.md](armport/notes/ON-DEMAND-ZONES.md), "0.13.68".
+
+- **Early start of the saved zone (9a).** `character_zoning.start_early_zone`,
+  called by the client diagnostic once the client's install steps have
+  finished: Thor 0.13.66's stage order runs the map stage
+  (`local_atlas_startup`, 21:14:45) before `client_visual_assets`,
+  `client_all_zone_assets` and `client_all_zone_audio` (until 21:16:12), the
+  shared zone tree mirrors the client worktree, and a failed zone tree is
+  latched for the session. The saved zone's server starts with no cookie:
+  `registerDbClient` (DBServer/src/dbinit.c) refuses only a cookie that
+  differs, as the cookie-less Atlas Park and King's Row starts of
+  0.13.50-0.13.58 showed. A request the game makes for the zone while it loads
+  is `session_flow` in `external_map_supervisor` (never started twice, never
+  delinked). `_tick_early_zone` records ready, asked-by-the-game and failure; a
+  failure after the game asked delinks that request so Enter Game can ask
+  again. Refused, leaving 0.13.59's path: option off, a new character, another
+  zone server running, a world's higher instance (Atlas Park 101), a zone this
+  build does not serve, MemAvailable unknown or under 3072 MiB. Report:
+  `character_zoning.initial_zone.early_start`.
+- **Why one zone beside the client is admitted.** 0.13.57's low-memory kill had
+  two zone servers loading beside the client (Atlas Park and the saved King's
+  Row); 0.13.50-0.13.56 ran one (Atlas Park) beside it on every launch. The
+  0.13.67 `memory_trace` records the figures on the phone.
+- **App and CI.** Option "Start my saved zone while the game starts (Reopen)"
+  (`early-saved-zone`, on by default, `COH_EARLY_ZONE`); `armport-app-runtime`
+  input `early_zone` (needs `stock_travel`); the host's guest-timings notice
+  carries the decision and times.
+- **Spare layer for trips (9b).** `patches/mapserver-zone-travel/0001` adds
+  `MapServer/src/svr/armport_spare_server.h` and two lines in `svr_init.c`:
+  with `ARMPORT_SPARE_FILE=<path>` a server waits after `cmdCfgLoad()`, before
+  `connectToDbserver`, for `ARMPORT_SPARE_ASSIGN_V1 map_id=<n> cookie=<n>`,
+  then sets `db_state.map_id`, `cookie`, `base_map_id` and `instance_id` (the
+  lookup `staticMapInfosLoad` made). Source reading: nothing else before that
+  point reads the map id (every other use is at map load or in play). Applied
+  by `prepare_server_metrics_source.py` after 0119 and trusted bins (receipt
+  `spare_server_patch`, contract `spare_server`); the host fixture runs the
+  shipping header over Win32 shims (assignment after two polls, a clone's base
+  map, 13 malformed assignments and local mode refused with exit 3, disabled)
+  and the unpatched source fails its assertion; host-check evidence
+  regenerated; guest admission `spare_server_changed` pins the patch.
+- **Spare supervisor (9b), off by default.** `COH_SPARE_ZONE` (app option "Keep
+  a spare zone server loaded for travel (needs Fast server start)"; CI input
+  `spare_zone`). `tick_spare` starts one spare (`-map_id 0`, no cookie) once
+  the hero has been in a zone 30 s, in a tree already prepared (the shared zone
+  tree, or the Atlas tree for a hero in Atlas Park), with the options the
+  DbServer adds to every request (Thor 0.13.66: `-maxLevel 50 -aggrocap 17
+  -targetcapmode 1`, the MapServer's own defaults; kept in
+  `zone-request-options.json`) and MemAvailable of at least 3072 MiB.
+  `_start_stock_map` gives a matching request to the spare (the zone's
+  navigation graph, then the assignment; the ordinary start's readiness and
+  failure handling follow) and drops the spare for any other. After a trip, the
+  zone the hero left gives way to the next spare only on the DbServer's own
+  answer (`stock_occupied`). CI's trip waits up to 480 s for a warm spare when
+  the input is on. Report: `character_zoning.spare_zone`. Not run in CI or on a
+  phone yet.
+- **Local evidence.** Full interactive suite on the development trees: 3294 run
+  / 86 failures / 13 errors / 36 skips with the early start, 3302 run with the
+  spare supervisor; no failure new against 0.13.67 (3289 / 86 / 13 / 36). One
+  run showed 44 more failures in `test_setup_copy_memory` and
+  `test_runtime_setup_reuse`: the work disk had under 5 GiB free, which those
+  Java fixtures refuse; both modules pass with space (36 tests). ArmPort
+  (`discover -s armport/tests`): 541 run, the same 2 local-only errors. Focused
+  on the merged tree: `test_dynamic_initial_map` 22, `test_stock_travel` 15,
+  `test_character_reopen_host` 16 and five more modules, 183 pass.
+- **Defect found after publishing (2026-11-10): the early start never runs with
+  the ARM64 client.** `start_early_zone` was called only from
+  `character_creation_diagnostic.start_wine`, after that method's early return
+  for launches without `native_responsiveness_candidate`; the ARM64 launch has
+  its own `start_wine` (armport/app/armport_interactive.py) and installs the
+  client inputs itself. Evidence: the chain's stock-travel run 42955090151
+  (`early_zone=true`) passed, its guest-timings notice has no `early_zone` key
+  (written whenever `initial_zone.early_start` exists), and its zone-servers
+  notice shows map 1 started by the game's request (cookie 2, `decision:
+  start`). 0.13.68 therefore behaves as 0.13.67 on the phone. Fixed in
+  aad238554: `armport_interactive.start_wine` calls it after
+  `prepare_client_visual_inputs`, and
+  `interactive_host.require_early_zone_decision` fails a run that asked for the
+  early start and holds no decision.
+- **Chain at 42728face** (one chain on x86/perf-round1). Build 42945013269;
+  stock-travel runtime 42955090151 (`early_zone=true`, two trips; no early
+  start was decided, see below); trusted runtime 42959924053 (interactive job
+  1873 s, THORHERO; its app-sources job compiled the changed Java). Build
+  42943406481 at af208ee1c stopped in its unit tests (the certified-startup
+  source test predated the spare layer); fixed in 42728face. APK 42963857636
+  published `coh-atlas-gameplay-v0.13.68` (92356261 bytes, sha256
+  75272fe931a6e8d6912cf6679f92dd7d136babebee8b2404e1d541c869e6f08a, signer
+  92955353…, the same as 0.13.50-0.13.66); its guest files match the commit and
+  it carries the navigation map pack's descriptor byte for byte. The
+  stock-travel run held no `early_start` record: the ARM64 launch never reached
+  the call (fixed in aad238554 for 0.13.69, where CI requires the record).
+  Atlas Park's MapServer, spawn to ready: 139.3 s stock, 98.7 s with trusted
+  bins.
+
+## 0.13.67: launch work is not repeated; Mercy Island graph fix (Claude, 2026-11-10)
+
+Owner, 16:17 and 16:26 CST: "evaluate the COH Android repo ... identify
+optimizations ... that can meet or exceed the goals set in the repo", then
+"Add to the roadmap and execute all recommended steps, you are free to develop
+and integrate these changes". The evaluation is in
+[armport/PERFORMANCE-PATH.md](armport/PERFORMANCE-PATH.md), "Evaluation after
+Thor 0.13.66"; its cost model: one path lookup through PRoot costs about
+0.8-1 ms on the phone, hashing runs at GB/s, so per-file checks dominate.
+Scope is single-player (owner, 2026-11-10). No `upstream/` edit; one new client
+patch (0128, made with patchwork).
+
+- **Mercy Island graph (the 0.13.66 defect).** `zone_beacon_package.input_state`
+  now follows the per-file link (`os.stat`) and requires a read-only regular
+  target, as `collision_input_snapshot` already did. Proofs are keyed by the
+  resolved device:inode with size, mtime, ctime and mode, and saved to
+  `zone-collision-input-proofs.json` in the session state root, so a later
+  start of the zone hashes only inputs whose state changed (`input_files_hashed`
+  in the result). 0.13.66's 20.6 s there was the manifest read and the folder
+  walk; it refused the first input before hashing anything. That walk remains
+  (twice per install), and the first hash of 565 MB is unmeasured on the phone. Tests now build the phone's shape (links into a read-only
+  store): `test_zone_beacons.py` 39 pass.
+- **Launch receipts** (`android/guest/launch_receipts.py`, new). The Atlas
+  world, client visual, zone resources and zone audio steps each re-checked
+  every installed leaf (21.7 + 25.2 + 43.0 + 3.0 s in export 20261110-213045,
+  0 files installed). A step that passes in full is recorded after every step
+  has finished: its pinned inputs (`asset_sha256` of its archive, manifest and
+  code), the worktree's identity, and one row per directory down to its leaves
+  (leaf directories: identity, mtime, ctime and a hash of the listing's names,
+  inodes and types). A later launch reads those directories and no leaf.
+  Stated limit: an in-place rewrite of a leaf (same inode) is not seen; leaves
+  are read-only and a receipt expires after 30 days. The report's
+  `launch_receipts[step]` gives `reused` or `ran_in_full` with a `reason`.
+  A reused Atlas world reports `reuse_validation`
+  `unchanged_filesystem_receipt` (a value CI's host validator already accepts).
+  `test_launch_receipts.py` 11 pass; a guard step runs it in the build workflow.
+- **Folder index identity** (`armport_client_package.folder_cache_identity`,
+  format 3). It no longer includes the ARM64 archive's, the executable's and
+  this file's hashes, which changed with every APK and cost a 133.8 s scan of
+  160,114 files after each update (`reason=header`). The archive adds only
+  `data/bin`, which the client scans live; `VIEW_LAYOUT` names the layout.
+  The first 0.13.67 launch still misses once (the identity's format changed).
+- **Zone data cache.** `cleanup_config` releases `zone_data_cache` when the
+  zone tree was prepared (only Atlas and King's Row were released before, so
+  each zone session mirrored the data again, 75.3 s, and left a stranded
+  copy). `foreign_processes` no longer counts a process whose parent chain
+  reaches our PRoot: exports 20261108-202611, 20261109-154935 and
+  20261110-213045 each show one untraced "exe" 4-5 pids after PostgreSQL
+  refusing the recovery. Foreign rows now carry `parent` and `tracer`.
+  `test_server_worktree_reuse.py` 39 pass. Whether the returned tree passes
+  `verify()` at the next checkout is unmeasured until the phone runs it.
+- **Overlap and polling.** The texture header worker is joined after the GPU
+  probes instead of before them (19.7 s then 30.9 s in 0.13.66). The
+  stop-request file is looked up at most every 0.1 s instead of on every
+  loop iteration.
+- **60 cap from launch.** Patch 0128 lets `COH_CLIENT_GAMEPLAY_FPS=60`
+  through; the app passes `COH_CLIENT_GAMEPLAY_60`, and the guest asks for 60
+  only with Turnip selected and that option on. 0.13.66 typed `/maxfps 60`
+  75 s after the world was drawn (the connection is confirmed from a flushed
+  log on a 15 s poll). `armport/tests/test_client_routing.py` 21 pass.
+- **Read-only records for the next round.** `wine_priorities` samples gain
+  `busiest_threads` (top 8 by CPU ticks with last CPU and nice),
+  `cpus_allowed`, `cgroup`, `guest` and `memory`; `memory_trace` samples
+  MemAvailable, swap and pressure every 10 s (360 samples); `state_inventory`
+  counts what earlier sessions left in the state root.
+- **Not in 0.13.67** (PERFORMANCE-PATH has the reasons): fast server by
+  default (the sheet asks for one optional phone run first), spare zone server
+  and zone start before Enter Game, cooked PhysX cache, Mesa 26 OpenGL layer,
+  fastest-core placement, zero-copy display.
+- **Local evidence.** Full interactive suite (`unittest discover -s
+  tools/android/interactive`): 3289 run / 86 failures / 13 errors / 36 skips;
+  HEAD 08c4b9c79 in a clean worktree: 3273 / 87 / 14 / 36. No failure is new to
+  this change (two baseline failures, timing-dependent, did not recur when the
+  suite ran alone; scratchpad `ut67-base.txt`, `ut67-new2.txt`). ArmPort
+  (`discover -s armport/tests`): 540 run, the same 2 local-only errors as
+  0.13.66. A first full run caught 14 errors in the startup-schedule tests,
+  whose stand-in step modules name no manifest; such a step now runs in full
+  (`inputs_not_pinned`), with a test.
+- **Chain at 0c37bef41** (one chain on x86/perf-round1). Build 42922800561;
+  trusted runtime 42936024060 (interactive job 1872 s, THORHERO; its
+  app-sources job compiled the changed Java). APK 42940665672 published
+  `coh-atlas-gameplay-v0.13.67` (92348069 bytes, sha256
+  fd966d1a5a13f4dce210927a3090577fedba926e35ac418b0bd0a2b02885b2f9, signer
+  92955353…, the same as 0.13.50-0.13.66); its guest files match the commit and
+  it carries the navigation map pack's descriptor byte for byte. CI's runtimes
+  start only Atlas trees with fresh state, so the receipts' reuse, the zone
+  cache return and Mercy Island's graph run first on the phone.
+
+## Thor test of 0.13.66 (user, 2026-11-10; observations only)
+
+Owner, 15:42 CST, with exports 20261110-213045 (session) and -213101 (setup)
+and storage report 20261110-214039: "Mercy island did not seem to have the nav
+data, pet did not move to attack and npcs were rooted in place." and "Do not
+develop further just yet, only analyze and log observations." No code changed;
+this section records what the exports show.
+
+- **Session** (Reopen of Ralakar, saved in Mercy Island). Runtime setup
+  21:07:53-21:10:26 UTC (153 s, setup export). Session start 21:13:47,
+  DbServer ready 21:14:44, client attempt 21:17:15, client main loop 21:20:07
+  (172 s). The character list and the map 71 request (Enter Game) were
+  observed together at 21:20:37; MapServer spawn 21:22:30 (112.5 s of
+  preparation), map ready 21:26:17 (`ready_seconds` 339.3; spawn to ready
+  226.8 s), Ralakar connected 21:27:49 (92.3 s after ready), `/quittologin`
+  21:29:01, save verified 21:30:06 (`committed_sql_verified`), report passed.
+- **The pack was bound.** App report `navigation_map_pack`: complete, no
+  missing parts, `bound` true, descriptor sha256 0f5fc5ee… (the published one).
+- **Mercy Island's graph was refused.** Guest report
+  `zone_tree_preparation.beacon_graph["71"]`: `status` `not_installed`,
+  `error` "Zone collision input is not a regular file",
+  `navigation_map_pack` `bound`, `elapsed_seconds` 20.585. Its MapServer
+  console (`character-zoning-generation-1-map-71-console-tail.txt` line 383):
+  "loading beacons.. Beacon file not loaded for map:
+  maps/City_Zones/V_City_01_01/V_City_01_01.txt". Without a graph a pet cannot
+  walk to its target and NPCs stand still, as reported.
+- **Cause (code reading; not yet reproduced in a test).** f7738814e (0.13.66)
+  added `zone_beacon_package.proven_input`, which hashes each input once per
+  process and first requires `stat.S_ISREG(os.lstat(path).st_mode)`. On the
+  phone the shared zone tree holds every read-only input as a per-file
+  symlink: `stage_map_data` writes `destination.symlink_to(resolved)`
+  (local_character_server.py:3194). `atlas_beacon_package.collision_input_snapshot`
+  accepts such links (lines 209-230: it follows each one and requires a
+  read-only regular target) and returns the link path, which `proven_input`
+  then refuses on its own lstat. Mercy Island's graph lists 8,711 inputs
+  (565 MB: 7,098 `object_library`, 1,585 `tricks`, 28 map files; the 0.13.65
+  APK's manifest), the first being the map's own `.txt`. 0.13.65's install
+  hashed each input with `pin()`, which follows links, and had no such check;
+  there is no 0.13.65 phone report, so whether its Mercy Island graph
+  installed is unknown.
+- **Why CI missed it.** `tools/android/interactive/test_zone_beacons.py`
+  builds its zone tree from regular read-only files (line 338: "as the phone's
+  tree keeps them"), not links. CI's runtimes start only Atlas trees. The pack
+  check (`guestcheck66.py`) ran `sources()` and `read_manifest` on the
+  imported objects, not `install` against a phone-shaped tree.
+- **Other observations.**
+  - The 112.5 s before the spawn ran inside the guest loop (its heartbeat
+    `elapsed_seconds` jumped from 201 to 314 at 21:22:30): the private map
+    data mirror (progress 21:20:42-21:21:48, 36,595 files by then), required
+    geometry 6.7 s, then the refused graph check 20.6 s. The server data cache
+    was not reused (`reuse_refused` "Atlas cache identity differs or prior
+    owner did not prove cleanup"; `stranded_recovery_refused`
+    `processes_outside_this_guest`, survivor pid 28974 `exe`), so the mirror
+    was rebuilt.
+  - Frame rate in Mercy Island (`ARMPORT_FRAME_RATE_V1`, 5 s windows): 15
+    windows under a 30 FPS cap, mean 28.2; then 14 under the 60 FPS cap, mean
+    33.0 (26.5-42.0). The wait for the zone was one 356 s window at 0.03 FPS;
+    menus ran at their 10 FPS cap.
+  - Memory peaks (`server-metrics.jsonl` RSS): client 1,930 MiB, Mercy
+    Island's MapServer 1,596 MiB, DbServer 422 MiB; 11.27 GB of 16.0 GB
+    available at setup. Thermal status 0 throughout, battery 30-32 °C. No new
+    Android process exit (newest record 2026-11-09 17:24 UTC).
+  - Tick probe (4 samples, 130-232 s after the map became active): p90 gap
+    44 ms, max 115 ms, none over 150 ms.
+  - Storage report: 37.65 GB allocated in app storage. Its cleanup removed
+    19,429 entries (3.50 GB, one older runtime) and stopped with "A cleanup
+    candidate changed. Scan again."; still reclaimable 11.22 GB (three older
+    runtimes 10.50 GB, download cache 0.67 GB, old reports 0.05 GB). Packs
+    6.23 GB, character, server, Wine and client state 13.22 GB, imported
+    assets 3.45 GB, current runtime 3.50 GB.
+- **Next (not started; analysis only, per the owner).** Let `proven_input`
+  accept a link the inventory already accepted (check the followed target:
+  regular, read-only, inside the verified roots) and key its once-per-process
+  proof on the target's identity; add a test whose zone tree uses per-file
+  links the way `stage_map_data` makes them; then re-test Mercy Island.
+
+## 0.13.66: navigation maps for every zone (Claude, 2026-11-09)
+
+Owner, 2026-11-09 (18:33 CST): "Please work on a solution for every single map
+to have a navmap while i test this". Choices (asked): one workflow run with up
+to 8 map jobs at once and nothing else running alongside; the maps reach the
+phone as a separate pack to import, like the asset pack.
+
+- **Throughput** (f8b44fcef): Mercy Island's single-worker graph took 8413 s
+  (run 42678203754): about 15 min of block generation, then two hours of
+  "Assigning 20 beacons" batches to the one worker. The host patch fixed the
+  sentry's cpuCount at 1 and the sentry ends any client beyond cpuCount + 1.
+  `patches/zone-beacons/0001` now takes the owned worker count from
+  `COH_ZONE_BEACON_WORKERS` (one digit 1-8; `COH_ZONE_BEACON_WORKERS_V1` in
+  the sentry log); `generate_zone_beacons.py --workers` (default 3) starts
+  worker, worker2... and records each one's blocks and batches
+  (`worker_work`).
+- **Every zone**: `zone_beacon_package.WORLDS` holds all 64 shared-tree zones
+  (every static zone except Atlas Park 1 and King's Row 5); zone graphs may
+  be up to 512 MiB with at least one connected beacon. The six zones whose
+  audited source graph lacks sky/moon models or one encounter group are no
+  longer refused up front: the native collision load must still report
+  `missing_groups=0 missing_root_models=0`. Only an `Omni/EncounterSpawns/...`
+  group the data lacks loads as the empty placeholder the shipping MapServer
+  makes (7cdf9a879; named in the witness as `noncollision_missing_groups`,
+  which the guest checks); any other missing group, reference or root model
+  stays fatal.
+- **Workflow** `armport-zone-beacons.yml`: `map_ids` (comma separated or
+  `all`) and `workers`; job `plan`, one `generator` compile (two compiler
+  processes) for all map jobs, matrix `beacons (<map>)` with max-parallel 8
+  and fail-fast off. Pack mode (`pack_runs`, `pack_version`,
+  `publish_pack`): job `pack` builds the pack from the passed map jobs of
+  the listed runs and can publish `coh-navigation-maps-v<version>`.
+- **Pack** (f7738814e): `tools/android/interactive/package_navigation_maps.py`
+  (descriptor id `coh-navigation-maps`, `navigation-maps-manifest.json`)
+  uses the asset pack's volume format: the descriptor first in every volume,
+  stored members under `payloads/runtime/zone-beacons-<map>{.zip,-manifest.json}`,
+  at most 256 files, volumes under 2 GiB (`maps`, or `maps-1`, `maps-2`...).
+  Each map must come from its own passed map job and pass the guest's
+  validator, its report and lock, and its archive closure.
+- **App** (fe1d9164a): `AssetPackStore.Kind` (`ASSETS`, `NAVIGATION_MAPS`:
+  runtime record `navigation_map_pack`, `runtime/navigation-maps-manifest.json`,
+  `files/navigation-packs`); "Import asset or map pack part" routes a volume
+  by its descriptor's id; a session binds the imported objects at
+  `/opt/coh-navigation` with `COH_NAVIGATION_MAPS` only when the APK pins the
+  pack and it is fully imported (report `navigation_map_pack`). The APK adds
+  only the descriptor (`--navigation-maps`, `navigation_maps_run_id`).
+- **Guest**: `sources()` takes each zone's graph from the pack (objects named
+  by SHA-256, pins from the APK's descriptor) or, as in 0.13.65, from the
+  APK; `_spawn_map` installs the zone's own graph before its MapServer
+  starts (`install_zone_beacon_graph`, once per zone and session, recorded in
+  `zone_tree_preparation.beacon_graph[<map>]`); inputs another zone proved in
+  the same process (same inode state) are not hashed again.
+- **Tests**: `test_zone_beacons.py` (35), `test_navigation_maps.py` (11, one
+  imports a built volume with the app's own `AssetPackArchive` on a JVM).
+- **Pilot run 42731367743** at f8b44fcef (x86/perf-round1, maps 55, 71, 72;
+  3 workers): one compile (generator job 00:50-01:01), then three map jobs
+  in parallel. Map 55 (`city_06_02`): 1,896 beacons, 13 s of generation, all
+  three workers took batches (45/35/35). Port Oakes (72): 411,083 combat
+  beacons, CRC 0xecd93487, 4601 s (batches 6932/6914/6919). Mercy Island (71):
+  4596 s against 8413 s with one worker (1.8x; the hosted runner's 4 vCPUs
+  also run the server), the same world CRC 0x086f500e, 407,059 combat beacons
+  against 407,225 with one worker: the split work changes a few beacons at
+  block edges; both graphs pass the native readback and 32-route proofs.
+  Each large map job takes about 90 min including about 12 min of setup.
+- **Full run 42743592550** at 089f712d2 (61 maps: every slot but 55, 71, 72).
+- **Full run 42743592550** results: 60 of 61 maps passed in one run (8 jobs at
+  once). Rikti War Zone (85) failed: its beacons layer names an encounter spawn
+  group the data lacks. Rerun 42798595431 at 7cdf9a879 (the placeholder fix)
+  passed: 290,332 combat beacons in 2610 s, two
+  `Omni/EncounterSpawns/Universal/...` placeholders named in the witness. With
+  the pilot's 3: 64 of 64 shared-tree zones, 13,288,584 combat beacons in all.
+  Largest graph: The Chantry (66), 552,758 combat beacons. Native generation
+  summed to about 44.3 h across the jobs.
+- **Pack run 42808590462** (pack mode: runs
+  42731367743,42743592550,42798595431) published `coh-navigation-maps-v1.0.0`:
+  `COH-Navigation-Maps-1.0.0.zip` 1,440,488,085 bytes, sha256
+  527962038726a4548c7259196820ecad91aa20f07b3d9bcb66c7b1ce6ac586b5; descriptor
+  21,102 bytes, sha256
+  0f5fc5ee83df63e79c5bbf468e0c03979aa3c5f1bb85594981321960cbb9040e. The
+  downloaded zip matched GitHub's digest, passed `verify_volume` and imported
+  with the app's own `AssetPackArchive` on a JVM (accepted, no missing part);
+  the guest's `sources()` found all 64 maps in the imported objects and
+  `read_manifest` accepted each (scratchpad `verifypack.py`,
+  `guestcheck66.py`).
+- **Chain at d8f417ea8** (one chain on x86/perf-round1). Build 42809195810;
+  trusted runtime 42821819932 (1761 s, THORHERO; its app-sources job compiled
+  the changed Java). APK 42827583406 published `coh-atlas-gameplay-v0.13.66`
+  (92339798 bytes, sha256
+  f96b0d9b0dd35373c7dacf4bc91f4d69cd15fe8f784278ab6a0576cfb951dcc7, signer
+  92955353…, the same as 0.13.50-0.13.65) with
+  `navigation_maps_run_id=42808590462`; it carries the published descriptor
+  byte for byte and no zone graph; its guest files match the commit. Against
+  0.13.65's APK, only Mercy Island's graph (`zone-beacons-71*`, 42,052,244
+  compressed bytes) left and `navigation-maps-manifest.json` came in. Every
+  run passed on its first attempt; the runtime's app-sources javac printed the
+  same notes as 0.13.65's runtime 42719564293.
+- Version 0.13.66 (81); test sheet `THOR-TEST-0.13.66.md`.
+
+## 0.13.65: Mercy Island's navigation graph (Claude, 2026-11-09)
+
+Thor 0.13.63 (owner, 2026-11-09 09:55 CST): "the pet he summoned would not
+move towards an enemy when ordered to attack, but would move to follow my
+character when ordered, and then would attack if close enough to an enemy".
+Mercy Island's MapServer: "Beacon file not loaded for map:
+maps/City_Zones/V_City_01_01/V_City_01_01.txt" (see "0.13.64").
+
+- **Cause**: every static zone other than Atlas Park and King's Row runs from
+  the shared zone tree (`prepare_zone_runtime`, 0.13.57), built like King's
+  Row's with the union of 380 extra collision leaves (`zone_index.py`) and no
+  beacon graph, so pets and critters there cannot plan a path.
+- **Generator** (24ef62a1b): `patches/zone-beacons/0001` is King's Row's
+  host-only producer with the map from `COH_ZONE_BEACON_MAP` (validated
+  lower-case `maps/city_zones/<world>/<world>.txt`), so one compile serves every
+  zone; it names its map in the native proof (`COH_ZONE_BEACON_MAP_V1`).
+  `generate_zone_beacons.py`: King's Row's generator world with the shared
+  tree's 380 leaves (a superset of King's Row's 52), master/server/sentry/worker
+  roles, then two fresh proofs (cold mirror, reopened world): native CRC,
+  full readback and 32 pathfinder routes; package `zone-beacons-<id>.zip`,
+  manifest, lock and report. Workflow `armport-zone-beacons.yml` (Windows, two
+  compiler processes, 355-minute bound; the compiled generator is kept for
+  reuse with `generator_run_id`).
+- **Guest**: `zone_beacon_package.py` checks a carried graph against the shared
+  tree (exact inventory of `data/object_library` .geo/.txt/.rootnames, the
+  zone's own map folder and `data/tricks`, then every input's hash) and writes
+  it with a marker; `local_character_server.install_zone_beacon_graphs` runs
+  when the tree is prepared (`zone_tree_preparation.beacon_graph`, phase
+  `zone_beacon_graphs`). A graph that does not match is recorded
+  (`not_installed`, `error`) and skipped; the zone starts as before.
+- **APK**: input `zone_beacons_run_id`; `stage_app_assets.zone_beacons` takes
+  the archive, manifest and lock only from a successful run of that workflow
+  whose generator report names the run's own head; runtime files only (outside
+  the bounded client inventory); report `zone_beacons`.
+- **First runs**: dispatch failed ("workflow armport-zone-beacons.yml not found
+  on the default branch"); a narrow push trigger made the first run
+  (42675871153 at e12956ebb), which failed at configure: www.lua.org timed out
+  every connection while CMake fetched Lua 5.1.5 ("Each download failed!"), as
+  in build 42488979665. `tools/pinned_lua_source.py` gives the generator the
+  archive from armport-build's Actions cache (per branch, so the workflow is
+  dispatched on x86/perf-round1) or a verified download (official site, then
+  mirrors; pinned SHA-256), extracted for CPM's own override
+  `-DCPM_lua51_SOURCE`, which still applies `lua-cmake.patch`. The push
+  trigger is gone (61c14b729).
+- **Tests**: `tools/android/interactive/test_zone_beacons.py` (21: package
+  validation, native witness, roles, guest install with read-only leaves, a
+  different or extra leaf refused, the server's install/skip/cancel, and APK
+  admission from its own run only); `tools/test_pinned_lua_source.py` (7). Both
+  run in the build's guard steps and first in the zone job.
+- **Graph run 42678203754** at 61c14b729 (x86/perf-round1, map 71): Lua 5.1.5
+  came from armport-build's job cache ("Cache hit"; `from_job_cache` true, no
+  download attempts). The two-process compile took 6 min; generation 8413 s,
+  8450 s with both proofs. Native witness: 407,225 combat / 407,100 connected
+  beacons, 4,683,678 ground connections, world CRC 0x086f500e, full readback,
+  32/32 routes, missing groups and root models 0, cold and reopened worlds
+  identical. Graph 93,662,230 bytes, archive 41,575,415 bytes, 8,711 pinned
+  inputs. King's Row's graph: 281,178 combat beacons, archive 23,708,626 bytes.
+- **Chain at caf52c828** (one chain on x86/perf-round1). Build 42705346414: the
+  libraries job's guard steps ran `test_zone_beacons.py` (21) and
+  `test_pinned_lua_source.py` (7). Trusted runtime 42719564293 (1743 s,
+  THORHERO): the APK's runtime qualification. CI's runtimes start only Atlas
+  Park trees (no all-zone package), so the shared tree, the graph's install and
+  a pet's path are first exercised on the phone; the zone-trip and default
+  runtimes were not repeated (guest change on the shared-tree path only). Build
+  42704278399 at fc3a018a2 failed in the libraries job's first run of the zone
+  graph guards (12 of 21 tests could not read `source-target.json`, which that
+  job's sparse checkout left out; the zone workflow checks out the whole tree)
+  and was cancelled; 37d484a7b adds the file to the checkout, and the chain
+  restarted at caf52c828. APK 42724564742 published
+  `coh-atlas-gameplay-v0.13.65` (134381308 bytes, sha256
+  f34229b0292fe271fbd80a4e54eae347449f2af2d56bdcaf135e85252e95ca97, signer
+  92955353…, the same as 0.13.50-0.13.64) with
+  `zone_beacons_run_id=42678203754`; its guest files and graph files match the
+  commit and the run.
+- Version 0.13.65 (80); test sheet `THOR-TEST-0.13.65.md`.
+
+## 0.13.64: display updates above 1024 rectangles (Claude, 2026-11-09)
+
+Thor 0.13.63 (user, 2026-11-09 09:55 CST, exports 20261109-154935 and
+20261109-154946): Ralakar reopened in Mercy Island, moved and fought; then "a
+sudden crash when my character was looking around with the camera rapidly";
+the app seemed frozen and the gear lit up but did not open the menu; also "the
+pet he summoned would not move towards an enemy when ordered to attack".
+
+- **What happened**: the reopen connected on map 71 at 15:40:13 UTC
+  (`character_connected_event`, name Ralakar). After the guest's last heartbeat
+  at 15:46:21.7 the app logged "Client operation: Local display connection
+  failed: RFB rectangle count exceeds limit" (`receiver_error`), stopped the
+  guest (`postgres-graceful-stop` 15:46:29.9, guest result `cancelled`
+  15:46:32.07) and finished the operation at 15:46:32 (run start 15:27:37.5 plus
+  1134.6 s). No save in that session (`character_saved_event` null,
+  `committed_sql_verified` false). `presentation_timing`: 19080 frames and
+  3,359,190 Raw rectangles (176 per update), ~60 frames/s in the last minute.
+  The second export is the preceding Set up / update runtime report
+  (`setup_complete`).
+- **Cause**: `InteractiveRfbClient` refused a FramebufferUpdate above 1024
+  rectangles (`MAX_RECTS`). Xtigervnc (TigerVNC 1.12) counts its whole changed
+  region into one update because the client advertises no LastRect; fast turns
+  fragment that region.
+- **Fix**: `MAX_RECTS = 0xFFFF`, the protocol's U16 range; each rectangle is
+  still bounded by the framebuffer. New `presentation_timing.rfb_update_rectangles_max`
+  (largest count of one update, kept across receiver teardown).
+- **Gear**: not explained by the report. When the operation ends the menu
+  reopens by itself (`refreshOverlayMenu`), and during the ~10 s shutdown the
+  gear's click calls only `setMenuOpen` and the input release; no blocking call
+  was found on that path.
+- **Pets**: Mercy Island's MapServer console (`character-zoning-generation-1-map-71-console-tail.txt`):
+  "loading beacons.. Beacon file not loaded for map:
+  maps/City_Zones/V_City_01_01/V_City_01_01.txt". The shared zone tree has no
+  graph (`prepare_zone_runtime`: "NPCs there do not path until their graphs are
+  generated"); Atlas Park and King's Row use their generated graphs. A pet
+  follows its owner but cannot walk to an attack target there. Next: a
+  generator per map like King's Row's (`android-kings-row-native.yml`).
+- **Tests**: `armport/tests/test_rfb_rectangle_count.py` (2): updates of 4096
+  and 65535 1x1 rectangles decode with exact pixels and the largest count, a
+  rectangle outside the framebuffer is still refused, the report keeps the
+  counter; on 0.13.63's decoder the first fails with Thor's message. ArmPort
+  suite: 539 run, 2 errors (the historical-baseline tests that need CI's
+  baseline checkout; the same without this change).
+- **Chain at 4f9e8eebe** (one chain on x86/perf-round1). Build 42653524766: the
+  libraries job's ArmPort unit tests include `test_rfb_rectangle_count.py`.
+  Trusted runtime 42668990132 (1780 s, THORHERO): the APK's runtime
+  qualification; its `app-sources` job compiles the changed Java against the
+  Android SDK. CI's runtimes read the display with their own Python RFB driver
+  (`tools/android/client/host_smoke.py`), not `InteractiveRfbClient`, so the
+  zone-trip and default runtimes were not repeated for this decoder-only
+  change. Every run passed on its first attempt. APK 42674721584 published
+  `coh-atlas-gameplay-v0.13.64` (92323241 bytes, sha256
+  0201c871b8426f1aa9ed063bfd3de2a91b167f84ba8fcca80ed0d2e1c3d0a0fc, signer
+  92955353…, the same as 0.13.50-0.13.63); its guest files match the commit.
+- Version 0.13.64 (79); test sheet `THOR-TEST-0.13.64.md`.
+
+## 0.13.63: Reopen any name with the game's own travel (Claude, 2026-11-08)
+
+Thor 0.13.62 (user, 2026-11-08 19:56 CST, export 20261109-015537): "Failed when
+trying to reopen hero".
+
+- **What happened**: Reopen of Ralakar (saved in Mercy Island) passed the
+  profile check before Wine (`character_profile_eligibility`: eligible,
+  `character_name` Ralakar) and stopped in `local_dbserver_startup`: "Station
+  travel (Game's own zone travel off) follows only a character named THORHERO.
+  Turn Game's own zone travel back on to play Ralakar." The option was on
+  (app report `stock_travel_requested` true; guest
+  `character_zoning.stock_travel.requested` true). `prepare_runtime` calls
+  `initial_map_preparation`, which qualifies the King's Row station route
+  (`monorail_qualified`; the all-zone package is installed) and then captures
+  the baseline, which binds the name (`bind_session_character`). 0.13.62's
+  refusal asked `monorail_enabled()` there, but `stock_travel_active()` needs
+  the external-maps DbServer layer, which `install_manual_atlas_dbserver`
+  installs only after `initial_map_preparation` returns, so
+  `monorail_enabled()` still read True. No SQL game mutation
+  (`sql_game_mutations_performed` false); the profile is unchanged. CI's
+  zone-trip runtime (OTHERHERO) has no King's Row package (`monorail_qualified`
+  false), so it passed.
+- **Fix** (`local_character_server.py`): `require_station_travel_name()`
+  refuses another name only after `decide_zone_travel()`, which
+  `prepare_runtime` calls right after installing the layer; every later bind
+  (start()'s second baseline, creation's Enter Game) checks again. The message
+  is unchanged (`STATION_TRAVEL_NAME`).
+- **Tests**: `test_character_any_name.py` (16): a bind before the layer no
+  longer refuses; `ReopenZoneTravelTests` drives the real zoning server in
+  Thor's order (Ralakar saved in Mercy Island, King's Row qualified, the game's
+  own travel): baseline, layer, decision, second baseline, the DbServer's Enter
+  Game request for map 71, ready, connection metadata (`monorail_enabled`
+  false, `stock_travel` true) and the reopen identity proof; station travel
+  (option off, or on without the layer) still refuses Ralakar once known. On
+  the published 0.13.62 guest these tests fail with Thor's message. Full
+  interactive suite: 3227 run/86 F/14 E/36 S, the same failures as 0.13.62.
+- **Chain at e679031ca** (one chain on x86/perf-round1). Build 42550231650: the
+  libraries job ran `test_character_any_name.py` (16 OK,
+  `ReopenZoneTravelTests` included). Zone-trip runtime 42558801806 with
+  `character_name=OTHERHERO` (2300 s): creation typed OTHERHERO, and the run
+  passes only when the guest's connected and saved events and its report carry
+  that name; map 1 cookie 2 ready 620.7 s after the stock start (108 bins
+  written, spawn to ready 443.9 s); reopen found OTHERHERO by OCR on the
+  character list, no zone server before Enter Game (`local_atlas_startup` 0.0
+  s), map 1 cookie 2 ready 142.1 s after the stock start, `/mapmove 101`
+  (cookie 3) 177.2 s, 2 arrivals before the save. Trusted runtime 42563040886
+  (1752 s, THORHERO). The default runtime was not repeated: the change only
+  defers a check, and the trusted runtime runs the same THORHERO path (no stock
+  travel) with trusted bins. Every run passed on its first attempt. APK
+  42566326193 published `coh-atlas-gameplay-v0.13.63` (92323241 bytes, sha256
+  8d748cb7a4b75acd9b92b26c325ee2c721ff40dc0006e04fa500c9db9373b508, signer
+  92955353…, the same as 0.13.50-0.13.62); its guest files match the commit. CI
+  has no King's Row package (`monorail_qualified` false), so only the unit
+  tests replay Thor's order.
+- Version 0.13.63 (78); test sheet `THOR-TEST-0.13.63.md`.
+
+## 0.13.62: any character name; walking no longer waits (Claude, 2026-11-08)
+
+Thor 0.13.61 (user, 2026-11-08 14:27 CST, exports 20261108-202601 setup and
+-202611 session): "I was able to create a villain, but please make it so
+controls arent locked and that i can name them something other than Thorhero."
+
+- **What happened**: Resume removed the unfinished THORHERO
+  (`unentered_character.removed`), the user created the Mastermind
+  **Ralakar** (not THORHERO), and the DbServer started Mercy Island at Enter
+  Game: `starting_zone_wait_seconds` 288.3, the first non-Atlas/King's Row zone
+  on the phone, about 27 FPS (`ARMPORT_FRAME_RATE_V1`), Arachnos and Skulls
+  spawned (entity log). The guest's `character_evidence` filtered the inventory
+  by `name == 'THORHERO'`, so it never sampled Ralakar
+  (`character_samples` empty, `connected_on_atlas` false); the app never got
+  `character_connected`, so `canSaveLogout` stayed false. `canWalk` (the
+  on-screen pad and the controller's W/A/S/D/Space, ControllerBridge) and Save
+  required it: the "locked controls". After about 15 minutes the user quit
+  (`ArmPort dialog: QuitNow`, client exit 0), which the session reports as
+  "Actual CoH client exited".
+- **Name** (`local_character_server.py`): `CHARACTER` is THORHERO until the
+  session reads the real name from SQL: Reopen binds the saved row (ID 1 of
+  COHLOCAL, any name) at the profile check before Wine; creation binds the one
+  row the DbServer inserts at Enter Game (`bind_session_character`;
+  `valid_character_name` = validate_name.c: ASCII, 3-20, no outer or double
+  spaces; a session never renames). Every entity-log reader builds its pattern
+  from `entity_name_prefix()` (re.escape): ready, positions, logout timer and
+  location, rewards, BuyPower, contacts, tasks, and the zoning readers
+  (`stock_ready`, `legacy_ready`, `stock_positions`, `stock_logout`,
+  `terminal_position`, "Step 1: Ent <name> moving"). The opt-in native console
+  producers (wine_character_events.c, the monorail producer) report only
+  THORHERO, so for another name `immediate_event_contract()` is None and Atlas
+  Park uses the stock entity logs (the legacy route); station travel refuses
+  another name. Resume removes an unfinished character of any name; its SQL
+  uses `md5(name)` instead of the player's text. Session budget (guest and
+  app) carries the session's own name.
+- **Ordinary-play save outside Atlas**: `reopen_connection_binding` accepted
+  only Atlas (or monorail) ready evidence, so `accept_gameplay_progress`
+  could not accept experience gained in Mercy Island. `stock_zone_binding`
+  binds a reopen whose ready record is the zone's own stock CLIENT_READY line
+  (`current_target_stock_CLIENT_READY_resumeCharacter_success`, embedded log
+  route, same map, name and account).
+- **App**: `ClientAcceptance.characterName` (the same rule) replaces the
+  THORHERO checks; ClientRuntime keeps one name per session
+  (`sameCharacter`) and shows it ("Ralakar is saved in Mercy Island"); texts
+  say "your character". `canWalk` no longer needs `canSaveLogout`: walking
+  follows the ordinary game-input gate and still stops while Save / log out
+  runs (`movementSuppressed`; moving cancels the logout timer), after the save,
+  during a zone transfer (ClientRuntime refuses gameplay input) and while a
+  typed command or the text dialog is pending.
+- **CI**: `armport-app-runtime.yml` gains `character_name` (3-15 capitals,
+  default THORHERO): the host scripts type it and find it by OCR, so a
+  runtime proves the guest with another name (Atlas through the stock logs).
+- **Tests**: `test_character_any_name.py` (13: name rules, binding, every
+  log reader with `Dr. O'Malley` and with Ralakar's own Mercy Island lines
+  from the Thor export, creation binding and save, station-travel refusal,
+  the stock-zone binding, the app's name rule and events, the walking gate);
+  `test_character_profile_eligibility.py` (+2 unit, +2 real PostgreSQL:
+  a named reopen and the md5 removal of an unfinished `Dr. O'Malley`; 38 OK on
+  PostgreSQL 16.15); `test_session_budget_guest.py` (+1). Updated for the new
+  wording or the bound name: `test_dynamic_initial_map.py`,
+  `test_fresh_profile_recovery.py`, `test_manual_session.py`,
+  `test_session_budget_java.py` (an invalid name, "X"). The build runs the
+  any-name and budget modules. `build_thor_apk.CHANGED_RUNTIME` adds
+  `stationary_contact_evidence.py` and `task_gate_evidence.py`
+  (`test_thor_apk_runtime_review`).
+- **Chain at 75523980e** (one chain on x86/perf-round1). Build 42525269953: the
+  libraries job ran `test_character_any_name.py` (13 OK) and
+  `test_session_budget_guest.py` (24 OK) after the real-PostgreSQL eligibility
+  module (38 OK, PostgreSQL 16.15). Zone-trip runtime 42532830880 with
+  `character_name=OTHERHERO` (2257 s): creation typed OTHERHERO, and the run
+  passes only when the guest's connected and saved events and its report carry
+  that name; map 1 cookie 2 ready 608.1 s after the stock start (108 bins
+  written, spawn to ready 438.2 s); reopen found OTHERHERO by OCR on the
+  character list, and its connected and saved events carried that name; no zone
+  server before Enter Game (`local_atlas_startup` 0.0 s), map 1 cookie 2 ready
+  141.2 s after the stock start; `/mapmove 101` (cookie 3) 171.8 s, 2 arrivals
+  before the save; `client_logout_keys` kept 0 / aborted 0. Default runtime
+  42536520114 (1792 s) and trusted runtime 42543661576 (1737 s) kept THORHERO.
+  Default runtime attempts 1 and 2 failed in creation with CI's known flakes.
+  Attempt 1, the slow logout (as trusted runtime 42322788540's attempt 1 and
+  zone-trip runtime 42397533053): `/quittologin` sent 285 s after the client
+  was ready, no Atlas logout line, "Character logout delivery does not match
+  this ready client or its save window" (120 s), client 2.1 FPS in the world
+  with the new-character help dialog drawn, `client_logout_keys` kept 0 /
+  aborted 0 (not the 0127 key race). Attempt 2, the creator (as default runtime
+  42316982535's attempt 1): "Costume page (HEAD/WEAPONS/Colors) not reached
+  after body_next", OCR checks 144-156 s after ready at 9.4 FPS. Attempt 3, a
+  second re-run of the failed `interactive-guest` job, passed. APK 42546944715
+  published `coh-atlas-gameplay-v0.13.62` (92323241 bytes, sha256
+  4151d44816333900a39889bd94b3451c5ec34ad895a13faa0e59203fad519eef, signer
+  92955353…, the same as 0.13.50-0.13.61); its guest files match the commit.
+- Version 0.13.62 (77); test sheet `THOR-TEST-0.13.62.md` (in place: Reopen
+  Ralakar in Mercy Island, play, save).
+
+## 0.13.61: Resume removes a THORHERO that never entered the game (Claude, 2026-11-08)
+
+Thor 0.13.60 (user, 2026-11-08 07:53 CST, exports 20261108-135104 Resume and
+-135110 Reopen): "Failed to even start the character start, both resume
+character creation and reopen failed".
+
+- **What happened**: both sessions stopped at the profile check before Wine
+  (`character_profile_eligibility`, `checked_before_wine`). The inventory was
+  `{"containerid":1,"authid":1353310574,"authname":"COHLOCAL","name":"THORHERO"}`.
+  Resume: "First character creation requires a completely empty inventory".
+  Reopen read its rows (`ents`: class, origin, level, experience, influence,
+  description, motto, datecreated and logincount NULL; `ents2` subid 0,
+  influencetype 1, no build; no powers, no costume) and stopped with "Saved
+  THORHERO has no committed login baseline". No in-app path remained.
+- **Cause**: 0.13.59's villain was not deleted; the 0.13.60 sheet and the
+  0.13.60 section below said it was. s_finishHandleChoosePlayer allocates the
+  container with `containerUpdate(..., 0)` (just_created stays 1), but
+  handlePlayerContainerLoaded -> updateAuthUserData writes
+  `Ents2[0].AuthUserDataEx` with `containerUpdate(..., TRUE)`, which clears
+  just_created and inserts the whole container (COH_PG_INSERT_CONTAINER
+  reserves ID 1) before setNewMap asks for the zone. When Mercy Island
+  failed, doneWaitingChoosePlayerFailed took its unload branch (0.13.59
+  DbServer error log: "setNewMap failed MapFailed", then "Someone unloaded a
+  player during map transfer", which only containerUnload logs) and kept the
+  row with Active 0. Only a MapServer writes class, origin, powers, costume
+  and LoginCount, so this row never entered the game.
+- **Fix** (`local_character_server.py`): `unentered_creation` (read-only)
+  recognizes exactly that row: the accepted identity (ID 1, THORHERO,
+  COHLOCAL); every field a MapServer writes NULL (`UNENTERED_NULL_FIELDS`,
+  LoginCount included); at most Ents2 subid 0 without a build; no powers or
+  costume; rows for ID 1 only in Ents and Ents2 among all 48 tables of the
+  verified schema's `ents.template` (`ents_family_tables`, the set
+  sqlDeleteContainer clears); ID high water exactly 1. Resume first character
+  creation then runs one DO statement (`remove_unentered_creation`). It
+  deletes those Ents2 and Ents rows under the same conditions and raises
+  (rolling back) unless exactly those rows went and no row for ID 1 or any
+  other character remains. Only then does it run `setval(ents sequence, 1,
+  false)` (setval is not transactional) and require high water 0. The
+  inventory and high water are read again afterwards. The eligibility
+  record gains `unentered_character` (identity, row counts, start map, the
+  kept fields of the removed rows, `removed`) and
+  `sql_game_mutations_performed: true`. Anything else (a logged-in
+  character, one power or badge, a second ID) is refused with the earlier
+  message. Reopen of such a row says it never entered the game and to use
+  Resume, and changes nothing. A creation session whose first zone fails now
+  says Resume will create THORHERO again (`failed_creation`).
+- **Tests**: `test_character_profile_eligibility.py`. Unit: the removal,
+  16 refusals, the Reopen message, a failed removal, and the accepted
+  48-table template (`run_generated_schema.template_columns`). Real
+  PostgreSQL with the guest's own psql invocation: a DbServer-like row is
+  removed (sequence `1:true` -> `1:false`, high water 0, the next DbServer ID
+  is 1); Reopen changes nothing; a badge row refuses. Local PostgreSQL
+  16.15: 34 tests OK, also in a copy limited to the libraries job's sparse
+  checkout. The build now starts the runner's PostgreSQL 16
+  (`armport/scripts/pg_fixture.sh`) and runs the module with
+  `COH_REQUIRE_POSTGRESQL=1`.
+- **App**: the Resume dialog says an unfinished THORHERO is removed first and
+  the report keeps its rows; the ready-profile text mentions a first zone
+  that did not start.
+- Not changed: the DbServer (its unload is upstream behaviour; the guest
+  handles the row at the next Resume). CI's sessions still start from a fresh
+  profile, so the removal is proven on real PostgreSQL in the build, not in an
+  app runtime; Thor is its first device run.
+- **Build fix (Lua download)**: build 42488979665 at a4799e843 passed every
+  job except `server-metrics-native`, which failed in both attempts (job logs
+  128774761485 and 128778888649). That job builds two MapServer variants and
+  CMake fetches Lua 5.1.5 from www.lua.org for each (`Lua.cmake`, CPM,
+  URL_HASH). The first variant's fetch succeeded (4 s, then 15 s); the second,
+  7 minutes later, timed out on all six connections ("Each download failed!").
+  0.13.60's build fetched both in 4 s and 3 s. Placing the archive in the
+  sub-build does not help: CPM deletes the sub-build before populating
+  ("remove timestamps so CMake will re-download"). `server_metrics_producer.py`
+  now gives a later variant a fresh extraction of the archive the first one
+  downloaded (checked against the same SHA-256) through CPM's own override
+  `CPM_lua51_SOURCE`, which still applies that variant's own
+  `lua-cmake.patch`. The job also keeps the archive in an Actions cache
+  (`out/lua-cache`), so later builds need no download at all; the evidence
+  record gains `lua_archive`. Tests: 4 new producer tests (12 OK); a local
+  CMake 3.28 replica with upstream CPM 0.40.8, the same declaration and a
+  synthetic archive configured, patched, built and ran offline with the
+  override, and failed without it. No source, game or app change.
+- **Chain at bd27744ed** (one chain on x86/perf-round1, each on its first
+  attempt; the first build at a4799e843 failed as above). Build 42499066512:
+  the libraries job started the runner's PostgreSQL 16.15 (`pg_fixture.sh`)
+  and ran `test_character_profile_eligibility.py` with
+  `COH_REQUIRE_POSTGRESQL=1` (34 OK, none skipped). `server-metrics-native`
+  (job 128805749349) found no cached archive, let CMake download Lua for
+  `retained_progress`, configured `thor_certified_startup` with
+  `-DCPM_lua51_SOURCE=.../lua-sources/thor_certified_startup` (its
+  `lua51.lib` built from the patched `CMakeLists.txt`) and saved the cache
+  `armport-lua-5.1.5-2640fc56…`. Zone-trip runtime 42506353321 on it
+  (2260 s): creation, map 1 cookie 2 ready 608.9 s after the stock start (108
+  bins written, spawn to ready 440.4 s); reopen, no zone server before Enter
+  Game (`local_atlas_startup` 0.0 s), map 1 cookie 2 ready 136.1 s after the
+  stock start, `/mapmove 101` (cookie 3) 172.0 s, 2 arrivals, same character
+  ID and profile; `client_logout_keys` kept 0 / aborted 0. Default runtime
+  42510220143 (1831 s); trusted runtime 42513450368 on the build (trusted bins
+  applied, 1716 s); APK 42516615576 published `coh-atlas-gameplay-v0.13.61`
+  (92319145 bytes, sha256
+  1718a7844d7c1eb8cd16e28afda774938c0b06fbbca186c3142329b7ce4bc88b,
+  signer 92955353…, the same as 0.13.50-0.13.60); its
+  `local_character_server.py` and `character_zoning.py` match the commit.
+- Version 0.13.61 (76); test sheet `THOR-TEST-0.13.61.md` (in place: Resume
+  removes the unfinished THORHERO, then a villain in Mercy Island).
+
+## 0.13.60: zones in the shared tree can start (Claude, 2026-11-07)
+
+Thor 0.13.59 (user, 2026-11-07 20:56 CST, exports 20261108-025402 setup and
+-025410 session): "Failed to load map when attempting mercy Island".
+
+- **What happened** (operation.log, `character-zoning.json`, DbServer logs):
+  a fresh-install villain; 02:47:20 the DbServer asked for map 71 (Mercy
+  Island, cookie 2) at Enter Game and the dynamic start admitted it (no zone
+  before). `_start_stock_map` -> `prepare_zone_runtime` built
+  `local-login-server-<sid>-zones` (cold private mirror, then the shared
+  server-data tree, 128704 files, "Preparing private map data directories",
+  02:47:25-02:52:16, the guest loop blocked meanwhile), then
+  `server_fx_catalog.install` refused the tree:
+  `stock_travel.starts[0].failure` = "FX projection is restricted to the owned
+  Atlas/Kings server namespace". The start was delinked; the DbServer logged
+  `dbid 1 name "THORHERO" setNewMap failed MapFailed`, which deletes a
+  just-created character (`doneWaitingChoosePlayerFailed`, `just_created`);
+  (corrected in 0.13.61: it was no longer just_created, so it was unloaded
+  and its row kept; see "0.13.61")
+  the client showed "Map failed to start" and exited (code 0) 02:53:46.
+  `initial_zone` still said `requested: false, attempts: []`.
+- **Cause**: the FX namespace check (`local-login-server-<32 hex>`
+  optionally `-kings-row`/`-atlas-park`) predates the shared tree of every
+  other static zone (`-zones`, 5542e3d11, 0.13.57). No session had ever
+  prepared that tree: CI's trip goes to 101 (Atlas tree), and the CI runtime
+  has no all-zone package (`zone_tree_for` serves `zones` only with
+  `zone_asset_document`; the retained 0.10.0 app's client-manifest has no
+  zone package pins), so a CI Mercy Island trip would be delinked as
+  `zone_not_served`. The unit test of a villain's Mercy Island start mocked
+  `_spawn_map`, so preparation never ran there either.
+- **Fix**: `-zones` admitted. `armport/tests/test_zone_travel.py`
+  (`SessionServerTrees`, run by every build) derives the session tree suffixes
+  from `local_character_server.py` and requires each to pass the FX namespace
+  and other names to be refused; the released module fails it with the
+  phone's message. The FX donor tests (`test_server_fx_catalog.py`, excluded
+  from the retained host suites: authenticated public donor) also gain the
+  case.
+- **Reporting**: a first-zone start that fails before its server runs is an
+  `initial_zone.attempts` row (`outcome: failed`, `failure`), `requested`
+  true, and a `not_ready` event (the app clears its starting line and returns
+  the wait) whose message names the reason. `prepare_zone_runtime` remembers
+  its failure; a second Enter Game in the session repeats that reason (the
+  partial tree stays where its data-cache receipt expects it) instead of
+  "Shared zone runtime already exists".
+- **CI**: the build now also runs `test_dynamic_initial_map.py`,
+  `test_stock_travel.py` and `test_character_reopen_host.py` (none ran in CI
+  before). Native coverage of the shared zone tree still needs the all-zone
+  package in the CI runtime (1.9 GB archive plus client-manifest pins); not
+  attempted here, so Mercy Island's server start is first proven on the phone.
+- Not changed: the zones tree's data cache is never returned at cleanup
+  (Atlas and King's Row are); the next session adopts it through
+  `recover_stranded` while the old tree exists.
+- **Chain at 81b6cdfc0** (one chain on x86/perf-round1, all passed on their
+  first attempt). Build 42442419621: the libraries job's "Check bounded M3
+  diagnostic reporting" step ran the ArmPort unit tests (`SessionServerTrees`
+  included) and the three guard modules. Zone-trip runtime 42448320432 on it
+  (2266 s): creation, map 1 cookie 2 ready 620.1 s after the stock start (the
+  install's first MapServer start: 108 bins written, spawn to ready 455.8 s);
+  reopen, no zone server before Enter Game (`local_atlas_startup` 0.0 s), map
+  1 cookie 2 ready 135.7 s after the stock start, `/mapmove 101` (cookie 3)
+  171.8 s, 2 arrivals, save passed; `client_logout_keys` kept 0 / aborted 0.
+  Default runtime 42451345001 (1788 s); trusted runtime 42453750449 on the build
+  (trusted bins applied, 1714 s); APK 42456241853 published
+  `coh-atlas-gameplay-v0.13.60` (92315049 bytes, sha256
+  3f2761d824bbef9b83450bd80a794bd51fd5b74317c6e16eaebdbf555fca0b67,
+  signer 92955353…, the same as 0.13.50-0.13.59). Every CI start used the
+  Atlas tree; `-zones` is first prepared on the phone.
+- Version 0.13.60 (75); test sheet `THOR-TEST-0.13.60.md` (in place, Resume
+  first character creation as a villain).
+
+## 0.13.59: only the character's own zone, at Enter Game (Claude, 2026-11-07)
+
+User, 00:28 CST, after the 0.13.58 test sheet: "I think you misunderstood my
+instructions. I want the game to load whatever zone my character is in. Under
+no circumstances should characters be transported to Atlas Park unless they
+exist in that zone already, especially if I have a villain or other origin
+characters that should start in their respective zones." Asked about scope, the
+user chose one character at a time (THORHERO, any side) over several characters.
+0.13.58 did not move the hero (the DbServer still sent it to its saved zone),
+but it started Atlas Park's MapServer for every session and accepted a first
+connection there.
+
+- **No zone before Enter Game** (`character_zoning`, `DYNAMIC_INITIAL_POLICY`
+  v2, `initial_zone` in the zoning report, `saved_startup.dynamic_start` is the
+  same record): with stock travel and the ARM64 client, `initial_map_preparation`
+  returns None for every saved map (Atlas Park included), `prepare_runtime`
+  defers Atlas preparation (`character_zone_started_at_enter_game`), and
+  `start_map` -> `defer_initial_zone` records the `local_atlas_startup` stage
+  (the app's stage contract) with `zone_servers_started` 0. The DbServer's
+  request at Enter Game (handleChoosePlayer -> handlePlayerContainerLoaded ->
+  findBestMapByBaseId -> setNewMap -> startMapIfStatic) starts the zone through
+  the zone policy; `tick_dynamic_initial` activates it once it ticks (attempts
+  with outcomes, `request_to_ready_ms`, `mapserver_started`, startup timing
+  `map_ready_observed`). `native_ready_record` is None until then;
+  `poll_initial_map_startup` and `client_startup_assets_allowed` are true (the
+  character list and the creator need only the DbServer).
+- **Admission** (`zone_travel.ZoneTravelPolicy(admit=...)`,
+  `admit_zone_request`): until the character first enters the world only its
+  own zone may start: the saved zone or another instance of its world
+  (`same_zone`: Atlas Park 1/101), one at a time (`not_the_saved_zone`,
+  `initial_zone_already_starting`, recorded in `refused_requests`); a started
+  zone of another world stops the session ("nothing was moved").
+  `verify_initial_connection` requires the first connection on the activated
+  zone. A failed start (900 s) is recorded and Enter Game may ask again.
+- **Creation** (`LocalCharacterZoningCreationServer`,
+  `character_creation_diagnostic.ZoningCharacterCreationDiagnostic`, chosen when
+  COH_STOCK_TRAVEL=1, COH_EXTERNAL_MAPS=1 and the ARM64 client): the zoning
+  machinery with the base creation identity (empty account, THORHERO ID 1, base
+  rows check); the first request after the creator is the starting zone
+  (determineStartMapId: 1 Atlas Park, 24 Outbreak, 71 Mercy Island, 70
+  Breakout, 40 Precinct Five, 36 Nova Praetoria, 41 Destroyed Galaxy City).
+  `creation_identity`/`creation_save_verified` accept a static zone with
+  stock_travel; the zone's wait is added back to the 1200 s creator window
+  (`initial_zone_wait_seconds`, bounded 1800 s). The legacy creation (x86, or
+  no stock travel) is unchanged.
+- **App**: `savedDestinationEvent` dynamic branch: port null, no
+  `prepared_map_id`, any static zone; `characterConnectedEvent`/
+  `characterCreationVerified`/`characterCreationAccepted` take the
+  stock-travel flag for creation (`ClientRuntime.dynamicCreation`);
+  `character_initial_zone` events show "Starting <zone>…" and keep it over the
+  guest heartbeat until connection; zone display names (`ZONE_DISPLAY_NAMES`,
+  `map_name` on connected/saved events, `ClientRuntime.zoneLabel`); messages
+  for any side.
+- **Trip timing rows**: `_start_stock_map` opens a `stock_travel_request`
+  startup-timing row per trip (map ready at the first tick, client world at
+  the arrival); before, a trip's spawn relabelled the session's initial row
+  (see the 0.13.58 CI bullet). The first zone keeps the initial row
+  (`initial_zone_started_by_dbserver_request`).
+- CI: the zone-trip runtime now exercises the dynamic start for both sessions
+  (CI's hero is a Primal hero, so Atlas Park is started by the DbServer's
+  request after the creator and again at the reopen's Enter Game). Other
+  starting zones and the saved-zone admission are unit-tested only
+  (`test_dynamic_initial_map.py`) until the Thor test.
+- **First zone-trip runtime at 18bdea026** (42397533053, 0.13.58 build's client):
+  creation failed "Character logout delivery does not match this ready client
+  or its save window". The dynamic start worked (request map 1 cookie 2, Atlas
+  ready 609.9 s after the request including the deferred Atlas preparation;
+  ResumeCharacter 18:06:22); `/quittologin` sent 18:07:53; at the failure
+  (137 s later) the client was still in the zone at 2.1 FPS (helper dialog
+  still drawn), no logout line. Same picture as r58t 42322788540 attempt 1 and
+  shared-heap 41931773800 (all at ~2 FPS in the world).
+- **Cause (source reading) and patch 0127** (ARM64 client: `game.c`, `input.c`,
+  `input.h`, `clientcomm.c`): `checkLogoutProgress` cancels a logout on any key
+  edge once the server's logout timer is back ("Press any key to abort",
+  `commSendQuitGame(1)`). The frame order is inpUpdate (DirectInput buffer),
+  windowProcessMessages, net, UI, checkLogoutProgress; Wine's dinput keyboard
+  hook (dinput thread, `GetCurrentTime()` stamp) queues a press only while the
+  window messages are pumped, so the Enter that sends `/quittologin` reaches
+  the chat (WM_KEYDOWN) in frame N and becomes a DirectInput edge in frame N+1.
+  At 2 FPS the server's logout update is back by frame N+1 and the stock client
+  cancels its own logout; at 40-60 FPS (Thor) it rarely is. 0127 records the
+  quit request time (`armportNoteQuitRequest`, timeGetTime) and each edge's
+  DirectInput time (`inpEdgeTime`); a key pressed at or before the request
+  does not cancel (`ARMPORT_LOGOUT_KEY_V1 ... logout_kept=1`), later keys still
+  do. Native check `armport/tests/logout_abort_keys.py` (build workflow,
+  extracted code, client frame order): patched keeps the logout, original
+  fails with "aborted by key: 28" at 2 FPS; a later Escape cancels in both; 10
+  FPS with a two-frame reply and Windows order pass in both. CI notices:
+  `client_logout_keys` (kept / aborted) in the startup and failure details.
+  x86 client (patches/ process) not changed yet.
+- **Build 42402626384 at 154d8d814** (client with 0127; native check notice
+  "ArmPort logout keys": patched PASS, original FAIL "aborted by key: 28").
+  Zone-trip runtime 42410700974 on it: **creation passed** (DbServer request
+  map 1 cookie 2 after the creator, Atlas ready 588.3 s after the stock start
+  including the deferred preparation, save verified; `client_logout_keys`
+  kept 0 / aborted 0, so the race did not occur that time). The reopen stopped
+  at the client launch: "Early retry requires the still-live current owned
+  native services" (`client_attempt_retry.service_identity` bound the Atlas
+  MapServer, which the dynamic reopen no longer has before Enter Game).
+  825bae059: the identity leaves the MapServer out only while the
+  character's zone is still to start (`initial_zone_pending`) and none runs;
+  the retry skips the Atlas tick check then (`zone_server_deferred_to_enter_game`),
+  a zone started since forbids it; `client_attempt_retry.py` added to
+  `CHANGED_RUNTIME` (`test_thor_apk_runtime_review` caught the omission).
+- **Chain at 825bae059** (one chain on x86/perf-round1, all passed on their
+  first attempt). Zone-trip runtime 42413409889 (client/data from build
+  42402626384, same client source), 2232 s. Creation: DbServer request map 1
+  cookie 2 after the creator, ready 579.7 s after the stock start (the
+  install's first MapServer start: 108 bins written, spawn to ready 421.8 s).
+  Reopen, the first CI run of the dynamic reopen: no zone server before Enter
+  Game (`local_atlas_startup` 0.0 s, database server 9.8 s); the DbServer's
+  request at Enter Game (map 1 cookie 2) was ready 136.1 s after the stock
+  start (spawn to ready 133.3 s; the `initial_guest_service_request` row's
+  257.7 s counts from the guest's start, before login); `/mapmove 101` (cookie
+  3) ready 172.2 s, 2 arrivals, save passed. `client_logout_keys` kept 0 /
+  aborted 0 in every session of the chain (the Enter race did not occur, so
+  0127 rests on its native check). Default runtime 42416994465 (1816 s). Build
+  42419983392 (native check again: patched PASS, original FAIL "aborted by
+  key: 28"); trusted runtime 42426938668 on it (trusted bins applied, 1779 s);
+  APK 42429765739 published `coh-atlas-gameplay-v0.13.59` (92315049 bytes,
+  sha256 aa704cdf8767a9ccc159d3497d9d2e3fc3766a7f63d030569a9fc7781c316ec9,
+  signer 92955353…, the same as 0.13.50-0.13.58).
+- Version 0.13.59 (74); test sheet `THOR-TEST-0.13.59.md`.
+
+## 0.13.58: Atlas Park first, the saved zone at Enter Game (Claude, 2026-11-06)
+
+User, 14:59-15:20 CST: 0.13.57 "crashed during startup ... straight to the
+Android home screen, no messages. The client splash screen had just appeared";
+then "I'm going to completely wipe the app and start fresh ... I want the
+initial map to be dynamic so we don't have an instance of this again."
+Evidence: export 20261106-205910 is the setup report only (written 20:50Z,
+exit history up to 20:47:47Z, reason 10 = the update). Recovered export
+20261106-210545 (`previous-guest/latest-report.json`, status running, last
+write 20:56:10Z): THORHERO saved in King's Row (`saved_startup` map 5, mapid 5,
+staticmapid 5; left there by the 0.13.56 stop); stock travel requested; the
+legacy saved start prepared King's Row (beacon graph 29.8 s, preparation
+42.2 s) and overlapped the client: King's Row native ready 200.96 s
+(20:56:10.258), client launcher started 20:56:09.2, no client window yet. No
+guest failure; the Android process ended (no report finalized). Storage report
+20261106-211807 has no exit history (format 1 inventory). The user's later
+setup export 20261106-220022 has it: **20:58:39.314Z reason 3 (LOW_MEMORY),
+importance 100 (foreground)**, app process PSS 242,631 KiB / RSS 364,340 KiB,
+pid 32400 (the 20:47:55Z setup service pid), 2.5 min after the client launch.
+Android's low-memory killer ended the foreground app while King's Row's
+preparation and native start overlapped the client's own startup (Android
+reported 10.9 GB available at setup; 0.13.52's per-process figures: client
+~2.2 GB, each zone ~1.9 GB, DbServer ~0.4 GB). The 0.13.56 trip (client in
+game, Atlas and King's Row resident) survived, which supports moving the
+saved zone's start after the client's startup.
+
+- **Dynamic initial map** (`character_zoning`, `DYNAMIC_INITIAL_POLICY`): with
+  stock travel and the ARM64 client, `capture_baseline` keeps the saved zone in
+  `saved_startup` (+ `prepared_map_id` 1, `dynamic_start`) but prepares Atlas
+  Park (`active_map_id` 1), the start of every working session. At Enter Game
+  the DbServer finds the saved static map not running (handleChoosePlayer ->
+  setNewMap(is_gameclient=1) -> startMapIfStatic, no loading message to a game
+  client) and publishes the start; the zone policy starts it like a trip.
+  `tick_dynamic_initial` (each `character_evidence`) activates it once ready
+  and before the first connection (no epoch, no arrival event), so the manual
+  wait's `native_ready_record` reads that zone's stock log; the connection may
+  also come on Atlas Park (findBestMapByBaseId for an Atlas instance).
+  `start_map` refuses a dynamic start without the external-maps layer; a zone
+  the runtime cannot serve stops at baseline. x86 client / station travel keep
+  the legacy saved start.
+- **Patch 0126** (ARM64 client, `initClient.c`): `dbChoosePlayer` waits 900 s
+  (stock 90 s; the DbServer answers only when the map is ready, or with a
+  failure message). The client's main loop is blocked during that wait (stock
+  behaviour): the screen stays still.
+- **Storage** (`ClientRuntime.ownedMountPoint`, `repairRuntimeMountPoints`):
+  `/opt/coh/pgsql` is bound inside the `/opt/coh` bind (runtime `assets`);
+  PRoot created the missing destination unreadable, the scan failed with
+  errno 13 at `m2/runtime-9618983b6f58caae/assets/pgsql`, `complete` false,
+  every category non-removable, 14 older runtimes kept (52.7 GB allocated).
+  The launch now creates it 0700; a scan first repairs it in every runtime
+  (`runtime_mount_points_repaired`) and the scan report carries
+  `android_process_exit_history` (with descriptions).
+- App: the saved-destination stage accepts `dynamic_start` (no port yet) and
+  says the zone starts at Enter Game.
+- Not covered by CI: CI's reopen starts with THORHERO in Atlas Park, so the
+  dynamic path runs only in unit tests (`test_dynamic_initial_map.py`) until the
+  Thor test (sheet step 6). The fresh install is the user's choice (uninstall
+  deletes the hero and assets; asset packs coh-assets-v1.0.0).
+- CI at 919e23760 (one chain, x86/perf-round1): build 42300265349 (server
+  metrics) passed; zone-trip runtime 42312362966 (external maps 41883310382,
+  stock travel) passed: `/mapmove 101` start ready 166.6 s (supervisor), 2
+  arrivals, save passed. (The row labelled map 101, 192.7 s to map ready and
+  339.6 s to client world, was the session's first Atlas Park start: a trip's
+  spawn relabelled the initial timing row. 0.13.56-0.13.58's "client in the
+  zone N s after the request" figures are those first-start times; 0.13.59
+  gives each trip its own `stock_travel_request` row.) Default runtime 42316982535 attempt 1 failed in creation: "Costume
+  page (HEAD/WEAPONS/Colors) not reached after body_next" (5 OCR checks,
+  144.9-154.7 s after ready, menu 9.8 FPS); attempt 2 (re-run of the failed
+  `interactive-guest` job) passed. Trusted runtime 42322788540 attempt 1
+  failed in reopen: `/quittologin` sent 315 s after ready, no Atlas logout
+  line, "Character logout delivery does not match this ready client or its
+  save window" (120 s), client 2.1 FPS in world; reopen startup timings
+  matched 0.13.57's r57t within 1 s; attempt 2 passed. Neither path changed in
+  0.13.58 (creation UI; non-stock reopen). Both first attempts are open
+  flakes, not proof of stability. APK 42329179898 (server metrics, trusted
+  runtime, external maps) published `coh-atlas-gameplay-v0.13.58`
+  (sha256 4feb75e2cd480f18d88e911c122e7d6c43728addb1c31b6dc77390c01e8dbb87).
+- Version 0.13.58 (73); test sheet `THOR-TEST-0.13.58.md`.
+
+## 0.13.57: a King's Row arrival no longer stops the session (Claude, 2026-11-06)
+
+User, 09:22 CST (exports 20261106-152001/152038, screenshot): reached King's
+Row by monorail, "Map loading, please wait..." stayed on screen, then a crash.
+Evidence (entity log, guest report): Step 1 15:15:07Z (Atlas), supervisor
+start of map 5 (cookie 2, tree `kings_row`, ready 185.6 s after launch),
+Step 2 15:18:12, ResumeCharacter on City_01_02_1 15:18:33 (the trip worked;
+both MapServers ran `-notwostagemapxfer`). The guest read the arrival at
+15:19:40 (stock log route: the MapServer resends logs every 30 s) and 1.7 s
+later failed the session: "Reopen phase budget lacks the current validated
+graphical character".
+
+- **Cause**: `character_zoning.character_identity` kept the station-era rule
+  `map_id != 5 or monorail_enabled`; `_stock_arrival` sets `monorail_enabled`
+  False (station queue off), so King's Row failed and the session was stopped.
+  `SessionBudget.identity` already allowed it (`STATIC_ZONES`); CI's trip goes
+  to map 101 and never reached the rule. Now `stock_travel` also qualifies.
+  Test `test_stock_arrival_in_kings_row_or_another_zone_keeps_the_session`
+  replays the device proof through the real `_stock_arrival` and
+  `interaction_deadline` (fails with the old rule with the device's message).
+- **App side** (same rule, would have failed a save or the next login in King's
+  Row or any other zone): `ClientAcceptance.supportedCharacterMap`, the budget
+  rows, `ClientSessionBudget.apply` and `ClientRuntime`'s proof check accept
+  `stock_travel` with a static zone (1-999); the guest's connected/saved events
+  carry `stock_travel`. Java case `stockarrival`.
+- **Stale "Map loading" text** (patch 0125, ARM64 client): the DbServer sends
+  only "loading on" (mapxfer.c, twice) and the load screen turns it off; with
+  `-notwostagemapxfer` the load screen comes first, the notice arrived during it
+  and stayed over the new zone. It is ignored on the load screen and cleared on
+  the map handoff. The shelved x86 client is unchanged.
+- **Third zone soon after a trip**: the arrival can be read up to ~60 s late, so
+  `active_map_id` may still name the zone the hero left, and the policy could
+  stop the zone the hero is on. `stock_occupied` asks the DbServer once
+  (`-getstatus 3 1`, only when a request needs room; at most up to query 140 of
+  160): the hero's map (still the origin during the request, InMapXfer) is the
+  occupied zone, recorded as an arrival if it was unread; unknown → delink (the
+  game says the map failed, the hero stays). `stock.occupied_probes` counts it.
+- Also: `test_client_gpu_repair_evidence` compiles again (its harness lacked
+  0.13.55's `stockTravelRequested`); two legacy 0.13.20 fixtures in it fail with
+  or without these changes (not investigated).
+- Version 0.13.57 (72); test sheet `THOR-TEST-0.13.57.md`.
+- CI at 8050afca8: build 42246645668, stock-travel runtime 42263546136 (trip to
+  101: instance ready 181.8 s, client world ready 352.1 s after the request, 2
+  arrivals, interactive passed with no failures), default runtime 42270379862,
+  trusted runtime 42276008129; APK 42281556221 published
+  `coh-atlas-gameplay-v0.13.57` (prerelease; sha256 62221a94…f1c07). CI does not
+  reach King's Row or a third zone, so the map-5 rule, `stock_occupied` and patch
+  0125 on screen are unit-tested only until the Thor test.
+
+## 0.13.56: zone starts no longer stop the DbServer; CI zone trip (Claude, 2026-11-05)
+
+User, 14:30 CST (export 20261105-202806): logged in, took the monorail to
+King's Row; "the client crashed immediately after the character boarded".
+Evidence: the box was the **DbServer's** assertion (`weeklyTFcfg.c:120`,
+`currentWeek`; built path `out\ex…` = the external-maps layer); the guest then
+failed "Local DbServer exited during login"; the supervisor saw 0 requests.
+`launcherCommStartProcess` builds every MapServer command with
+`WeeklyTFCfg_getCurrentWeek` (launchercomm.c:1619), which devasserts when
+`server/db/weeklyTF.cfg` has no entry; the pinned data lacks the file (schema
+receipt `absent_in_pinned_data`). No CI run had ever made the DbServer start a
+zone, so CI never reached it.
+
+- **Fix** (`local_character_server.write_weekly_tf_config`): with the
+  external-maps layer enabled, write one past week, no tokens (no
+  `-WeeklyTFTokens`); recorded as `external_maps.weekly_tf_config`.
+- **CI zone trip**: the stock-travel reopen (`StockTravelReopenInteraction`)
+  types `/mapmove 101`, so the DbServer starts Atlas Park instance 2 through the
+  same start path as a door or the monorail and publishes it to the supervisor;
+  the host waits for the guest's `stock_travel` arrival (900 s), returns with
+  `/mapmove 1`, then runs stuck/logout/save. On the CI donor's legacy MapServer
+  the zoning flow reads Atlas CLIENT_READY with its log time (`legacy_ready`);
+  the device keeps its immediate events. The failure notice adds the DbServer
+  console tail and zone console tails.
+- **What the CI trip found next** (round3, each run one fix):
+  r56z 42105741978: the DbServer published map 101 (no assertion) but the
+  supervisor refused `-productionmode` (shipped `MapServerParams`); r56z2
+  42113734763: refused `-idleExitTimeout` — servercfg.c appends
+  `-idleExitTimeout 30`, `-idleUpkeep 30`, `-MARTY_enabled` (and on other
+  configs `-IsBetaShard`, `-dailyUpkeep A B`); all dropped, the session's own
+  MapServers run without them (test rebuilds the whole command from the
+  shipped servers.cfg). r56z3 42122856772: 101 started (cookie 2, ready 202 s)
+  but the 4 KB notice hid why the hero stayed → "zone diagnostics" notices.
+  r56z4 42130378619: the game did the trip (entity log: Step 1 00:08:09,
+  Step 2 00:11:01, ResumeCharacter on City_01_01_2) but the guest missed it:
+  after the connection is proved the base flow stops status probes →
+  arrivals are read from the stock entity log (`_poll_stock_logs`). r56z5
+  42136835869: round trip, stuck, logout and save all passed (arrival 101 in
+  258.7 s host time, back in 84.2 s); the host's report check wanted the
+  `local-character-atlas` process label → `local-character-zoning-1` accepted.
+- **Loading screen at once**: the stock MapServer's two-stage transfer kept
+  the hero in the world until the destination started; stock-travel session
+  MapServers run with `-notwostagemapxfer` (svr_init.c): frozen,
+  untargetable, invincible and the loading screen immediately.
+- Version 0.13.56 (71); test sheet `THOR-TEST-0.13.56.md`.
+
+## 0.13.55: the game's own zone travel, every zone (Claude, 2026-11-05)
+
+User, 22:46 CST (0.13.54 test passed, temps high 50s/low 60s): a zone trigger
+should show a loading screen and take the character out of the world; the
+monorail should board at once, then load; open the whole zone list; full
+screen 1280x720, launcher options in a floating movable touch icon, controller
+mapping like trasc; "The biggest priority is nailing the map/zone server".
+Answers: current zone + one spare; open all zones now (game's own rules).
+Plan and stock-zoning evidence: `armport/notes/ON-DEMAND-ZONES.md`.
+
+- **Guest** (`COH_STOCK_TRAVEL=1` + external-maps layer): station queue off;
+  `external_map_supervisor.py` start policy (`zone_travel.py`: two zone
+  servers, stop the idle one, 900 s start budget then stop + delink);
+  `character_zoning` starts a request with `-cookie` and its own game options,
+  follows arrival from the character status (`_observe_stock_move`).
+- **Every zone**: `zone_index.py` (66 maps.db static zones; union of 380 extra
+  collision leaves from the all-map closure evidence, all in the pinned
+  zones-world-supplement); `prepare_zone_runtime` builds one owned tree for
+  every zone other than 1/101/5 (no beacon graph yet); `register_zone`; a hero
+  saved in such a zone starts there; reopen budget `static_zones`.
+- **App**: `ClientZoning` follows `stock_travel` events (any static zone, no
+  four-trip limit, no input block).
+- **CI/APK**: runtime input `stock_travel` (reopen runs `--zoning`); APK input
+  `external_maps_run_id` (run 41883310382) puts the external-maps DbServer in
+  the APK. Version 0.13.55 (70). Chain `r55.sh`.
+- **Interface** (merged ac9720c22): the game fills the window (still drawn at
+  800x600 and scaled); launcher options in a draggable gear button
+  (`ClientOverlayPosition`, Back toggles it); controller mapping
+  (`ControllerInput/Profile/Bridge/Manager/Dialog`, 6 layers, deadzone, cursor
+  speed; defaults = the 0.13.54 buttons; preset "COH power trays").
+- **Published**: `coh-atlas-gameplay-v0.13.55` (pre-release), APK run
+  42037755195 at 81e81ddd0, sha256 `bdd05be9…a4f68f00`, built from build
+  41980185206, default runtime 41991355281 and trusted runtime 42020227060 (all
+  passed at 81e81ddd0).
+- **Stock-travel CI run (not a gate)**: r55z 42025310478 passed creation with
+  the external-maps DbServer + `COH_STOCK_TRAVEL=1`, then the reopen failed:
+  "No module named 'character_zoning'" (the CI guest's retained 0.10.0 donor
+  predates the zoning flow). a1434f3ea (CI staging only; `android/` unchanged)
+  adds the flow's modules. r55z2 42029819713: the zoning reopen started with
+  `stock_travel.enabled` true, supervisor `session_maps` "dynamic", Atlas ready
+  192 s, the client reached the world (help dialog), but the connection was
+  never proven and the host's 20-minute bound ended it. Cause: the CI donor's
+  legacy MapServer has no native events contract; the zoning flow's Atlas
+  readiness needs `utc_ms` (`native_ready_record`), which legacy log records
+  lack. The device uses the immediate events (export 20261105-043833,
+  `character_reopen.immediate_native_events.enabled`). CI zoning coverage
+  moves to step 2, which runs the Thor test server (it has the contract).
+- Not covered by CI: an actual trip (needs a CI travel trigger; planned with
+  the spare-server MapServer layer).
+
+## 0.13.54: save check for ordinary play, shared server memory experiment (Claude, 2026-11-04)
+
+- **Save check** (e6829cbae): `gameplay_progress()` composes the narrow reopen
+  verifiers for ordinary play (training with its BuyPower records, automatic
+  Inherent powers, temporary powers granted or expired, Inherent set-level
+  normalization, slots with a level, experience/influence); see the 0.13.53
+  Thor bullet below and `armport/tests/test_gameplay_progress.py` (exact rows).
+- **Shared server memory** (3f725c8c9, owner's choice over the spare server):
+  `COH_SHARED_HEAP=1` omits `-nosharedmemory` at both MapServer launches; app
+  option off; CI input `shared_heap`; `pss_kib` per server every 30 s; console
+  decision in `creation_report.shared_heap` / `zoning_report.shared_heap_consoles`.
+  Notes: `armport/notes/ON-DEMAND-ZONES.md`.
+- Chain at 3f725c8c9 (`r54.sh`): build 41906219190, default runtime 41920974522
+  and trusted runtime 41926582700 passed creation and reopen. Shared-heap runtime
+  41931773800 failed creation: "Character logout delivery does not match this
+  ready client or its save window" (no Atlas logout line in 120 s; server ticks
+  normal, client 0.26 FPS for 15 s after the quit; new-character welcome dialog
+  twice in the stdio tail). Its console decision read all zeros: the first
+  caller prints `initSharedHeapMemoryManager: SMAR_FirstCaller` inside the
+  `reserving shared heap space...` load line, so the outcome lands on a later
+  line. Cause of the logout miss unknown (shared heap or timing).
+- APK 41935584201 failed before signing: "Unexpected runtime additions or
+  removals" — `external_map_supervisor.py` (new guest dependency, fd73bc165) and
+  `native_training_save.py` (changed) were not in `build_thor_apk`'s reviewed
+  lists. Fixed, with `armport/tests/test_thor_apk_runtime_review.py` checking the
+  lists against pinned 0.13.36 donor contents (`tests/fixtures/donor-0.13.36-runtime-pins.json`);
+  it fails on 3f725c8c9 and passes now. Release notes' version slips corrected.
+- Shared-heap evidence v2: the outcome is searched in a 4 KiB window after the
+  marker, plus `first_caller`, `disabled_reasons` and a 6-line excerpt; zone
+  server evidence (`shared_heap`, `external_maps`) moves to its own CI notice
+  "zone servers <session>"; failure detail adds `client_dialogs`.
+- **Published** (rerun chain `r54b.sh` at a66b533f6): build 41937339905, default
+  runtime 41948749075 and trusted runtime 41952941661 passed creation and reopen;
+  APK 41960891294 → release `coh-atlas-gameplay-v0.13.54` (prerelease, APK
+  sha256 `9c24ef9e25cf1b35…`, version code 69).
+- **Shared heap, CI verdict: not safe.** Runtime 41956900853 (v2 evidence):
+  the first caller reserved the shared heap (`reserved 1024 MB`, active), Atlas
+  ready 372.5 s / 106.5 s (creation / reopen) vs 357.1 s / 94.0 s without it.
+  Creation passed; reopen failed "Ordinary stuck recovery lacked native
+  stable-position proof within 180 seconds": client 0.04 FPS for 267 s, then the
+  new-character welcome dialog 30 times; server ticks normal (max 27 ms), no
+  logout line. With 41931773800 (creation logout lost) that is 2 of 2 shared-heap
+  runs failing in session vs 4 of 4 passing without it. The option stays in the
+  app, off; the test sheet says leave it off. Likely cause to study: the shared
+  (read-only after load) definitions differ in use from private ones; repeated
+  map-entry dialogs suggest the server re-sends the player's entry.
+- **External-maps DbServer in a CI guest** (runtime 41961253764,
+  `external_maps_run_id=41883310382`): the device lineage (manual Atlas level-up
+  + map-request hook, layer `b9cb4391…`) passed creation and reopen; supervisor
+  enabled, `manual_atlas_ack` true, 0 requests, no anomalies. The DbServer prints
+  its acknowledgement only when it decides its mode at the first map start
+  (`wine_external_maps.c`), and nothing asked for one (Atlas is the
+  supervisor's own start), so `acknowledgement_observed: false` is expected.
+  Requests need a zoning flow (CI monorail/zoning check or the Thor).
+
+## 0.13.53: game audio (Claude, 2026-11-03)
+
+User, 21:57 CST: "audio doesn't seem to be working and don't think it ever did
+for the ARM client". Built on 0.13.52; its chain runs after 0.13.52's.
+
+- **Cause:** the guest has no playback device. Wine's ALSA driver finds none
+  ("Unknown PCM default"), so `DirectSoundCreate` fails and the client logs
+  "Couldn't start DirectSound, continuing without audio" (every export since
+  2026-10-27). The launcher's `-noaudio 1` is inert: `parseArgs` raises the
+  command access level to 9 only in development mode, and the client runs in
+  production (pigg) mode, so it is left unchanged.
+- **Bridge (reused, device-proven):** the owner's TRASC ALSA plugin and
+  protocol, `armport/audio/` (unchanged copies of `native/pcm_trasc.c`,
+  `audio-LICENSE` MIT, `tests/audio_receiver.py`, `tests/check_audio_native.py`
+  from trasc-server-android@99e8c86; also used by lsb-android on the Thor).
+  ALSA `plug` converts to 48 kHz stereo S16_LE; the Android AudioTrack playback
+  head is the clock; writes never block.
+- **Build:** `armport/audio/build.sh` (runtime workflow, `guest-boot` job) builds
+  it in `debian:bookworm-slim` (the guest rootfs release) and runs the native
+  check against real alsa-lib (conversion, pause that empties the ring, drain,
+  reconnect). Local x86-64 check against alsa-lib 1.2.11: PASS. The plugin
+  rides in `armport-client.zip` as `armport-audio/libasound_module_pcm_trasc.so`
+  (optional member, AArch64 ELF check on package and unpack).
+- **Guest:** `ArmPortClient.client_audio_environment` (with `COH_CLIENT_AUDIO=1`
+  and a listening `COH_CLIENT_AUDIO_SOCKET`) writes `armport-asound.conf`
+  (includes `/usr/share/alsa/alsa.conf`, then `pcm.!default` → plug → trasc)
+  and sets `ALSA_CONFIG_PATH`, `TRASC_AUDIO_SOCKET` and `winepulse.drv=d` for
+  the client launch only. Any missing piece leaves audio off and is recorded in
+  `client_audio`; it never fails the session.
+- **App:** `ClientAudio.java` (lsb-android `AudioBridge`/`AudioPcmSession`/
+  `AudioBufferPolicy`, statistics on a leaf lock, no log file) binds
+  `<app>/s/audio.sock` (guest `/presentation-socket/audio.sock`, 0600, peer UID
+  checked, at most 8 streams), requests game audio focus and reports
+  `client_audio_bridge` in the Android report. Option "Game audio" (key
+  `client-audio`, default on). The APK builder admits the one new source (25).
+- **CI:** `interactive_host.py` runs the TRASC protocol sink (real-time playback
+  head) on `work/socket/audio.sock` with `COH_CLIENT_AUDIO=1` (runtime input
+  `client_audio`, default true), writes `audio-report.json`, and fails unless at
+  least one stream connected without a protocol fault (non-zero samples are
+  reported; they depend on what the scripted screens play). This is not
+  evidence of audible playback.
+- **Memory evidence:** `server-metrics.jsonl` process rows gain `rss_kib`
+  (field 24 of `/proc/<pid>/stat` × page size) for the zone servers, DbServer,
+  client and wineserver.
+- **Independent review (before CI):** nothing serious in the session path.
+  Fixed: the sink counted the client's shutdown disconnects (errno 32/104,
+  simulated in about 5-67% of kills) as faults, which would have failed the
+  chain; the plugin build step captured `step.sh` and hid its log; the
+  listener thread outlived each session (now `Os.shutdown` wakes `accept`),
+  and one failed connection ended later streams; the bridge no longer starts
+  (or takes audio focus) for the x86 client. Left: push-triggered runtime runs
+  read `client_audio` as off (same as `shared_server_data`; the chain
+  dispatches). First run of the client's sound engine on ARM64 is the Thor test.
+- **CI, 2026-11-04 (build 41819619887 at b6bf8dc64):** plugin native check
+  PASS. Runtime 41832716509: the game opened one stream through the plugin
+  (20.9 M frames, no protocol fault) but every sample was zero, because the CI
+  client data has no sound files (reference assets, Atlas and reviewed zone
+  supplements: none; "Loading sounds" takes 3 ms). Its creation session then
+  failed the save window: logout typed, no save in 120 s (then the usual
+  ownership-inspection cleanup symptom). Runtime 41838960420 at 6a8d7a08e
+  added a **DirectSound tone probe** to the boot run (`armport/audio/dsound_tone.c`,
+  the client's exact audio settings, packaged plugin, CI-only): **PASS, 1 stream,
+  71,986 / 71,987 non-zero samples left/right** (1.5 s at 48 kHz). Its creation
+  session failed the same way; the new failure-detail notice showed the client's
+  last output "Could not find sound Element_Siren_02 … Element_Vehicle_03" and
+  its frame rate falling from the 10 FPS cap to 3 and 2 FPS.
+- **Cause and fix (patch 0124):** with DirectSound working, `loadSoundScripts`
+  (sound_ambient.c) parses Atlas's ambient sound scripts; each script naming a
+  sound the data lacks opens `winErrorDialog("Sound Script Errors")`, a modal
+  dialog that stops the game's input. With audio off (all earlier runs) the
+  loader returns first. The device holds all 6,219 original sounds, but a
+  missing or renamed sound must never stop play: 0124 logs the errors
+  (`ARMPORT_SOUND_SCRIPT_ERRORS_V1`) and bounds the 1,024-byte error text (a
+  script naming many missing sounds overflowed it). Chain restarted at 7f0a59664.
+- **CI with 0124 (build 41845880444 at c1b7097e1):** runtime 41868387083
+  (default) and 41875359508 (trusted bins) **passed creation and reopen with
+  game audio on**. Both: tone probe PASS (71,986 / 71,987 non-zero samples), the
+  game opened 2 streams (38.6 M / 38.8 M frames, all silent: no CI sounds) with
+  no protocol or teardown faults. The save windows that failed before 0124 now
+  pass. The logged `ARMPORT_SOUND_SCRIPT_ERRORS_V1` lines are inside the report
+  artifact, which cannot be downloaded here; from fd73bc165 the startup-detail
+  notice reports them. Audio costs nothing measurable in CI: Atlas
+  request→client world ready, creation/reopen, 1035/350 s and 1020/313 s
+  (trusted) against 0.13.52's 1059/352 s and 1032/315 s. Build 41843958974 at
+  7f0a59664 had failed its unit tests only (the sparse checkout lacked the
+  qualified base DbServer manifest that the external-maps receipt test reads).
+  APK 41881139424 (not published), then **published:**
+  [coh-atlas-gameplay-v0.13.53](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.53)
+  (APK run 41881826170 from runtime 41875359508, `COH-Atlas-Gameplay-0.13.53.apk`,
+  92,249,277 bytes, code 68, sha256
+  `e49b88e0faf003133a708eac8d6fbe1799fe3d01a59f119705a5d84217a02363`).
+- **Thor, 2026-11-04 (exports 20261104-193441 and -195518, plus the startup
+  export -193423):** the owner reports audio working well, King's Row fixed,
+  the second start within target, temperatures mostly under 70 °C (the second
+  session reached the low-mid 70s, then fell). Evidence: `ARMPORT_NET_CLOCK_V1`
+  16 / 26 lines, King's Row lag 254-357 ms and 19-263 ms, one wrapped bias
+  (4294317285) rendered correctly; no `ARMPORT_SOUND_SCRIPT_ERRORS_V1` on the
+  device (all sounds present); folder index miss/scan 126.65 s (160,114 files)
+  then **hit in 0.257 s**, client start 166.96 s → **40.60 s**; Atlas native
+  ready 204.2 s / 149.6 s. King's Row prestart: session 1 rode after 48 s
+  (prestarted loading, 134 s), session 2 found it resident (9.3 s to ready,
+  return 5.9 s). In-world FPS median 53.2 / 39.2, p10 27.1 / 29.6 (0.13.52:
+  36.6 / 43.1). Battery 29-35 °C / 35-38 °C, thermal status 0 throughout.
+  **Memory (`rss_kib`, first device figures):** client 2,257 / 2,139 MiB, Atlas
+  MapServer 1,814 / 1,782, King's Row 1,875 / 1,877, DbServer 415 / 417,
+  wineserver 15; total peak 6,161 / 6,339 MiB with both zones; Android reported
+  6,929 / 6,938 MiB available when King's Row started. So each further resident
+  zone costs about 1.9 GB.
+- **Both sessions report "failed" with the saves correct:** `Committed existing
+  character rows changed after reopen: ents` (session 1: trained to level 2,
+  bought `805/773`, got 7 stock automatic powers (Walk, Rest, Fitness_Fix,
+  the four Fitness), a Day Job temporary
+  power `temporary_powers.day_job_powers.day_job_movement_increase_lesser`, and
+  XP/influence in the same session) and `: powers` (session 2: that Day Job power
+  expired and the stock level-2 auto-set `powersetlevelbought` normalization
+  ran). Each change has its own narrow verifier (training, temporary grants,
+  normalization, rewards), but no combination is accepted, and expiry is not.
+  Not a save failure; fix the comparator before the next APK.
+
+## 0.13.52: King's Row interpolation fix, saved client file list, first-lookup links, opt-in test server (Claude, 2026-11-03)
+
+User, 19:24 CST: "Work on 1 and 2 and 3, stage the update, wait for my results
+to add more". 21:57 CST, with the 0.13.51 results: "Look through the reports,
+see if there are additional fixes that can be made and integrate that into the
+next apk in conjunction with the other updates you worked on". The staging
+chain (build 41760267957 at `0395e3c16`, passed, folder-cache index check
+included) was stopped before its runtimes and restarted with patch 0123.
+
+- **King's Row NPC jumps** (ArmPort patch 0123, always on). Root cause found in
+  `entrecv.c`: `local_time_bias` (U32) maps the client's clock onto the
+  server's `abs_time`, and other entities are drawn at `client_abs`,
+  `auto_delay` behind the newest update. `doMapXfer` resets the bias to 0; for
+  a zone server younger than the client's clock (King's Row, started after
+  the client was in Atlas) the correction `local_time_bias += dt * 3000.f` is
+  negative. x86 converts that float to U32 modulo 2^32; AArch64 `fcvtzu`
+  saturates to 0, so the bias stayed 0, `client_abs` was clamped to the
+  newest update and entities jumped at the server's 4 updates per second.
+  Atlas started before the client, so its correction was positive (matches
+  the report: Atlas smooth on entry and return, King's Row jumpy on both
+  trips, never on x86). With 0122 the client can reach its main loop before
+  Atlas is ready, which would have exposed Atlas too. Fix:
+  `armportWrapFloatToU32` (64-bit signed conversion, then modulo) for the
+  bias correction and both `client_abs` computations; `ARMPORT_NET_CLOCK_LOG=1`
+  (set by the guest) logs `ARMPORT_NET_CLOCK_V1 ... lag_ms=` every 30 s.
+  `armport/tests/net_clock_interpolation.py` simulates Atlas → King's Row →
+  Atlas with the extracted code (build step on the AArch64 runner; the
+  original must lose the delay there; under `-fsanitize=float-cast-overflow`
+  the original reports the -1.68e6 King's Row correction on any host).
+  Audit: an IR scan of the ARM64 client and UtilitiesLib found 363 `fptoui`
+  sites; the time, network, entity, sound and player ones were read and only
+  this clock depends on the wrap (the rest are colours, sizes and UI values).
+
+- **Saved client file list** (ArmPort patch 0122, app option on,
+  `COH_CLIENT_FOLDER_INDEX`). `FolderCacheAddFolder("./data")` saves its scan
+  to `<root>/armport-folder-cache-index.bin` and rebuilds the same nodes when
+  `ARMPORT_FOLDER_CACHE_ID` matches. The identity (`armport_client_package.
+  folder_cache_identity`) hashes the per-launch link validation digests (every
+  source directory and link-target directory: device, inode, mtime, ctime),
+  the link count, the overlay archive and executable, the skip and live lists,
+  and the view-building code (`armport_client_package.py`). Installs publish
+  new files, so any change moves a directory identity. The client also refuses
+  on header, length, checksum or record errors (separators, NUL, long names),
+  or when one of 64 sampled files changed size or time. It always scans live the
+  overlay's root `bin/` (fresh mtimes every launch) and the writable cache roots
+  `geobin` and `server` (`ARMPORT_FOLDER_CACHE_LIVE`; their files can be
+  rewritten in place without a directory change), with the full scan's skip
+  and exclusion rules. Log: `phase=index result=hit|miss reason=...` and
+  `result=written`. `armport/tests/folder_cache_index.py` runs the extracted
+  prepared code natively (20 checks; upstream fails) as a build step.
+  160k-file fixture: 5.2 MB index, identical tree, 2 listings vs 1,642.
+  Independent review (before CI): no serious defect; the CI step's pipe hid a
+  failure, the in-place rewrite gap and the view-code identity were fixed.
+  Left as is: merged directories carry the previous launch's folder times on a
+  hit (nothing found that reads folder times), and the second server archive
+  is in the client manifest, so it is hashed every launch.
+- **First-lookup links** (`COH_SERVERDATA_FIRST_LOOKUP`, on). `runtime/serverdata`
+  is now a directory of folder links (15 shared) plus `bin`, `geobin` and
+  `server` linked to `../data/`. The Atlas console requests trees for 14 roots,
+  none of these three, so they are looked up one file at a time and each first
+  missed in `serverdata/`. Expected: some of the 5-6 s, measured only on the
+  device (CI +0.8 s). Writes still land in `data/` through the links.
+- **Opt-in test server** (`server_option` APK input, app option "Fast server
+  start (test server)", off by default under a new key; the old `trusted-bins`
+  key defaulted on). The APK keeps `game-package.tar.gz` byte-identical
+  (`build_thor_apk` admits no change to it in this mode) and adds the admitted
+  `thor_certified_startup` metrics server (0119 + trusted bins) as
+  `game-package-trusted.tar.gz`. `select_game_archive` uses it only with
+  `COH_TRUSTED_BINS=1`; the binding then pins that archive and requires the
+  Thor variant with the reviewed switch. This server has never run anywhere
+  (CI runs `retained_progress`); its first run is the Thor test. The data
+  cache identity maps it to its shipping predecessor, so the mirror is reused.
+- Chain (one at a time, one head): `armport-build` with `build_server_metrics=true` →
+  runtime with the default server (evidence for the file list and links) →
+  runtime with `server_run_id`, `trusted_bins=true` (qualifies the server
+  package) → APK with `server_metrics`, `server_option`, published when qualified.
+- **Published:** [coh-atlas-gameplay-v0.13.52](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.52),
+  all at `424228d68`: build 41772928339 (interpolation clock notice: patched
+  King's Row lag 197 ms; original `lag_ms=0 ... FAIL: no interpolation delay`
+  on the AArch64 runner; folder-cache index 20 checks), runtime 41783448453
+  (default server; passed; reopen bin writes 0; `phase=index result=written
+  bytes=4651426` on creation, `result=hit reason=match seconds=0.127` for
+  123,633 files on reopen; `first_lookup_private_folders` bin/geobin/server),
+  runtime 41787724875 (`trusted_bins` applied; passed), APK 41791858823
+  (`COH-Atlas-Gameplay-0.13.52.apk`, 92,236,989 bytes, code 67, sha256
+  `047b0f4115e2c6ebfd51ec41ef40e6ce7c18fdcd17db04cb023086d48824f6a1`). The
+  first chain (41760267957, `0395e3c16`) was stopped before its runtimes; a
+  chain-script bug (the dispatch helper captured `gh workflow run`'s stdout
+  as the run id) stalled the second after its build, and it was resumed from it.
+
+## Thor test of 0.13.51 (user, 2026-11-03; exports 20261104-032856 and -035206)
+
+Two sessions, both passed with proved cleanup; export -032851 is the runtime
+setup. User: King's Row NPCs still "porting point to point" on both trips;
+device temperature only into the 60s °C (0.13.50: 76 °C); no audio on the
+ARM64 client (the x86 game they played before had audio and smooth King's Row).
+
+| | Session 1 | Session 2 |
+|---|---|---|
+| Guest start → client launched (`startup_elapsed`) | 142 s | 161 s |
+| King's Row trip (cold): Python / native ready / transfer | 51 / 238 / 45 s | 51 / 218 / 35 s |
+| Return to Atlas (resident) | 8 + 40 s | 5 + 40 s |
+| In-world FPS (windows above the 10 FPS cap) | mean 40, 77/111 ≥ 30 | mean 47, 70/72 ≥ 30 |
+
+- **Tick probe:** King's Row completed 117-118 ticks per 4 s window in every
+  sample (max gap 64-69 ms, 0-1 gaps over 67 ms), Atlas the same with max
+  48 ms. The server was not starving; this led to the client clock (0123).
+- **Station cap:** applied and removed twice per session, no error.
+- **Priorities and CPUs:** MapServer threads at nice 0 (5 during preparation),
+  client 7 of 21 threads at nice 19; CPU clusters 2.0/2.8/3.2 GHz.
+- **Audio:** never worked in this app. The launcher passes `-noaudio 1`, yet
+  the client still reaches `DirectSoundCreate` in `sndSysInit`, and Wine's ALSA
+  driver finds no device in the guest ("Unknown PCM default"; "Couldn't start
+  DirectSound, continuing without audio"). Every export since 2026-10-27
+  shows the same. A sound path from the guest to Android is needed
+  (planned: an ALSA plugin that hands PCM to an AudioTrack in the app); not in
+  0.13.52.
+- Pre-existing observation note in both sessions (and on 0.13.49/0.13.50):
+  `Cache inventory: Linked private cache directory refused`.
+
+## Thor test of 0.13.50 (user, 2026-11-03; exports 20261103-215454 and -220758)
+
+Two sessions, both passed with proved cleanup; export -215435 is the runtime
+setup. ARM64 client, fast mode, 60 FPS, shared data and the client skip on.
+User report: King's Row reached; device at 76 °C while loading; King's Row NPCs
+look laggy while the client is smooth; loading still long.
+
+| | Session 1 (first start) | Session 2 | 0.13.49 session 2 |
+|---|---|---|---|
+| Tap → Atlas map ready | 762 s | 444 s | 297 s |
+| Atlas Python preparation | 537 s (mirror 88, shared tree 282 one-time, beacons 75) | 202 s (mirror 84, beacons 75) | 70 s (checkout 9, beacons 25) |
+| Atlas MapServer spawn → ready | 225 s | 242 s | 227 s |
+| Client asset installs (incl. client data) | 97 s | 56 s | 98 s |
+| Client folder scan | 160,114 files, 106 s | 160,114 files, 114 s | 212,496 files, 138 s |
+| King's Row trip (request → in world) | 562 s (cold: Python 244 = mirror 103 + beacons 121; native 280; transfer 35) | not taken | failed |
+| Return to Atlas (resident) | 50 s (prep 10, transfer 40) | | |
+
+- **King's Row works:** Python preparation 244 s, inside the 420 s budget (cold
+  mirror 103 s on the device, against 360 s+ on 0.13.49). Its cache was sealed
+  and returned after owned cleanup.
+- **Session 2 regression is a bug of mine:** the Atlas cache was refused with
+  `Immutable Atlas child layout changed: .`. When the data root's mtime changes,
+  `verify_changed_directories` expects every source top-level folder, but the
+  generation omits the 15 shared folders. CI never changed the root mtime, so it
+  never ran this path. Cost: cold mirror 84 s and beacon graph 75 s instead of
+  checkout 9 s and 25 s. King's Row uses the same validator.
+- **Shared tree lookup cost on the device:** Atlas `loading map` 34.1 s and
+  King's Row 35.7 s, against 20.8 s on 0.13.49 (CI: +0.8 s). The engine searches
+  `serverdata/` first, so every map-geometry open misses there first. Other
+  phases are unchanged (story arcs 43-45 s, fx gap 35-36 s). *Correction
+  (0.13.52 work): 20.8 s was 0.13.49's warm checkout; its cold copy (export
+  -162813) took 29.0 s, and both 0.13.50 sessions were cold copies. The shared
+  tree costs about 5-6 s per load, not 13 s.*
+- **Client:** the skip saves 24-33 s of scan; the single-pass installs save
+  about 42 s. Client preparation still starts only after Atlas's Python preparation.
+- **NPC lag:** the King's Row MapServer ticked at 29/s throughout (same as
+  Atlas), at 3-25% of one core; client 55-60 FPS there. The stay was about 80 s,
+  beginning within a minute of King's Row's server becoming ready (3,768 entity file reads at ready).
+  No cause found in the logs; the shipping MapServer does not report tick
+  durations.
+- **Heat:** the report has only battery temperature (31-35 °C) and Android thermal
+  status `none` at Atlas start and ready. During the 9-minute station wait the
+  client kept rendering Atlas at 30-60 FPS (dips to 15-20 during King's Row's load).
+
+## Thor test of 0.13.49 (user, 2026-11-03; exports 20261103-162813 and -165322)
+
+Two sessions on 0.13.49, both passed with proved cleanup. **They ran the ARM64
+client** (`client_architecture_requested: arm64`, standard graphics, Turnip),
+not the x86 client. Fast mode on; King's Row background start and idle priority
+off. Export 20261103-162800 is only the post-update runtime setup (153 s).
+
+| | Session 1 (first start after the update) | Session 2 (warm) |
+|---|---|---|
+| Tap → Atlas map ready | 728 s | 302 s |
+| Atlas preparation (Python) | cold mirror 360 s, beacon graph 77 s | cache checkout 9 s, beacon graph 25 s |
+| Atlas MapServer "Server ready (took …)" | 204 s | 222 s (.44: 287 s) |
+| Client at login screen, from guest start | 850 s | 374 s |
+| Client folder scan (212,496 files) | 127 s | 138 s |
+| In-world FPS, 60 cap (windows above the 10 FPS inactive cap) | mean 48, median 49, 91% ≥ 30 | mean 45, median 42, 97% ≥ 30 |
+| King's Row trip | failed | failed |
+
+- **FPS goal met on the ARM64 client** (.44 ARM64: 25.6 FPS mean). The 60 FPS
+  world-entry cap applied (`maxfps=60` windows). The x86 client is still
+  unmeasured.
+- **King's Row:** both trips failed with "Kings Row Python preparation timed out
+  before native startup" at the 420 s Python budget (`python_inputs`). It was a
+  cold King's Row mirror both times. Session 1 timed out mid-mirror, so no King's
+  Row cache generation was sealed for session 2. Not caused by an unchecked
+  option. The background start option has no 420 s cap until a trip is
+  requested, so it is the stopgap.
+- **Why session 1 was cold:** a generation for this exact identity existed
+  (refused `…-6c6678d9…`, prior owner did not prove cleanup). Stranded recovery
+  refused with `[Errno 2] … '/proc/26417/status'`: an ancestor exited during
+  `foreign_processes`' parent walk. Fix: end the ancestor walk at a vanished
+  ancestor (unwalked ancestors still count as foreign, so it stays fail-safe).
+- **Mirror cost on the Thor:** cold mirror 360 s against 218-230 s on .44; CI
+  shows fast mode does not speed the mirror (99.5 s off, 103.7 s on). The shared
+  read-only tree removes it.
+- **Prepared caches load on the device** with the shipping MapServer: spawn
+  definitions 4 s (CI's retained-progress variant: 110 s).
+- **Warm critical path is the client.** Session 2: Atlas ready at 297 s from
+  guest start, client login screen at 374 s. The client waits for Atlas's Python
+  preparation (client assets start at +70 s), then spends about 117 s on
+  per-session asset installs (visual 28 s, animation 10 s, all-zone assets 48 s,
+  audio 4 s, client data 8 s), then 190 s to start (138 s folder scan).
+- **Wine priorities** (`character_zoning.wine_priorities`, one sample each,
+  `RLIMIT_NICE` 40): `CityOfHeroes.exe` 14 threads at nice 0 and **7 at nice 19**;
+  MapServer, DbServer and wineserver all at 0. Wine applies the dev-mode IDLE
+  class to the client's later threads (likely loaders), not to its main thread.
+  FPS is already good; the lead now concerns loading. Only one sample was taken,
+  because the zoning tick stops calling it after a failed trip.
+- **Cleanup:** complete in both sessions (5 dead leaders with live tasks, all
+  signalled). The fallback lineage sampler mostly fails on its own 1 s budget
+  ("Wine ownership task inspection timed out", 854 and 561 times), but still
+  authenticated 19 and 14 groups.
+
+## Performance rounds (Claude, 2026-11-03)
+
+PR #11 (`x86/perf-round1` → `x86-track`); `x86/perf-round3` is the working
+branch and is merged into round 1 for each release. Evidence and numbers:
+[PERFORMANCE-PATH.md](armport/PERFORMANCE-PATH.md) and issue #10.
+
+- **Published (use 0.13.49):** pre-release
+  [coh-atlas-gameplay-v0.13.49](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.49)
+  (APK 41647713812, qualifying runtime 41642095387 at `0f13f5741`, sha256
+  `9520fb31…`). It is 0.13.48 plus read-only device evidence, and reuses build
+  41616229359 (no native patch changed). Earlier:
+  [0.13.48](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.48)
+  (APK 41636249551). Neither has run on a device.
+- Fast mode (PRoot seccomp) is on by default from 0.13.48. In CI it cut MapServer
+  startup by 26-32% (41588867344 off vs 41584980465 on).
+- **Servers in the published APKs:** the shipping MapServer that ran on .44,
+  where the prepared server caches installed. Trusted prepared bins
+  (`patches/mapserver-trusted-bins/0001`) need the instrumented MapServer, so
+  they have no effect there. CI A/B with the instrumented retained-progress
+  variant (41610459604 off, 41605600310 on): reopen Atlas 130→94 s.
+- **CI's fresh-character re-parse is CI-only.** CI executes the retained-progress
+  metrics variant, which has no startup receipt, so `verify_mapserver_compatibility`
+  falls through to the monorail check and refuses the prepared caches
+  (`Monorail native identity differs`, 41630365042). The MapServer then rewrites
+  106 bins, including the archive's `spawndefs`/`storyarc`/`contacts`. A metrics
+  APK would embed `thor_certified_startup`, which the startup contract accepts,
+  but that variant has never run.
+- Background King's Row start, idle priority for a resident MapServer,
+  stranded-cache recovery and the 60 FPS world-entry cap; see X86-THOR-TEST.md.
+- Shared read-only tree, CI probes (PERFORMANCE-PATH.md): level 1 (`scripts.loc`,
+  52,149 files) passed with no side effects, per-start mirror 106 → 74 s
+  (41636702283). The wide level (17 folders, 136,019 files) passed with a 28 s
+  mirror, but it rebuilt `sequencers.bin` and 21 power/salvage bins on every
+  start (sequencer phase 36 → 240 s; 41648097743). Probe the folders one at a time.
+- Leads from source reading, with evidence in 0.13.49: the dev-mode client asks
+  for `IDLE_PRIORITY_CLASS`, which wineserver turns into about nice +11 when
+  `RLIMIT_NICE` allows (the Thor reports 40) (`character_zoning.wine_priorities`);
+  the client loads its data folders before choosing the on-demand folder-cache
+  mode (full 141 s scan; fix needs a client rebuild); the cleanup defect's
+  failing /proc read (`live_lineage_observation.unavailable_by_operation`).
+- Next: the Thor test of 0.13.49; per-folder shared-tree probes; a
+  client-priority fix if the samples show it; a cache-compatibility path for
+  the retained-progress variant so CI creation matches the device; a native
+  60 FPS launch cap and the folder-cache order with the next client rebuild; an
+  x86 FPS baseline on the Thor.

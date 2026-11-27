@@ -85,19 +85,42 @@ class CreatorTransitions(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Costume page'):
             self.run_check(value, 'verify_costume', 'verify_costume_page', [AFTER_POWERS])
 
+    def test_next_is_clicked_again_when_the_creator_stays_on_the_body_page(self):
+        value = self.interaction()
+        names = [a[2] for a in value.ACTIONS]
+        index, again = names.index('verify_costume_page'), names.index('preposition_body_next') - 1
+        self.assertEqual(names[again + 1:index + 1], ['preposition_body_next', 'body_next', 'verify_costume_page'])
+        seen = []
+        for attempt in range(1, max(host.COSTUME_RECLICK_AT) + 2):
+            self.run_check(value, 'verify_costume', 'verify_costume_page', [AFTER_POWERS])
+            seen.append(value.action)
+            check = value.result['armport_transition_checks'][-1]
+            self.assertEqual(check.get('reclick', False), attempt in host.COSTUME_RECLICK_AT)
+            self.assertEqual(check['words'], ['Body'])
+        self.assertEqual(seen, [again if attempt in host.COSTUME_RECLICK_AT else index - 1
+                                for attempt in range(1, max(host.COSTUME_RECLICK_AT) + 2)])
+        self.assertTrue(self.run_check(value, 'verify_costume', 'verify_costume_page', [AFTER_BODY]))
+        self.assertNotIn('reclick', value.result['armport_transition_checks'][-1])
+
     def observer(self, primary_pending, costume_misses, accounts=1):
         names = [a[2] for a in host.ArmPortCharacterInteraction.ACTIONS]
         retry, account = names.index('preposition_account'), names.index('verify_rendered_account')
         start = names.index('preposition_select_primary_set')
         check, costume = names.index('verify_primary_power_selected'), names.index('verify_costume_page')
         order = (names[:retry] + names[retry:account] * accounts + names[account:start]
-                 + names[start:check + 1] * (primary_pending + 1) + names[check + 1:costume]
-                 + [names[costume]] * (costume_misses + 1) + names[costume + 1:])
-        steps = [{'action': name, 'order': index} for index, name in enumerate(order)]
+                 + names[start:check + 1] * (primary_pending + 1) + names[check + 1:costume])
         checks = [{'check': 'verify_primary_power_selected', 'retry': i, 'primary_selection_pending': i < primary_pending,
                    'evidence': 'p%d' % i} for i in range(primary_pending + 1)]
-        checks += [{'check': 'verify_costume_page', 'attempt': i + 1, 'costume_page_shown': i == costume_misses,
-                    'evidence': 'c%d' % i} for i in range(costume_misses + 1)]
+        for i in range(costume_misses + 1):
+            row = {'check': 'verify_costume_page', 'attempt': i + 1, 'costume_page_shown': i == costume_misses,
+                   'evidence': 'c%d' % i}
+            order.append(names[costume])
+            if i < costume_misses and i + 1 in host.COSTUME_RECLICK_AT:
+                row['reclick'] = True
+                order += names[costume - 2:costume]
+            checks.append(row)
+        order += names[costume + 1:]
+        steps = [{'action': name, 'order': index} for index, name in enumerate(order)]
         return {'interaction_script': {'steps': steps, 'armport_transition_checks': checks,
                                        'account_entry_checks': [{}] * accounts}}
 
@@ -107,7 +130,7 @@ class CreatorTransitions(unittest.TestCase):
         return names[:retry] + names[retry:account] * accounts + names[account:]
 
     def test_validator_projects_replays_onto_the_shared_sequence(self):
-        for primary, costume, accounts in ((0, 0, 1), (2, 3, 2), (1, 0, 1)):
+        for primary, costume, accounts in ((0, 0, 1), (2, 3, 2), (1, 0, 1), (0, 9, 1)):
             observer = self.observer(primary, costume, accounts)
             with mock.patch.object(host.character, 'validate_observer') as shared:
                 host.armport_validate_observer(observer, {})
@@ -115,8 +138,15 @@ class CreatorTransitions(unittest.TestCase):
             self.assertEqual([s['action'] for s in projected], self.shared_expected(accounts))
             orders = [s['order'] for s in projected]
             self.assertEqual(orders, sorted(orders))  # the final primary pass is the one kept
+            again = 2 * sum(1 for attempt in host.COSTUME_RECLICK_AT if attempt <= costume)
             self.assertEqual(len(observer['interaction_script']['steps']) - len(projected),
-                             primary * 5 + 1 + costume + 1 if primary else 1 + costume + 1)
+                             (primary * 5 + 1 + costume + 1 if primary else 1 + costume + 1) + again)
+
+    def test_validator_refuses_an_unrecorded_second_click(self):
+        observer = self.observer(0, 4, 1)
+        del observer['interaction_script']['armport_transition_checks'][3]['reclick']   # attempt 3
+        with mock.patch.object(host.character, 'validate_observer'), self.assertRaisesRegex(ValueError, 'transition'):
+            host.armport_validate_observer(observer, {})
 
     def test_validator_rejects_inconsistent_evidence(self):
         observer = self.observer(1, 0)

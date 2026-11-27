@@ -60,6 +60,7 @@ class OwnedRuntime {
         if(scenario.equals("report_oom"))JSONObject.failNext=true;
     }
     void loadManifest(){}void check(){}void stage(String a,String b){}void line(String text){}
+    void openLiveLog(boolean dropped){}void closeLiveLog(){}
     static String message(Exception failure){return failure.getMessage();}
     static Object characterProfileState(Object context){return "ready";}
     static String profileRecoveryMessage(Object state){return "existing character retained";}

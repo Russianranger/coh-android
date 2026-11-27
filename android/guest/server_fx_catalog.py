@@ -217,8 +217,11 @@ def install(assets, runtime, *, context=None, mapserver_package=None):
     assets, runtime = Path(assets), Path(runtime)
     if not (assets / PAYLOAD).exists() and not (assets / MANIFEST).exists():
         return {'format': 1, 'status': 'ordinary_fx_loader', 'installed_files': 0}
-    require(re.fullmatch(r'local-login-server-[0-9a-f]{32}(?:-kings-row|-atlas-park)?', runtime.name) is not None,
-            'FX projection is restricted to the owned Atlas/Kings server namespace')
+    # 0.13.60: '-zones' is the session's one shared tree for every other static
+    # zone (prepare_zone_runtime, 0.13.57). Thor 0.13.59: Mercy Island's start
+    # stopped here because this check still knew only Atlas and King's Row.
+    require(re.fullmatch(r'local-login-server-[0-9a-f]{32}(?:-kings-row|-atlas-park|-zones)?', runtime.name) is not None,
+            'FX projection is restricted to the owned Atlas/Kings/zones server namespace')
     value, raw = verify_package(assets)
     compatibility = verify_consumer(runtime, mapserver_package)
     actual = caches.file_pin(runtime/'MapServer.exe')

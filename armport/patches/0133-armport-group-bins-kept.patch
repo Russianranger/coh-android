@@ -1,0 +1,184 @@
+diff --git a/Common/group/groupfileload.c b/Common/group/groupfileload.c
+index a8f5d62..a2b3ed4 100644
+--- a/Common/group/groupfileload.c
++++ b/Common/group/groupfileload.c
+@@ -1576,6 +1576,46 @@ static void convertFile(const char *fname,char *newfname)
+     fclose(file);
+ }
+ 
++// ArmPort opt-in (patch 0133, ARMPORT_GROUP_BINS=<absolute folder>): a production client keeps
++// the prepared form of the group files it parses.
++//
++// 0.13.80/0.13.81 in CI (patch 0131's totals): the client loads 341 object library files in
++// full at every zone load, about 20 ms each, 6.4-7.5 s of a zone load. It is a production
++// client reading loose data (patch 0042), and the imported game data holds no .bin files, so
++// each of them is parsed from its .txt every time: only a development client writes the
++// geobin form after parsing. The server does write them, and its map load fell from 18.5 s
++// to 4.8 s between the session that wrote them and the next (CI run 45125692618).
++//
++// With the variable set, a group file's bin name is under that folder instead of the data
++// view's geobin/ (absolute paths bypass the folder cache: one stat, one open), and a file
++// that had to be parsed is written there as the development client would write it. A
++// production client accepts a bin by its signature and parse-table checksum and does not
++// compare source dates, so the guest names a new folder whenever its identity of the data
++// view changes. Without the variable nothing changes: no bin is written, geobin/ is read.
++int armport_group_bin_reads, armport_group_text_loads, armport_group_bin_writes;
++
++static const char *armportGroupBinRoot(void)
++{
++    static int checked;
++    static char root[MAX_PATH];
++
++    if (!checked)
++    {
++        const char *value = getenv("ARMPORT_GROUP_BINS");
++        size_t length = value ? strlen(value) : 0;
++
++        checked = 1;
++        if (length >= 4 && length < 160 && value[1] == ':')
++        {
++            memcpy(root, value, length + 1);
++            forwardSlashes(root);
++            if (root[length - 1] == '/')
++                root[length - 1] = 0;
++        }
++    }
++    return root[0] ? root : NULL;
++}
++
+ static char *makeBinName(const char *fname,char *buf)
+ {
+     const char    *cs;
+@@ -1591,6 +1631,15 @@ static char *makeBinName(const char *fname,char *buf)
+         cs = strstriConst(fname,"maps");
+     if (!cs)
+         return 0;
++    if (armportGroupBinRoot())
++    {
++        // mkdirtree and the file layer hold paths in MAX_PATH buffers: a name that would not
++        // fit has no bin and is parsed, as every file is without the variable.
++        if (strlen(armportGroupBinRoot()) + strlen(cs) + 8 >= MAX_PATH)
++            return 0;
++        sprintf(buf,"%s/%s",armportGroupBinRoot(),cs);
++    }
++    else
+     sprintf(buf,"geobin/%s",cs);
+     //strcpy(buf,fname);
+     s = strrchr(buf,'.');
+@@ -1622,10 +1671,14 @@ static void groupWriteGroupAndRootnameToBin( GroupFileLoad * group_file, const c
+     if ( fileExists( librootname ) )
+         FileListInsert(&g_parselist, librootname, 0);
+ 
++    if (armportGroupBinRoot())
++        sprintf(fullbinpath,"%s", bin_name);            // already absolute (0133)
++    else
+     sprintf(fullbinpath,"%s/%s", fileDataDir(), bin_name);
+     forwardSlashes(fullbinpath);
+     mkdirtree(fullbinpath);
+-    ParserWriteBinaryFile(bin_name, parse_group_list, group_file, &g_parselist, NULL, 0, 0);
++    if (ParserWriteBinaryFile(bin_name, parse_group_list, group_file, &g_parselist, NULL, 0, 0))
++        armport_group_bin_writes++;
+     //FileListDestroy(&filelist);
+ 
+     PERFINFO_AUTO_STOP_CHECKED("groupWriteGroupAnRootNameToBin");
+@@ -1672,6 +1725,8 @@ static GroupFile *groupLoadInternal(const char *fname, BinForceType reprocessBin
+                 binfile = ParserIsPersistNewer(NULL, NULL, bin_name, parse_group_list, NULL);
+             if ( binfile ) 
+                 loadedFromBin = ParserReadBinaryFile(binfile, bin_name, parse_group_list, &group_file, NULL, NULL) ;
++            if (loadedFromBin)
++                armport_group_bin_reads++;
+ #ifndef FINAL
+             else if(!isDevelopmentMode()) {
+                 printf("Failed to load group file: %s\n", bin_name);
+@@ -1688,7 +1743,8 @@ static GroupFile *groupLoadInternal(const char *fname, BinForceType reprocessBin
+         FileListDestroy(&g_parselist); //cleans out g_parselist. I don't know why it's not cleaned out already...
+         groupLoadRaw( librootname, &group_file ); //only if it exists. (Duplicates in .txt and ,rootnames are concatenated 
+         groupLoadRaw( fname, &group_file );
+-        if ( reprocessBins != BIN_REBUILD_MAP && isDevelopmentMode())
++        armport_group_text_loads++;
++        if ( reprocessBins != BIN_REBUILD_MAP && (isDevelopmentMode() || armportGroupBinRoot()))
+             groupWriteGroupAndRootnameToBin( &group_file, fname, librootname );
+         if (file_dep_info) { // Add include files to depency file
+             FileListForEach(&g_parselist, addDependencyCallback);
+diff --git a/Game/src/group/armport_group_load_log.h b/Game/src/group/armport_group_load_log.h
+index 3d66923..aae9e76 100644
+--- a/Game/src/group/armport_group_load_log.h
++++ b/Game/src/group/armport_group_load_log.h
+@@ -6,6 +6,7 @@
+  *
+  *   ARMPORT_GROUP_LOAD_V1 total_ms= start_ms= files= sent= known= bounds= bounds_ms=
+  *       full= full_ms= map_ms= defs= defs_ms= libs_ms= geo= geo_ms= cached= cached_ms= kept=
++ *       bin= text= wrote=
+  *
+  *   start_ms   clientLoadMapStart (the load screen and the previous world's teardown)
+  *   files      group files the server listed; sent: those it described in the packet
+@@ -18,6 +19,8 @@
+  *   geo        of defs: definitions with a model; geo_ms: looking the models up
+  *   cached     library files not loaded because their bounds were kept (patch 0132), and
+  *              the time; kept: files whose bounds this load added to that store
++ *   bin        group files read from their prepared .bin up to here; text: parsed from
++ *              their .txt; wrote: .bin files written after parsing (patch 0133)
+  *
+  * No packet, loading or timeout behavior changes. Only written with ARMPORT_STDIO_LOG set,
+  * like the "ArmPort zone:" lines. Game/UtilitiesLib headers redefine printf/fflush; the
+@@ -46,6 +49,7 @@ typedef struct ArmportGroupLoad
+     long long began;
+     long long start, bounds_time, full_time, map_time, defs_time, libs_time, geo_time, cached_time;
+     unsigned files, sent, known, bounds, full, defs, geo, cached, kept;
++    unsigned bin, text, wrote;      /* the loader's counts at map.start, then the load's own */
+ } ArmportGroupLoad;
+ 
+ static ArmportGroupLoad armport_group_load;
+@@ -84,12 +88,13 @@ static void armportGroupLoadEnd(void)
+         snprintf(line, sizeof(line),
+             "ARMPORT_GROUP_LOAD_V1 total_ms=%u start_ms=%u files=%u sent=%u known=%u bounds=%u bounds_ms=%u"
+             " full=%u full_ms=%u map_ms=%u defs=%u defs_ms=%u libs_ms=%u geo=%u geo_ms=%u"
+-            " cached=%u cached_ms=%u kept=%u\n",
++            " cached=%u cached_ms=%u kept=%u bin=%u text=%u wrote=%u\n",
+             armportGroupLoadMs(armportGroupLoadNow() - t->began), armportGroupLoadMs(t->start),
+             t->files, t->sent, t->known, t->bounds, armportGroupLoadMs(t->bounds_time),
+             t->full, armportGroupLoadMs(t->full_time), armportGroupLoadMs(t->map_time),
+             t->defs, armportGroupLoadMs(t->defs_time), armportGroupLoadMs(t->libs_time),
+-            t->geo, armportGroupLoadMs(t->geo_time), t->cached, armportGroupLoadMs(t->cached_time), t->kept);
++            t->geo, armportGroupLoadMs(t->geo_time), t->cached, armportGroupLoadMs(t->cached_time), t->kept,
++            t->bin, t->text, t->wrote);
+         fputs(line, stdout);
+         fflush(stdout);
+     }
+diff --git a/Game/src/group/groupnetrecv.c b/Game/src/group/groupnetrecv.c
+index 0d6cab7..2e4c879 100644
+--- a/Game/src/group/groupnetrecv.c
++++ b/Game/src/group/groupnetrecv.c
+@@ -666,6 +666,9 @@ static bool newWorldIsBase()
+     return ( eaSize(&g_base.rooms) > 0 );
+ }
+ 
++// 0133: the group loader's counts of prepared files read, text files parsed and bins written.
++extern int armport_group_bin_reads, armport_group_text_loads, armport_group_bin_writes;
++
+ // 0132 (opt-in, armport_library_bounds.h): the engine calls of the client's own bounds store.
+ static void armportLibraryBoundsSet(const char *name, const void *bounds)
+ {
+@@ -952,6 +955,9 @@ void worldReceiveGroups(Packet *pak)
+             groupFileSetName(grp_file,fname);
+             armportZoneTrace("map.start", fname);
+             armportGroupLoadBegin();
++            armport_group_load.bin = (unsigned)armport_group_bin_reads;
++            armport_group_load.text = (unsigned)armport_group_text_loads;
++            armport_group_load.wrote = (unsigned)armport_group_bin_writes;
+             clientLoadMapStart(fname);
+             armport_group_load.start = armportGroupLoadNow() - armport_group_load.began;
+         }
+@@ -976,6 +982,12 @@ void worldReceiveGroups(Packet *pak)
+         }
+ 
+     armport_group_load.kept = armportLibraryBoundsFlush();
++    if (armport_group_load.active)
++    {
++        armport_group_load.bin = (unsigned)armport_group_bin_reads - armport_group_load.bin;
++        armport_group_load.text = (unsigned)armport_group_text_loads - armport_group_load.text;
++        armport_group_load.wrote = (unsigned)armport_group_bin_writes - armport_group_load.wrote;
++    }
+     armportGroupLoadEnd();
+     armportZoneTrace("groups.files.done", NULL);
+     PERFINFO_AUTO_STOP_START("middle2", 1);

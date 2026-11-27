@@ -1,0 +1,292 @@
+{
+ "files": {
+  "defs/classes.def": {
+   "bytes": 603,
+   "origin": "upstream file with the Primalist include switched on",
+   "replaces": {
+    "path": "defs/classes.def",
+    "sha256": "a88054fcdddf2635c29a72d9ec41536d0d1d7020efd7f5b8ad071a79fd1092b7"
+   },
+   "sha256": "384590d602e826513fd0c74ccb28ddc4b5fdd0ee7234c17c063881cc3750aa31"
+  },
+  "defs/classes/pc_primalist.def": {
+   "bytes": 188359,
+   "origin": "Primalist zip localdata/Defs/classes/PC_Primalist.def; Icon names the texture as the stock classes do (.tga: the creator looks it up by that name)",
+   "sha256": "e661bc6c1c45006b0e61625b1bef600721d5f28fa4cf61024786ba1bc472f3f9"
+  },
+  "defs/powers/feral_might_feral_might.powers": {
+   "bytes": 112608,
+   "origin": "Primalist zip localdata/Defs/powers/Feral_Might_Feral_Might.powers",
+   "replaces": {
+    "path": "defs/powers/feral_might_feral_might.powers",
+    "sha256": "52332540ad8a7890bba64bf12ee10bb3699100a288c2c066de17c74b08655fe4"
+   },
+   "sha256": "591df57c036a5b2a3534d560f6f28b649bc687e7812dcb5b108da99e15b0aaf5"
+  },
+  "defs/powers/primal_gifts_primal_gift.powers": {
+   "bytes": 109052,
+   "origin": "Primalist zip localdata/Defs/powers/Primal_Gifts_Primal_Gift.powers",
+   "replaces": {
+    "path": "defs/powers/primal_gifts_primal_gift.powers",
+    "sha256": "e74cdb160ed89ba8a4e0b5b7f8a66ddb1120fa4602a58b1bb8f0ee25a36d7b19"
+   },
+   "sha256": "8e49fcd82c3ff317d4c822e875e45ea35e03519b8b8a8b4e6bdd50ecbde8442d"
+  },
+  "defs/powers/primalist_misc_brutalswipe_heal.powers": {
+   "bytes": 1726,
+   "origin": "Primalist zip localdata/Defs/powers/Primalist_Misc_BrutalSwipe_Heal.powers",
+   "replaces": {
+    "path": "defs/powers/primalist_misc_brutalswipe_heal.powers",
+    "sha256": "2bc4c6dbf018dc94f4840a5b7c86ba3641119758d6ecddcadb20baf07dfaffbb"
+   },
+   "sha256": "e686dc0a0ef163731a168f1bf4abcd66299eb8a1621b1f98120e2b036eeb4f7f"
+  },
+  "defs/powers/primalist_misc_brutalswipe_heal_nbactive.powers": {
+   "bytes": 1734,
+   "origin": "Primalist zip localdata/Defs/powers/Primalist_Misc_BrutalSwipe_Heal_NBActive.powers",
+   "replaces": {
+    "path": "defs/powers/primalist_misc_brutalswipe_heal_nbactive.powers",
+    "sha256": "4d1805361d3c1e1461a2f1e58b0b2e26f71524500e438dd32a5d17c5f0162725"
+   },
+   "sha256": "821748ee839fc847dbfc70eb7cdbc741da7860637f3c84ae9dc8b8924c69563f"
+  },
+  "defs/powers/primalist_misc_call_of_the_wild_pet.powers": {
+   "bytes": 24406,
+   "origin": "Primalist zip localdata/Defs/powers/Primalist_Misc_Call_of_the_Wild_Pet.powers",
+   "replaces": {
+    "path": "defs/powers/primalist_misc_call_of_the_wild_pet.powers",
+    "sha256": "8f5c321d31d80ff55083e00c5cc717642d49bea8f73032fde26494a04670598d"
+   },
+   "sha256": "5fb32c27e5b70f7987dab4c18b4b5158a85d673886c3ef01f32ae71f76d2541a"
+  },
+  "defs/powers/primalist_misc_feralblow_heal.powers": {
+   "bytes": 1722,
+   "origin": "Primalist zip localdata/Defs/powers/Primalist_Misc_FeralBlow_Heal.powers",
+   "replaces": {
+    "path": "defs/powers/primalist_misc_feralblow_heal.powers",
+    "sha256": "26f8604647193f7ac0ae09b8be67f233b2deb352767fe86215bbff0db1687cd3"
+   },
+   "sha256": "c878b6cdf52b8dae936fd701ea89fc6accda277ea6fccf41d7399da5064e00bf"
+  },
+  "defs/powers/primalist_misc_feralblow_heal_nbactive.powers": {
+   "bytes": 1731,
+   "origin": "Primalist zip localdata/Defs/powers/Primalist_Misc_FeralBlow_Heal_NBActive.powers",
+   "replaces": {
+    "path": "defs/powers/primalist_misc_feralblow_heal_nbactive.powers",
+    "sha256": "d733a80d0d5de5fcc3b8edd828edec1d57a48cf33f624579f0dca9442c77a2fb"
+   },
+   "sha256": "7d80df54f253a1abd177cf7adc8bb00e98d5a07de89b5ef62312951bfdc4b3f2"
+  },
+  "defs/powers/primalist_misc_hunter_form_powers.powers": {
+   "bytes": 78810,
+   "origin": "Primalist zip localdata/Defs/powers/Primalist_Misc_Hunter_Form_Powers.powers",
+   "replaces": {
+    "path": "defs/powers/primalist_misc_hunter_form_powers.powers",
+    "sha256": "b0aecf4c7959e39654d8d312bc28a0446deb6aa2e82463e9b85b276211a6b626"
+   },
+   "sha256": "ec1e8d493ae8babc7cc82850a25a4f99e09094996a66336bad1dc28e3713e90d"
+  },
+  "defs/powers/primalist_misc_primal_form_powers.powers": {
+   "bytes": 39533,
+   "origin": "Primalist zip localdata/Defs/powers/Primalist_Misc_Primal_Form_Powers.powers",
+   "replaces": {
+    "path": "defs/powers/primalist_misc_primal_form_powers.powers",
+    "sha256": "a96dd70ff7656a2e083d32f01ba0aeb273f04a3f2b126cf544d12eb7d3b29206"
+   },
+   "sha256": "bd98c346b0ef98ae3f6b2009a7b77cc6f580259a155829ff7f97bebce9afe4dc"
+  },
+  "defs/powers/primalist_misc_primalstrike_heal.powers": {
+   "bytes": 1727,
+   "origin": "Primalist zip localdata/Defs/powers/Primalist_Misc_PrimalStrike_Heal.powers",
+   "replaces": {
+    "path": "defs/powers/primalist_misc_primalstrike_heal.powers",
+    "sha256": "981dc40e18c353ae21f6dfbec92798e7febb4d8a5e9aa532238d381cdeb6cc93"
+   },
+   "sha256": "bbe7230726cc3506fa9e57b0d4643ea886c2c4c2070d5043fff23e2b3c6f16bf"
+  },
+  "defs/powers/primalist_misc_primalstrike_heal_nbactive.powers": {
+   "bytes": 1736,
+   "origin": "Primalist zip localdata/Defs/powers/Primalist_Misc_PrimalStrike_Heal_NBActive.powers",
+   "replaces": {
+    "path": "defs/powers/primalist_misc_primalstrike_heal_nbactive.powers",
+    "sha256": "0e9279fdb13d86876b6d9fdf55f817435f2fef71d29d4c7fd6b2d018120e21da"
+   },
+   "sha256": "1772700bf6748802009b00e3c1cb61e549764b1ec14022432d01f6a2fc1dae57"
+  },
+  "defs/powers/primalist_misc_prowler_form_powers.powers": {
+   "bytes": 56647,
+   "origin": "Primalist zip localdata/Defs/powers/Primalist_Misc_Prowler_Form_Powers.powers",
+   "replaces": {
+    "path": "defs/powers/primalist_misc_prowler_form_powers.powers",
+    "sha256": "7bb3e957729760fcf566e17793ac4c00eaa373d01f5e32ce27cbecb1be8c507f"
+   },
+   "sha256": "bacbbb98c5849423ad6632959ed156ef5f21bb0e90555995a20b9542ad5ff0e5"
+  },
+  "defs/powers/primalist_misc_savageblow_heal.powers": {
+   "bytes": 1724,
+   "origin": "Primalist zip localdata/Defs/powers/Primalist_Misc_SavageBlow_Heal.powers",
+   "replaces": {
+    "path": "defs/powers/primalist_misc_savageblow_heal.powers",
+    "sha256": "392d043dfa272e197285a9e64302ae5dc61052e06c4cf96be4b94ba1c5c2ae21"
+   },
+   "sha256": "c1f644801002b5176ba9c2aa87b0528eec79a22c31e7af524cff2aae4adada8a"
+  },
+  "defs/powers/primalist_misc_savageblow_heal_nbactive.powers": {
+   "bytes": 1733,
+   "origin": "Primalist zip localdata/Defs/powers/Primalist_Misc_SavageBlow_Heal_NBActive.powers",
+   "replaces": {
+    "path": "defs/powers/primalist_misc_savageblow_heal_nbactive.powers",
+    "sha256": "4ebdd7c2027e5624d4cf43597a5dfad0f0f993d3d8542c70c2c62762eab9b3b2"
+   },
+   "sha256": "284b792c64d05e49abef1d5145a6c168bc5a975ceeefba8f46e2406abf980d6c"
+  },
+  "defs/powers/primalist_misc_upheaval_heal.powers": {
+   "bytes": 1719,
+   "origin": "Primalist zip localdata/Defs/powers/Primalist_Misc_Upheaval_Heal.powers",
+   "replaces": {
+    "path": "defs/powers/primalist_misc_upheaval_heal.powers",
+    "sha256": "27ebf2d58ee7c079dc2bad8457dfa5c44e5fd13690a4b16ced1a8bb361d67bf6"
+   },
+   "sha256": "d66d7fd51cee409a8ede0980197a1c5f906369b2c81604871da2f942f927693f"
+  },
+  "defs/powers/primalist_misc_upheaval_heal_nbactive.powers": {
+   "bytes": 1728,
+   "origin": "Primalist zip localdata/Defs/powers/Primalist_Misc_Upheaval_Heal_NBActive.powers",
+   "replaces": {
+    "path": "defs/powers/primalist_misc_upheaval_heal_nbactive.powers",
+    "sha256": "4600962c2ea3ad4e3cc28cb58bddfb60014ef8e0a78078f4ccbe42ad4441cabb"
+   },
+   "sha256": "4b40041360012429eee123e1371fed7a7c68367cbb79daac9ee518b4ee62ccfa"
+  },
+  "defs/powers/primalist_misc_viciousstrike_heal.powers": {
+   "bytes": 1729,
+   "origin": "Primalist zip localdata/Defs/powers/Primalist_Misc_ViciousStrike_Heal.powers",
+   "replaces": {
+    "path": "defs/powers/primalist_misc_viciousstrike_heal.powers",
+    "sha256": "1b9fdd4392c77c8e5690d17e19743bcf419b47fd0798e6ae6d7c49c4ea0bf8f0"
+   },
+   "sha256": "1e01dfedcbfae05e66b10770e4855528c5f89ec04a02c32bf5a6e4acad942cf5"
+  },
+  "defs/powers/primalist_misc_viciousstrike_heal_nbactive.powers": {
+   "bytes": 1737,
+   "origin": "Primalist zip localdata/Defs/powers/Primalist_Misc_ViciousStrike_Heal_NBActive.powers",
+   "replaces": {
+    "path": "defs/powers/primalist_misc_viciousstrike_heal_nbactive.powers",
+    "sha256": "3b888585a858649c90df6926d635ef500a0a46ee31fc5c7c57250c4fb3f39d71"
+   },
+   "sha256": "0ee892ec722e5c5d45d2429651dde0daf01b7441eaabd483b4cc979a0bedce61"
+  },
+  "menu/powers/animfx/playerpowers/primalist_feralmight_brutalswipe.pfx": {
+   "bytes": 540,
+   "origin": "Primalist zip localdata/menu/Powers/AnimFX/PlayerPowers/Primalist_FeralMight_BrutalSwipe.PFX",
+   "sha256": "8be494366caab99d7b140a256099d66620b8288bc43d96d459f95c63e449c80d"
+  },
+  "menu/powers/animfx/playerpowers/primalist_feralmight_feralblow.pfx": {
+   "bytes": 1741,
+   "origin": "Primalist zip localdata/menu/Powers/AnimFX/PlayerPowers/Primalist_FeralMight_FeralBlow.PFX",
+   "sha256": "35890399f555220b2dbec9f25d7a2d05a7b8f03ee277bcb357c99f6750971d66"
+  },
+  "menu/powers/animfx/playerpowers/primalist_feralmight_huntershowl.pfx": {
+   "bytes": 481,
+   "origin": "Primalist zip localdata/menu/Powers/AnimFX/PlayerPowers/Primalist_FeralMight_HuntersHowl.pfx",
+   "sha256": "72e61c036721271cb27b8b74444d79aecdfb750947a437bd03cfdaf7b64b82bf"
+  },
+  "menu/powers/animfx/playerpowers/primalist_feralmight_naturesboon.pfx": {
+   "bytes": 870,
+   "origin": "Primalist zip localdata/menu/Powers/AnimFX/PlayerPowers/Primalist_FeralMight_NaturesBoon.pfx",
+   "sha256": "7a4ade7b1d5cde3c869d4fc23e72ab92a4afacba38b08891ccd04f4c5f524900"
+  },
+  "menu/powers/animfx/playerpowers/primalist_feralmight_packfrenzy.pfx": {
+   "bytes": 814,
+   "origin": "Primalist zip localdata/menu/Powers/AnimFX/PlayerPowers/Primalist_FeralMight_PackFrenzy.pfx",
+   "sha256": "739f58873d91e067a1c17d0040a5a0be138553d2fa2e07aa1eede184e30926c8"
+  },
+  "menu/powers/animfx/playerpowers/primalist_feralmight_primalstrike.pfx": {
+   "bytes": 667,
+   "origin": "Primalist zip localdata/menu/Powers/AnimFX/PlayerPowers/Primalist_FeralMight_PrimalStrike.PFX",
+   "sha256": "029045babbddb1da99f006d918695b0adf34234295bb796a5e390c2fe4a02693"
+  },
+  "menu/powers/animfx/playerpowers/primalist_feralmight_savageblow.pfx": {
+   "bytes": 491,
+   "origin": "Primalist zip localdata/menu/Powers/AnimFX/PlayerPowers/Primalist_FeralMight_SavageBlow.PFX",
+   "sha256": "8e702851dc6a5d08f3800b1c53a9ecb8257c2ef7d739391a93c4ec5b0b703691"
+  },
+  "menu/powers/animfx/playerpowers/primalist_hunterform.pfx": {
+   "bytes": 657,
+   "origin": "Primalist zip localdata/menu/Powers/AnimFX/PlayerPowers/Primalist_HunterForm.pfx",
+   "sha256": "75c617bd6c66b40e3a80152181dc3ae27ffcdc7b18ca5c9350bab5cb376d4a01"
+  },
+  "menu/powers/animfx/playerpowers/primalist_primalgifts_graceofnature.pfx": {
+   "bytes": 961,
+   "origin": "Primalist zip localdata/menu/Powers/AnimFX/PlayerPowers/Primalist_PrimalGifts_GraceOfNature.pfx",
+   "sha256": "e05d9f052e3a87f4b3b561bf49feb1a9c69e058f35f0ad9182fd46c6fdd8fa27"
+  },
+  "menu/powers/animfx/playerpowers/primalist_primalgifts_naturesembrace.pfx": {
+   "bytes": 847,
+   "origin": "Primalist zip localdata/menu/Powers/AnimFX/PlayerPowers/Primalist_PrimalGifts_NaturesEmbrace.pfx",
+   "sha256": "85f37a65a319688d2728946763f62d7272a8a434faa33496f98898b2e7c49870"
+  },
+  "menu/powers/animfx/playerpowers/primalist_primalgifts_primalhowl.pfx": {
+   "bytes": 437,
+   "origin": "Primalist zip localdata/menu/Powers/AnimFX/PlayerPowers/Primalist_PrimalGifts_PrimalHowl.pfx",
+   "sha256": "cb1689b1fbeea5c43ab8567285c6292c9072a5c0a176b2ac988354dddd08abf8"
+  },
+  "menu/powers/animfx/playerpowers/primalist_primalgifts_primalward.pfx": {
+   "bytes": 896,
+   "origin": "Primalist zip localdata/menu/Powers/AnimFX/PlayerPowers/Primalist_PrimalGifts_PrimalWard.PFX",
+   "sha256": "734ecc03f7a61edf78128dcf5cf3fac50668ff54d44de1a9dd30cc864d200934"
+  },
+  "menu/powers/animfx/playerpowers/primalist_primalgifts_rejuvenate.pfx": {
+   "bytes": 469,
+   "origin": "Primalist zip localdata/menu/Powers/AnimFX/PlayerPowers/Primalist_PrimalGifts_Rejuvenate.pfx",
+   "sha256": "bf4e8eb3eb1893fcef29bf33428cb11eb5ff1d02a30eefcf80ab793fa65faa6d"
+  },
+  "menu/powers/animfx/playerpowers/primalist_primalgifts_shiftersshield.pfx": {
+   "bytes": 1196,
+   "origin": "Primalist zip localdata/menu/Powers/AnimFX/PlayerPowers/Primalist_PrimalGifts_ShiftersShield.pfx",
+   "sha256": "08dca9a270d1bd2d7e0fcd5430975b9405b877d87d64f3183b5814f06aa59b4a"
+  },
+  "menu/powers/animfx/playerpowers/primalist_primalgifts_thickhide.pfx": {
+   "bytes": 828,
+   "origin": "Primalist zip localdata/menu/Powers/AnimFX/PlayerPowers/Primalist_PrimalGifts_ThickHide.PFX",
+   "sha256": "dc16dcda6420f6e8143a4e5a535afbf2f9d8d86965907171df3bf638ad5ba6ae"
+  },
+  "menu/powers/animfx/playerpowers/primalist_primalgifts_wildroar.pfx": {
+   "bytes": 516,
+   "origin": "Primalist zip localdata/menu/Powers/AnimFX/PlayerPowers/Primalist_PrimalGifts_WildRoar.pfx",
+   "sha256": "eef2fa9a61647d992a9ba5e630ac95416d7c185ef1d51fa15c1b8b81c33641ca"
+  },
+  "menu/powers/animfx/playerpowers/primalist_primalgifts_willofthewild.pfx": {
+   "bytes": 375,
+   "origin": "Primalist zip localdata/menu/Powers/AnimFX/PlayerPowers/Primalist_PrimalGifts_WilloftheWild.PFX",
+   "sha256": "5e34242f74ec4a9835fef944f909435982aa4d64a2f522a08c982c2aee142294"
+  },
+  "texts/english/classes/classes.def.ms": {
+   "bytes": 32235,
+   "origin": "upstream file with the Primalist block of the zip (serverdata/texts/English/Classes/classes.def.ms) and a text for its LockedTooltip key",
+   "replaces": {
+    "path": "texts/english/classes/classes.def.ms",
+    "sha256": "c270cf5c3130f1cb5b5799500d0f61b0c6cd3fe18c380495de80a4b70aa9eaf2"
+   },
+   "sha256": "02a6c8417d88bb921420a8b3052a910439459ccd4769176eb49ca7b4523c906a"
+  },
+  "texts/english/menumessages.ms": {
+   "bytes": 1094590,
+   "origin": "upstream file with the PrimalEnergyTip line of the zip (serverdata/texts/English/menuMessages.ms)",
+   "replaces": {
+    "path": "texts/english/menumessages.ms",
+    "sha256": "128f2b361b3ad7ee79a58742ccd25c00814ef70825863502314c8af6e8e7af7a"
+   },
+   "sha256": "263657eeeb879b79aa37ab7e0b40b53fa0323dc168167027398e811b6f65d75c"
+  }
+ },
+ "files_sha256": "2215c55684773c9956b8fa3621d1524ee190c8f4b9b0c7cfb996ee295cb8d78b",
+ "format": 1,
+ "name": "single-player-content",
+ "scope": "Primalist archetype: class file, power files, animation bindings and two text lines",
+ "source": {
+  "primalist_zip_sha256": "ad22240cee233fcf4278a3620873047675ddc138af34fb3134b63f2c43148b7d",
+  "upstream_data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3"
+ },
+ "version": 1
+}

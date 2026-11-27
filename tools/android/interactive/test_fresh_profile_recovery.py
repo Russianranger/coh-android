@@ -65,6 +65,7 @@ class ClientRuntime {
     public enum ProfileState { ABSENT, READY, PRESERVE }
     final Context context;
     final ClientZoning zoning=new ClientZoning();
+    boolean reopenedHero(){return reopen;} long heroId(){return 1;}
     boolean reopen,resumeFirstCreation,inputReady=true,finished,finishRequested,cancelled,producerCompleted,connectedCapturedReady,stuckRequested,relocationCapturedReady,saveLogoutRequested,performanceCommandPending;
     JSONObject manifest,characterConnectedEvent=new JSONObject(),characterSavedEvent,taskAcceptedEvent,taskCompletedEvent,taskContactReceipt,taskCompletionReceipt;
     Capture taskAcceptedCapture=new Capture(),taskCompletedCapture=new Capture();
@@ -94,7 +95,7 @@ public class FreshProfileRecoveryHost {
         switch(args[0]) {
         case "absent":need(ClientRuntime.characterProfileState(context)==ClientRuntime.ProfileState.ABSENT);runtime.requireCharacterProfile(false);reject(()->runtime.requireCharacterProfile(true));need(ClientRuntime.profileRecoveryMessage(ClientRuntime.ProfileState.ABSENT).contains("external database backup"));break;
         case "missing_ancestor":Files.createDirectories(root.resolve("client"));need(ClientRuntime.characterProfileState(context)==ClientRuntime.ProfileState.ABSENT);runtime.requireCharacterProfile(false);break;
-        case "ready":need(ClientRuntime.characterProfileState(context)==ClientRuntime.ProfileState.READY);runtime.requireCharacterProfile(true);reject(()->runtime.requireCharacterProfile(false));need(ClientRuntime.profileRecoveryMessage(ClientRuntime.ProfileState.READY).contains("startup checks for a saved THORHERO"));break;
+        case "ready":need(ClientRuntime.characterProfileState(context)==ClientRuntime.ProfileState.READY);runtime.requireCharacterProfile(true);reject(()->runtime.requireCharacterProfile(false));need(ClientRuntime.profileRecoveryMessage(ClientRuntime.ProfileState.READY).contains("startup checks for the saved character"));break;
         case "resume_ready":runtime.resumeFirstCreation=true;runtime.requireCharacterProfile(false);need(ClientRuntime.characterProfileState(context)==ClientRuntime.ProfileState.READY);break;
         case "resume_absent":runtime.resumeFirstCreation=true;reject(()->runtime.requireCharacterProfile(false));need(ClientRuntime.characterProfileState(context)==ClientRuntime.ProfileState.ABSENT);break;
         case "uninitialized":StorageFiles.marker.put("initialized",false);break;

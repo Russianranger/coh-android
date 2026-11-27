@@ -9,6 +9,7 @@ import re
 import stat
 import signal
 import sys
+import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import client_interactive_diagnostic as interactive
@@ -67,9 +68,37 @@ def wine_update_timestamp(path):
 
 class LoginContext(base.Context):
     server_health = None
+    # Thor 0.13.66: every loop iteration looked up state/stop-request, and one path
+    # lookup costs about 1 ms through PRoot (23,876 zone files: 43 s with their stats).
+    # The lookup now runs at most every 0.1 s; a stop is still seen within that time.
+    STOP_PROBE_SECONDS = 0.1
+    _stop_probe_after = 0.0
+
+    def cancelled(self):
+        if self.cancel_requested:
+            return True
+        now = time.monotonic()
+        if now < self._stop_probe_after:
+            return False
+        self._stop_probe_after = now + self.STOP_PROBE_SECONDS
+        return (self.state / 'stop-request').exists()
+
+    # 0.13.73: every loop iteration also ran the whole server health chain, which polls
+    # PostgreSQL and the DbServer (two wait4 calls, each stopped twice by PRoot). Thor 0.13.72:
+    # 418-581 wait4 stops a second through whole launches; CI run 44103181482 counted 527,457
+    # polls in a 1,220 s creation session. The chain now runs at most every 0.05 s; a server
+    # that exited is still noticed within that time. Cancellation and the deadline are checked
+    # on every call, as before.
+    HEALTH_SECONDS = 0.05
+    _health_after = 0.0
+
     def check(self):
         super().check()
-        if self.server_health is not None: self.server_health()
+        if self.server_health is not None:
+            now = time.monotonic()
+            if now >= self._health_after:
+                self._health_after = now + self.HEALTH_SECONDS
+                self.server_health()
 
 
 class ClientLoginDiagnostic(interactive.ClientInteractiveDiagnostic):

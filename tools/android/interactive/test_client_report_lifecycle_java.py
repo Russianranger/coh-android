@@ -42,7 +42,7 @@ public class ReportLifecycleHost {
   static volatile Object held;static boolean operationActive;static Object setupFinalizationOwner;
   Object context,setupReservation;boolean operationOwned,freshReportRetained;File home,work,operationDir,latestReport;String operation,session,runId;long startedUptime;int checkpointFailure;
   static final String BLOCK_MESSAGE="blocked";
-  boolean pointerFails;void write(File path,byte[] data)throws IOException{if(pointerFails)throw new IOException("pointer unwritable");Files.write(path.toPath(),data);}void line(String message){}
+  boolean pointerFails;void write(File path,byte[] data)throws IOException{if(pointerFails)throw new IOException("pointer unwritable");Files.write(path.toPath(),data);}void line(String message){}void openLiveLog(boolean dropped){}void closeLiveLog(){}
   RECORD_METHOD
   ClientRuntime(File root){home=new File(root,"m2");work=new File(root,"client");work.mkdirs();}
   static boolean cleanupBlocked(Object c){return false;}

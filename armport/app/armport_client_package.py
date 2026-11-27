@@ -21,6 +21,14 @@ import zipfile
 ARCHIVE = 'armport-client.zip'
 MANIFEST = 'client-package.json'
 BINARIES = {'CityOfHeroes.exe', 'libc++.dll', 'libunwind.dll', 'armport-launcher.exe'}
+# Optional (0.13.53): the guest ALSA playback plugin (armport/audio), an
+# AArch64 glibc ELF that Wine's ALSA driver loads inside the client process.
+AUDIO_PLUGIN = 'armport-audio/libasound_module_pcm_trasc.so'
+# Optional (0.13.74): the wineserver realpath cache (armport/wineserver), an
+# AArch64 glibc ELF loaded with LD_PRELOAD. It must be on disk before the
+# session's first Wine process, so extract_member() reads it on its own.
+REALPATH_CACHE = 'armport-native/libarmport_realpath.so'
+NATIVE_LIBRARIES = (AUDIO_PLUGIN, REALPATH_CACHE)
 MAX_BYTES = 512 * 1024 * 1024
 
 
@@ -48,17 +56,37 @@ def arm64_pe(path):
             'Expected ARM64 PE32+: ' + path.name)
 
 
+def arm64_elf_shared_object(path):
+    with path.open('rb') as stream:
+        header = stream.read(20)
+    require(len(header) == 20 and header[:6] == b'\x7fELF\x02\x01'
+            and struct.unpack_from('<HH', header, 16) == (3, 183),
+            'Expected an AArch64 little-endian ELF64 shared object: ' + path.name)
+
+
+# 0.13.86: client art the import does not have (the Primalist's archetype icon), from
+# armport/content/single-player/client. Textures only, a handful, each small.
+CLIENT_ART_LIMIT, CLIENT_ART_BYTES = 16, 1024 * 1024
+
+
+def client_art(name):
+    path = PurePosixPath(name)
+    return (4 <= len(path.parts) <= 8 and path.parts[:2] == ('data', 'texture_library')
+            and path.suffix == '.texture' and '..' not in path.parts)
+
+
 def allowed(name):
-    if name in BINARIES:
+    if name in BINARIES or name in NATIVE_LIBRARIES:
         return True
     path = PurePosixPath(name)
     return ((len(path.parts) == 3 and path.parts[:2] == ('data', 'bin')
              and path.suffix.lower() == '.bin') or
             (len(path.parts) == 2 and path.parts[0] == 'armport_cg'
-             and path.suffix == '.arb')) and bool(re.fullmatch(r'[A-Za-z0-9_./-]+', name))
+             and path.suffix == '.arb') or client_art(name)) and bool(re.fullmatch(r'[A-Za-z0-9_./-]+', name))
 
 
-def package(client, bins, shaders, launcher, output, client_run, data_run):
+def package(client, bins, shaders, launcher, output, client_run, data_run, audio_plugin=None,
+            realpath_cache=None, client_data=None):
     require(not output.exists(), 'Package output already exists')
     require({p.name for p in client.iterdir()} == BINARIES - {'armport-launcher.exe'},
             'Expected the exact ARM64 Release artifact binary closure')
@@ -67,12 +95,30 @@ def package(client, bins, shaders, launcher, output, client_run, data_run):
     for binary in sources.values():
         require(binary.is_file() and not binary.is_symlink(), 'Invalid binary')
         arm64_pe(binary)
+    if audio_plugin is not None:
+        require(audio_plugin.is_file() and not audio_plugin.is_symlink(), 'Invalid audio plugin')
+        arm64_elf_shared_object(audio_plugin)
+        sources[AUDIO_PLUGIN] = audio_plugin
+    if realpath_cache is not None:
+        require(realpath_cache.is_file() and not realpath_cache.is_symlink(), 'Invalid realpath cache library')
+        arm64_elf_shared_object(realpath_cache)
+        sources[REALPATH_CACHE] = realpath_cache
     for root, prefix, suffix in ((bins, 'data/bin/', '.bin'), (shaders, 'armport_cg/', '.arb')):
         selected = sorted(root.glob('*' + suffix))
         require(selected, 'Missing bins or shaders')
         for source in selected:
             require(source.is_file() and not source.is_symlink(), 'Invalid overlay input')
             sources[prefix + source.name] = source
+    if client_data is not None:
+        require(client_data.is_dir() and not client_data.is_symlink(), 'Invalid client art folder')
+        art = sorted(p for p in client_data.rglob('*') if not p.is_dir())
+        require(0 < len(art) <= CLIENT_ART_LIMIT, 'Client art count is out of bounds')
+        for source in art:
+            name = source.relative_to(client_data).as_posix()
+            require(source.is_file() and not source.is_symlink() and client_art(name)
+                    and 0 < source.stat().st_size <= CLIENT_ART_BYTES and name not in sources,
+                    'Unexpected client art: ' + name)
+            sources[name] = source
     require(all(allowed(name) for name in sources), 'Unexpected overlay path')
     require(sum(p.stat().st_size for p in sources.values()) <= MAX_BYTES, 'Overlay too large')
     document = {'format': 1, 'role': 'arm64_graphical_client', 'machine': 'ARM64',
@@ -119,7 +165,44 @@ def unpack(archive_path, destination):
             require(digest(target) == expected['sha256'], 'Overlay digest differs: ' + name)
         for name in BINARIES:
             arm64_pe(destination / name)
+        for name in NATIVE_LIBRARIES:
+            if name in files:
+                arm64_elf_shared_object(destination / name)
     return document
+
+
+def extract_member(archive_path, name, destination):
+    """Write one native library of the package to `destination`; None when the package has none.
+
+    The member is checked against the package's own manifest (size, SHA-256, AArch64
+    ELF shared object) exactly as unpack() checks it. `destination` must not exist.
+    """
+    require(name in NATIVE_LIBRARIES, 'Not a native library of the client package')
+    destination = Path(destination)
+    require(not destination.exists() and not destination.is_symlink(), 'Fresh library destination required')
+    with zipfile.ZipFile(archive_path) as archive:
+        names = archive.namelist()
+        require(MANIFEST in names and archive.getinfo(MANIFEST).file_size <= 1024 * 1024,
+                'Missing/bounded client package manifest')
+        document = json.loads(archive.read(MANIFEST))
+        files = document.get('files')
+        require(document.get('format') == 1 and document.get('role') == 'arm64_graphical_client'
+                and isinstance(files, dict), 'ARM64 package identity')
+        if name not in files:
+            return None
+        expected, info = files[name], archive.getinfo(name)
+        require(isinstance(expected, dict) and type(expected.get('size')) is int
+                and 0 < expected['size'] <= 16 * 1024 * 1024 and info.file_size == expected['size']
+                and not info.is_dir() and not info.flag_bits & 1
+                and not stat.S_ISLNK(info.external_attr >> 16), 'Invalid native library member')
+        data = archive.read(info)
+    require(len(data) == expected['size'] and hashlib.sha256(data).hexdigest() == expected['sha256'],
+            'Native library digest differs: ' + name)
+    descriptor = os.open(destination, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o500)
+    with os.fdopen(descriptor, 'wb') as output:
+        output.write(data)
+    arm64_elf_shared_object(destination)
+    return {'name': name, 'size': expected['size'], 'sha256': expected['sha256']}
 
 
 
@@ -159,7 +242,8 @@ def validate_links(source_data, links, tree, receipt):
                 targets = [[name, *identity(name)] for name in saved['target_directories']]
                 if identity_digest(targets) == saved.get('targets'):
                     return {'mode': 'unchanged_directory_receipt', 'links_checked': 0,
-                            'target_directories': len(targets)}
+                            'target_directories': len(targets), 'tree_sha256': tree,
+                            'targets_sha256': saved['targets'], 'links': len(links)}
         except (OSError, ValueError, KeyError, TypeError):
             pass
     directories = set()
@@ -185,13 +269,56 @@ def validate_links(source_data, links, tree, receipt):
         directories.add(os.path.dirname(target))
     names = sorted(directories)
     targets = [[name, *identity(name)] for name in names]
+    targets_sha256 = identity_digest(targets)
     if receipt is not None:
         pending = receipt.with_name(receipt.name + '.pending')
         pending.write_text(json.dumps({'format': VALIDATION_FORMAT, 'policy': VALIDATION_POLICY,
             'source': str(source_data), 'tree': tree,
-            'links': len(links), 'target_directories': names, 'targets': identity_digest(targets)}))
+            'links': len(links), 'target_directories': names, 'targets': targets_sha256}))
         pending.replace(receipt)
-    return {'mode': 'complete_link_check', 'links_checked': len(links), 'target_directories': len(names)}
+    return {'mode': 'complete_link_check', 'links_checked': len(links), 'target_directories': len(names),
+            'tree_sha256': tree, 'targets_sha256': targets_sha256, 'links': len(links)}
+
+
+FOLDER_INDEX = 'armport-folder-cache-index.bin'
+# Patch 0132: the client's kept object library bounds, one file per identity of the data view.
+LIBRARY_BOUNDS_PREFIX = 'armport-library-bounds-'
+LIBRARY_BOUNDS_SUFFIX = '.bin'
+# Patch 0133: the client's prepared group files, one folder per identity of the data view.
+GROUP_BINS_PREFIX = 'armport-group-bins-'
+
+
+# Bump when merge_links lays the view out differently: a saved file list of another
+# layout must not be reused.
+VIEW_LAYOUT = 1
+
+
+def folder_cache_identity(client, skip, live=''):
+    """Identity of the client's data view for its saved file list (patch 0122).
+
+    The view is the verified app data (every source directory's device, inode,
+    mtime and ctime, plus every directory the links point into). Adding,
+    removing, renaming or replacing any entry changes one of these; installs
+    publish new files, never rewrite one. Root folders that may be rewritten in
+    place (the overlay's bin/ and the writable cache roots in `live`) are
+    scanned live by the client, which also checks sampled files.
+
+    Thor 0.13.66: the identity also held the ARM64 archive's and executable's
+    hashes and this file's own, so every new APK threw the list away and the
+    first launch after each update scanned 160,114 files again (133.8 s). The
+    archive's only data is bin/ (`allowed`), which the client scans live, and
+    the list's own format is the client's (its header version). The view's
+    layout is named by VIEW_LAYOUT instead.
+    """
+    validation = client['data_validation']
+    record = {'format': 3, 'policy': 'armport_folder_cache_index_v1', 'view_layout': VIEW_LAYOUT,
+              'overlay_data_roots': ['bin'],
+              'tree_sha256': validation['tree_sha256'], 'targets_sha256': validation['targets_sha256'],
+              'links': validation['links'], 'skip': skip, 'live': live}
+    require(all(isinstance(record[key], str) and re.fullmatch('[0-9a-f]{64}', record[key])
+                for key in ('tree_sha256', 'targets_sha256')),
+            'Client folder index identity needs every digest')
+    return hashlib.sha256(json.dumps(record, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
 
 
 def merge_links(source_data, target_root, receipt=None):
@@ -353,6 +480,11 @@ def main():
         parser.add_argument('--' + name, type=int, required=True)
     parser.add_argument('--source-data', type=Path)
     parser.add_argument('--stage', type=Path)
+    parser.add_argument('--audio-plugin', type=Path, help='guest ALSA plugin (armport/audio/build.sh)')
+    parser.add_argument('--realpath-cache', type=Path,
+                        help='wineserver realpath cache (armport/wineserver/build.sh)')
+    parser.add_argument('--client-data', type=Path,
+                        help='client art laid over the imported data (armport/content/single-player/client)')
     args = vars(parser.parse_args())
     source_data, stage = args.pop('source_data'), args.pop('stage')
     require(bool(source_data) == bool(stage), '--source-data and --stage must be used together')

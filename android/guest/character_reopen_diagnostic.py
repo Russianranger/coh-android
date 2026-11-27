@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reopen preserved THORHERO and save normally; /stuck is optional recovery."""
+"""Reopen the preserved character (any name since 0.13.62) and save normally; /stuck is optional recovery."""
 from pathlib import Path
 import copy
 import sys
@@ -18,10 +18,11 @@ REQUIRED = creation.REQUIRED | {'character_reopen_diagnostic.py', 'character_ses
 
 
 def character_identity(proof, session):
+    hero = creation.character.HERO_ID
     return (creation.character_identity(proof, session)
-        and proof.get('character_id') == 1
-        and type(proof.get('before_character_id')) is int and proof['before_character_id'] == 1
-        and type(proof.get('baseline_character_id')) is int and proof['baseline_character_id'] == 1
+        and proof.get('character_id') == hero
+        and type(proof.get('before_character_id')) is int and proof['before_character_id'] == hero
+        and type(proof.get('baseline_character_id')) is int and proof['baseline_character_id'] == hero
         and all(proof.get(key) is True for key in ('existing_character_verified', 'reopen_verified',
             'preserved_existing_identity', 'native_client_ready_observed')))
 
@@ -107,6 +108,10 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
         if not self.connected_announced:
             return deadline
         proof = self.ctx.report.get(self.REPORT_KEY, {})
+        if proof.get('created_in_session') is True:
+            # A hero made in the character list: a creation has no reopen budget, and a session
+            # started with Play has no countdown.
+            return deadline
         require(self.identity_verified(proof, self.args.session_id)
                 and isinstance(launch, dict) and proof.get('client_pid') == launch.get('pid'),
                 'Reopen phase budget lacks the current validated graphical character')
@@ -117,11 +122,13 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
             presentation_ready = getattr(self, 'presentation_ready_monotonic', None)
             require(session_budget.finite_seconds(presentation_ready),
                     'Reopen budget lacks the current owned presentation clock')
-            budget_options = ({'supported_maps': (1, 5, 101) if proof.get('monorail_enabled') is True
+            budget_options = ({'supported_maps': session_budget.STATIC_ZONES if proof.get('stock_travel') is True
+                               else (1, 5, 101) if proof.get('monorail_enabled') is True
                                else (1, 101)} if self.ZONING else {})
             self.session_budget = session_budget.SessionBudget(self.args.session_id, launch['pid'],
                 self.launcher_started_monotonic, self.ctx.deadline,
-                presentation_ready=presentation_ready, manual=self.MANUAL_SESSION, **budget_options)
+                presentation_ready=presentation_ready, manual=self.MANUAL_SESSION,
+                name=creation.character.CHARACTER, **budget_options)
         events = [self.session_budget.connected(proof, now, utc_ms)]
         if getattr(self, 'relocated_announced', False):
             if self.session_budget.revision < 2:
@@ -147,10 +154,10 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
                     require(observed.get('task_' + phase + '_verified') is True
                         and observed.get('session_id') == self.args.session_id
                         and observed.get('client_pid') == proof.get('client_pid')
-                        and observed.get('character_id') == 1,
+                        and observed.get('character_id') == creation.character.HERO_ID,
                         'Task milestone event differs from this native graphical character')
                     self.ctx.event('character_task_' + phase, session_id=self.args.session_id,
-                        client_pid=proof['client_pid'], character_id=1,
+                        client_pid=proof['client_pid'], character_id=creation.character.HERO_ID,
                         **{key: observed[key] for key in ('task', 'observed_utc_ms',
                             'active_task_count', 'native_task_verified', 'sql_task_verified')})
                     setattr(self, announced, True)
@@ -188,7 +195,7 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
                         proof['ground_observed_utc_ms'] - samples[-1]['utc_ms'])
             self.ctx.event('character_relocated', session_id=self.args.session_id,
                 client_pid=proof['client_pid'], character_id=proof['character_id'],
-                name=creation.CHARACTER_NAME, account=creation.login.server.ACCOUNT, map_id=1,
+                name=creation.character.CHARACTER, account=creation.login.server.ACCOUNT, map_id=1,
                 recovery_requested=True, recovery_verified=True,
                 ordinary_stuck_observed=True, on_atlas_safe_position=True, stable_ground_verified=True)
         return result
@@ -204,14 +211,19 @@ class ZoningCharacterReopenDiagnostic(CharacterReopenDiagnostic):
     ZONING = True
     REQUIRED = REQUIRED | {'character_zoning.py', 'character_zoning_scheduler.py'}
 
+    # 0.13.87: the proof of a hero made in the character list is a creation's (created_in_session).
     @staticmethod
     def identity_verified(proof, session):
         import character_zoning
+        if isinstance(proof, dict) and proof.get('created_in_session') is True:
+            return character_zoning.creation_identity(proof, session)
         return character_zoning.character_identity(proof, session)
 
     @staticmethod
     def proof_verified(proof, session):
         import character_zoning
+        if isinstance(proof, dict) and proof.get('created_in_session') is True:
+            return character_zoning.creation_save_verified(proof, session)
         return character_zoning.save_verified(proof, session)
 
     def make_server(self):
@@ -228,14 +240,30 @@ class ZoningCharacterReopenDiagnostic(CharacterReopenDiagnostic):
         super().initialize()
         self.ctx.report['zoning_enabled'] = True
 
+    # stock_travel: the game's own zone travel; the app accepts King's Row and
+    # the other static zones for a character connected or saved there.
     def connected_event_data(self, proof):
+        import character_zoning
+        if proof.get('created_in_session') is True:
+            return {'created_in_session': True, 'zoning_enabled': True, 'connected_on_supported_map': True,
+                    'monorail_enabled': False, 'stock_travel': proof.get('stock_travel') is True,
+                    'map_name': character_zoning.zone_name(proof['map_id'])}
         return dict(super().connected_event_data(proof), zoning_enabled=True, connected_on_supported_map=True,
-                    monorail_enabled=proof.get('monorail_enabled') is True)
+                    monorail_enabled=proof.get('monorail_enabled') is True,
+                    stock_travel=proof.get('stock_travel') is True,
+                    map_name=character_zoning.zone_name(proof['map_id']))
 
     def saved_event_data(self, proof):
+        import character_zoning
+        if proof.get('created_in_session') is True:
+            return {'created_in_session': True, 'zoning_enabled': True, 'connected_on_supported_map': True,
+                    'map_id': proof['map_id'], 'map_name': character_zoning.zone_name(proof['map_id']),
+                    'monorail_enabled': False, 'stock_travel': proof.get('stock_travel') is True}
         return dict(super().saved_event_data(proof), zoning_enabled=True,
                     connected_on_supported_map=True, map_id=proof['map_id'],
-                    monorail_enabled=proof.get('monorail_enabled') is True)
+                    map_name=character_zoning.zone_name(proof['map_id']),
+                    monorail_enabled=proof.get('monorail_enabled') is True,
+                    stock_travel=proof.get('stock_travel') is True)
 
 
 def parse_reopen_arguments(argv):

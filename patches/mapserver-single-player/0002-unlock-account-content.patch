@@ -1,0 +1,142 @@
+diff --git a/Common/account/AccountData.c b/Common/account/AccountData.c
+index 8e70e7f..703bdf5 100644
+--- a/Common/account/AccountData.c
++++ b/Common/account/AccountData.c
+@@ -27,6 +27,36 @@
+ #include "auth/authUserData.h"
+ #endif
+ 
++// ArmPort single-player (0.13.85). Two switches read once from the environment of the game
++// client and of the map server; unset, every function below answers as before.
++//   ARMPORT_UNLOCK_ALL=1  the one local account owns every store product and every loyalty
++//                         (veteran) reward and is a VIP. Counts of consumable products
++//                         (AccountGetStoreProductCount) are not changed.
++//   ARMPORT_PRIMALIST=1   the Primalist archetype's product ("ctatprim") is owned. It is not
++//                         part of ARMPORT_UNLOCK_ALL: the archetype also needs its class data
++//                         on the map server and its name in the database.
++static int armport_switch(const char *name, int *state)
++{
++    if (*state < 0)
++    {
++        const char *value = getenv(name);
++        *state = (value && value[0] == '1' && value[1] == 0) ? 1 : 0;
++    }
++    return *state;
++}
++
++int armport_unlock_all(void)
++{
++    static int state = -1;
++    return armport_switch("ARMPORT_UNLOCK_ALL", &state);
++}
++
++int armport_primalist(void)
++{
++    static int state = -1;
++    return armport_switch("ARMPORT_PRIMALIST", &state);
++}
++
+ // If you modify these functions, Please remember to modify:
+ //            passAccountServerInventoryDB in QueueServer_Passthrough.c
+ //            accountInventoryRelayToClient in accountservercomm.c
+@@ -269,6 +299,9 @@ int accountLoyaltyRewardHasThisNode(U8 *loyalty, LoyaltyRewardNode *node)
+     int bit;
+     int index;
+ 
++    if (node && armport_unlock_all())
++        return true;
++
+     if (!loyalty || !node || node->index >= LOYALTY_BITS)
+         return false;
+ 
+@@ -281,6 +314,9 @@ bool accountLoyaltyRewardHasNode(U8 *loyalty, const char *nodeName)
+ {
+     LoyaltyRewardNode *node;
+ 
++    if (nodeName && armport_unlock_all())
++        return accountLoyaltyRewardFindNode(nodeName) != NULL;
++
+     if (!loyalty || !nodeName)
+         return false;
+ 
+@@ -296,6 +332,9 @@ int accountLoyaltyRewardMasteredThisTier(U8 *loyalty, LoyaltyRewardTier *tier)
+ {
+     int i, count = 0;
+ 
++    if (tier && armport_unlock_all())
++        return true;
++
+     if (!loyalty || !tier)
+         return false;
+ 
+@@ -323,6 +362,9 @@ int accountLoyaltyRewardMasteredTier(U8 *loyalty, const char *tierName)
+ {
+     LoyaltyRewardTier *tier;
+ 
++    if (tierName && armport_unlock_all())
++        return accountLoyaltyRewardFindTier(tierName) != NULL;
++
+     if (!loyalty || !tierName)
+         return false;
+ 
+@@ -339,6 +381,9 @@ int accountLoyaltyRewardUnlockedThisTier(U8 *loyalty, LoyaltyRewardTier *tier)
+ {
+     LoyaltyRewardTier *previousTier;
+ 
++    if (tier && armport_unlock_all())
++        return true;
++
+     if (!loyalty || !tier)
+         return false;
+ 
+@@ -356,6 +401,9 @@ int accountLoyaltyRewardUnlockedTier(U8 *loyalty, const char *tierName)
+ {
+     LoyaltyRewardTier *tier;
+ 
++    if (tierName && armport_unlock_all())
++        return accountLoyaltyRewardFindTier(tierName) != NULL;
++
+     if (!loyalty || !tierName)
+         return false;
+ 
+@@ -369,6 +417,9 @@ int accountLoyaltyRewardUnlockedTier(U8 *loyalty, const char *tierName)
+ 
+ int accountLoyaltyRewardHasThisLevel(int pointEarned, LoyaltyRewardLevel *level)
+ {
++    if (level && armport_unlock_all())
++        return true;
++
+     if (pointEarned <= 0 || !level)
+         return false;
+ 
+@@ -382,6 +433,9 @@ int accountLoyaltyRewardHasLevel(int pointEarned, const char *levelName)
+ {
+     LoyaltyRewardLevel *level;
+ 
++    if (levelName && armport_unlock_all())
++        return accountLoyaltyRewardFindLevel(levelName) != NULL;
++
+     if (pointEarned <= 0 || !levelName)
+         return false;
+ 
+@@ -439,6 +493,8 @@ int accountLoyaltyRewardGetNodesBought(U8 *loyalty)
+ 
+ int AccountIsVIP(AccountInventorySet* invSet, U32 accountStatusFlags)
+ {
++    if (armport_unlock_all())
++        return 1;
+     return accountStatusFlags & ( ACCOUNT_STATUS_FLAG_IS_VIP | ACCOUNT_STATUS_FLAG_DEBUG_VIP );
+ }
+ 
+@@ -562,6 +618,11 @@ S64 accountLoyaltyRewardGetInfluenceCap(int pointEarned, AccountInventorySet* in
+ 
+ bool AccountHasStoreProduct(AccountInventorySet* invSet, SkuId sku_id)
+ {
++    // ArmPort: the Primalist's product follows its own switch only (see the top of this file).
++    if (skuIdEquals(sku_id, skuIdFromString("ctatprim")))
++        return armport_primalist() != 0;
++    if (armport_unlock_all())
++        return true;
+     return ( AccountGetStoreProductCount( invSet, sku_id, false ) > 0 );
+ }
+ 

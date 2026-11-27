@@ -211,6 +211,9 @@ class CleanupLineageTests(unittest.TestCase):
         self.assertEqual(self.owner.live_lineage['unavailable_samples'], 1)
         self.assertIn((123, 10), self.owner.live_lineage['groups'])
         self.assertEqual(self.owner.receipt['inspection_failures'], 0)
+        self.assertEqual(self.owner.live_lineage['unavailable_by_operation'],
+                         {'lineage_authentication:PermissionError': 1})
+        self.assertEqual(self.owner.live_lineage['first_unavailable']['error_type'], 'PermissionError')
         self.dead_leader()
         with self.deny_worker():
             self.assertIsNotNone(self.owner.inspect(123, time.monotonic() + 1))
@@ -636,6 +639,27 @@ int main(int argc, char **argv) {
                 for stream in (child.stdin, child.stdout, child.stderr):
                     if stream is not None and not stream.closed:
                         stream.close()
+
+
+class LineageFailureCounterTests(unittest.TestCase):
+    def test_counts_are_bounded_and_the_first_failure_is_kept(self):
+        owner = guest.DeviceWineProcessOwner.__new__(guest.DeviceWineProcessOwner)
+        owner.live_lineage = {'unavailable_by_operation': {}, 'first_unavailable': None}
+        first = FileNotFoundError(2, 'no ns link')
+        first.ownership_observation = {'operation': 'pid_namespace', 'errno': 2, 'group_pid': 7, 'worker_tid': 8}
+        owner.record_lineage_unavailable(first)
+        owner.record_lineage_unavailable(first)
+        for index in range(40):
+            error = PermissionError(13, 'denied')
+            error.ownership_observation = {'operation': 'op' + str(index), 'group_pid': 7}
+            owner.record_lineage_unavailable(error)
+        counts = owner.live_lineage['unavailable_by_operation']
+        self.assertEqual(len(counts), 16)
+        self.assertEqual(counts['pid_namespace:FileNotFoundError'], 2)
+        self.assertEqual(owner.live_lineage['first_unavailable'],
+                         {'operation': 'pid_namespace', 'error_type': 'FileNotFoundError', 'errno': 2,
+                          'target': 'worker', 'message': '[Errno 2] no ns link'})
+        self.assertEqual(owner.live_lineage['last_unavailable_operation'], 'op39')
 
 
 if __name__ == '__main__':

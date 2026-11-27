@@ -1,0 +1,30 @@
+diff --git a/Game/src/clientcomm/clientcomm.c b/Game/src/clientcomm/clientcomm.c
+index 0d713be..d45702f 100644
+--- a/Game/src/clientcomm/clientcomm.c
++++ b/Game/src/clientcomm/clientcomm.c
+@@ -853,7 +853,16 @@ void commServerWaitOK(char* mapname)
+ 
+ void commServerMapXferLoading(Packet *pak_in)
+ {
+-    g_showMapLoadingMessage = pktGetBits(pak_in, 1);
++    int on = pktGetBits(pak_in, 1);
++
++    /* ArmPort (patch 0125): the DbServer only ever sends "loading" on, and the
++     * load screen (commServerWaitOK) turns it off. With the MapServer's
++     * -notwostagemapxfer the load screen comes first and the DbServer's notice
++     * arrives during it, so the text stayed over the new zone (Thor 0.13.56,
++     * King's Row). It is a notice for a player still in the world. */
++    if (on && game_state.game_mode == SHOW_LOAD_SCREEN)
++        return;
++    g_showMapLoadingMessage = on;
+ }
+ 
+ int do_map_xfer;
+@@ -862,6 +871,7 @@ void commServerMapXfer(Packet *pak_in)
+ {
+     Packet    *pak;
+ 
++    g_showMapLoadingMessage = false;   /* ArmPort (patch 0125): moving on, the wait is over */
+     dbOrMapConnect(pak_in);
+     pak = pktCreate();
+     pktSendBitsPack(pak,1,CLIENT_MAP_XFER_ACK);

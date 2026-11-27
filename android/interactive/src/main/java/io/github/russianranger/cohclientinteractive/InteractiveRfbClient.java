@@ -18,7 +18,13 @@ public final class InteractiveRfbClient implements Closeable {
 
     public static final int MAX_WIDTH = 1024;
     public static final int MAX_HEIGHT = 768;
-    private static final int MAX_RECTS = 1024;
+    // FramebufferUpdate's count is a U16. This client advertises no LastRect, so
+    // TigerVNC counts its whole changed region into one update; fast camera turns
+    // fragment that region. Thor 0.13.63 (export 20261109-154935, 176 rectangles per
+    // update on average) ended its session when one update exceeded the earlier 1024
+    // limit. Accept the protocol's whole range; every rectangle is still bounded by
+    // the framebuffer below.
+    static final int MAX_RECTS = 0xFFFF;
     private static final int MAX_TEXT = 4096;
     private static final int DESKTOP_SIZE = -223;
     private final DataInputStream input;
@@ -51,7 +57,10 @@ public final class InteractiveRfbClient implements Closeable {
     // blocking socket wait plus copy for Raw pixel bytes; convert time is the
     // pixel conversion alone.
     private volatile long readNanosSum, readNanosMax, convertNanosSum, convertNanosMax, decodedRects;
+    private volatile int updateRectsMax;
     private final java.util.concurrent.atomic.AtomicBoolean totalsRetired = new java.util.concurrent.atomic.AtomicBoolean();
+    /** The largest rectangle count of one accepted FramebufferUpdate. */
+    public int updateRectsMax() { return updateRectsMax; }
     public long readNanosSum() { return readNanosSum; }
     public long readNanosMax() { return readNanosMax; }
     public long convertNanosSum() { return convertNanosSum; }
@@ -163,6 +172,7 @@ public final class InteractiveRfbClient implements Closeable {
         input.readUnsignedByte();
         int count = input.readUnsignedShort();
         if (count > MAX_RECTS) throw new IOException("RFB rectangle count exceeds limit");
+        if (count > updateRectsMax) updateRectsMax = count;
         boolean changed = false;
         boolean resized = false;
         for (int i = 0; i < count; i++) {
@@ -303,6 +313,7 @@ public final class InteractiveRfbClient implements Closeable {
         if ("show_fps".equals(safeName)) command = "/showfps 1";
         else if ("cap_10".equals(safeName)) command = "/maxfps 10";
         else if ("cap_30".equals(safeName)) command = "/maxfps 30";
+        else if ("cap_60".equals(safeName)) command = "/maxfps 60";
         else throw new IOException("Performance command is unavailable");
         sendChatCommand(command, expectedEpoch);
     }
@@ -364,6 +375,23 @@ public final class InteractiveRfbClient implements Closeable {
         writePointer(nextX, nextY, mask);
         if (mask == 0 && moved) pointerSettledAfter = System.nanoTime() + INPUT_SETTLE_NANOS;
         if (previousMask != 0 && mask == 0) keyFocusSettledAfter = System.nanoTime() + INPUT_SETTLE_NANOS;
+    }
+
+    /** RFB wheel buttons 4 (up) and 5 (down); only this paired event may set these mask bits. */
+    public static final int WHEEL_UP = 8, WHEEL_DOWN = 16;
+
+    /** One wheel tick at the pointer: press then release button 4 or 5, keeping held buttons 1-3.
+     * General pointer events stay limited to buttons 1-3 (mask 0-7). No settle wait is added. */
+    public synchronized void sendWheel(int x, int y, boolean up, long expectedEpoch) throws IOException {
+        requireCurrentInput(expectedEpoch);
+        int nextX = Math.max(0, Math.min(width - 1, x));
+        int nextY = Math.max(0, Math.min(height - 1, y));
+        boolean moved = !pointerPositionKnown || nextX != pointerX || nextY != pointerY;
+        int held = pointerMask & 7;
+        writePointer(nextX, nextY, held | (up ? WHEEL_UP : WHEEL_DOWN));
+        writePointer(nextX, nextY, held);
+        // A later click at this new position still gets the usual preposition settle.
+        if (held == 0 && moved) pointerSettledAfter = System.nanoTime() + INPUT_SETTLE_NANOS;
     }
 
     private void writePointer(int x, int y, int mask) throws IOException {

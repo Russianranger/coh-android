@@ -224,7 +224,7 @@ class AndroidStartupTimingTests(unittest.TestCase):
             self.assertIn('.put("android_startup_timing",startupTimingReport())', method(runtime, signature))
         output = method(runtime, 'private void captureOutput(')
         self.assertIn('if ("map_server_ready_observed".equals(event.optString("type"))) observeMapServerReady(event);', output)
-        connected = method(output, 'if ((reopen ? ClientAcceptance.characterReopenConnectedEvent(')
+        connected = method(output, 'if ((reopen ? heroCreated || ClientAcceptance.characterReopenConnectedEvent(')
         self.assertIn('observeStartupWorldReady();', connected)
         self.assertIn('checkpoint();', method(runtime, 'private synchronized void observeMapServerReady('))
         activity = (JAVA/'ClientActivity.java').read_text()

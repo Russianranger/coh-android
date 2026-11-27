@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Exercise ClientRuntime's exact optional Android exit-history adapter."""
 from pathlib import Path
+import re
 import subprocess
 import tempfile
 import unittest
@@ -61,6 +62,8 @@ public final class ApplicationExitInfo {
     public long getPss() { return 5000000000L; }
     public long getRss() { return 6000000000L; }
     public int getPid() { return 321; }
+    public String description="lmkd kill";
+    public String getDescription() { return description; }
     public java.io.InputStream getTraceInputStream() { throw new AssertionError("Trace streams must not be opened"); }
 }
 ''',
@@ -69,6 +72,7 @@ public final class JSONObject {
     private final java.util.Map<String,Object> values=new java.util.LinkedHashMap<>();
     public JSONObject put(String name,Object value) { values.put(name,value);return this; }
     public Object get(String name) { return values.get(name); }
+    public static final Object NULL=new Object();
 }
 ''',
     'org/json/JSONArray.java': '''package org.json;
@@ -91,6 +95,7 @@ import java.util.List;
 public final class ExitHistoryHost {
 %s
 %s
+%s
     private static void require(boolean value,String message) {
         if(!value)throw new AssertionError(message);
     }
@@ -108,12 +113,16 @@ public final class ExitHistoryHost {
             StringBuilder longName=new StringBuilder(own+":");
             while(longName.length()<300)longName.append('x');
             manager.history.add(new ApplicationExitInfo(longName.toString()));
-            for(int i=0;i<10;i++)manager.history.add(new ApplicationExitInfo(own));
+            for(int i=0;i<20;i++)manager.history.add(new ApplicationExitInfo(own));
+            StringBuilder words=new StringBuilder();
+            while(words.length()<600)words.append("too many phantom processes ");
+            manager.history.get(0).description=words.toString();
+            manager.history.get(3).description=null;
         } else if("null_history".equals(scenario)){manager.history=null;}
         else {manager.history.add(new ApplicationExitInfo(own));}
         JSONObject result=historicalProcessExits(context);
         JSONArray records=(JSONArray)result.get("records");
-        require(Integer.valueOf(4).equals(result.get("maximum_records")),"bounded count");
+        require(Integer.valueOf(16).equals(result.get("maximum_records")),"bounded count");
         require(Boolean.TRUE.equals(result.get("own_processes_only")),"own processes only");
         require(Boolean.FALSE.equals(result.get("trace_streams_requested")),"no trace streams");
         if("old_api".equals(scenario)) {
@@ -123,8 +132,8 @@ public final class ExitHistoryHost {
             if(manager.failure!=null)require(result.get("error_class")!=null,"classified failure");
         } else {
             require("available".equals(result.get("status")),"history available");
-            require(own.equals(manager.queriedPackage)&&manager.queriedPid==0&&manager.queriedLimit==4,"own package bounded query");
-            require(records.length()==("bounded".equals(scenario)?2:"null_history".equals(scenario)?0:1),"filtered bounded records");
+            require(own.equals(manager.queriedPackage)&&manager.queriedPid==0&&manager.queriedLimit==16,"own package bounded query");
+            require(records.length()==("bounded".equals(scenario)?14:"null_history".equals(scenario)?0:1),"filtered bounded records");
             if(records.length()>0) {
                 JSONObject first=(JSONObject)records.get(0);
                 require(Long.valueOf(2200000000000L).equals(first.get("timestamp_utc_ms")),"64bit timestamp");
@@ -133,8 +142,13 @@ public final class ExitHistoryHost {
                 require(Integer.valueOf(3).equals(first.get("reason"))&&Integer.valueOf(9).equals(first.get("status")),"reason and status");
                 require(Integer.valueOf(100).equals(first.get("importance"))&&Integer.valueOf(321).equals(first.get("pid")),"importance and pid");
                 require(own.equals(first.get("process_name")),"process name");
+                require("bounded".equals(scenario)?((String)first.get("description")).length()==240
+                        :"lmkd kill".equals(first.get("description")),"Android's description, bounded");
             }
-            if("bounded".equals(scenario))require(((String)((JSONObject)records.get(1)).get("process_name")).length()==160,"name byte bound");
+            if("bounded".equals(scenario)) {
+                require(((String)((JSONObject)records.get(1)).get("process_name")).length()==160,"name byte bound");
+                require(((JSONObject)records.get(1)).get("description")==JSONObject.NULL,"absent description");
+            }
         }
         System.out.println("PASS "+scenario);
     }
@@ -148,7 +162,9 @@ class ProcessExitHistoryTests(unittest.TestCase):
         cls.temp = tempfile.TemporaryDirectory(prefix='coh-exit-history-')
         cls.classes = Path(cls.temp.name)
         source = SOURCE.read_text()
-        harness = HARNESS % (java_block(source, 'private static JSONObject historicalProcessExits'),
+        # Android keeps 16 records for an app; four did not reach back to an ending seen two launches later.
+        constant = re.search(r'static final int EXIT_HISTORY_RECORDS = 16;', source).group(0)
+        harness = HARNESS % (constant, java_block(source, 'private static JSONObject historicalProcessExits'),
                              java_block(source, 'private static final class ProcessExitHistory'))
         inputs = dict(STUBS, **{'ExitHistoryHost.java': harness})
         for name, contents in inputs.items():

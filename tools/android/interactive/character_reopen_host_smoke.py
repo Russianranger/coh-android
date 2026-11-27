@@ -23,16 +23,71 @@ host, require = character.host, character.require
 INTERACTION_SECONDS = character.INTERACTION_SECONDS
 OVERALL_SECONDS = character.OVERALL_SECONDS
 # Pinned Hybrid UI's first selected name row at 800x600. The actual click still
-# comes only from exact recognized THORHERO bounds, never from a fixed point.
+# comes only from exact recognized character-name bounds, never from a fixed point.
 CHARACTER_REGION = (100, 60, 330, 83)
 ATLAS_HELP_REGION = (345, 270, 680, 490)
 WORLD_CACHE_POLICY = 'once_per_world_manifest_private_atlas_geobin_and_supplemented_object_library_only'
 
 
-def reopen_actions():
+# The game's own zone travel (COH_STOCK_TRAVEL=1 with the external-maps DbServer):
+# /mapmove asks the DbServer for Atlas Park instance 2 (the Atlas tree, one more
+# MapServer start), which publishes the start to the zoning supervisor exactly
+# like a door, tunnel or monorail does; then back to the still-running Atlas.
+STOCK_TRAVEL_MAPS = ((101, 'instance_2'), (1, 'atlas'))
+STOCK_TRAVEL_SECONDS = 900
+# 0.13.69, COH_SPARE_ZONE=1: the first trip waits (bounded) for the guest's spare zone server to
+# be warm, so the run measures a zone started from the spare. Without one it travels anyway.
+SPARE_WARM_SECONDS = 480
+# Spare run 44732475821 (0.13.78): the return "/mapmove 1" was typed 25 s after the arrival on
+# map 101 and never reached a server (its command log holds "mapmove 101" only); the client stayed
+# in that zone at about 1.5 FPS until the 900 s bound. A trip that has not arrived is therefore
+# asked for again, whatever the chat line holds by then: after the first delay Enter alone (a typed
+# line whose Enter was lost is sent; a closed line opens empty), after the second the command and
+# Enter ("/" opens a closed chat line with the slash already in it). Recorded, never hidden.
+STOCK_TRAVEL_RESEND_SECONDS = (300, 450)
+# 0.13.84, COH_MISSION_PROBE=1 (with COH_MISSION_MAPS=1 in the guest): the two trips are a mission
+# instead. "/startmission <task> *" assigns the task and enters its mission (door.c StartMission:
+# teamStartMap creates the mission's map container, the DbServer asks for its server exactly as
+# for a mission door); "/exitmission" leaves it for the zone. The task is a level 1 office
+# mission (scripts.loc/contacts/level_1/tasks/clockwork_primary_1.taskset). The mission map's id
+# is the DbServer's choice, so its arrival is known by the guest's mission_map mark.
+MISSION_PROBE_ENV = 'COH_MISSION_PROBE'
+MISSION_PROBE_TASK = 'L1_P_Clockwork_Mission1'
+MISSION = 'mission'
+
+
+def travel_trips():
+    """(expected map id or MISSION, label, typed command) for each CI trip."""
+    if os.environ.get(MISSION_PROBE_ENV) == '1':
+        return ((MISSION, 'mission', '/startmission %s *' % MISSION_PROBE_TASK), (1, 'atlas', '/exitmission'))
+    return tuple((map_id, label, '/mapmove %d' % map_id) for map_id, label in STOCK_TRAVEL_MAPS)
+
+
+def trip_arrived(trip, event):
+    """Whether a guest arrival event is this trip's destination."""
+    if trip[0] == MISSION:
+        return (event.get('mission_map') is True and type(event.get('current_map_id')) is int
+                and event['current_map_id'] not in (1, 5, 101))
+    return event.get('current_map_id') == trip[0] and event.get('mission_map') is not True
+
+
+def stock_travel_actions():
+    actions = []
+    for map_id, label, command in travel_trips():
+        actions += [('key', 0xff0d, 'open_travel_chat_'+label),
+                    ('command', command, 'type_stock_travel_'+label),
+                    ('key', 0xff0d, 'submit_stock_travel_'+label),
+                    ('arrived', map_id, 'wait_stock_arrival_'+label),
+                    ('move', (600, 100), 'clear_cursor_after_'+label),
+                    ('optional_ocr_move', None, 'check_travel_help_'+label),
+                    ('optional_ocr_click', None, 'dismiss_travel_help_'+label)]
+    return actions
+
+
+def reopen_actions(stock_travel=False):
     actions = [('login', None, 'wait_existing_character_list'),
         ('move', (600, 100), 'clear_cursor_before_existing_character'),
-        ('ocr_move', ('THORHERO', CHARACTER_REGION), 'preposition_existing_character'),
+        ('ocr_move', (character.CHARACTER, CHARACTER_REGION), 'preposition_existing_character'),
         ('ocr_click', None, 'select_existing_character')]
     actions += character.click_steps('play_existing_character', 757, 579)
     actions += [('connected', None, 'wait_reopened_atlas_connection'),
@@ -40,8 +95,10 @@ def reopen_actions():
     for index in range(1, 4):
         actions += [('optional_ocr_move', None, 'check_atlas_help_'+str(index)),
                     ('optional_ocr_click', None, 'dismiss_atlas_help_'+str(index))]
-    actions += [('modal_clear', None, 'verify_atlas_help_dismissed'),
-        ('key', 0xff0d, 'open_stuck_chat'), ('command', '/stuck', 'type_ordinary_stuck'),
+    actions += [('modal_clear', None, 'verify_atlas_help_dismissed')]
+    if stock_travel:
+        actions += stock_travel_actions()
+    actions += [('key', 0xff0d, 'open_stuck_chat'), ('command', '/stuck', 'type_ordinary_stuck'),
         ('key', 0xff0d, 'submit_ordinary_stuck'),
         ('relocated', None, 'wait_world_after_stuck'),
         ('key', 0xff0d, 'open_chat'), ('command', '/quittologin', 'type_ordinary_logout'),
@@ -82,16 +139,17 @@ class ReopenInteraction(character.CharacterInteraction):
         self.modal_position = None
 
     def fixture_text(self, connection, value):
-        if value == '/stuck':
+        if value == '/stuck' or value.startswith(('/mapmove ', '/startmission ', '/exitmission')):
             for letter in value: character.key(connection, ord(letter))
         else:
             super().fixture_text(connection, value)
 
     def custom_action(self, kind, value, name, connection, frame, events, sequence, now):
         if kind in ('optional_ocr_move', 'modal_clear'):
+            checks = self.result['travel_help_checks' if name.startswith('check_travel_help') else 'atlas_help_checks']
             match, stem = character.read_button(frame, self.evidence, 'OK', name,
-                len(self.result['atlas_help_checks'])+1, ATLAS_HELP_REGION)
-            self.result['atlas_help_checks'].append({'action': name, 'found': match is not None,
+                len(checks)+1, ATLAS_HELP_REGION)
+            checks.append({'action': name, 'found': match is not None,
                 'label': 'OK', 'evidence': stem, 'frame_sequence': sequence,
                 'frame_generation': frame.generation, 'session_id': self.session, 'client_pid': events.client_pid})
             if kind == 'modal_clear':
@@ -126,6 +184,80 @@ class ReopenInteraction(character.CharacterInteraction):
             self.stuck_delivered_at = time.monotonic()
 
 
+class StockTravelReopenInteraction(ReopenInteraction):
+    """The reopen with one CI trip through the DbServer's own zone start, then back."""
+    ACTIONS = character.CharacterInteraction.LOGIN_ACTIONS + reopen_actions(stock_travel=True)
+
+    def __init__(self, session, evidence, finish_path):
+        super().__init__(session, evidence, finish_path)
+        self.result.update(stock_travel_arrivals=[], travel_help_checks=[], stock_travel_resends=[])
+        self.travel_sent_at = None
+        self.spare_wait_started = None
+        self.spare_wait = (None if os.environ.get('COH_SPARE_ZONE') != '1' else
+                           {'waited_seconds': None, 'status_at_travel': None, 'bound_seconds': SPARE_WARM_SECONDS})
+        if self.spare_wait is not None:
+            self.result['spare_zone_wait'] = self.spare_wait
+
+    def holding_for_spare(self, events, now):
+        """True while the first trip should still wait for a warm spare zone server."""
+        wait = self.spare_wait
+        if (wait is None or wait['waited_seconds'] is not None or self.action >= len(self.ACTIONS)
+                or self.ACTIONS[self.action][2] != 'open_travel_chat_' + travel_trips()[0][1]):
+            return False
+        if self.spare_wait_started is None:
+            self.spare_wait_started = now
+        status = getattr(events, 'spare_status', None)
+        if status != 'warm' and now - self.spare_wait_started < SPARE_WARM_SECONDS:
+            return True
+        wait.update(waited_seconds=round(now - self.spare_wait_started, 3), status_at_travel=status)
+        return False
+
+    def resend_travel(self, connection, now):
+        """Ask again for a trip that has not arrived (STOCK_TRAVEL_RESEND_SECONDS); at most twice a trip."""
+        map_id = self.ACTIONS[self.action][1]
+        resends = self.result['stock_travel_resends']
+        sent = sum(1 for item in resends if item['map_id'] == map_id)
+        if (sent >= len(STOCK_TRAVEL_RESEND_SECONDS)
+                or now - self.travel_sent_at < STOCK_TRAVEL_RESEND_SECONDS[sent]):
+            return
+        if sent:
+            self.fixture_text(connection, next(trip[2] for trip in travel_trips() if trip[0] == map_id))
+        character.key(connection, 0xff0d)
+        resends.append({'map_id': map_id, 'keys': 'command_and_enter' if sent else 'enter',
+                        'seconds_after_submit': round(now - self.travel_sent_at, 3)})
+
+    def arrivals_needed(self):
+        return sum(1 for action in self.ACTIONS[:self.action+1] if action[0] == 'arrived')
+
+    def on_frame(self, connection, frame, events, sequence, captures, now):
+        if (self.action < len(self.ACTIONS) and self.ACTIONS[self.action][0] == 'arrived'
+                and len(events.arrivals) < self.arrivals_needed()):
+            require(self.travel_sent_at is not None and now-self.travel_sent_at < STOCK_TRAVEL_SECONDS,
+                    'Zone travel to map %s did not arrive within %d seconds'
+                    % (self.ACTIONS[self.action][1], STOCK_TRAVEL_SECONDS))
+            require(now-self.ready_at-character.initial_zone_seconds(events, now) < INTERACTION_SECONDS,
+                    'Host character creation exceeded twenty-minute interaction bound')
+            self.resend_travel(connection, now)
+            return
+        if self.holding_for_spare(events, now):
+            require(now-self.ready_at-character.initial_zone_seconds(events, now) < INTERACTION_SECONDS,
+                    'Host character creation exceeded twenty-minute interaction bound')
+            return
+        before = self.action
+        super().on_frame(connection, frame, events, sequence, captures, now)
+        if self.action != before and self.ACTIONS[before][2].startswith('submit_stock_travel_'):
+            self.travel_sent_at = time.monotonic()
+
+    def custom_action(self, kind, value, name, connection, frame, events, sequence, now):
+        if kind == 'arrived':
+            arrival = events.arrivals[self.arrivals_needed()-1]
+            require(trip_arrived((value,), arrival), 'Zone travel arrived on another map')
+            self.result['stock_travel_arrivals'].append(dict(arrival, frame_sequence=sequence,
+                host_seconds=round(now-self.travel_sent_at, 3)))
+            return True
+        return super().custom_action(kind, value, name, connection, frame, events, sequence, now)
+
+
 class ReopenEvents(character.CharacterEvents):
     def __init__(self, path, session):
         super().__init__(path, session)
@@ -137,12 +269,12 @@ class ReopenEvents(character.CharacterEvents):
                 require(event.get('character_id') == 1 and type(event.get('baseline_character_id')) is int
                         and event['baseline_character_id'] == 1
                         and event.get('reopen_verified') is True and event.get('existing_character_verified') is True,
-                        'Connected character differs from the persistent THORHERO baseline')
+                        'Connected character differs from the persistent character baseline')
             elif event.get('type') == 'character_relocated':
                 require(self.active and self.connected_generation == 1 and self.saved_generation == 0
                         and self.relocated_generation == 0 and type(event.get('client_pid')) is int
                         and event['client_pid'] == self.client_pid and event.get('character_id') == self.character_id == 1
-                        and event.get('name') == 'THORHERO' and event.get('account') == 'COHLOCAL'
+                        and event.get('name') == character.CHARACTER and event.get('account') == 'COHLOCAL'
                         and type(event.get('map_id')) is int and event['map_id'] == 1
                         and all(event.get(name) is True for name in ('ordinary_stuck_observed',
                             'on_atlas_safe_position', 'stable_ground_verified')),
@@ -151,6 +283,44 @@ class ReopenEvents(character.CharacterEvents):
                 return
             elif event.get('type') == 'character_saved':
                 require(self.relocated_generation == 1, 'Reopened character save preceded stable native relocation')
+        super().consume(event)
+
+
+class StockTravelReopenEvents(ReopenEvents):
+    """Follow the guest's stock_travel arrivals; the save must come after the round trip."""
+    def __init__(self, path, session):
+        super().__init__(path, session)
+        self.arrivals = []
+        self.spare_status = None
+
+    def consume(self, event):
+        if event.get('session_id') == self.session and event.get('type') == 'character_spare_zone':
+            if event.get('status') in ('loading', 'warm', 'assigned', 'dropped'):
+                self.spare_status = event['status']
+            return
+        if (event.get('session_id') == self.session and event.get('type') == 'character_zoning'
+                and event.get('status') == 'arrived'):
+            trips = travel_trips()
+            expected = trips[len(self.arrivals)] if len(self.arrivals) < len(trips) else None
+            origin = 1 if not self.arrivals else self.arrivals[-1]['current_map_id']
+            require(self.active and self.connected_generation == 1 and self.saved_generation == 0
+                    and self.relocated_generation == 0 and expected is not None
+                    and event.get('travel_method') == 'stock_travel'
+                    and type(event.get('client_pid')) is int and event['client_pid'] == self.client_pid
+                    and event.get('character_id') == 1 and event.get('epoch') == len(self.arrivals)+1
+                    and trip_arrived(expected, event)
+                    and event.get('target_map_id') == event.get('current_map_id')
+                    and event.get('from_map_id') == origin
+                    and event.get('current_map_verified') is True
+                    and event.get('character_identity_preserved') is True,
+                    'Zone travel arrival is foreign, out of order or unverified')
+            self.arrivals.append({key: event[key] for key in ('epoch', 'current_map_id', 'from_map_id',
+                                                               'generated_utc_ms')})
+            if event.get('mission_map') is True:
+                self.arrivals[-1]['mission_map'] = True
+            return
+        if event.get('session_id') == self.session and event.get('type') == 'character_relocated':
+            require(len(self.arrivals) == len(travel_trips()), 'Stuck recovery preceded the zone travel round trip')
         super().consume(event)
 
 
@@ -206,7 +376,9 @@ def validate_world_supplement(report, manifest):
             'World private-cache refresh receipt is incomplete or unbounded')
 
 
-def validate_report(report, session, manifest, *, finish_request=None):
+def validate_report(report, session, manifest, *, finish_request=None, heroes=1):
+    # heroes (0.13.87): how many heroes the account held at the start; the session follows one of them.
+    require(type(heroes) is int and 1 <= heroes <= 36, 'Invalid expected hero count')
     require(report.get('scope') == 'actual_character_reopen_guest'
             and report.get('diagnostic_mode') == 'actual_character_reopen', 'Wrong reopen report scope')
     # Retain every creation-mode startup, current-client, ordinary logout,
@@ -219,11 +391,12 @@ def validate_report(report, session, manifest, *, finish_request=None):
     local = report['local_login']
     proof = report['character_reopen']
     baseline = proof.get('baseline', {})
-    require(local.get('profile_reused') is True and local.get('character_count') == 1,
+    require(local.get('profile_reused') is True and local.get('character_count') == heroes,
             'Reopening did not reuse the saved one-character profile')
     require(proof.get('character_id') == 1
             and all(type(proof.get(name)) is int and proof[name] == 1
-                    for name in ('before_character_id', 'baseline_character_id', 'baseline_character_count'))
+                    for name in ('before_character_id', 'baseline_character_id'))
+            and type(proof.get('baseline_character_count')) is int and proof['baseline_character_count'] == heroes
             and type(baseline.get('character_id')) is int and baseline['character_id'] == 1
             and type(baseline.get('auth_id')) is int and baseline['auth_id'] == proof.get('auth_id')
             and all(proof.get(name) is True for name in ('reopen_verified', 'existing_character_verified',
@@ -244,7 +417,8 @@ def validate_report(report, session, manifest, *, finish_request=None):
                 'Saved '+table+' differ from the pre-reopen baseline')
 
 
-def validate_observer(observer, report):
+def validate_observer(observer, report, interaction=None):
+    interaction = interaction or ReopenInteraction
     require(observer.get('failure') is None and observer.get('terminal_event_observed') is True
             and observer.get('client_pid') == report['client_launch']['pid'], 'Reopen observer did not complete')
     script = observer['interaction_script']
@@ -256,12 +430,12 @@ def validate_observer(observer, report):
                     and check.get('session_id') == report['session_id']
                     and check.get('client_pid') == observer['client_pid'] for index, check in enumerate(checks)),
             'Reopen login lacks exact rendered COHLOCAL evidence')
-    names = [action[2] for action in ReopenInteraction.ACTIONS]
+    names = [action[2] for action in interaction.ACTIONS]
     retry_start, account_check = names.index('preposition_account'), names.index('verify_rendered_account')
     expected = names[:retry_start]+names[retry_start:account_check]*len(checks)+names[account_check:]
     require(script.get('script_completed') is True and [step['action'] for step in script['steps']] == expected
             and script.get('finish_request', {}).get('client_pid') == observer['client_pid']
-            and len(script.get('ocr_buttons', [])) == 1 and script['ocr_buttons'][0].get('label') == 'THORHERO',
+            and len(script.get('ocr_buttons', [])) == 1 and script['ocr_buttons'][0].get('label') == character.CHARACTER,
             'Existing-character UI script did not finish')
     modal = script.get('atlas_help_checks', [])
     require(len(modal) == 4 and modal[-1].get('found') is False
@@ -287,6 +461,25 @@ def validate_observer(observer, report):
                         and item['frame_generation'] == captures[0]['frame_generation'] for item in captures)
                 and captures[-1]['elapsed_since_ready']-captures[0]['elapsed_since_ready'] >= 2,
                 'Missing fresh current-client reopen proof images: '+name)
+    if interaction is StockTravelReopenInteraction:
+        arrivals = script.get('stock_travel_arrivals', [])
+        trips = travel_trips()
+        require(len(arrivals) == len(trips) and all(trip_arrived(trip, item) for trip, item in zip(trips, arrivals))
+                and [item.get('epoch') for item in arrivals] == list(range(1, len(trips)+1))
+                and all(type(item.get('host_seconds')) is float and 0 <= item['host_seconds'] < STOCK_TRAVEL_SECONDS
+                        for item in arrivals),
+                'Zone travel round trip lacks its guest arrivals')
+        resends = script.get('stock_travel_resends', [])
+        require(isinstance(resends, list) and len(resends) <= len(trips) * len(STOCK_TRAVEL_RESEND_SECONDS)
+                and all(isinstance(item, dict) and item.get('map_id') in [trip[0] for trip in trips]
+                        and item.get('keys') in ('enter', 'command_and_enter')
+                        and type(item.get('seconds_after_submit')) is float
+                        and STOCK_TRAVEL_RESEND_SECONDS[0] <= item['seconds_after_submit'] < STOCK_TRAVEL_SECONDS
+                        for item in resends),
+                'Zone travel resend record is malformed')
+        travel = script.get('travel_help_checks', [])
+        require(len(travel) == len(trips) and all(type(check.get('found')) is bool for check in travel),
+                'Zone travel help checks are incomplete')
     stuck = next(step['after_frame_sequence'] for step in script['steps'] if step['action'] == 'submit_ordinary_stuck')
     require(min(item['frame_sequence'] for item in script['world_after_stuck_captures']) > stuck,
             'World images preceded ordinary stuck command delivery')

@@ -1,0 +1,359 @@
+diff --git a/MapServer/src/beacon/beaconFile.c b/MapServer/src/beacon/beaconFile.c
+index b1fa19b..2f7ebdb 100644
+--- a/MapServer/src/beacon/beaconFile.c
++++ b/MapServer/src/beacon/beaconFile.c
+@@ -1577,6 +1577,10 @@ void beaconFindBeaconsInWorldData(S32 loadNPC, S32 loadTraffic){
+     }
+ }
+ 
++/* ArmPort (armport_deferred_load.h): set by groupLoadMap for the reload that leaves the file
++ * for later. The reload then ends in the state of a zone that has no beacon file. */
++int armport_beacon_reload_without_file;
++
+ void beaconReload(void){
+     S32 readFile = 0;
+     S32 v;
+@@ -1594,7 +1598,7 @@ void beaconReload(void){
+ 
+     // Read the stored beacon file if it exists.                                                      d
+     
+-    for(v = curBeaconFileVersion; v >= oldestAllowableBeaconFileVersion; v--){
++    for(v = curBeaconFileVersion; !armport_beacon_reload_without_file && v >= oldestAllowableBeaconFileVersion; v--){
+         char beaconFileName[1000];
+         
+         beaconGetBeaconFileName(beaconFileName, v);
+@@ -1614,7 +1618,7 @@ void beaconReload(void){
+         }
+     }
+     
+-    if(!readFile){
++    if(!readFile && !armport_beacon_reload_without_file){
+         // Get the dummy base raid beacon file if possible.
+         
+         if(server_state.dummy_raid_base && OnSGBase()){
+diff --git a/MapServer/src/group/armport_deferred_load.h b/MapServer/src/group/armport_deferred_load.h
+new file mode 100644
+index 0000000..403cdca
+--- /dev/null
++++ b/MapServer/src/group/armport_deferred_load.h
+@@ -0,0 +1,157 @@
++/* ArmPort opt-in (ARMPORT_DEFER_ZONE_LOADS=1, read at the first map load): a zone server
++ * finishes two steps of its map load after "Server ready", while the client loads the zone.
++ *
++ * Thor 0.13.79: a trip through the spare zone server took 25.6-30.7 s. The server loaded
++ * for 18.8 s before it was ready, and then waited about 8 s while the client loaded the
++ * zone itself. Of the 18.8 s, "loading beacons" was 4.7 s and "Starting novodex" 1.5 s.
++ * Neither is needed to accept the client and send it the world:
++ *   - beacons: the navigation data of NPCs and pets. Until it is read the server is in
++ *     the state of a zone without a beacon file (beaconReload without the file). Reading
++ *     it later is the server's own "beaconreadfile" command; the door connections are
++ *     made again as beaconCheckBlocksNeedRebuild does after a rebuild. A client that
++ *     gets its world before the file is read is told the beacons are loaded, as it would
++ *     have been (the bit only removes a developer banner from its screen).
++ *   - PhysX: the static world for ragdolls. Every use is behind nwEnabled(); starting it
++ *     later is the server's own "nxs_init_world" command. The geometry data it reads
++ *     is freed after it, as before.
++ * Both run on the main thread, before a tick: half a second after the first full world
++ * update went to a client (it is then loading), or after three seconds in which no client
++ * came. Only the first map load of a process leaves steps for later; a later load first
++ * finishes them. One record:
++ *   ARMPORT_DEFERRED_LOAD_V1 status=ok trigger=world_sent|idle|map_load|clock_error
++ *       waited_ms= beacons_ms= physx_ms=     (-1: not left for later, or no clock)
++ * Off by default: without the variable every step runs where it always did. Server only.
++ */
++#ifndef ARMPORT_DEFERRED_LOAD_H
++#define ARMPORT_DEFERRED_LOAD_H
++
++enum
++{
++    ARMPORT_DEFERRED_BEACONS = 1,
++    ARMPORT_DEFERRED_PHYSX = 2
++};
++
++/* beaconFile.c: beaconReload leaves the beacon file unread while this is set. */
++extern int armport_beacon_reload_without_file;
++
++void armportDeferredLoadBegin(int import, int do_beacon_reload);   /* groupLoadMap, first line of the load */
++int armportDeferredLoadTake(int step);                              /* 1: the step is left for later */
++int armportDeferredLoadPending(int step);                           /* 1: left for later and not run yet */
++void armportDeferredLoadWorldSent(void);                            /* worldSendUpdate, a full update */
++void armportDeferredLoadTick(void);                                 /* main loop, before svrTick */
++
++#ifdef ARMPORT_DEFERRED_LOAD_IMPLEMENTATION
++#include <stdio.h>
++#include <stdlib.h>
++#include <utilitieslib/utils/timing.h>
++
++#define ARMPORT_DEFERRED_AFTER_WORLD_MS 500
++#define ARMPORT_DEFERRED_IDLE_MS 3000
++
++static void armportDeferredDoBeacons(void);     /* the including file defines both */
++static void armportDeferredDoPhysx(void);
++
++static struct
++{
++    int enabled, loads, deferring, pending;
++    S64 armed, world_sent;
++} armport_deferred = { -1 };
++
++/* Both steps that are pending, each timed, and the record. */
++static void armportDeferredRun(const char* trigger, int waited_ms, S64 speed)
++{
++    S64 begin;
++    int beacons_ms = -1, physx_ms = -1;
++    int pending = armport_deferred.pending;
++
++    armport_deferred.pending = 0;
++    if (pending & ARMPORT_DEFERRED_BEACONS)
++    {
++        begin = timerCpuTicks64();
++        armportDeferredDoBeacons();
++        if (speed > 0)
++            beacons_ms = (int)((timerCpuTicks64() - begin) * 1000 / speed);
++    }
++    if (pending & ARMPORT_DEFERRED_PHYSX)
++    {
++        begin = timerCpuTicks64();
++        armportDeferredDoPhysx();
++        if (speed > 0)
++            physx_ms = (int)((timerCpuTicks64() - begin) * 1000 / speed);
++    }
++    printf("ARMPORT_DEFERRED_LOAD_V1 status=ok trigger=%s waited_ms=%d beacons_ms=%d physx_ms=%d\n",
++           trigger, waited_ms, beacons_ms, physx_ms);
++}
++
++void armportDeferredLoadBegin(int import, int do_beacon_reload)
++{
++    if (armport_deferred.enabled < 0)
++    {
++        const char* value = getenv("ARMPORT_DEFER_ZONE_LOADS");
++        armport_deferred.enabled = value && value[0] == '1' && value[1] == '\0';
++    }
++    /* A later map load in the same process: what the first one left is finished before it
++     * starts, as if it had never been left. Only the first load leaves steps for later. */
++    if (armport_deferred.pending)
++        armportDeferredRun("map_load", -1, timerCpuSpeed64());
++    armport_deferred.armed = armport_deferred.world_sent = 0;
++    armport_deferred.deferring = armport_deferred.enabled && !armport_deferred.loads && !import && do_beacon_reload;
++    ++armport_deferred.loads;
++}
++
++int armportDeferredLoadTake(int step)
++{
++    if (!armport_deferred.deferring)
++        return 0;
++    armport_deferred.pending |= step;
++    return 1;
++}
++
++int armportDeferredLoadPending(int step)
++{
++    return (armport_deferred.pending & step) != 0;
++}
++
++void armportDeferredLoadWorldSent(void)
++{
++    if (armport_deferred.pending && armport_deferred.armed && !armport_deferred.world_sent)
++    {
++        armport_deferred.world_sent = timerCpuTicks64();
++        if (!armport_deferred.world_sent)
++            armport_deferred.world_sent = 1;
++    }
++}
++
++void armportDeferredLoadTick(void)
++{
++    S64 now, speed;
++    const char* trigger;
++
++    if (!armport_deferred.pending)
++        return;
++    now = timerCpuTicks64();
++    if (!armport_deferred.armed)
++    {
++        armport_deferred.armed = now ? now : 1;     /* the first loop: the server is ready */
++        return;
++    }
++    speed = timerCpuSpeed64();
++    if (speed <= 0)
++        trigger = "clock_error";                    /* no clock to wait by: finish now */
++    else if (armport_deferred.world_sent)
++    {
++        if ((now - armport_deferred.world_sent) * 1000 / speed < ARMPORT_DEFERRED_AFTER_WORLD_MS)
++            return;
++        trigger = "world_sent";
++    }
++    else
++    {
++        if ((now - armport_deferred.armed) * 1000 / speed < ARMPORT_DEFERRED_IDLE_MS)
++            return;
++        trigger = "idle";
++    }
++    armportDeferredRun(trigger, speed > 0 ? (int)((now - armport_deferred.armed) * 1000 / speed) : -1, speed);
++}
++#endif
++
++#endif
+diff --git a/MapServer/src/group/groupnetdb.c b/MapServer/src/group/groupnetdb.c
+index 5fd1f2f..dd3e90f 100644
+--- a/MapServer/src/group/groupnetdb.c
++++ b/MapServer/src/group/groupnetdb.c
+@@ -60,6 +60,8 @@
+ #include "storyarc/missiongeoCommon.h"
+ #define ARMPORT_MAP_LOAD_PROFILE_IMPLEMENTATION
+ #include "group/armport_map_load_profile.h"
++#define ARMPORT_DEFERRED_LOAD_IMPLEMENTATION
++#include "group/armport_deferred_load.h"
+ 
+ 
+ int        no_update;
+@@ -153,6 +155,45 @@ int worldModified()
+     return t;
+ }
+ 
++/* The two steps a zone start may leave until after "Server ready" (armport_deferred_load.h).
++ * Each is the load's own statements, run either during the load or by the main loop. */
++static void armportLoadBeacons(void)
++{
++    loadstart_printf("loading beacons.. ");
++    beaconReload();
++    loadend_printf("done");
++}
++
++/* After "Server ready" the doors are already gathered (dbGatherMapLinkInfo), so their beacon
++ * connections are made again, as beaconCheckBlocksNeedRebuild does after a rebuild. */
++static void armportDeferredDoBeacons(void)
++{
++    armportLoadBeacons();
++    dbDoorCreateBeaconConnections();
++}
++
++static void armportDeferredDoPhysx(void)
++{
++#if NOVODEX
++
++    loadstart_printf("Starting novodex...");
++
++    if ( nwInitializeNovodex() )
++    {
++        loadend_printf("success");
++    }
++    else
++    {
++        loadend_printf("failed");
++    }
++
++    loadstart_printf("freeing all .geo files...");
++    modelFreeAllGeoData();
++    loadend_printf("done");
++
++#endif
++}
++
+ void groupLoadMap(char *mapname,int import,int do_beacon_reload)
+ {
+     void entKillAll();
+@@ -181,6 +222,7 @@ void groupLoadMap(char *mapname,int import,int do_beacon_reload)
+ 
+     loadstart_printf("loading map: %s..",mapname);
+     armportMapLoadBegin();
++    armportDeferredLoadBegin(import, do_beacon_reload);
+     entKillAll();
+     if (!import)
+     {
+@@ -343,9 +385,15 @@ void groupLoadMap(char *mapname,int import,int do_beacon_reload)
+         do_beacon_reload &&
+         server_state.levelEditor!=1)
+     {
+-        loadstart_printf("loading beacons.. ");
+-        beaconReload();
+-        loadend_printf("done");
++        if (armportDeferredLoadTake(ARMPORT_DEFERRED_BEACONS))
++        {
++            // A zone without a beacon file, until the main loop reads the file.
++            armport_beacon_reload_without_file = 1;
++            beaconReload();
++            armport_beacon_reload_without_file = 0;
++        }
++        else
++            armportLoadBeacons();
+     }
+ 
+     if(!server_state.beaconProcessOnLoad)
+@@ -379,24 +427,8 @@ void groupLoadMap(char *mapname,int import,int do_beacon_reload)
+     groupCreateAllCtris();
+     loadend_printf("done");
+ 
+-#if NOVODEX
+-
+-    loadstart_printf("Starting novodex...");
+-
+-    if ( nwInitializeNovodex() )
+-    {
+-        loadend_printf("success");
+-    }
+-    else
+-    {
+-        loadend_printf("failed");
+-    }
+-
+-    loadstart_printf("freeing all .geo files...");
+-    modelFreeAllGeoData();
+-    loadend_printf("done");
+-
+-#endif
++    if (!armportDeferredLoadTake(ARMPORT_DEFERRED_PHYSX))
++        armportDeferredDoPhysx();
+ }
+ 
+ static int diffColor(GroupDef *old,GroupDef *curr)
+diff --git a/MapServer/src/group/groupnetsend.c b/MapServer/src/group/groupnetsend.c
+index 34d79a7..e26f792 100644
+--- a/MapServer/src/group/groupnetsend.c
++++ b/MapServer/src/group/groupnetsend.c
+@@ -16,6 +16,7 @@
+ #include "bases/bases.h"
+ #include "gameSys/sgraid_V2.h"
+ #include "dbcomm/staticMapInfo.h"
++#include "group/armport_deferred_load.h"
+ 
+ int        world_id;
+ char    world_name[MAX_PATH];
+@@ -393,7 +394,7 @@ void worldSendUpdate(NetLink *link,int full_update)
+     else
+         pktSendBits(pak,1,0);
+ 
+-    pktSendBits(pak, 1, (beaconGetReadFileVersion()||server_state.levelEditor)? 1: 0); // Either beacons are loaded, or we explicitly told them not to load
++    pktSendBits(pak, 1, (beaconGetReadFileVersion()||server_state.levelEditor||armportDeferredLoadPending(ARMPORT_DEFERRED_BEACONS))? 1: 0); // Either beacons are loaded, or we explicitly told them not to load
+ 
+     if (g_isBaseRaid)
+     {
+@@ -462,6 +463,8 @@ void worldSendUpdate(NetLink *link,int full_update)
+     //sendAllBounds(pak);
+     pak->reliable=1;
+     pktSend(&pak,link);
++    if (full_update)
++        armportDeferredLoadWorldSent();
+ //assert(heapValidateAll());
+ }
+ 
+diff --git a/MapServer/src/svr/svr_init.c b/MapServer/src/svr/svr_init.c
+index 0a9f1e8..6b6bc11 100644
+--- a/MapServer/src/svr/svr_init.c
++++ b/MapServer/src/svr/svr_init.c
+@@ -77,6 +77,7 @@
+ #include "gridcoll/gridcache.h"
+ #include <utilitieslib/utils/wininclude.h>
+ #include "armport_spare_server.h"
++#include "group/armport_deferred_load.h"
+ #include <utilitieslib/utils/DirMonitor.h>
+ #include "dbcomm/characterTransfer.h"
+ #include "dbcomm/characterInfo.h"
+@@ -2261,6 +2262,7 @@ int __cdecl main(int argc,char **argv)
+         startProfilingCPU();
+ 
+         PERFINFO_AUTO_START("svrTick", 1);
++            armportDeferredLoadTick();
+             svrTick();
+         PERFINFO_AUTO_STOP_CHECKED("svrTick");
+ 

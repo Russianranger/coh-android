@@ -1,0 +1,53 @@
+diff --git a/libs/UtilitiesLib/src/utils/textparser.c b/libs/UtilitiesLib/src/utils/textparser.c
+index a80f0aa..e01e4de 100644
+--- a/libs/UtilitiesLib/src/utils/textparser.c
++++ b/libs/UtilitiesLib/src/utils/textparser.c
+@@ -7,6 +7,7 @@
+ #include "utilitieslib/utils/textparser.h"
+ #include "utilitieslib/components/earray.h"
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <string.h>
+ #include "utilitieslib/utils/fileutil.h"
+ #include <time.h>
+@@ -2240,6 +2241,27 @@ static FileScanAction DateCheckCallback(char* dir, struct _finddata32_t* data)
+     return FSA_EXPLORE_DIRECTORY;
+ }
+ 
++// ArmPort opt-in (ARMPORT_TRUSTED_BINS=1, read once). Reports at most 256
++// trusted bins; the caller has already matched the signature and parse CRC.
++static int armportTrustedBin(const char* persistfile)
++{
++    static int enabled = -1;
++    static unsigned int trusted = 0;
++    if (enabled < 0)
++    {
++        const char* value = getenv("ARMPORT_TRUSTED_BINS");
++        enabled = value && value[0] == '1' && value[1] == '\0';
++    }
++    if (!enabled)
++        return 0;
++    if (trusted < 256u)
++    {
++        ++trusted;
++        printf("ARMPORT_TRUSTED_BINS_V1 status=trusted ordinal=%u bin=%s\n", trusted, persistfile ? persistfile : "");
++    }
++    return 1;
++}
++
+ SimpleBufHandle ParserIsPersistNewer(const char* dir, const char* filemask, const char* persistfile, ParseTable pti[], DefineContext* defines)
+ {
+     FileList binlist = NULL;
+@@ -2263,6 +2285,12 @@ SimpleBufHandle ParserIsPersistNewer(const char* dir, const char* filemask, cons
+     if(isProductionMode())
+         return binfile;
+ 
++    // ArmPort: a prepared .bin whose signature and CRC matched above is used
++    // without the source tree scan and per-file date check. A missing or
++    // CRC-mismatched .bin still falls back to the text files.
++    if (armportTrustedBin(persistfile))
++        return binfile;
++
+     // read the file table from the bin file first
+     if (!FileListRead(&binlist, binfile))
+         goto IsPersist_Fail;

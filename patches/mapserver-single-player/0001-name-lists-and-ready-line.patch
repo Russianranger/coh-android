@@ -1,0 +1,47 @@
+diff --git a/MapServer/src/gameComm/NpcNames.c b/MapServer/src/gameComm/NpcNames.c
+index df2bb08..c024dc9 100644
+--- a/MapServer/src/gameComm/NpcNames.c
++++ b/MapServer/src/gameComm/NpcNames.c
+@@ -38,8 +38,12 @@ static void ReadNameFile(char *pch, char ***pearray)
+ 
+     while (walk && walk < mem + len) {
+         s = walk;
+-        walk = strchr(s, '\r');
+-        if (!walk) break;
++        // ArmPort: a name list ends its lines with CR LF on Windows and with LF alone in the
++        // data repository this game is built from. Looking only for CR found no line at all
++        // in an LF file, so every list was empty and no citizen had a name. A line now ends
++        // at the first CR or LF; a CR LF file reads exactly as before.
++        walk = s + strcspn(s, "\r\n");
++        if (!*walk) break;
+         while (*walk=='\r' || *walk=='\n') walk++;
+         s = strtok(s, " \t\r\n");
+         if (s && strncmp(s, "//", 2)!=0)
+diff --git a/MapServer/src/player/parseClientInput.c b/MapServer/src/player/parseClientInput.c
+index a44a752..ea3809f 100644
+--- a/MapServer/src/player/parseClientInput.c
++++ b/MapServer/src/player/parseClientInput.c
+@@ -816,6 +816,23 @@ int resumeCharacter(ClientLink* client, int ent_idx_cookie)
+         }
+     }
+ 
++    // ArmPort: one console line when a client has loaded the zone and its character resumed.
++    // The entity log line for the same event ("Connection:ResumeCharacter") reaches its file
++    // 60-90 s later (the map server batches log messages for 30 s and the log server holds
++    // them for 60 s to sort them), and that was the only way the app could learn the player
++    // was in the world (Thor 0.13.81: 73 and 74 s late). Evidence only: nothing reads it here.
++    {
++        FILETIME now;
++        unsigned __int64 ticks;
++
++        GetSystemTimeAsFileTime(&now);
++        ticks = ((unsigned __int64)now.dwHighDateTime << 32) | now.dwLowDateTime;
++        printf("ARMPORT_CLIENT_READY_V1 utc_ms=%I64u map_id=%d port=%d name=\"%s\" auth=\"%s\"\n",
++               (ticks - 116444736000000000ui64) / 10000, db_state.map_id,
++               (int)client->link->addr.sin_port, e->name, e->auth_name);
++        fflush(fileGetStdout());
++    }
++
+     return TRUE;
+ }
+ 

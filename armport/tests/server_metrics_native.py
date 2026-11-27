@@ -20,11 +20,1105 @@ CASES = ['window', 'disabled', 'files', 'thread', 'slow', 'clock', 'saturation',
          'startup', 'startup_disabled', 'startup_clock']
 NEGATIVE_ASSERTION = 's->ticks == 4 && s->file_calls == 4 && s->window_start == 0'
 STARTUP_NEGATIVE_ASSERTION = 'startup->enabled && startup->sequence == 17'
+TRUSTED_NEGATIVE_ASSERTION = 'scans == 0 && list_reads == 0'
+TEXTPARSER = 'libs/UtilitiesLib/src/utils/textparser.c'
+TRUSTED_CASES = ['trusted_bins', 'trusted_bins_disabled']
+SPARE_HEADER = 'MapServer/src/svr/armport_spare_server.h'
+SPARE_NEGATIVE_ASSERTION = 'reads == 3 && sleeps == 2 && db_state.map_id == 5001'
+SPARE_CASES = ['spare_server', 'spare_server_disabled', 'spare_server_invalid']
+GROUPFILELIB = 'Common/group/groupfilelib.c'
+OBJECT_LIBRARY_NEGATIVE_ASSERTION = 'scans == 0 && date_checks == 0'
+OBJECT_LIBRARY_CASES = ['object_library', 'object_library_disabled', 'object_library_rebuild']
+NWWRAPPER = 'Common/NovodeX/NwWrapper.cpp'
+PHYSX_HEADER = 'Common/NovodeX/armport_physx_cache.h'
+PHYSX_NEGATIVE_ASSERTION = 'cooks == 0 && creates == 4'
+PHYSX_CASES = ['physx_cache', 'physx_cache_disabled', 'physx_cache_damaged']
+INITCOMMON = 'Common/gameComm/initCommon.c'
+MESSAGESTORE = 'libs/UtilitiesLib/src/language/MessageStore.c'
+START_TREES_NEGATIVE_ASSERTION = 'requests == 4 && listings == 0 && date_checks == 0'
+START_TREES_CASES = ['start_trees', 'start_trees_disabled',
+                     'message_bins', 'message_bins_disabled', 'message_bins_fallback']
+LOAD_PROFILE_HEADER = 'Common/group/armport_map_load_profile.h'
+LOAD_PROFILE_SOURCES = ('Common/group/group.c', 'Common/group/groupgrid.c', 'MapServer/src/group/groupnetdb.c')
+LOAD_PROFILE_NEGATIVE_ASSERTION = ('armport_map_load.calls[ARMPORT_MAP_LOAD_BOUNDS_FILES] == 3 '
+                                   '&& armport_map_load.ticks[ARMPORT_MAP_LOAD_OTHER] == 360')
+LOAD_PROFILE_CASES = ['map_load_profile', 'map_load_profile_disabled']
+BOUNDS_NEGATIVE_ASSERTION = 'bounds_reads == 0 && bounds_writes == 0 && bounds_set == 2'
+BOUNDS_CASES = ['bounds_files', 'bounds_files_disabled']
+DEFERRED_HEADER = 'MapServer/src/group/armport_deferred_load.h'
+DEFERRED_SOURCES = ('MapServer/src/group/groupnetdb.c', 'MapServer/src/group/groupnetsend.c',
+                    'MapServer/src/beacon/beaconFile.c', 'MapServer/src/svr/svr_init.c')
+DEFERRED_NEGATIVE_ASSERTION = 'taken == 3 && beacons_in_load == 0 && physx_runs == 0'
+DEFERRED_CASES = ['deferred_load', 'deferred_load_idle', 'deferred_load_later_map', 'deferred_load_clock',
+                  'deferred_load_not_first', 'deferred_load_disabled']
+NPCNAMES = 'MapServer/src/gameComm/NpcNames.c'
+PARSECLIENTINPUT = 'MapServer/src/player/parseClientInput.c'
+NAMES_NEGATIVE_ASSERTION = 'count == 4'
+NAMES_CASES = ['npc_names', 'npc_names_crlf']
+READY_LINE = ('printf("ARMPORT_CLIENT_READY_V1 utc_ms=%I64u map_id=%d port=%d name=\\"%s\\" auth=\\"%s\\"\\n",')
 
 
 def test_cases(source):
     text = (source / 'MapServer/src/svr/svr_init.c').read_text()
-    return CASES + (['progress_markers'] if 'cohMapProgressMark(COH_MAP_STAGE_LOOP_PRE_TICK);' in text else [])
+    parser = (source / TEXTPARSER).read_text()
+    return (CASES + (['progress_markers'] if 'cohMapProgressMark(COH_MAP_STAGE_LOOP_PRE_TICK);' in text else [])
+            + (TRUSTED_CASES if 'static int armportTrustedBin(' in parser else [])
+            + (SPARE_CASES if (source / SPARE_HEADER).is_file() else [])
+            + (OBJECT_LIBRARY_CASES if 'static int armportTrustedObjectLibrary('
+               in (source / GROUPFILELIB).read_text() else [])
+            + (PHYSX_CASES if (source / PHYSX_HEADER).is_file() else [])
+            + (START_TREES_CASES if 'static int armportTrustedStartTrees('
+               in (source / INITCOMMON).read_text() else [])
+            + (LOAD_PROFILE_CASES if (source / LOAD_PROFILE_HEADER).is_file() else [])
+            + (BOUNDS_CASES if 'static int armportTrustedBounds(' in (source / GROUPFILELIB).read_text() else [])
+            + (DEFERRED_CASES if (source / DEFERRED_HEADER).is_file() else [])
+            + (NAMES_CASES if 'strcspn(s, "\\r\\n")' in (source / NPCNAMES).read_text() else []))
+
+
+def names_fixture(source):
+    '''Run the shipping ReadNameFile body over an LF, a CR LF and a CR name list.'''
+    text = (source / NPCNAMES).read_text()
+    return r'''
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+static const char *content;
+static char *names[16];
+static int count;
+static char *fileAlloc(const char *name, int *length) {
+    char *copy;
+    (void)name;
+    if (!content) return NULL;
+    copy = malloc(strlen(content) + 1);
+    strcpy(copy, content); *length = (int)strlen(content); return copy; }
+static int IsProfanity(const char *word, int length) { return length == 4 && !strncmp(word, "Darn", 4); }
+static void eaPush(char ***list, char *value) { (void)list; if (count < 16) names[count] = value; ++count; }
+''' + function(text, 'static void ReadNameFile(char *pch, char ***pearray)') + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+static int same(const char *a, const char *b, const char *c, const char *d) {
+    return count == 4 && !strcmp(names[0], a) && !strcmp(names[1], b) && !strcmp(names[2], c) && !strcmp(names[3], d); }
+int main(int argc, char **argv) {
+    const char *mode = argc > 1 ? argv[1] : "";
+    char **list = NULL, name[] = "names.txt";
+    if (!strcmp(mode, "npc_names")) {
+        /* The data repository's form: LF alone. A comment, a blank line, a refused word,
+         * a second word on a line, and a last line with no line end (as before, not read). */
+        content = "\n// Taken from a census\nJames\nJohn\n\nDarn\nRobert extra\nMichael\nlast";
+        ReadNameFile(name, &list);
+        CHECK(count == 4);
+        CHECK(same("James", "John", "Robert", "Michael"));
+        count = 0; content = NULL;                    /* no file: no names, no fault */
+        ReadNameFile(name, &list);
+        CHECK(count == 0);
+        count = 0; content = "";
+        ReadNameFile(name, &list);
+        CHECK(count == 0);
+        printf("names=4\n");
+        return 0;
+    }
+    if (!strcmp(mode, "npc_names_crlf")) {
+        content = "\r\n// Taken from a census\r\nJames\r\nJohn\r\n\r\nDarn\r\nRobert extra\r\nMichael\r\nlast";
+        ReadNameFile(name, &list);                    /* a Windows file reads as it always did */
+        CHECK(same("James", "John", "Robert", "Michael"));
+        count = 0; content = "James\rJohn\rRobert\rMichael\r";
+        ReadNameFile(name, &list);
+        CHECK(same("James", "John", "Robert", "Michael"));
+        printf("names=4\n");
+        return 0;
+    }
+    return 2;
+}
+'''
+
+
+def deferred_fixture(source):
+    '''Run the shipping deferred-load header over a recorded clock; check its call sites.'''
+    header = source / DEFERRED_HEADER
+    if header.is_file():
+        loader, sender, beacons, svr = ((source / name).read_text() for name in DEFERRED_SOURCES)
+        include = '#include "group/armport_deferred_load.h"\n'
+        assert loader.count(include) == sender.count(include) == svr.count(include) == 1 and include not in beacons
+        define = '#define ARMPORT_DEFERRED_LOAD_IMPLEMENTATION\n'          # one translation unit holds the state
+        assert loader.count(define + include) == 1 and define not in sender and define not in svr
+        load = function(loader, 'void groupLoadMap(char *mapname,int import,int do_beacon_reload)')
+        order = [load.index(text) for text in (
+            '    armportMapLoadBegin();\n    armportDeferredLoadBegin(import, do_beacon_reload);\n    entKillAll();\n',
+            '    loadend_printf("done"); // map load\n',
+            '        server_state.levelEditor!=1)\n    {\n'
+            '        if (armportDeferredLoadTake(ARMPORT_DEFERRED_BEACONS))\n        {\n',
+            '            armport_beacon_reload_without_file = 1;\n            beaconReload();\n'
+            '            armport_beacon_reload_without_file = 0;\n        }\n        else\n'
+            '            armportLoadBeacons();\n    }\n',
+            '        initMap(0);\n',
+            '    groupCreateAllCtris();\n    loadend_printf("done");\n\n'
+            '    if (!armportDeferredLoadTake(ARMPORT_DEFERRED_PHYSX))\n        armportDeferredDoPhysx();\n}')]
+        assert order == sorted(order), order
+        assert load.count('armportDeferredLoadTake(') == 2 and loader.count('armportDeferredLoadBegin(') == 1
+        # The statements the load used to run in place are now these three functions, unchanged.
+        assert function(loader, 'static void armportLoadBeacons(void)').split('{', 1)[1].split() == \
+            'loadstart_printf("loading beacons.. "); beaconReload(); loadend_printf("done"); }'.split()
+        assert function(loader, 'static void armportDeferredDoBeacons(void)').split('{', 1)[1].split() == \
+            'armportLoadBeacons(); dbDoorCreateBeaconConnections(); }'.split()
+        assert function(loader, 'static void armportDeferredDoPhysx(void)').split('{', 1)[1].split() == (
+            '#if NOVODEX loadstart_printf("Starting novodex..."); if ( nwInitializeNovodex() ) { '
+            'loadend_printf("success"); } else { loadend_printf("failed"); } '
+            'loadstart_printf("freeing all .geo files..."); modelFreeAllGeoData(); loadend_printf("done"); '
+            '#endif }').split()
+        assert (loader.count('beaconReload();') == 2 and loader.count('nwInitializeNovodex()') == 1
+                and loader.count('modelFreeAllGeoData();') == 1 and loader.count('dbDoorCreateBeaconConnections();') == 1)
+        send = function(sender, 'void worldSendUpdate(NetLink *link,int full_update)')
+        assert send.rstrip().endswith('    pak->reliable=1;\n    pktSend(&pak,link);\n    if (full_update)\n'
+                                      '        armportDeferredLoadWorldSent();\n//assert(heapValidateAll());\n}')
+        assert sender.count('armportDeferredLoadWorldSent();') == 1
+        # A world sent before the file is read still says the beacons are loaded.
+        assert send.count('    pktSendBits(pak, 1, (beaconGetReadFileVersion()||server_state.levelEditor'
+                          '||armportDeferredLoadPending(ARMPORT_DEFERRED_BEACONS))? 1: 0);') == 1
+        assert sender.count('armportDeferredLoadPending(') == 1
+        reload = function(beacons, 'void beaconReload(void)')
+        assert beacons.count('\nint armport_beacon_reload_without_file;\n') == 1
+        assert reload.count('armport_beacon_reload_without_file') == 2
+        assert ('    for(v = curBeaconFileVersion; !armport_beacon_reload_without_file && '
+                'v >= oldestAllowableBeaconFileVersion; v--){\n') in reload
+        assert '    if(!readFile && !armport_beacon_reload_without_file){\n' in reload
+        # With or without the file, the reload still clears, finds the volumes and starts the path code.
+        order = [reload.index(text) for text in ('    aiClearBeaconReferences();\n', '    beaconClearBeaconData(1, 1, 1);\n',
+                 '        aiFindPathLimitedVolumes();\n', '    beaconPathInit(1);\n')]
+        assert order == sorted(order), order
+        assert svr.count('            armportDeferredLoadTick();\n            svrTick();\n') == 1
+        assert svr.count('armportDeferredLoadTick();') == 1
+        body = header.read_text()
+        include = '#include <utilitieslib/utils/timing.h>\n'
+        assert body.count(include) == 1
+        support = '#define ARMPORT_DEFERRED_LOAD_IMPLEMENTATION\n' + body.replace(include, '')
+    else:
+        support = '''
+enum { ARMPORT_DEFERRED_BEACONS = 1, ARMPORT_DEFERRED_PHYSX = 2 };
+int armport_beacon_reload_without_file;
+static void armportDeferredDoBeacons(void);
+static void armportDeferredDoPhysx(void);
+static struct { int pending, loads; S64 armed, world_sent; } armport_deferred;
+static void armportDeferredLoadBegin(int import, int reload) { (void)import; (void)reload; (void)timerCpuSpeed64(); }
+static int armportDeferredLoadTake(int step) { (void)step; return 0; }
+static int armportDeferredLoadPending(int step) { (void)step; return 0; }
+static void armportDeferredLoadWorldSent(void) {}
+static void armportDeferredLoadTick(void) { (void)timerCpuTicks64(); if (armport_deferred.pending) armportDeferredDoBeacons(); }
+'''
+    return r'''
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define SERVER 1
+typedef long long S64;
+static S64 clock_now, clock_speed = 1000;            /* one tick is one millisecond */
+static S64 timerCpuTicks64(void) { return clock_now; }
+static S64 timerCpuSpeed64(void) { return clock_speed; }
+''' + support + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+static int beacons_in_load, beacons_late, physx_runs;
+static void armportDeferredDoBeacons(void) { ++beacons_late; clock_now += 4700; }
+static void armportDeferredDoPhysx(void) { ++physx_runs; clock_now += 1500; }
+/* groupLoadMap's use of the header: which steps this load left for the main loop. */
+static int load_map(int import, int do_beacon_reload) {
+    int taken = 0;
+    armportDeferredLoadBegin(import, do_beacon_reload);
+    if (do_beacon_reload) {
+        if (armportDeferredLoadTake(ARMPORT_DEFERRED_BEACONS)) taken |= 1; else ++beacons_in_load;
+    }
+    if (armportDeferredLoadTake(ARMPORT_DEFERRED_PHYSX)) taken |= 2; else armportDeferredDoPhysx();
+    return taken;
+}
+static void tick_at(S64 now) { clock_now = now; armportDeferredLoadTick(); }
+int main(int argc, char **argv) {
+    const char *mode = argc > 1 ? argv[1] : "";
+    int taken;
+    if (strcmp(mode, "deferred_load_disabled")) CHECK(setenv("ARMPORT_DEFER_ZONE_LOADS", "1", 1) == 0);
+    else unsetenv("ARMPORT_DEFER_ZONE_LOADS");
+    clock_now = 100;
+    if (!strcmp(mode, "deferred_load")) {
+        taken = load_map(0, 1);
+        CHECK(taken == 3 && beacons_in_load == 0 && physx_runs == 0);
+        CHECK(armportDeferredLoadPending(ARMPORT_DEFERRED_BEACONS) && armportDeferredLoadPending(ARMPORT_DEFERRED_PHYSX));
+        armportDeferredLoadWorldSent();                      /* before the main loop: not a client's world */
+        CHECK(armport_deferred.world_sent == 0);
+        tick_at(1000);                                       /* the first loop: the server is ready */
+        CHECK(armport_deferred.armed == 1000 && beacons_late == 0);
+        tick_at(1300);
+        armportDeferredLoadWorldSent();                      /* a client got its full world at 1300 */
+        clock_now = 1400; armportDeferredLoadWorldSent();    /* a second one does not move the time */
+        CHECK(armport_deferred.world_sent == 1300);
+        tick_at(1799); CHECK(beacons_late == 0 && physx_runs == 0);
+        tick_at(1800); CHECK(beacons_late == 1 && physx_runs == 1 && armport_deferred.pending == 0);
+        CHECK(!armportDeferredLoadPending(ARMPORT_DEFERRED_BEACONS) && !armportDeferredLoadPending(ARMPORT_DEFERRED_PHYSX));
+        tick_at(20000); CHECK(beacons_late == 1 && physx_runs == 1);         /* once */
+        taken = load_map(0, 1);                              /* a later load does every step itself */
+        CHECK(taken == 0 && beacons_in_load == 1 && physx_runs == 2 && beacons_late == 1);
+        tick_at(40000); CHECK(beacons_late == 1 && physx_runs == 2);
+        return 0;
+    }
+    if (!strcmp(mode, "deferred_load_idle")) {
+        taken = load_map(0, 1);
+        CHECK(taken == 3);
+        tick_at(1000); tick_at(3999); CHECK(beacons_late == 0);
+        tick_at(4000); CHECK(beacons_late == 1 && physx_runs == 1);          /* nobody came for 3 s */
+        armportDeferredLoadWorldSent(); tick_at(30000); CHECK(beacons_late == 1 && physx_runs == 1);
+        return 0;
+    }
+    if (!strcmp(mode, "deferred_load_later_map")) {
+        taken = load_map(0, 1);
+        CHECK(taken == 3);
+        tick_at(1000);
+        taken = load_map(0, 0);                              /* a second map before the steps ran */
+        CHECK(taken == 0 && beacons_late == 1 && physx_runs == 2 && beacons_in_load == 0);
+        CHECK(armport_deferred.pending == 0);
+        tick_at(90000); CHECK(beacons_late == 1 && physx_runs == 2);
+        return 0;
+    }
+    if (!strcmp(mode, "deferred_load_clock")) {
+        taken = load_map(0, 1);
+        CHECK(taken == 3);
+        tick_at(1000);
+        clock_speed = 0;
+        tick_at(1001); CHECK(beacons_late == 1 && physx_runs == 1);          /* no clock to wait by */
+        return 0;
+    }
+    if (!strcmp(mode, "deferred_load_not_first")) {
+        taken = load_map(1, 1);                              /* an import, or a load without beacons, */
+        CHECK(taken == 0 && beacons_in_load == 1 && physx_runs == 1);
+        taken = load_map(0, 1);                              /* and no load after the first */
+        CHECK(taken == 0 && beacons_in_load == 2 && physx_runs == 2);
+        tick_at(90000); CHECK(beacons_late == 0);
+        return 0;
+    }
+    if (!strcmp(mode, "deferred_load_disabled")) {
+        taken = load_map(0, 1);
+        CHECK(taken == 0 && beacons_in_load == 1 && physx_runs == 1);
+        CHECK(!armportDeferredLoadPending(ARMPORT_DEFERRED_BEACONS));
+        CHECK(setenv("ARMPORT_DEFER_ZONE_LOADS", "1", 1) == 0);              /* read once: still off */
+        tick_at(1000); armportDeferredLoadWorldSent(); tick_at(90000);
+        CHECK(beacons_late == 0 && physx_runs == 1);
+        return 0;
+    }
+    return 2;
+}
+'''
+
+
+def spare_fixture(source):
+    """Run the shipping spare-server header over recorded Win32 file, clock and map-list shims."""
+    svr = (source / 'MapServer/src/svr/svr_init.c').read_text()
+    header = source / SPARE_HEADER
+    if header.is_file():
+        # The shipping call site: after every shared load, before any DbServer traffic.
+        main = svr[svr.index('int __cdecl main(int argc,char **argv)'):]
+        order = [main.index(text) for text in ('    checkTsr();', '        cmdCfgLoad();\n        armportSpareWait();\n',
+                                               '        connectToDbserver(NO_TIMEOUT);')]
+        assert order == sorted(order) and svr.count('armportSpareWait();') == 1, order
+        assert svr.index('#include <utilitieslib/utils/wininclude.h>') < svr.index('#include "armport_spare_server.h"')
+        body = header.read_text()
+    else:
+        assert 'armportSpare' not in svr
+        body = 'static void armportSpareWait(void) {}\n'
+    return r'''
+#define _POSIX_C_SOURCE 200809L
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+typedef uint32_t DWORD; typedef void *HANDLE;
+#define INVALID_HANDLE_VALUE ((HANDLE)-1)
+#define GENERIC_READ 1
+#define FILE_SHARE_READ 1
+#define FILE_SHARE_WRITE 2
+#define FILE_SHARE_DELETE 4
+#define OPEN_EXISTING 3
+#define FILE_ATTRIBUTE_NORMAL 0
+typedef struct StaticMapInfo { int mapID, baseMapID, instanceID; } StaticMapInfo;
+static struct { int map_id, base_map_id, instance_id, cookie, local_server; } db_state;
+static const char *contents[8]; static const char *opened; static int reads, sleeps, ticks;
+static HANDLE CreateFileA(const char *path, int access, int share, void *security, int disposition, int flags, void *template) {
+    (void)access; (void)share; (void)security; (void)disposition; (void)flags; (void)template;
+    opened = path; return contents[reads] ? (HANDLE)1 : (++reads, INVALID_HANDLE_VALUE); }
+static int ReadFile(HANDLE handle, char *buffer, DWORD wanted, DWORD *got, void *overlapped) {
+    const char *text = contents[reads++]; size_t length = strlen(text);
+    (void)handle; (void)overlapped;
+    if (length > wanted) length = wanted;
+    memcpy(buffer, text, length); *got = (DWORD)length; return 1; }
+static void CloseHandle(HANDLE handle) { (void)handle; }
+static void Sleep(int milliseconds) { sleeps += milliseconds == 100; }
+static DWORD GetTickCount(void) { return (DWORD)(ticks += 250); }
+static DWORD GetCurrentProcessId(void) { return 42; }
+static StaticMapInfo clone = {5001, 50, 2};
+static StaticMapInfo *staticMapInfoFind(int id) { return id == 5001 ? &clone : NULL; }
+#define fileGetStdout() stdout      /* svr_init.c flushes its console this way */
+''' + body + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+int main(int argc, char **argv) {
+    const char *mode = argc > 1 ? argv[1] : "";
+    (void)contents; (void)opened; (void)clone; (void)staticMapInfoFind; (void)CreateFileA; (void)ReadFile;
+    (void)CloseHandle; (void)Sleep; (void)GetTickCount; (void)GetCurrentProcessId;
+    db_state.map_id = 71; db_state.base_map_id = 71;
+    if (!strcmp(mode, "spare_server")) {
+        CHECK(setenv("ARMPORT_SPARE_FILE", "Z:\\state\\spare-assign", 1) == 0);
+        contents[2] = "ARMPORT_SPARE_ASSIGN_V1 map_id=5001 cookie=7\n";      /* absent twice, then published */
+        armportSpareWait();
+        CHECK(reads == 3 && sleeps == 2 && db_state.map_id == 5001);
+        CHECK(db_state.base_map_id == 50 && db_state.instance_id == 2 && db_state.cookie == 7);
+        CHECK(opened && !strcmp(opened, "Z:\\state\\spare-assign"));
+        reads = 0; contents[0] = "ARMPORT_SPARE_ASSIGN_V1 map_id=71 cookie=2147483647\n"; contents[2] = NULL;
+        armportSpareWait();                                                  /* a zone without a base map */
+        CHECK(db_state.map_id == 71 && db_state.base_map_id == 71 && db_state.instance_id == 0);
+        CHECK(db_state.cookie == 2147483647);
+        return 0;
+    }
+    if (!strcmp(mode, "spare_server_disabled")) {
+        unsetenv("ARMPORT_SPARE_FILE");
+        armportSpareWait();
+        CHECK(setenv("ARMPORT_SPARE_FILE", "", 1) == 0);
+        armportSpareWait();
+        CHECK(reads == 0 && sleeps == 0 && db_state.map_id == 71 && db_state.cookie == 0);
+        return 0;
+    }
+    if (!strcmp(mode, "spare_server_invalid")) {
+        CHECK(setenv("ARMPORT_SPARE_FILE", "assign", 1) == 0);
+        contents[0] = argc > 2 ? argv[2] : "";
+        db_state.local_server = argc > 3;
+        armportSpareWait();                                                  /* must exit(3) itself */
+        return 0;
+    }
+    return 2;
+}
+'''
+
+
+def physx_fixture(source):
+    """Run the shipping nwCookAndLoadMeshShape and cache header over PhysX and Win32 file shims."""
+    wrapper = (source / NWWRAPPER).read_text()
+    header = source / PHYSX_HEADER
+    if header.is_file():
+        assert wrapper.count('#include "NovodeX/armport_physx_cache.h"') == 1
+        support = header.read_text() + '\n#define RESTART() memset(&armport_physx, 0, sizeof(armport_physx))\n'
+    else:
+        assert 'armportPhysx' not in wrapper
+        support = '#define RESTART() ((void)0)\n'
+    body = function(wrapper, 'void* nwCookAndLoadMeshShape(') + function(wrapper, 'void nwFreeStreamBuffer()')
+    return r'''
+#include <assert.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
+typedef uint32_t DWORD; typedef int32_t LONG; typedef int BOOL; typedef void *HANDLE;
+typedef struct { long long QuadPart; } LARGE_INTEGER;
+#define INVALID_HANDLE_VALUE ((HANDLE)(intptr_t)-1)
+#define INVALID_SET_FILE_POINTER ((DWORD)-1)
+#define GENERIC_READ 1u
+#define GENERIC_WRITE 2u
+#define FILE_SHARE_READ 1u
+#define OPEN_EXISTING 3u
+#define CREATE_ALWAYS 2u
+#define FILE_ATTRIBUTE_NORMAL 0x80u
+#define FILE_BEGIN 0u
+#define MOVEFILE_REPLACE_EXISTING 1u
+static int opens, open_now, fail_writes;
+static long long clock_ticks;
+static HANDLE CreateFileA(const char *path, DWORD access, DWORD share, void *security, DWORD how, DWORD flags, void *model) {
+    int fd;
+    (void)share; (void)security; (void)flags; (void)model;
+    fd = (access == GENERIC_WRITE && how == CREATE_ALWAYS) ? open(path, O_WRONLY | O_CREAT | O_TRUNC, 0600)
+        : (access == GENERIC_READ && how == OPEN_EXISTING) ? open(path, O_RDONLY) : -1;
+    if (fd < 0) return INVALID_HANDLE_VALUE;
+    ++opens; ++open_now;
+    return (HANDLE)(intptr_t)(fd + 1);
+}
+static int descriptor(HANDLE h) { assert(h && h != INVALID_HANDLE_VALUE); return (int)(intptr_t)h - 1; }
+static DWORD GetFileSize(HANDLE h, DWORD *high) { struct stat st; if (fstat(descriptor(h), &st)) abort(); *high = 0; return (DWORD)st.st_size; }
+static BOOL ReadFile(HANDLE h, void *bytes, DWORD length, DWORD *got, void *overlapped) {
+    ssize_t n = read(descriptor(h), bytes, length > 5000 ? 5000 : length);      /* short reads */
+    (void)overlapped;
+    if (n < 0)
+        return 0;
+    *got = (DWORD)n;
+    return 1; }
+static BOOL WriteFile(HANDLE h, const void *bytes, DWORD length, DWORD *wrote, void *overlapped) {
+    ssize_t n;
+    (void)overlapped;
+    if (fail_writes)
+        return 0;
+    n = write(descriptor(h), bytes, length > 7000 ? 7000 : length);              /* short writes */
+    if (n < 0)
+        return 0;
+    *wrote = (DWORD)n;
+    return 1; }
+static DWORD SetFilePointer(HANDLE h, LONG to, LONG *high, DWORD from) {
+    off_t at;
+    assert(!high && from == FILE_BEGIN);
+    at = lseek(descriptor(h), to, SEEK_SET);
+    return at < 0 ? INVALID_SET_FILE_POINTER : (DWORD)at; }
+static BOOL CloseHandle(HANDLE h) { --open_now; return close(descriptor(h)) == 0; }
+static BOOL MoveFileExA(const char *from, const char *to, DWORD flags) { assert(flags == MOVEFILE_REPLACE_EXISTING); return rename(from, to) == 0; }
+static BOOL DeleteFileA(const char *path) { return unlink(path) == 0; }
+static BOOL QueryPerformanceCounter(LARGE_INTEGER *value) { value->QuadPart = (clock_ticks += 1000); return 1; }
+static BOOL QueryPerformanceFrequency(LARGE_INTEGER *value) { value->QuadPart = 1000000; return 1; }
+
+typedef unsigned char NxU8; typedef unsigned int NxU32;
+struct NwSharedStream {
+    static NxU8 *pTempBuffer; static NxU32 uiBufferSize; NxU8 *pCursor;
+    NwSharedStream(const char *name, bool load) { (void)name; (void)load;
+        if (!pTempBuffer) { uiBufferSize = 1024; pTempBuffer = (NxU8 *)calloc(uiBufferSize, 1); }
+        pCursor = pTempBuffer; }
+    void resetByteCounter() { pCursor = pTempBuffer; }
+    void checkTempBufferSize(NxU32 size) {
+        if (pCursor + size >= pTempBuffer + uiBufferSize) {
+            NxU8 *old = pTempBuffer; NxU32 grown = uiBufferSize + (uiBufferSize >> 1) + size;
+            pTempBuffer = (NxU8 *)malloc(grown); memcpy(pTempBuffer, old, (size_t)(pCursor - old));
+            pCursor += pTempBuffer - old; uiBufferSize = grown; free(old); } }
+    static void freeTempBuffer() { free(pTempBuffer); pTempBuffer = NULL; }
+    NxU8 *getBuffer() { return pTempBuffer; }
+    int getBufferSize() { return (int)(pCursor - pTempBuffer); }
+    void storeBuffer(const void *bytes, NxU32 size) { checkTempBufferSize(size); memcpy(pCursor, bytes, size); pCursor += size; }
+};
+NxU8 *NwSharedStream::pTempBuffer; NxU32 NwSharedStream::uiBufferSize;
+struct NxTriangleMeshDesc { NxU32 numVertices, pointStrideBytes, numTriangles, triangleStrideBytes, flags; const void *points, *triangles; };
+struct NxTriangleMesh { NxU32 size; NxU8 *bytes; };
+struct NxTriangleMeshShapeDesc { NxTriangleMesh *meshData; };
+static int cooks, creates, refuse_creates;
+static void NxInitCooking() {}
+/* A stand-in cooker: a tag, the counts, then every input byte changed in a fixed way. */
+static bool NxCookTriangleMesh(const NxTriangleMeshDesc &desc, NwSharedStream &stream) {
+    NxU32 i, n; const NxU8 *p;
+    ++cooks;
+    stream.storeBuffer("COOK", 4); stream.storeBuffer(&desc.numVertices, 4); stream.storeBuffer(&desc.numTriangles, 4);
+    p = (const NxU8 *)desc.points; n = desc.numVertices * desc.pointStrideBytes;
+    for (i = 0; i < n; ++i) { NxU8 b = (NxU8)(p[i] ^ 0x5a); stream.storeBuffer(&b, 1); }
+    p = (const NxU8 *)desc.triangles; n = desc.numTriangles * desc.triangleStrideBytes;
+    for (i = 0; i < n; ++i) { NxU8 b = (NxU8)(p[i] + 7); stream.storeBuffer(&b, 1); }
+    return true; }
+static struct Sdk {
+    NxTriangleMesh *createTriangleMesh(NwSharedStream &stream) {
+        NxU32 verts, tris, size; NxTriangleMesh *mesh;
+        ++creates;
+        if (refuse_creates > 0) { --refuse_creates; return NULL; }
+        if (memcmp(stream.pCursor, "COOK", 4)) return NULL;
+        memcpy(&verts, stream.pCursor + 4, 4); memcpy(&tris, stream.pCursor + 8, 4);
+        size = 12 + verts * 12 + tris * 12;
+        mesh = new NxTriangleMesh; mesh->size = size; mesh->bytes = (NxU8 *)malloc(size);
+        memcpy(mesh->bytes, stream.pCursor, size); stream.pCursor += size;
+        return mesh; }
+} sdk, *nxSDK = &sdk;
+static struct { int meshShapeCount; } nx_state;
+#define PERFINFO_AUTO_START(name, n) ((void)0)
+#define PERFINFO_AUTO_STOP_START(name, n) ((void)0)
+#define PERFINFO_AUTO_STOP() ((void)0)
+''' + support + body + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+static float verts[3][600][3]; static int tris[3][900][3];
+static NxU8 *expected[3]; static NxU32 expected_size[3];
+static int same(void *shape, int which) {
+    NxTriangleMesh *mesh = ((NxTriangleMeshShapeDesc *)shape)->meshData;
+    return mesh && mesh->size == expected_size[which] && !memcmp(mesh->bytes, expected[which], mesh->size); }
+static void *load(int which) {
+    return nwCookAndLoadMeshShape("mesh", verts[which], 200 * (which + 1), 12, tris[which], 300 * (which + 1), 12); }
+/* One world load: three meshes, the second one twice (two definitions of one model). */
+static int world(void) {
+    void *a = load(0), *b = load(1), *c = load(1), *d = load(2);
+    int good = same(a, 0) && same(b, 1) && same(c, 1) && same(d, 2);
+    nwFreeStreamBuffer();
+    return good; }
+static long size_of(const char *path) { struct stat st; return stat(path, &st) ? -1 : (long)st.st_size; }
+int main(int argc, char **argv) {
+    const char *mode = argc > 1 ? argv[1] : "", *path = argc > 2 ? argv[2] : "";
+    char other[600];
+    int w, i, j;
+    long full;
+    for (w = 0; w < 3; ++w) {
+        for (i = 0; i < 600; ++i) for (j = 0; j < 3; ++j) verts[w][i][j] = (float)(w * 1000 + i * 3 + j) * 0.25f;
+        for (i = 0; i < 900; ++i) for (j = 0; j < 3; ++j) tris[w][i][j] = (i * 7 + j + w) % (200 * (w + 1)); }
+    /* What the cooker makes of each mesh, taken once without the cache. */
+    unsetenv("ARMPORT_PHYSX_CACHE");
+    for (w = 0; w < 3; ++w) {
+        NxTriangleMesh *mesh = ((NxTriangleMeshShapeDesc *)load(w))->meshData;
+        expected[w] = mesh->bytes; expected_size[w] = mesh->size; }
+    nwFreeStreamBuffer();
+    CHECK(cooks == 3 && creates == 3 && opens == 0);
+    RESTART(); cooks = creates = 0;
+    snprintf(other, sizeof(other), "%s.new", path);
+    if (!strcmp(mode, "physx_cache_disabled")) {
+        CHECK(world() && cooks == 4 && creates == 4 && opens == 0 && size_of(path) == -1);
+        return 0;
+    }
+    CHECK(setenv("ARMPORT_PHYSX_CACHE", path, 1) == 0);
+    if (!strcmp(mode, "physx_cache")) {
+        CHECK(world());                                   /* a first start: everything is cooked */
+        CHECK(cooks == 4 && creates == 4 && open_now == 0);
+        full = size_of(path);
+        RESTART(); cooks = creates = 0;
+        CHECK(world());                                   /* the next start: nothing is cooked */
+        CHECK(cooks == 0 && creates == 4);
+        /* Three records (the model used twice is stored once), and the file is not written again. */
+        CHECK(full == 24 + 3 * 36 + (long)(expected_size[0] + expected_size[1] + expected_size[2]));
+        CHECK(open_now == 0 && size_of(path) == full && size_of(other) == -1);
+        return 0;
+    }
+    if (!strcmp(mode, "physx_cache_damaged")) {
+        int fd; unsigned char byte;
+        long first = 24 + 36 + (long)expected_size[0], second = first + 36 + (long)expected_size[1];
+        CHECK(world() && cooks == 4);
+        full = size_of(path);
+        CHECK(full == second + 36 + (long)expected_size[2]);
+        /* One changed byte in the second record's stream: that mesh is cooked again, the others are read. */
+        fd = open(path, O_RDWR); CHECK(fd >= 0);
+        CHECK(pread(fd, &byte, 1, first + 36 + 100) == 1); byte ^= 1;
+        CHECK(pwrite(fd, &byte, 1, first + 36 + 100) == 1); close(fd);
+        RESTART(); cooks = creates = 0;
+        CHECK(world() && cooks == 2 && creates == 4 && open_now == 0);      /* both definitions of that model */
+        CHECK(size_of(path) == full + 36 + (long)expected_size[1]);
+        RESTART(); cooks = creates = 0;
+        CHECK(world() && cooks == 0 && open_now == 0);                      /* the new record comes first */
+        /* A stored stream this PhysX refuses is cooked again, and the game gets the same mesh. */
+        RESTART(); cooks = creates = 0; refuse_creates = 1;
+        CHECK(world() && cooks == 1 && creates == 5 && refuse_creates == 0 && open_now == 0);
+        RESTART(); cooks = creates = 0;
+        CHECK(world() && cooks == 0 && open_now == 0);
+        /* A file cut inside its last stream, then inside a record head: whole records before the cut are used. */
+        CHECK(unlink(path) == 0);
+        RESTART(); cooks = creates = 0;
+        CHECK(world() && cooks == 4 && size_of(path) == full);
+        CHECK(truncate(path, full - 10) == 0);
+        RESTART(); cooks = creates = 0;
+        CHECK(world() && cooks == 1 && open_now == 0);                      /* the third mesh */
+        CHECK(unlink(path) == 0);
+        RESTART(); cooks = creates = 0;
+        CHECK(world() && cooks == 4 && size_of(path) == full);
+        CHECK(truncate(path, first + 20) == 0);
+        RESTART(); cooks = creates = 0;
+        CHECK(world() && cooks == 3 && open_now == 0);                      /* all but the first mesh */
+        CHECK(size_of(path) == full);
+        /* Another program's file under this name is left unread and replaced. */
+        fd = open(path, O_WRONLY | O_TRUNC); CHECK(fd >= 0 && write(fd, "not a cooked mesh file, but long enough", 39) == 39); close(fd);
+        RESTART(); cooks = creates = 0;
+        CHECK(world() && cooks == 4 && open_now == 0);
+        CHECK(size_of(path) == full);
+        /* A file that cannot be written changes nothing for the game or the old file. */
+        CHECK(truncate(path, first) == 0);
+        RESTART(); cooks = creates = 0; fail_writes = 1;
+        CHECK(world() && cooks == 3 && open_now == 0);
+        CHECK(size_of(path) == first && size_of(other) == -1);
+        return 0;
+    }
+    return 2;
+}
+'''
+
+
+def bounds_fixture(source):
+    '''Run the shipping objectLibraryWriteBoundsFileIfDifferent body over recorded library shims.'''
+    text = (source / GROUPFILELIB).read_text()
+    helpers = ''.join(function(text, name) for name in (
+        'static int armportTrustedObjectLibrary(', 'static int armportTrustedBounds(') if name in text)
+    return r'''
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+typedef unsigned int U32;
+typedef struct GroupBounds { float min[3], max[3], mid[3], radius; } GroupBounds;
+typedef struct GroupDef { float min[3], max[3], mid[3], radius; const char *name; int is_public; } GroupDef;
+typedef struct GroupFile { int idx, count; GroupDef **defs; U32 bounds_checksum; const char *fullname; } GroupFile;
+typedef struct GroupFileEntry { U32 bounds_checksum; } GroupFileEntry;
+static GroupFileEntry library_entry;
+static int bounds_reads, bounds_writes, bounds_set, wrong_bounds, file_matches = 1, entry_known = 1;
+static U32 sum;
+static int groupIsPublic(GroupDef *def) { return def && def->is_public; }
+static void cryptAdler32Init(void) { sum = 1; }
+static void cryptAdler32Update(const unsigned char *data, int length) { while (length-- > 0) sum = sum * 31 + *data++; }
+static U32 cryptAdler32Final(void) { return sum; }
+static GroupFileEntry *objectLibraryEntryFromFname(const char *name) { (void)name; return entry_known ? &library_entry : NULL; }
+static void objectLibrarySetBounds(const char *name, GroupBounds *bounds) {
+    ++bounds_set;
+    if (strcmp(name, bounds->radius == 1 ? "first" : "third")) ++wrong_bounds; }
+static int objectLibraryLoadBoundsFile(const char *name, U32 checksum) {
+    (void)name;
+    if (library_entry.bounds_checksum == checksum) return 1;
+    ++bounds_reads;
+    if (!file_matches) return 0;
+    library_entry.bounds_checksum = checksum; return 1; }
+static void objectLibraryWriteBoundsFile(GroupFile *file) { (void)file; ++bounds_writes; }
+''' + helpers + function(text, 'void objectLibraryWriteBoundsFileIfDifferent(GroupFile *file)') + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+int main(int argc, char **argv) {
+    const char *mode = argc > 1 ? argv[1] : "";
+    GroupDef first = {{0}, {0}, {0}, 1, "first", 1}, second = {{0}, {0}, {0}, 2, "second", 0},
+             third = {{0}, {0}, {0}, 3, "third", 1};
+    GroupDef *defs[] = {&first, &second, &third};
+    GroupFile file = {1, 3, defs, 0, "object_library/a/a.txt"}, map = {0, 3, defs, 0, "maps/a/a.txt"};
+    U32 expected;
+    if (!strcmp(mode, "bounds_files")) {
+        CHECK(setenv("ARMPORT_TRUSTED_BINS", "1", 1) == 0);
+        objectLibraryWriteBoundsFileIfDifferent(&map);        /* the map's own file has no bounds file */
+        CHECK(bounds_reads == 0 && bounds_set == 0 && map.bounds_checksum == 0);
+        objectLibraryWriteBoundsFileIfDifferent(&file);
+        CHECK(bounds_reads == 0 && bounds_writes == 0 && bounds_set == 2);
+        CHECK(wrong_bounds == 0);                              /* each public def's own bounds, by its name */
+        expected = file.bounds_checksum;
+        CHECK(expected != 0 && library_entry.bounds_checksum == expected);
+        objectLibraryWriteBoundsFileIfDifferent(&file);        /* already known: nothing set again */
+        CHECK(bounds_reads == 0 && bounds_writes == 0 && bounds_set == 2);
+        third.radius = 4; third.name = "third";                /* changed bounds: a new checksum, set again */
+        objectLibraryWriteBoundsFileIfDifferent(&file);
+        CHECK(file.bounds_checksum != expected && library_entry.bounds_checksum == file.bounds_checksum);
+        CHECK(bounds_reads == 0 && bounds_writes == 0 && bounds_set == 4);
+        entry_known = 0;                                       /* no library entry: the ordinary path */
+        library_entry.bounds_checksum = 0; file_matches = 0;
+        objectLibraryWriteBoundsFileIfDifferent(&file);
+        CHECK(bounds_reads == 1 && bounds_writes == 1 && bounds_set == 4);
+        printf("bounds_set=%d bounds_reads=%d bounds_writes=%d\n", bounds_set, bounds_reads, bounds_writes);
+        return 0;
+    }
+    if (!strcmp(mode, "bounds_files_disabled")) {
+        unsetenv("ARMPORT_TRUSTED_BINS");
+        objectLibraryWriteBoundsFileIfDifferent(&file);        /* read and compared as before */
+        CHECK(bounds_reads == 1 && bounds_writes == 0 && bounds_set == 0);
+        objectLibraryWriteBoundsFileIfDifferent(&file);
+        CHECK(bounds_reads == 1 && bounds_writes == 0);
+        library_entry.bounds_checksum = 0; file_matches = 0;   /* a stale bounds file is written again */
+        objectLibraryWriteBoundsFileIfDifferent(&file);
+        CHECK(bounds_reads == 2 && bounds_writes == 1 && bounds_set == 0);
+        printf("bounds_set=%d bounds_reads=%d bounds_writes=%d\n", bounds_set, bounds_reads, bounds_writes);
+        return 0;
+    }
+    return 2;
+}
+'''
+
+
+def load_profile_fixture(source):
+    '''Run the shipping map load profile header over a recorded clock; check its call sites.'''
+    header = source / LOAD_PROFILE_HEADER
+    if header.is_file():
+        model, grid, loader = ((source / name).read_text() for name in LOAD_PROFILE_SOURCES)
+        include = '#include "group/armport_map_load_profile.h"\n'
+        assert model.count(include) == grid.count(include) == loader.count(include) == 1
+        # One translation unit holds the state; the other two only call into it.
+        define = '#define ARMPORT_MAP_LOAD_PROFILE_IMPLEMENTATION\n'
+        assert loader.count(define + include) == 1 and define not in model and define not in grid
+        find = function(model, 'Model * groupModelFind(const char *name)')
+        assert find.count('armportMapLoadEnter(ARMPORT_MAP_LOAD_MODEL_FIND);') == 1
+        assert find.count('    return ') == find.count('armportMapLoadLeave();') == 2      # every way out leaves
+        assert all(part.rstrip().endswith('PERFINFO_AUTO_STOP_CHECKED("groupModelFind");')
+                   and 'armportMapLoadLeave();' in part[-120:] for part in find.split('    return ')[:2])
+        activate = function(grid, 'void groupRefActivate(DefTracker *ref)')
+        order = [activate.index(text) for text in (
+            '        return;\n', '    armportMapLoadEnter(ARMPORT_MAP_LOAD_REF_ACTIVATE);\n',
+            '    groupLoadIfPreload(ref->def);\n', '    collGridAddGroup(&obj_grid,ref,ref);\n',
+            '    armportMapLoadLeave();\n')]
+        assert order == sorted(order) and activate.count('return') == 1, order
+        load = function(loader, 'void groupLoadMap(char *mapname,int import,int do_beacon_reload)')
+        order = [load.index(text) for text in (
+            '    loadstart_printf("loading map: %s..",mapname);\n    armportMapLoadBegin();\n',
+            '    armportMapLoadEnter(ARMPORT_MAP_LOAD_RECALC_BOUNDS);\n    groupRecalcAllBounds();\n    armportMapLoadLeave();\n',
+            '            armportMapLoadEnter(ARMPORT_MAP_LOAD_BOUNDS_FILES);\n'
+            '            objectLibraryWriteBoundsFileIfDifferent(group_info.files[i]);\n            armportMapLoadLeave();\n',
+            '    armportMapLoadEnter(ARMPORT_MAP_LOAD_SCENE);\n',
+            '        sceneLoad(group_info.scenefile);\n    armportMapLoadLeave();\n',
+            '        armportMapLoadEnter(ARMPORT_MAP_LOAD_SPAWN_AREAS);\n        spawnAreaReload(pchMap);\n'
+            '        armportMapLoadLeave();\n',
+            '    loadend_printf("done"); // map load\n    armportMapLoadReport();\n')]
+        assert order == sorted(order), order
+        assert (loader.count('armportMapLoadBegin();') == loader.count('armportMapLoadReport();') == 1
+                and loader.count('armportMapLoadEnter(') == loader.count('armportMapLoadLeave();') == 4)
+        # No way out of the load between its first and last line.
+        section = load[load.index('    armportMapLoadBegin();\n'):load.index('    armportMapLoadReport();\n')]
+        assert 'return' not in section
+        body = header.read_text()
+        include = '#include <utilitieslib/utils/timing.h>\n'
+        assert body.count(include) == 1
+        support = '#define ARMPORT_MAP_LOAD_PROFILE_IMPLEMENTATION\n' + body.replace(include, '')
+    else:
+        support = '''
+enum { ARMPORT_MAP_LOAD_OTHER, ARMPORT_MAP_LOAD_MODEL_FIND, ARMPORT_MAP_LOAD_REF_ACTIVATE,
+       ARMPORT_MAP_LOAD_RECALC_BOUNDS, ARMPORT_MAP_LOAD_BOUNDS_FILES, ARMPORT_MAP_LOAD_SCENE,
+       ARMPORT_MAP_LOAD_SPAWN_AREAS, ARMPORT_MAP_LOAD_STEPS };
+static struct { int active; S64 ticks[ARMPORT_MAP_LOAD_STEPS]; unsigned int calls[ARMPORT_MAP_LOAD_STEPS]; } armport_map_load;
+static void armportMapLoadBegin(void) { (void)timerCpuTicks64(); (void)timerCpuSpeed64(); }
+static void armportMapLoadEnter(int step) { (void)step; }
+static void armportMapLoadLeave(void) {}
+static void armportMapLoadReport(void) {}
+'''
+    return r'''
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define SERVER 1
+typedef long long S64;
+static S64 clock_now, clock_speed = 1000;            /* one tick is one millisecond */
+static S64 timerCpuTicks64(void) { return clock_now; }
+static S64 timerCpuSpeed64(void) { return clock_speed; }
+''' + support + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+static void step(int name, S64 until) { armportMapLoadEnter(name); clock_now = until; armportMapLoadLeave(); }
+int main(int argc, char **argv) {
+    const char *mode = argc > 1 ? argv[1] : "";
+    int i;
+    if (!strcmp(mode, "map_load_profile")) {
+        CHECK(setenv("ARMPORT_SERVER_METRICS", "1", 1) == 0);
+        step(ARMPORT_MAP_LOAD_MODEL_FIND, 50);                       /* outside a load: not counted */
+        armportMapLoadBegin();                                       /* the load begins at 50 */
+        clock_now = 150;                                             /* other 100 */
+        armportMapLoadEnter(ARMPORT_MAP_LOAD_MODEL_FIND);
+        clock_now = 180;                                             /* model_find 30 */
+        step(ARMPORT_MAP_LOAD_REF_ACTIVATE, 185);                    /* a nested step: 5, not the model's */
+        clock_now = 200;                                             /* model_find 15 more */
+        armportMapLoadLeave();
+        clock_now = 450;                                             /* other 250 */
+        step(ARMPORT_MAP_LOAD_RECALC_BOUNDS, 470);
+        for (i = 0; i < 3; i++) step(ARMPORT_MAP_LOAD_BOUNDS_FILES, clock_now + 2);
+        step(ARMPORT_MAP_LOAD_SCENE, 481);
+        step(ARMPORT_MAP_LOAD_SPAWN_AREAS, 550);
+        clock_now = 560;                                             /* other 10 */
+        armportMapLoadLeave();                                       /* one leave too many changes nothing */
+        armportMapLoadReport();
+        CHECK(armport_map_load.calls[ARMPORT_MAP_LOAD_BOUNDS_FILES] == 3 && armport_map_load.ticks[ARMPORT_MAP_LOAD_OTHER] == 360);
+        CHECK(armport_map_load.active == 0);
+        step(ARMPORT_MAP_LOAD_MODEL_FIND, 600);                      /* after the load: not counted */
+        armportMapLoadReport();                                      /* and no second record */
+        CHECK(armport_map_load.calls[ARMPORT_MAP_LOAD_MODEL_FIND] == 1);
+        armportMapLoadBegin();                                       /* a second load starts from zero */
+        for (i = 0; i < 40; i++) { armportMapLoadEnter(ARMPORT_MAP_LOAD_REF_ACTIVATE); ++clock_now; }
+        for (i = 0; i < 40; i++) armportMapLoadLeave();              /* deeper than the stack: still balanced */
+        armportMapLoadReport();
+        armportMapLoadBegin();
+        clock_speed = 0;
+        armportMapLoadReport();
+        return 0;
+    }
+    if (!strcmp(mode, "map_load_profile_disabled")) {
+        unsetenv("ARMPORT_SERVER_METRICS");
+        armportMapLoadBegin();
+        step(ARMPORT_MAP_LOAD_MODEL_FIND, 50);
+        armportMapLoadReport();
+        CHECK(armport_map_load.active == 0 && armport_map_load.calls[ARMPORT_MAP_LOAD_MODEL_FIND] == 0);
+        CHECK(setenv("ARMPORT_SERVER_METRICS", "1", 1) == 0);        /* read once: still off */
+        armportMapLoadBegin();
+        armportMapLoadReport();
+        return 0;
+    }
+    return 2;
+}
+'''
+
+
+def start_trees_fixture(source):
+    '''Run the shipping cacheRelevantFolders and LoadMessageStore bodies over recorded shims.'''
+    common = (source / INITCOMMON).read_text()
+    store = (source / MESSAGESTORE).read_text()
+    helpers = ''.join(function(text, name) for text, name in (
+        (common, 'static int armportTrustedStartTrees('), (store, 'static int armportTrustedMessageBins('))
+        if name in text)
+    return r'''
+#define _POSIX_C_SOURCE 200809L
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define SERVER 1
+#define MAX_PATH 260
+#define OUTPUT_DEBUG 0
+typedef int __time32_t;
+typedef struct SharedHeapHandle { int unused; } SharedHeapHandle;
+typedef enum { SHAR_Error, SHAR_DataAcquired, SHAR_FirstCaller } SharedHeapAcquireResult;
+typedef enum { MSLOAD_DEFAULT = 0, MSLOAD_RELOADING = 1, MSLOAD_NOFILES = 2, MSLOAD_SERVERONLY = 4,
+               MSLOAD_FORCEBINS = 8 } MessageStoreLoadFlags;
+typedef struct MessageStore { SharedHeapHandle *pHandle; int localeID; int from_bin; int texts; } MessageStore;
+typedef struct MSFileInfo { __time32_t time_write; char filename[16]; } MSFileInfo;
+static struct { int unused; } *folder_cache;
+static int quickload;
+static char requested[8][64];
+static int requests, listings, date_checks, bin_reads, bin_writes, text_loads, loaded_without_list, created, destroyed;
+static int bin_exists = 1, read_works = 1, development = 1;
+static MSFileInfo listed[2] = {{1, "texts/a.ms"}, {1, "texts/b.ms"}};
+static MSFileInfo *listed_rows[2] = {&listed[0], &listed[1]};
+static void writeConsole(int level, const char *format, ...) { (void)level; (void)format; }
+static void FolderCacheRequestTree(void *cache, const char *path) {
+    (void)cache; if (requests < 8) snprintf(requested[requests], sizeof requested[0], "%s", path); ++requests; }
+static MessageStore *createMessageStore(MessageStoreLoadFlags flags) { (void)flags; ++created; return calloc(1, sizeof(MessageStore)); }
+static void destroyMessageStore(MessageStore *store) { ++destroyed; free(store); }
+static int isDevelopmentMode(void) { return development; }
+static int isProductionMode(void) { return !development; }
+static const char *locGetAlpha2(int locid) { (void)locid; return "en"; }
+static char *fileLocateRead(const char *path, char *buffer) {
+    if (!bin_exists) return NULL;
+    snprintf(buffer, MAX_PATH, "%s", path); return buffer; }
+static char *fileLocateWrite(const char *path, char *buffer) { snprintf(buffer, MAX_PATH, "%s", path); return buffer; }
+static void FatalErrorFilenamef(const char *file, const char *format, ...) { (void)file; (void)format; abort(); }
+static void ErrorFilenamef(const char *file, const char *format, ...) { (void)file; (void)format; abort(); }
+static void Sleep(int ms) { (void)ms; abort(); }
+#define STR_COMBINE_SSD(buffer, a, b, d) snprintf(buffer, sizeof(buffer), "%s%s%d", a, b, d)
+static SharedHeapAcquireResult sharedHeapAcquire(SharedHeapHandle **handle, const char *name) {
+    (void)handle; (void)name; abort(); }
+static void setStorePointersToSharedHeap(MessageStore *store) { (void)store; }
+static bool msMoveStoreIntoSharedHeap(MessageStore *store) { (void)store; return true; }
+static void msSetPrepend(MessageStore *store, const char *prepend) { (void)store; (void)prepend; }
+static void msGetDirFilesList(MSFileInfo ***dirfiles, char **dirs) { (void)dirs; ++listings; *dirfiles = listed_rows; }
+static int eaSize(MSFileInfo ***rows) { return *rows ? 2 : 0; }
+static void eaDestroyEx(MSFileInfo ***rows, void *destructor) { (void)destructor; *rows = NULL; }
+static __time32_t fileLastChanged(const char *path) { (void)path; ++date_checks; return 2; }
+static int msReadBin(const char *name, MessageStore *store) { (void)name; ++bin_reads; store->from_bin = read_works; return read_works; }
+static int msWriteBin(const char *name, MessageStore *store) { (void)name; (void)store; ++bin_writes; return 1; }
+static void initMessageStore(MessageStore *store, int locid, const char *prepend) { (void)store; (void)locid; (void)prepend; }
+static void msAddMessages(MessageStore *store, MessageStoreLoadFlags flags, const char *messages, const char *types) {
+    (void)flags; (void)types; ++text_loads; ++store->texts;
+    if (strcmp(messages, "texts/a.ms") && strcmp(messages, "texts/b.ms") && strcmp(messages, "texts/x.ms")) ++loaded_without_list; }
+static void mkdirtree(char *path) { (void)path; }
+''' + helpers + function(common, 'void cacheRelevantFolders() {') + function(store, 'void LoadMessageStore( MessageStore **pStore,') + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+static char *files[] = {"texts/x.ms", NULL, NULL};
+static char *dirs[] = {"texts/English", NULL};
+static MessageStore *load(char *persist, MessageStoreLoadFlags flags) {
+    MessageStore *store = NULL;
+    LoadMessageStore(&store, files, dirs, 0, NULL, persist, NULL, flags);
+    return store;
+}
+int main(int argc, char **argv) {
+    const char *mode = argc > 1 ? argv[1] : "";
+    MessageStore *store;
+    if (!strcmp(mode, "start_trees") || !strcmp(mode, "start_trees_disabled")) {
+        int trusted = !strcmp(mode, "start_trees");
+        if (trusted) CHECK(setenv("ARMPORT_TRUSTED_BINS", "1", 1) == 0); else unsetenv("ARMPORT_TRUSTED_BINS");
+        cacheRelevantFolders();
+        if (trusted) {
+            store = load("messages", MSLOAD_SERVERONLY);
+            CHECK(requests == 4 && listings == 0 && date_checks == 0);
+            CHECK(store && store->from_bin == 1);
+            free(store);
+            CHECK(!strcmp(requested[0], "player_library/animations/male") && !strcmp(requested[3], "player_library/animations/Vahzilok"));
+        } else {
+            CHECK(requests == 6 && !strcmp(requested[0], "Defs") && !strcmp(requested[1], "Menu"));
+            CHECK(!strcmp(requested[2], "player_library/animations/male") && !strcmp(requested[5], "player_library/animations/Vahzilok"));
+        }
+        requests = 0; quickload = 1;                      /* the game's own quickload switch is as before */
+        cacheRelevantFolders();
+        CHECK(requests == (trusted ? 0 : 2));
+        return 0;
+    }
+    if (!strcmp(mode, "message_bins")) {
+        CHECK(setenv("ARMPORT_TRUSTED_BINS", "1", 1) == 0);
+        store = load("messages", MSLOAD_SERVERONLY);
+        CHECK(store && store->from_bin == 1 && store->texts == 0);
+        CHECK(listings == 0 && date_checks == 0 && bin_reads == 1 && text_loads == 0 && bin_writes == 0);
+        free(store);
+        store = load("menuMessages", MSLOAD_DEFAULT);       /* a client-and-server bin: the same */
+        CHECK(store && store->from_bin == 1 && listings == 0 && date_checks == 0 && bin_reads == 2);
+        free(store);
+        store = load("messages", MSLOAD_SERVERONLY | MSLOAD_RELOADING);   /* a reload reads the text files */
+        CHECK(store && store->texts == 3 && listings == 1 && bin_reads == 2 && bin_writes == 1);
+        free(store);
+        store = load("messages", MSLOAD_SERVERONLY | MSLOAD_FORCEBINS);   /* forced bins: listed, rebuilt */
+        CHECK(store && store->texts == 3 && listings == 2 && bin_reads == 2 && bin_writes == 2);
+        free(store);
+        store = load(NULL, MSLOAD_DEFAULT);                 /* no bin asked for: the text files */
+        CHECK(store && store->texts == 3 && listings == 3 && bin_reads == 2 && bin_writes == 2);
+        free(store);
+        development = 0;                                    /* production mode is as before */
+        store = load("messages", MSLOAD_SERVERONLY);
+        CHECK(store && store->from_bin == 1 && listings == 3 && date_checks == 0 && bin_reads == 3);
+        free(store);
+        CHECK(loaded_without_list == 0);
+        return 0;
+    }
+    if (!strcmp(mode, "message_bins_disabled")) {
+        unsetenv("ARMPORT_TRUSTED_BINS");
+        store = load("messages", MSLOAD_SERVERONLY);
+        CHECK(store && store->from_bin == 1 && store->texts == 0);
+        CHECK(listings == 1 && date_checks == 2 && bin_reads == 1 && text_loads == 0);
+        free(store);
+        return 0;
+    }
+    if (!strcmp(mode, "message_bins_fallback")) {
+        CHECK(setenv("ARMPORT_TRUSTED_BINS", "1", 1) == 0);
+        read_works = 0;                                     /* a bin msReadBin refuses: list, load text, write */
+        store = load("messages", MSLOAD_SERVERONLY);
+        CHECK(store && store->from_bin == 0 && store->texts == 3);
+        CHECK(listings == 1 && date_checks == 0 && bin_reads == 1 && text_loads == 3 && bin_writes == 1);
+        CHECK(created == 2 && destroyed == 1);
+        free(store);
+        bin_exists = 0;                                     /* no bin: the same without a read */
+        store = load("messages", MSLOAD_SERVERONLY);
+        CHECK(store && store->texts == 3 && listings == 2 && bin_reads == 1 && text_loads == 6 && bin_writes == 2);
+        free(store);
+        CHECK(loaded_without_list == 0);
+        return 0;
+    }
+    return 2;
+}
+'''
+
+
+def object_library_fixture(source):
+    """Run the shipping UpdateObjectLibraryBin body over recorded file-list and parser shims."""
+    text = (source / GROUPFILELIB).read_text()
+    name = 'static int armportTrustedObjectLibrary('
+    helper = function(text, name) if name in text else ''
+    body = function(text, 'static int UpdateObjectLibraryBin(')
+    return r'''
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+typedef struct SimpleBuf { int pos; } *SimpleBufHandle;
+typedef struct ParseTable { int unused; } ParseTable;
+typedef struct FileEntry { const char *path; } FileEntry;
+typedef FileEntry **FileList;
+struct _finddata32_t { unsigned attrib; char name[260]; };
+typedef int FileScanAction;
+#define PARSE_SIG "Parse6"
+#define verbose_printf(...) ((void)0)
+static struct SimpleBuf bin_buffer;
+static FileEntry *disk_list[1];
+static ParseTable GroupNamesSaveInfo[1];
+static struct { int unused; } group_names;
+static FileList object_lib_disk = 0;
+static int scans, date_checks, list_reads, bin_reads, closes, rebuilds, writes, rebuilt_without_list;
+static int bin_exists = 1, crc_matches = 1, read_works = 1;
+static FileScanAction populateFileList(char *dir, struct _finddata32_t *data) { (void)dir; (void)data; return 0; }
+static void FileListCreate(FileList *list) { *list = disk_list; }
+static void FileListDestroy(FileList *list) { *list = NULL; }
+static void fileScanAllDataDirs(const char *dir, FileScanAction (*callback)(char *, struct _finddata32_t *)) {
+    if (strcmp(dir, "object_library") || callback != populateFileList) abort();
+    ++scans; }
+static int fileExists(const char *path) { (void)path; return bin_exists; }
+static int ParserCRCFromParseInfo(ParseTable pti[], void *defines) { (void)pti; (void)defines; return 7; }
+static SimpleBufHandle SerializeReadOpen(const char *name, const char *type, int crc, int ignore_crc) {
+    (void)name; (void)type; return (crc_matches && (crc == 7 || ignore_crc)) ? &bin_buffer : NULL; }
+static int SimpleBufTell(SimpleBufHandle h) { return h->pos; }
+static void SimpleBufSeek(SimpleBufHandle h, int pos, int whence) { (void)whence; h->pos = pos; }
+static void SerializeClose(SimpleBufHandle h) { (void)h; ++closes; }
+static int FileListRead(FileList *list, SimpleBufHandle h) { (void)h; ++list_reads; *list = NULL; return 1; }
+static int FileListIsBinUpToDate(FileList *bin, FileList *disk) { (void)bin; (void)disk; ++date_checks; return 1; }
+static int ParserReadBinaryFile(SimpleBufHandle h, void *a, ParseTable pti[], void *data, void *b, void *c) {
+    (void)h; (void)a; (void)pti; (void)data; (void)b; (void)c; ++bin_reads; return read_works; }
+static void loadGroupNamesFromFileList(FileList *list) { ++rebuilds; if (*list != disk_list) ++rebuilt_without_list; }
+static void ParserWriteBinaryFile(const char *name, ParseTable pti[], void *data, FileList *list, void *a, int b, int c) {
+    (void)name; (void)pti; (void)data; (void)list; (void)a; (void)b; (void)c; ++writes; }
+''' + helper + body + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+int main(int argc, char **argv) {
+    const char *mode = argc > 1 ? argv[1] : "";
+    if (!strcmp(mode, "object_library")) {
+        CHECK(setenv("ARMPORT_TRUSTED_BINS", "1", 1) == 0);
+        CHECK(UpdateObjectLibraryBin(0, 0) == 1);
+        CHECK(scans == 0 && date_checks == 0);
+        CHECK(list_reads == 1 && bin_reads == 1 && rebuilds == 0 && writes == 0);
+        CHECK(UpdateObjectLibraryBin(0, 1) == 1);          /* a forced rebuild check still scans and compares */
+        CHECK(scans == 1 && date_checks == 1 && rebuilds == 0);
+        CHECK(UpdateObjectLibraryBin(1, 0) == 1);          /* production mode is as before: no scan */
+        CHECK(scans == 1 && date_checks == 1);
+        return 0;
+    }
+    if (!strcmp(mode, "object_library_disabled")) {
+        unsetenv("ARMPORT_TRUSTED_BINS");
+        CHECK(UpdateObjectLibraryBin(0, 0) == 1);
+        CHECK(scans == 1 && date_checks == 1 && rebuilds == 0);
+        return 0;
+    }
+    if (!strcmp(mode, "object_library_rebuild")) {
+        CHECK(setenv("ARMPORT_TRUSTED_BINS", "1", 1) == 0);
+        bin_exists = 0;                                     /* no bin: scan, rebuild from the list, write */
+        CHECK(UpdateObjectLibraryBin(0, 0) == 0);
+        CHECK(scans == 1 && rebuilds == 1 && writes == 1 && rebuilt_without_list == 0);
+        bin_exists = 1; crc_matches = 0;                    /* another parse table: the same */
+        CHECK(UpdateObjectLibraryBin(0, 0) == 0);
+        CHECK(scans == 2 && rebuilds == 2 && writes == 2 && rebuilt_without_list == 0);
+        crc_matches = 1; read_works = 0;                    /* unreadable data: the same */
+        CHECK(UpdateObjectLibraryBin(0, 0) == 0);
+        CHECK(scans == 3 && rebuilds == 3 && writes == 3 && rebuilt_without_list == 0 && date_checks == 0);
+        return 0;
+    }
+    return 2;
+}
+'''
+
+
+def trusted_fixture(source):
+    """Run the shipping ParserIsPersistNewer body over recorded parser shims."""
+    text = (source / TEXTPARSER).read_text()
+    helper = function(text, 'static int armportTrustedBin(') if 'static int armportTrustedBin(' in text else ''
+    body = function(text, 'SimpleBufHandle ParserIsPersistNewer(')
+    return r'''
+#define _POSIX_C_SOURCE 200809L
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+typedef int __time32_t;
+typedef struct SimpleBuf { int pos; } *SimpleBufHandle;
+typedef struct ParseTable { int unused; } ParseTable;
+typedef struct DefineContext DefineContext;
+typedef struct FileEntry { const char *path; __time32_t date; int seen; } FileEntry;
+typedef FileEntry **FileList;
+struct _finddata32_t { unsigned attrib; char name[260]; __time32_t time_write; };
+typedef int FileScanAction;
+#define PARSE_SIG "Parse6"
+#define verbose_printf(...) ((void)0)
+static struct SimpleBuf bin_buffer;
+static FileList lf_filedates;
+static int scans, list_reads, closes, production, crc_matches = 1;
+static const char *g_StdAdditionalFilePrefixes[] = {""};
+static int ParseTableCRC(ParseTable pti[], DefineContext *defines) { (void)pti; (void)defines; return 7; }
+static SimpleBufHandle SerializeReadOpen(const char *name, const char *type, int crc, int ignore_crc) {
+    (void)name; (void)type; return (crc_matches && (crc == 7 || ignore_crc)) ? &bin_buffer : NULL; }
+static int isProductionMode(void) { return production; }
+static int SimpleBufTell(SimpleBufHandle h) { return h->pos; }
+static void SimpleBufSeek(SimpleBufHandle h, int pos, int whence) { (void)whence; h->pos = pos; }
+static void SerializeClose(SimpleBufHandle h) { (void)h; ++closes; }
+static int FileListRead(FileList *list, SimpleBufHandle h) { (void)h; ++list_reads; *list = NULL; return 1; }
+static void FileListCreate(FileList *list) { *list = NULL; }
+static void FileListDestroy(FileList *list) { *list = NULL; }
+static void FileListInsert(FileList *list, const char *path, __time32_t date) { (void)list; (void)path; (void)date; }
+static FileEntry *FileListFind(FileList *list, const char *path) { (void)list; (void)path; return NULL; }
+static int eaSize(FileList *list) { (void)list; return 0; }
+static char *addFilePrefix(const char *mask, const char *prefix) { (void)prefix; return (char *)mask; }
+static FileScanAction DateCheckCallback(char *dir, struct _finddata32_t *data) { (void)dir; (void)data; return 0; }
+static void fileScanAllDataDirs(const char *dir, FileScanAction (*callback)(char *, struct _finddata32_t *)) {
+    (void)dir; (void)callback; ++scans; }
+static int fileDatesEqual(__time32_t a, __time32_t b, bool exact) { (void)exact; return a == b; }
+static __time32_t fileLastChanged(const char *path) { (void)path; return 0; }
+static int fileExists(const char *path) { (void)path; return 0; }
+''' + helper + body + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+int main(int argc, char **argv) {
+    ParseTable pti[1] = {{0}};
+    int i;
+    const char *mode = argc > 1 ? argv[1] : "";
+    if (!strcmp(mode, "trusted_bins")) {
+        CHECK(setenv("ARMPORT_TRUSTED_BINS", "1", 1) == 0);
+        CHECK(ParserIsPersistNewer("fx", NULL, "bin/fxinfo.bin", pti, NULL) == &bin_buffer);
+        CHECK(scans == 0 && list_reads == 0);
+        crc_matches = 0;
+        CHECK(ParserIsPersistNewer("fx", NULL, "bin/fxinfo.bin", pti, NULL) == NULL);
+        crc_matches = 1;
+        for (i = 0; i < 300; ++i)
+            CHECK(ParserIsPersistNewer("maps", NULL, "bin/minimap.bin", pti, NULL) == &bin_buffer);
+        CHECK(scans == 0 && list_reads == 0 && closes == 0);
+        return 0;
+    }
+    if (!strcmp(mode, "trusted_bins_disabled")) {
+        unsetenv("ARMPORT_TRUSTED_BINS");
+        CHECK(ParserIsPersistNewer("fx", NULL, "bin/fxinfo.bin", pti, NULL) == &bin_buffer);
+        CHECK(scans == 1 && list_reads == 1);
+        return 0;
+    }
+    return 2;
+}
+'''
 
 
 def function(text, signature):
@@ -76,6 +1170,12 @@ def fixture(source, original=None):
         assert loop.index('sleepAndCalcTimers();') < loop.index('armportServerMetricsLoopEnd();')
         assert loop.strip().startswith('armportServerMetricsTickBegin();')
         assert loop.strip().endswith('armportServerMetricsLoopEnd();')
+    # 0.13.81: the deferred zone load's call, inside the measured tick and before svrTick.
+    deferred_tick = ''
+    if 'armportDeferredLoadTick();' in loop:
+        assert (loop.index('armportServerMetricsTickBegin();') < loop.index('armportDeferredLoadTick();')
+                < loop.index('svrTick();')) and loop.count('armportDeferredLoadTick();') == 1
+        deferred_tick = 'static void armportDeferredLoadTick(void) {}\n'
     return r'''
 #define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
@@ -146,7 +1246,7 @@ static void startProfilingCPU(void) {}
 static void endProfilingCPU(void) {}
 static void svrTick(void) { void *p = fileAlloc_dbg("file", NULL); free(p); fake_now += 200; }
 static void sleepAndCalcTimers(void) { fake_now += 750; }
-static void one_actual_loop(void) {
+''' + deferred_tick + r'''static void one_actual_loop(void) {
 ''' + loop + r'''
 }
 static void actual_startup_observations(void) {
@@ -292,13 +1392,119 @@ def run(source, original=None, expect_control_failure=False):
                         '-Wno-unused-but-set-variable',  # upstream fileAllocEx original_total
                         '-fsanitize=address,undefined', '-pthread', '-I', str(work),
                         str(work / 'control.c'), '-o', str(exe)], check=True)
-        for mode in (['window', 'startup'] if original and expect_control_failure else
+        trusted_root = original or source
+        trusted = work / 'trusted'
+        (work / 'trusted.c').write_text(trusted_fixture(trusted_root))
+        subprocess.run(['cc', '-std=gnu11', '-O1', '-g', '-Wall', '-Wextra', '-Werror',
+                        '-Wno-unused-label', '-fsanitize=address,undefined',
+                        str(work / 'trusted.c'), '-o', str(trusted)], check=True)
+        control += trusted_fixture(trusted_root)
+        spare = work / 'spare'
+        (work / 'spare.c').write_text(spare_fixture(trusted_root))
+        subprocess.run(['cc', '-std=gnu11', '-O1', '-g', '-Wall', '-Wextra', '-Werror',
+                        '-Wno-unused-function', '-fsanitize=address,undefined',
+                        str(work / 'spare.c'), '-o', str(spare)], check=True)
+        control += spare_fixture(trusted_root)
+        library = work / 'library'
+        (work / 'library.c').write_text(object_library_fixture(trusted_root))
+        subprocess.run(['cc', '-std=gnu11', '-O1', '-g', '-Wall', '-Wextra', '-Werror',
+                        '-fsanitize=address,undefined',
+                        str(work / 'library.c'), '-o', str(library)], check=True)
+        control += object_library_fixture(trusted_root)
+        physx = work / 'physx'
+        (work / 'physx.cpp').write_text(physx_fixture(trusted_root))
+        subprocess.run(['c++', '-std=gnu++11', '-O1', '-g', '-Wall', '-Wextra', '-Werror', '-Wno-unused-parameter',
+                        '-Wno-unused-function', '-fsanitize=address,undefined',
+                        str(work / 'physx.cpp'), '-o', str(physx)], check=True)
+        control += physx_fixture(trusted_root)
+        trees = work / 'trees'
+        (work / 'trees.c').write_text(start_trees_fixture(trusted_root))
+        subprocess.run(['cc', '-std=gnu11', '-O1', '-g', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
+                        '-fsanitize=address,undefined',
+                        str(work / 'trees.c'), '-o', str(trees)], check=True)
+        control += start_trees_fixture(trusted_root)
+        profile = work / 'profile'
+        (work / 'profile.c').write_text(load_profile_fixture(trusted_root))
+        subprocess.run(['cc', '-std=gnu11', '-O1', '-g', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
+                        '-Wno-missing-field-initializers',   # the header's `= { -1 }` state
+                        '-fsanitize=address,undefined',
+                        str(work / 'profile.c'), '-o', str(profile)], check=True)
+        control += load_profile_fixture(trusted_root)
+        bounds = work / 'bounds'
+        (work / 'bounds.c').write_text(bounds_fixture(trusted_root))
+        subprocess.run(['cc', '-std=gnu11', '-O1', '-g', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
+                        '-fsanitize=address,undefined',
+                        str(work / 'bounds.c'), '-o', str(bounds)], check=True)
+        control += bounds_fixture(trusted_root)
+        deferred = work / 'deferred'
+        (work / 'deferred.c').write_text(deferred_fixture(trusted_root))
+        subprocess.run(['cc', '-std=gnu11', '-O1', '-g', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
+                        '-Wno-missing-field-initializers',   # the header's `= { -1 }` state
+                        '-fsanitize=address,undefined',
+                        str(work / 'deferred.c'), '-o', str(deferred)], check=True)
+        control += deferred_fixture(trusted_root)
+        names = work / 'names'
+        (work / 'names.c').write_text(names_fixture(trusted_root))
+        subprocess.run(['cc', '-std=gnu11', '-O1', '-g', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
+                        '-Wno-unused-variable',              # upstream ReadNameFile's pos
+                        '-fsanitize=address,undefined',
+                        str(work / 'names.c'), '-o', str(names)], check=True)
+        control += names_fixture(trusted_root)
+        if not (original and expect_control_failure):
+            # The console line is a printf in a function too entangled to run here: its text is checked.
+            ready_text = (source / PARSECLIENTINPUT).read_text()
+            assert (ready_text.count(READY_LINE) == 1) == ('npc_names' in test_cases(source))
+            # file.h turns fflush(f) into x_fflush((FileWrapper *)f); given the CRT's stdout that
+            # asserts and ends the server at the first client (0.13.82's first trusted run).
+            assert 'fflush(stdout)' not in ready_text
+            assert (ready_text.count('fflush(fileGetStdout());') >= 1) == ('npc_names' in test_cases(source))
+        environment = {**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0'}
+        for mode in (['window', 'startup', 'trusted_bins', 'spare_server', 'object_library', 'physx_cache',
+                      'start_trees', 'map_load_profile', 'bounds_files', 'deferred_load', 'npc_names']
+                     if original and expect_control_failure else
                      (['window'] if original else test_cases(source))):
-            result = subprocess.run([str(exe), mode], capture_output=True, text=True,
-                                    env={**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0'})
+            if mode == 'spare_server_invalid':
+                # Every malformed assignment, and a server in local mode, ends the process with
+                # status 3 before it has touched its map id or the DbServer.
+                invalid = ['ARMPORT_SPARE_ASSIGN_V1 map_id=71 cookie=1', 'ARMPORT_SPARE_ASSIGN_V1 map_id=0 cookie=1\n',
+                           'ARMPORT_SPARE_ASSIGN_V1 map_id=071 cookie=1\n', 'ARMPORT_SPARE_ASSIGN_V1 map_id=100000 cookie=1\n',
+                           'ARMPORT_SPARE_ASSIGN_V1 map_id=71 cookie=2147483648\n', 'ARMPORT_SPARE_ASSIGN_V1 map_id=71  cookie=1\n',
+                           'ARMPORT_SPARE_ASSIGN_V1 map_id=71 cookie=1 \n', 'ARMPORT_SPARE_ASSIGN_V2 map_id=71 cookie=1\n',
+                           'ARMPORT_SPARE_ASSIGN_V1 map_id=-1 cookie=1\n', 'ARMPORT_SPARE_ASSIGN_V1 map_id=71 cookie=\n',
+                           'ARMPORT_SPARE_ASSIGN_V1 map_id=71 cookie=1\nmore\n', '\n', 'x' * 200 + '\n']
+                for text in invalid:
+                    result = subprocess.run([str(spare), mode, text], capture_output=True, text=True, env=environment)
+                    assert result.returncode == 3 and result.stdout.splitlines() == [
+                        'ARMPORT_SPARE_V1 status=waiting pid=42 placeholder_map_id=71',
+                        'ARMPORT_SPARE_V1 status=refused pid=42 reason=invalid_assignment'], (text, result)
+                result = subprocess.run([str(spare), mode, 'ARMPORT_SPARE_ASSIGN_V1 map_id=71 cookie=1\n', 'local'],
+                                        capture_output=True, text=True, env=environment)
+                assert result.returncode == 3 and result.stdout.splitlines()[-1] == \
+                    'ARMPORT_SPARE_V1 status=refused pid=42 reason=local_server', result
+                print(mode + ': %d malformed assignments and local mode refused' % len(invalid))
+                continue
+            program = (trusted if mode in TRUSTED_CASES else spare if mode in SPARE_CASES
+                       else library if mode in OBJECT_LIBRARY_CASES else physx if mode in PHYSX_CASES
+                       else trees if mode in START_TREES_CASES
+                       else profile if mode in LOAD_PROFILE_CASES
+                       else bounds if mode in BOUNDS_CASES
+                       else deferred if mode in DEFERRED_CASES
+                       else names if mode in NAMES_CASES else exe)
+            arguments = [str(work / (mode + '-cooked.bin'))] if mode in PHYSX_CASES else []
+            for stale in arguments:
+                Path(stale).unlink(missing_ok=True)       # the unpatched control runs the same mode again
+            result = subprocess.run([str(program), mode, *arguments], capture_output=True, text=True, env=environment)
             print(mode + ': ' + ' | '.join(result.stdout.splitlines()))
             if expect_control_failure:
-                assertion = NEGATIVE_ASSERTION if mode == 'window' else STARTUP_NEGATIVE_ASSERTION
+                assertion = {'window': NEGATIVE_ASSERTION, 'trusted_bins': TRUSTED_NEGATIVE_ASSERTION,
+                             'spare_server': SPARE_NEGATIVE_ASSERTION,
+                             'object_library': OBJECT_LIBRARY_NEGATIVE_ASSERTION,
+                             'physx_cache': PHYSX_NEGATIVE_ASSERTION,
+                             'start_trees': START_TREES_NEGATIVE_ASSERTION,
+                             'map_load_profile': LOAD_PROFILE_NEGATIVE_ASSERTION,
+                             'bounds_files': BOUNDS_NEGATIVE_ASSERTION,
+                             'deferred_load': DEFERRED_NEGATIVE_ASSERTION,
+                             'npc_names': NAMES_NEGATIVE_ASSERTION}.get(mode, STARTUP_NEGATIVE_ASSERTION)
                 assert result.returncode != 0 and 'FAIL line ' in result.stderr and assertion in result.stderr, result.stderr
                 print('unpatched negative control: expected missing-' + mode + ' assertion')
                 continue
@@ -332,6 +1538,78 @@ def run(source, original=None, expect_control_failure=False):
                                       'scope': 'main_entry_to_checkpoint'}, row
             if mode == 'startup_disabled':
                 assert 'ARMPORT_SERVER_STARTUP_V1' not in result.stdout
+            if mode == 'trusted_bins':
+                rows = result.stdout.splitlines()
+                assert len(rows) == 256, len(rows)
+                assert rows[0] == 'ARMPORT_TRUSTED_BINS_V1 status=trusted ordinal=1 bin=bin/fxinfo.bin', rows[0]
+                assert rows[1] == 'ARMPORT_TRUSTED_BINS_V1 status=trusted ordinal=2 bin=bin/minimap.bin', rows[1]
+                assert rows[-1].endswith('ordinal=256 bin=bin/minimap.bin'), rows[-1]
+            if mode == 'trusted_bins_disabled':
+                assert 'ARMPORT_TRUSTED_BINS_V1' not in result.stdout
+            if mode == 'spare_server':
+                assert result.stdout.splitlines() == [
+                    'ARMPORT_SPARE_V1 status=waiting pid=42 placeholder_map_id=71',
+                    'ARMPORT_SPARE_V1 status=assigned pid=42 map_id=5001 base_map_id=50 instance_id=2 waited_ms=250',
+                    'ARMPORT_SPARE_V1 status=waiting pid=42 placeholder_map_id=5001',
+                    'ARMPORT_SPARE_V1 status=assigned pid=42 map_id=71 base_map_id=71 instance_id=0 waited_ms=250'], result.stdout
+            if mode == 'spare_server_disabled':
+                assert 'ARMPORT_SPARE_V1' not in result.stdout
+            if mode == 'object_library':
+                assert result.stdout.splitlines() == [
+                    'ARMPORT_OBJECT_LIBRARY_BIN_V1 status=trusted bin=bin/defnames.bin'], result.stdout
+            if mode in ('object_library_disabled', 'object_library_rebuild'):
+                assert 'ARMPORT_OBJECT_LIBRARY_BIN_V1' not in result.stdout
+            if mode == 'physx_cache':
+                rows = [dict(field.split('=', 1) for field in row.split()[1:]) for row in result.stdout.splitlines()]
+                assert all(row.startswith('ARMPORT_PHYSX_COOKED_V1 status=ok ') for row in result.stdout.splitlines())
+                counts = [{key: row[key] for key in ('loaded', 'hits', 'misses', 'refused', 'added', 'bad_records',
+                                                     'written')} for row in rows]
+                assert counts == [
+                    {'loaded': '0', 'hits': '0', 'misses': '4', 'refused': '0', 'added': '3', 'bad_records': '0',
+                     'written': '1'},
+                    {'loaded': '3', 'hits': '4', 'misses': '0', 'refused': '0', 'added': '0', 'bad_records': '0',
+                     'written': '0'}], counts
+            if mode == 'physx_cache_disabled':
+                assert 'ARMPORT_PHYSX_COOKED_V1' not in result.stdout
+            if mode == 'start_trees':
+                assert result.stdout.splitlines() == [
+                    'ARMPORT_START_TREES_V1 status=not_read_ahead trees=Defs,Menu',
+                    'ARMPORT_MESSAGE_BIN_V1 status=trusted bin=server/bin/messages-en.bin',
+                    'ARMPORT_START_TREES_V1 status=not_read_ahead trees=Defs,Menu'], result.stdout
+            if mode == 'message_bins':
+                assert result.stdout.splitlines() == [
+                    'ARMPORT_MESSAGE_BIN_V1 status=trusted bin=server/bin/messages-en.bin',
+                    'ARMPORT_MESSAGE_BIN_V1 status=trusted bin=bin/menuMessages-en.bin'], result.stdout
+            if mode == 'map_load_profile':
+                assert result.stdout.splitlines() == [
+                    'ARMPORT_MAP_LOAD_V1 status=ok total_ms=510 other_ms=360 model_find_ms=45 model_finds=1 '
+                    'ref_activate_ms=5 ref_activates=1 recalc_bounds_ms=20 bounds_files_ms=6 bounds_files=3 '
+                    'scene_ms=5 spawn_areas_ms=69 unbalanced=0',
+                    'ARMPORT_MAP_LOAD_V1 status=ok total_ms=40 other_ms=0 model_find_ms=0 model_finds=0 '
+                    'ref_activate_ms=40 ref_activates=40 recalc_bounds_ms=0 bounds_files_ms=0 bounds_files=0 '
+                    'scene_ms=0 spawn_areas_ms=0 unbalanced=0',
+                    'ARMPORT_MAP_LOAD_V1 status=clock_error'], result.stdout
+            if mode == 'bounds_files':
+                assert result.stdout.splitlines() == ['bounds_set=4 bounds_reads=1 bounds_writes=1'], result.stdout
+            if mode == 'bounds_files_disabled':
+                assert result.stdout.splitlines() == ['bounds_set=0 bounds_reads=2 bounds_writes=1'], result.stdout
+            if mode in DEFERRED_CASES:
+                assert result.stdout.splitlines() == {
+                    'deferred_load': ['ARMPORT_DEFERRED_LOAD_V1 status=ok trigger=world_sent waited_ms=800 '
+                                      'beacons_ms=4700 physx_ms=1500'],
+                    'deferred_load_idle': ['ARMPORT_DEFERRED_LOAD_V1 status=ok trigger=idle waited_ms=3000 '
+                                           'beacons_ms=4700 physx_ms=1500'],
+                    'deferred_load_later_map': ['ARMPORT_DEFERRED_LOAD_V1 status=ok trigger=map_load waited_ms=-1 '
+                                                'beacons_ms=4700 physx_ms=1500'],
+                    'deferred_load_clock': ['ARMPORT_DEFERRED_LOAD_V1 status=ok trigger=clock_error waited_ms=-1 '
+                                            'beacons_ms=-1 physx_ms=-1'],
+                    'deferred_load_not_first': [], 'deferred_load_disabled': []}[mode], result.stdout
+            if mode in NAMES_CASES:
+                assert result.stdout.splitlines() == ['names=4'], result.stdout
+            if mode == 'map_load_profile_disabled':
+                assert 'ARMPORT_MAP_LOAD_V1' not in result.stdout
+            if mode in ('start_trees_disabled', 'message_bins_disabled', 'message_bins_fallback'):
+                assert 'ARMPORT_START_TREES_V1' not in result.stdout and 'ARMPORT_MESSAGE_BIN_V1' not in result.stdout
             if mode == 'startup_clock':
                 rows = result.stdout.splitlines()
                 assert len(rows) == 3 and all('status=clock_error' in row for row in rows), rows
@@ -375,13 +1653,17 @@ def main():
                     'build_input_sha256': staging.digest(staging.canonical(receipt)),
                     'source_sha256': receipt['patched_sha256'],
                     'original_sha256': {name: staging.digest((args.negative_control / name).read_bytes())
-                                        for name in (staging.SVR, staging.FILE)},
+                                        for name in (staging.SVR, staging.FILE, staging.TEXTPARSER,
+                                                     staging.GROUPFILELIB, staging.NWWRAPPER,
+                                                     staging.INITCOMMON, staging.MESSAGESTORE)
+                                        + staging.LOAD_PROFILE_SOURCES + staging.DEFERRED_SOURCES
+                                        + staging.SINGLE_PLAYER_SOURCES + staging.UNLOCK_SOURCES},
                     'fixture_sha256': {'positive': positive, 'negative': negative},
                     'test_script_sha256': staging.digest(Path(__file__).read_bytes()),
                     'compiler': subprocess.check_output(['cc', '--version'], text=True).splitlines()[0],
                     'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                     'positive_cases': test_cases(source), 'unpatched_control_failed': True,
-                    'unpatched_control_failure': 'runtime_missing_metrics_and_startup_assertions',
+                    'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_map_load_bounds_file_deferred_load_and_name_list_assertions',
                     'shipping_binary_executed': False}
         staging.validate_test_report(document, receipt, args.upstream_root)
         args.report.write_text(json.dumps(document, indent=2) + '\n')

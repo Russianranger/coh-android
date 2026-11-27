@@ -23,7 +23,61 @@ SVR = 'MapServer/src/svr/svr_init.c'
 FILE = 'libs/UtilitiesLib/src/utils/file.c'
 HEADER = 'libs/UtilitiesLib/include/utilitieslib/utils/armport_server_metrics.h'
 IMPL = 'libs/UtilitiesLib/src/utils/armport_server_metrics_impl.h'
-FILES = (SVR, FILE, HEADER, IMPL)
+METRIC_FILES = (SVR, FILE, HEADER, IMPL)
+# Opt-in trusted prepared bins (ARMPORT_TRUSTED_BINS=1), off by default.
+TRUSTED_PATCH = 'patches/mapserver-trusted-bins/0001-trusted-prepared-bins.patch'
+TEXTPARSER = 'libs/UtilitiesLib/src/utils/textparser.c'
+# The same switch for bin/defnames.bin (0.13.75): no object_library tree scan.
+OBJECT_LIBRARY_PATCH = 'patches/mapserver-trusted-bins/0002-trusted-object-library-bin.patch'
+GROUPFILELIB = 'Common/group/groupfilelib.c'
+# The same switch for the bounds file of each loaded library file (0.13.78): not read back.
+BOUNDS_PATCH = 'patches/mapserver-trusted-bins/0004-trusted-bounds-files.patch'
+# Opt-in early zone server (ARMPORT_SPARE_FILE=<path>), off by default: every shared
+# load, then a wait before connectToDbserver for the map id and cookie.
+SPARE_PATCH = 'patches/mapserver-zone-travel/0001-spare-zone-server.patch'
+SPARE_HEADER = 'MapServer/src/svr/armport_spare_server.h'
+# Opt-in cooked collision meshes (ARMPORT_PHYSX_CACHE=<file>), off by default (0.13.75): a
+# mesh cooked at an earlier start is read back for createTriangleMesh instead of cooked.
+PHYSX_PATCH = 'patches/mapserver-physx-cache/0001-cooked-mesh-cache.patch'
+NWWRAPPER = 'Common/NovodeX/NwWrapper.cpp'
+PHYSX_HEADER = 'Common/NovodeX/armport_physx_cache.h'
+# The trusted-bin switch for what a start reads ahead (0.13.77): no Defs or Menu tree
+# read-ahead, and prepared message bins without the listing of their source folders.
+START_TREES_PATCH = 'patches/mapserver-trusted-bins/0003-trusted-start-trees.patch'
+INITCOMMON = 'Common/gameComm/initCommon.c'
+MESSAGESTORE = 'libs/UtilitiesLib/src/language/MessageStore.c'
+# Where "loading map" spends its time (0.13.77), with the metrics variable: exclusive time per
+# step, one record after the load. Measurement only.
+LOAD_PROFILE_PATCH = 'patches/mapserver-load-profile/0001-map-load-profile.patch'
+LOAD_PROFILE_HEADER = 'Common/group/armport_map_load_profile.h'
+GROUP = 'Common/group/group.c'
+GROUPGRID = 'Common/group/groupgrid.c'
+GROUPNETDB = 'MapServer/src/group/groupnetdb.c'
+LOAD_PROFILE_SOURCES = (GROUP, GROUPGRID, GROUPNETDB)
+# Opt-in zone load finished after "Server ready" (ARMPORT_DEFER_ZONE_LOADS=1), off by default
+# (0.13.81): the beacon file and the PhysX world are read while the client loads the zone, by
+# the server's own reload paths. Also changes GROUPNETDB and SVR (one call in the main loop).
+DEFERRED_PATCH = 'patches/mapserver-deferred-load/0001-finish-zone-load-after-ready.patch'
+DEFERRED_HEADER = 'MapServer/src/group/armport_deferred_load.h'
+BEACONFILE = 'MapServer/src/beacon/beaconFile.c'
+GROUPNETSEND = 'MapServer/src/group/groupnetsend.c'
+DEFERRED_SOURCES = (BEACONFILE, GROUPNETSEND)
+# Always on, no switch (0.13.82): NPC name lists whose lines end in LF are read (they were
+# empty, so no citizen had a name), and a console line when a client's character has resumed
+# (the entity log line for it reaches its file 60-90 s later).
+SINGLE_PLAYER_PATCH = 'patches/mapserver-single-player/0001-name-lists-and-ready-line.patch'
+NPCNAMES = 'MapServer/src/gameComm/NpcNames.c'
+PARSECLIENTINPUT = 'MapServer/src/player/parseClientInput.c'
+SINGLE_PLAYER_SOURCES = (NPCNAMES, PARSECLIENTINPUT)
+# Off unless the environment asks (0.13.85): ARMPORT_UNLOCK_ALL=1 makes the one local account own
+# every store product and loyalty reward and be a VIP; ARMPORT_PRIMALIST=1 owns the Primalist
+# archetype's product. The same change is client patch 0136 (armport/patches).
+UNLOCK_PATCH = 'patches/mapserver-single-player/0002-unlock-account-content.patch'
+ACCOUNTDATA = 'Common/account/AccountData.c'
+UNLOCK_SOURCES = (ACCOUNTDATA,)
+FILES = METRIC_FILES + (TEXTPARSER, SPARE_HEADER, GROUPFILELIB, NWWRAPPER, PHYSX_HEADER, INITCOMMON, MESSAGESTORE,
+                        LOAD_PROFILE_HEADER) + LOAD_PROFILE_SOURCES + (DEFERRED_HEADER,) + DEFERRED_SOURCES + SINGLE_PLAYER_SOURCES + UNLOCK_SOURCES
+ADDED_FILES = (HEADER, IMPL, SPARE_HEADER, PHYSX_HEADER, LOAD_PROFILE_HEADER, DEFERRED_HEADER)
 VARIANTS = {'retained_progress': 'mapserver-progress-build-input.json',
             'thor_certified_startup': 'map-startup-build-input.json'}
 CONTRACT = {
@@ -40,6 +94,117 @@ CONTRACT = {
     'disk_only_measurement': False, 'wineserver_request_counts': False,
     'clock_failure': 'disable_metrics_only_with_status_record',
     'gameplay_decisions_changed': False,
+    'trusted_bins': {
+        'environment_variable': 'ARMPORT_TRUSTED_BINS', 'enabled_value': '1',
+        'disabled_by_default': True, 'record_prefix': 'ARMPORT_TRUSTED_BINS_V1',
+        'record_limit': 256, 'function': 'ParserIsPersistNewer',
+        'skipped_when_enabled': ['source_tree_scan', 'per_file_date_check'],
+        'still_required': ['bin_signature', 'parse_table_crc'],
+        'text_fallback_retained': ['missing_bin', 'signature_or_crc_mismatch', 'binary_read_failure'],
+    },
+    'trusted_object_library': {
+        'environment_variable': 'ARMPORT_TRUSTED_BINS', 'enabled_value': '1',
+        'disabled_by_default': True, 'record_prefix': 'ARMPORT_OBJECT_LIBRARY_BIN_V1',
+        'function': 'UpdateObjectLibraryBin', 'bin': 'bin/defnames.bin',
+        'skipped_when_enabled': ['object_library_tree_scan', 'file_list_date_check'],
+        'still_required': ['bin_signature', 'parse_table_crc', 'file_list_read'],
+        'scan_and_rebuild_retained': ['missing_bin', 'signature_or_crc_mismatch', 'file_list_read_failure',
+                                      'binary_read_failure', 'force_rebuild'],
+        'gameplay_decisions_changed': False,
+    },
+    'trusted_start_trees': {
+        'environment_variable': 'ARMPORT_TRUSTED_BINS', 'enabled_value': '1',
+        'disabled_by_default': True, 'record_prefix': 'ARMPORT_START_TREES_V1',
+        'function': 'cacheRelevantFolders', 'server_only': True,
+        'not_read_ahead_when_enabled': ['Defs', 'Menu'],
+        'still_read_ahead': ['player_library/animations/male', 'player_library/animations/huge',
+                             'player_library/animations/fem', 'player_library/animations/Vahzilok'],
+        'retained': ['tree_request_by_any_folder_scan', 'single_file_lookup_on_disk'],
+        'gameplay_decisions_changed': False,
+    },
+    'trusted_message_bins': {
+        'environment_variable': 'ARMPORT_TRUSTED_BINS', 'enabled_value': '1',
+        'disabled_by_default': True, 'record_prefix': 'ARMPORT_MESSAGE_BIN_V1',
+        'function': 'LoadMessageStore',
+        'skipped_when_enabled': ['source_folder_listing', 'source_date_check'],
+        'still_required': ['bin_version', 'string_tables', 'message_count'],
+        'listing_and_text_load_retained': ['missing_bin', 'bin_refused_by_msReadBin', 'reload',
+                                           'forced_bins', 'no_bin_requested'],
+        'gameplay_decisions_changed': False,
+    },
+    'map_load_profile': {
+        'environment_variable': 'ARMPORT_SERVER_METRICS', 'enabled_value': '1',
+        'disabled_by_default': True, 'record_prefix': 'ARMPORT_MAP_LOAD_V1',
+        'scope': 'groupLoadMap_loading_map_section_on_the_loading_thread',
+        'clock': 'timerCpuTicks64', 'time': 'exclusive_wall_time_per_step',
+        'steps': ['other', 'model_find', 'ref_activate', 'recalc_bounds', 'bounds_files', 'scene', 'spawn_areas'],
+        'records_per_map_load': 1, 'measurement_only': True,
+        'gameplay_decisions_changed': False,
+    },
+    'deferred_zone_load': {
+        'environment_variable': 'ARMPORT_DEFER_ZONE_LOADS', 'enabled_value': '1',
+        'disabled_by_default': True, 'record_prefix': 'ARMPORT_DEFERRED_LOAD_V1',
+        'function': 'groupLoadMap', 'only': 'first_map_load_of_the_process',
+        'left_for_the_main_loop': ['beacon_file_read', 'physx_world_and_geo_data_free'],
+        'state_until_then': ['beaconReload_without_the_file', 'nwEnabled_false'],
+        'run_by': ['beaconReload', 'dbDoorCreateBeaconConnections', 'nwInitializeNovodex', 'modelFreeAllGeoData'],
+        'run_when': ['500_ms_after_first_full_world_update', '3000_ms_without_one', 'before_a_later_map_load'],
+        'thread': 'main_before_svrTick', 'clock': 'timerCpuTicks64',
+        'steps_removed_or_reordered_when_disabled': [],
+        'gameplay_decisions_changed': False,
+    },
+    'single_player': {
+        'environment_variable': None, 'disabled_by_default': False,
+        'npc_name_lists': {'function': 'ReadNameFile', 'line_ends_accepted': ['cr_lf', 'lf', 'cr'],
+                           'cr_lf_files_read_as_before': True},
+        'client_ready_line': {'function': 'resumeCharacter', 'record_prefix': 'ARMPORT_CLIENT_READY_V1',
+                              'fields': ['utc_ms', 'map_id', 'port', 'name', 'auth'],
+                              'at': 'the_functions_last_return_after_the_character_resumed',
+                              'evidence_only': True},
+        'gameplay_decisions_changed': False,
+    },
+    'account_unlock': {
+        'environment_variables': ['ARMPORT_UNLOCK_ALL', 'ARMPORT_PRIMALIST'], 'enabled_value': '1',
+        'disabled_by_default': True, 'read': 'once_per_process',
+        'unlock_all': {'functions': ['AccountHasStoreProduct', 'AccountIsVIP',
+                                     'accountLoyaltyRewardHasThisNode', 'accountLoyaltyRewardHasNode',
+                                     'accountLoyaltyRewardMasteredThisTier', 'accountLoyaltyRewardMasteredTier',
+                                     'accountLoyaltyRewardUnlockedThisTier', 'accountLoyaltyRewardUnlockedTier',
+                                     'accountLoyaltyRewardHasThisLevel', 'accountLoyaltyRewardHasLevel'],
+                       'consumable_product_counts_changed': False},
+        'primalist': {'function': 'AccountHasStoreProduct', 'product': 'ctatprim',
+                      'owned_only_with': 'ARMPORT_PRIMALIST', 'part_of_unlock_all': False},
+        'gameplay_decisions_changed_when_unset': False,
+    },
+    'trusted_bounds_files': {
+        'environment_variable': 'ARMPORT_TRUSTED_BINS', 'enabled_value': '1',
+        'disabled_by_default': True, 'function': 'objectLibraryWriteBoundsFileIfDifferent',
+        'skipped_when_enabled': ['bounds_file_read', 'bounds_file_write'],
+        'set_from_loaded_defs': ['library_file_bounds_checksum', 'public_def_bounds'],
+        'still_computed': ['bounds_checksum_of_loaded_defs'],
+        'gameplay_decisions_changed': False,
+    },
+    'physx_cache': {
+        'environment_variable': 'ARMPORT_PHYSX_CACHE', 'value': 'file_path', 'disabled_by_default': True,
+        'record_prefix': 'ARMPORT_PHYSX_COOKED_V1', 'function': 'nwCookAndLoadMeshShape',
+        'published_by': 'nwFreeStreamBuffer', 'key': ['vertex_count', 'vertex_stride', 'triangle_count',
+                                                      'triangle_stride', 'vertex_bytes', 'triangle_bytes'],
+        'key_hashes': 2, 'record_checksum': True, 'file_magic': 'ARMPORT_PHYSX_COOKED_V1',
+        'skipped_when_stored': ['NxCookTriangleMesh'], 'still_called': ['createTriangleMesh'],
+        'cooked_as_before': ['no_record', 'checksum_mismatch', 'stream_refused_by_createTriangleMesh',
+                             'unreadable_or_foreign_file'],
+        'write': 'new_file_then_rename', 'memory': 'record_index_only',
+        'gameplay_decisions_changed': False,
+    },
+    'spare_server': {
+        'environment_variable': 'ARMPORT_SPARE_FILE', 'disabled_by_default': True,
+        'record_prefix': 'ARMPORT_SPARE_V1', 'assignment_prefix': 'ARMPORT_SPARE_ASSIGN_V1',
+        'assignment_fields': ['map_id', 'cookie'], 'waits_before': 'connectToDbserver',
+        'shared_loading_before_wait': True, 'poll_milliseconds': 100,
+        'sets': ['db_state.map_id', 'db_state.cookie', 'db_state.base_map_id', 'db_state.instance_id'],
+        'invalid_assignment': 'exit_3_before_any_dbserver_connection',
+        'gameplay_decisions_changed': False,
+    },
     'startup': {
         'record_prefix': 'ARMPORT_SERVER_STARTUP_V1',
         'scope': 'main_entry_to_checkpoint',
@@ -87,7 +252,104 @@ def modules(upstream_root):
 def patch_bytes():
     data = (ROOT / PATCH).read_bytes().replace(b'\r\n', b'\n')
     names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
-    require(len(names) == 4 and set(names) == set(FILES), 'Native metric patch file set differs')
+    require(len(names) == 4 and set(names) == set(METRIC_FILES), 'Native metric patch file set differs')
+    return data
+
+
+def trusted_patch_bytes():
+    data = (ROOT / TRUSTED_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [TEXTPARSER], 'Trusted-bin patch file set differs')
+    return data
+
+
+def object_library_patch_bytes():
+    data = (ROOT / OBJECT_LIBRARY_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [GROUPFILELIB], 'Trusted object library patch file set differs')
+    return data
+
+
+def start_trees_patch_bytes():
+    data = (ROOT / START_TREES_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [INITCOMMON, MESSAGESTORE], 'Trusted start trees patch file set differs')
+    return data
+
+
+def load_profile_patch_bytes():
+    data = (ROOT / LOAD_PROFILE_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [LOAD_PROFILE_HEADER, GROUP, GROUPGRID, GROUPNETDB], 'Map load profile patch file set differs')
+    return data
+
+
+def deferred_patch_bytes():
+    data = (ROOT / DEFERRED_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [BEACONFILE, DEFERRED_HEADER, GROUPNETDB, GROUPNETSEND, SVR],
+            'Deferred zone load patch file set differs')
+    return data
+
+
+def single_player_patch_bytes():
+    data = (ROOT / SINGLE_PLAYER_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [NPCNAMES, PARSECLIENTINPUT], 'Single player patch file set differs')
+    return data
+
+
+def unlock_patch_bytes():
+    data = (ROOT / UNLOCK_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [ACCOUNTDATA], 'Account unlock patch file set differs')
+    return data
+
+
+def patch_deferred(data):
+    """Rebase the deferred load patch's two insertions in svr_init.c over the spare-patched loop."""
+    replacements = (
+        (b'#include "armport_spare_server.h"\n',
+         b'#include "armport_spare_server.h"\n#include "group/armport_deferred_load.h"\n'),
+        (b'            svrTick();\n', b'            armportDeferredLoadTick();\n            svrTick();\n'),
+    )
+    for old, new in replacements:
+        require(data.count(old) == 1, 'Deferred zone load anchor differs: ' + old.decode().strip())
+        data = data.replace(old, new, 1)
+    return data
+
+
+def bounds_patch_bytes():
+    data = (ROOT / BOUNDS_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [GROUPFILELIB], 'Trusted bounds file patch file set differs')
+    return data
+
+
+def physx_patch_bytes():
+    data = (ROOT / PHYSX_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [NWWRAPPER, PHYSX_HEADER], 'Cooked mesh cache patch file set differs')
+    return data
+
+
+def spare_patch_bytes():
+    data = (ROOT / SPARE_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [SPARE_HEADER, SVR], 'Spare zone server patch file set differs')
+    return data
+
+
+def patch_spare(data):
+    """Rebase the spare patch's two insertions in svr_init.c over a metrics-patched loop."""
+    replacements = (
+        (b'#include <utilitieslib/utils/wininclude.h>\n',
+         b'#include <utilitieslib/utils/wininclude.h>\n#include "armport_spare_server.h"\n'),
+        (b'        cmdCfgLoad();\n', b'        cmdCfgLoad();\n        armportSpareWait();\n'),
+    )
+    for old, new in replacements:
+        require(data.count(old) == 1, 'Spare zone server anchor differs: ' + old.decode().strip())
+        data = data.replace(old, new, 1)
     return data
 
 
@@ -213,9 +475,49 @@ def native_images(variant, baseline_receipt, root):
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes((root / 'upstream/ouroboros' / name).read_bytes())
         original_loop = (stage / SVR).read_bytes()
+        target = stage / TEXTPARSER
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((root / 'upstream/ouroboros' / TEXTPARSER).read_bytes())
+        target = stage / GROUPFILELIB
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((root / 'upstream/ouroboros' / GROUPFILELIB).read_bytes())
         apply_patch(stage, patch_bytes())
+        apply_patch(stage, trusted_patch_bytes())
+        apply_patch(stage, spare_patch_bytes())
+        apply_patch(stage, object_library_patch_bytes())
+        apply_patch(stage, bounds_patch_bytes())
+        target = stage / NWWRAPPER
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((root / 'upstream/ouroboros' / NWWRAPPER).read_bytes())
+        apply_patch(stage, physx_patch_bytes())
+        for name in (INITCOMMON, MESSAGESTORE):
+            target = stage / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((root / 'upstream/ouroboros' / name).read_bytes())
+        apply_patch(stage, start_trees_patch_bytes())
+        for name in LOAD_PROFILE_SOURCES:
+            target = stage / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((root / 'upstream/ouroboros' / name).read_bytes())
+        apply_patch(stage, load_profile_patch_bytes())
+        for name in DEFERRED_SOURCES:
+            target = stage / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((root / 'upstream/ouroboros' / name).read_bytes())
+        apply_patch(stage, deferred_patch_bytes())
+        for name in SINGLE_PLAYER_SOURCES:
+            target = stage / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((root / 'upstream/ouroboros' / name).read_bytes())
+        apply_patch(stage, single_player_patch_bytes())
+        for name in UNLOCK_SOURCES:
+            target = stage / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((root / 'upstream/ouroboros' / name).read_bytes())
+        apply_patch(stage, unlock_patch_bytes())
         images = {name: (stage / name).read_bytes() for name in FILES}
-        require(images[SVR] == patch_loop(original_loop), 'Loop rebase differs from exported native patch')
+        require(images[SVR] == patch_deferred(patch_spare(patch_loop(original_loop))),
+                'Loop rebase differs from exported native patches')
     with tempfile.TemporaryDirectory(prefix='coh-server-metrics-base-') as directory:
         stage = Path(directory)
         patches = [progress.game.patch_bytes(root), progress.patch_bytes(root)]
@@ -230,11 +532,39 @@ def native_images(variant, baseline_receipt, root):
         for patch in patches:
             apply_patch(stage, patch)
         inputs = {SVR: (stage / SVR).read_bytes(),
-                  FILE: (root / 'upstream/ouroboros' / FILE).read_bytes()}
-    images[SVR] = patch_loop(inputs[SVR])
+                  FILE: (root / 'upstream/ouroboros' / FILE).read_bytes(),
+                  TEXTPARSER: (root / 'upstream/ouroboros' / TEXTPARSER).read_bytes(),
+                  GROUPFILELIB: (root / 'upstream/ouroboros' / GROUPFILELIB).read_bytes(),
+                  NWWRAPPER: (root / 'upstream/ouroboros' / NWWRAPPER).read_bytes(),
+                  INITCOMMON: (root / 'upstream/ouroboros' / INITCOMMON).read_bytes(),
+                  MESSAGESTORE: (root / 'upstream/ouroboros' / MESSAGESTORE).read_bytes(),
+                  **{name: (root / 'upstream/ouroboros' / name).read_bytes()
+                     for name in LOAD_PROFILE_SOURCES + DEFERRED_SOURCES + SINGLE_PLAYER_SOURCES + UNLOCK_SOURCES}}
+    images[SVR] = patch_deferred(patch_spare(patch_loop(inputs[SVR])))
     closure, _ = baseline_closure(baseline_receipt, VARIANTS[variant])
     require(closure[SVR] == digest(inputs[SVR]), 'Baseline loop preimage differs')
     require(FILE not in closure or closure[FILE] == digest(inputs[FILE]), 'Baseline file loader preimage differs')
+    require(TEXTPARSER not in closure or closure[TEXTPARSER] == digest(inputs[TEXTPARSER]),
+            'Baseline text parser preimage differs')
+    require(GROUPFILELIB not in closure or closure[GROUPFILELIB] == digest(inputs[GROUPFILELIB]),
+            'Baseline object library preimage differs')
+    require(NWWRAPPER not in closure or closure[NWWRAPPER] == digest(inputs[NWWRAPPER]),
+            'Baseline PhysX wrapper preimage differs')
+    for name in (INITCOMMON, MESSAGESTORE):
+        require(name not in closure or closure[name] == digest(inputs[name]),
+                'Baseline start tree preimage differs: ' + name)
+    for name in LOAD_PROFILE_SOURCES:
+        require(name not in closure or closure[name] == digest(inputs[name]),
+                'Baseline map load preimage differs: ' + name)
+    for name in DEFERRED_SOURCES:
+        require(name not in closure or closure[name] == digest(inputs[name]),
+                'Baseline deferred load preimage differs: ' + name)
+    for name in SINGLE_PLAYER_SOURCES:
+        require(name not in closure or closure[name] == digest(inputs[name]),
+                'Baseline single player preimage differs: ' + name)
+    for name in UNLOCK_SOURCES:
+        require(name not in closure or closure[name] == digest(inputs[name]),
+                'Baseline account unlock preimage differs: ' + name)
     return inputs, images
 
 
@@ -248,6 +578,16 @@ def expected_receipt(variant, baseline_receipt, upstream_root=ROOT):
             'baseline_receipt': base, 'baseline_receipt_sha256': digest(canonical(base)),
             'baseline_receipts_sha256': {name: digest(canonical(value)) for name, value in receipts.items()},
             'patch': {'path': PATCH, 'sha256': digest(patch_bytes())},
+            'trusted_bins_patch': {'path': TRUSTED_PATCH, 'sha256': digest(trusted_patch_bytes())},
+            'spare_server_patch': {'path': SPARE_PATCH, 'sha256': digest(spare_patch_bytes())},
+            'object_library_patch': {'path': OBJECT_LIBRARY_PATCH, 'sha256': digest(object_library_patch_bytes())},
+            'physx_cache_patch': {'path': PHYSX_PATCH, 'sha256': digest(physx_patch_bytes())},
+            'start_trees_patch': {'path': START_TREES_PATCH, 'sha256': digest(start_trees_patch_bytes())},
+            'load_profile_patch': {'path': LOAD_PROFILE_PATCH, 'sha256': digest(load_profile_patch_bytes())},
+            'bounds_files_patch': {'path': BOUNDS_PATCH, 'sha256': digest(bounds_patch_bytes())},
+            'deferred_load_patch': {'path': DEFERRED_PATCH, 'sha256': digest(deferred_patch_bytes())},
+            'single_player_patch': {'path': SINGLE_PLAYER_PATCH, 'sha256': digest(single_player_patch_bytes())},
+            'account_unlock_patch': {'path': UNLOCK_PATCH, 'sha256': digest(unlock_patch_bytes())},
             'source_sha256': {name: digest(data) for name, data in inputs.items()},
             'patched_sha256': {name: digest(data) for name, data in images.items()},
             'retained_sha256': {name: value for name, value in closure.items() if name not in FILES},
@@ -274,14 +614,26 @@ def validate_test_report(document, source_receipt, upstream_root=ROOT):
                 'variant': receipt['variant'], 'build_input_sha256': digest(canonical(receipt)),
                 'source_sha256': receipt['patched_sha256'],
                 'original_sha256': {name: digest((Path(upstream_root) / 'upstream/ouroboros' / name).read_bytes())
-                                    for name in (SVR, FILE)},
+                                    for name in (SVR, FILE, TEXTPARSER, GROUPFILELIB, NWWRAPPER,
+                                                 INITCOMMON, MESSAGESTORE) + LOAD_PROFILE_SOURCES
+                                    + DEFERRED_SOURCES + SINGLE_PLAYER_SOURCES + UNLOCK_SOURCES},
                 'test_script_sha256': digest((ROOT / 'armport/tests/server_metrics_native.py').read_bytes()),
                 'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                 'positive_cases': ['window', 'disabled', 'files', 'thread', 'slow', 'clock', 'saturation',
                                    'startup', 'startup_disabled', 'startup_clock',
-                                   'progress_markers'],
+                                   'progress_markers', 'trusted_bins', 'trusted_bins_disabled',
+                                   'spare_server', 'spare_server_disabled', 'spare_server_invalid',
+                                   'object_library', 'object_library_disabled', 'object_library_rebuild',
+                                   'physx_cache', 'physx_cache_disabled', 'physx_cache_damaged',
+                                   'start_trees', 'start_trees_disabled',
+                                   'message_bins', 'message_bins_disabled', 'message_bins_fallback',
+                                   'map_load_profile', 'map_load_profile_disabled',
+                                   'bounds_files', 'bounds_files_disabled',
+                                   'deferred_load', 'deferred_load_idle', 'deferred_load_later_map',
+                                   'deferred_load_clock', 'deferred_load_not_first', 'deferred_load_disabled',
+                                   'npc_names', 'npc_names_crlf'],
                 'unpatched_control_failed': True,
-                'unpatched_control_failure': 'runtime_missing_metrics_and_startup_assertions',
+                'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_map_load_bounds_file_deferred_load_and_name_list_assertions',
                 'shipping_binary_executed': False}
     require(set(document) == set(expected).union(('compiler', 'fixture_sha256')),
             'Server metrics test report keys differ')
@@ -342,7 +694,7 @@ def apply_metrics(source, variant, upstream_root=ROOT, required_baseline_receipt
     check_baseline_receipts(source, receipt)
     for name, expected in {**receipt['retained_sha256'], **receipt['source_sha256']}.items():
         check_file(source, name, expected)
-    for name in (HEADER, IMPL):
+    for name in ADDED_FILES:
         path = source / name
         require(not path.exists() and not path.is_symlink() and not any(p.is_symlink() for p in path.parents),
                 'Native metrics addition already exists or is linked: ' + name)

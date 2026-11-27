@@ -1,0 +1,47 @@
+diff --git a/Common/group/groupfilelib.c b/Common/group/groupfilelib.c
+index f37439b..bcbec7c 100644
+--- a/Common/group/groupfilelib.c
++++ b/Common/group/groupfilelib.c
+@@ -882,6 +882,33 @@ void objectLibraryWriteBoundsFile(GroupFile *file)
+     ParserDestroyStruct(parse_lib_desc, &lib_desc);
+ }
+ 
++// ArmPort opt-in (ARMPORT_TRUSTED_BINS=1): the bounds file of a library file
++// that was just loaded is not read back to be compared with it. What a
++// matching bounds file sets (objectLibraryLoadBoundsFileInternal: the stored
++// checksum and each public def's bounds) is set from the loaded defs, and no
++// bounds file is written.
++static int armportTrustedBounds(GroupFile *file)
++{
++    GroupFileEntry    *libfile;
++    int                i;
++
++    if (!armportTrustedObjectLibrary())
++        return 0;
++    libfile = objectLibraryEntryFromFname(file->fullname);
++    if (!libfile)
++        return 0;
++    if (libfile->bounds_checksum != file->bounds_checksum)
++    {
++        for(i=0;i<file->count;i++)
++        {
++            if (groupIsPublic(file->defs[i]))
++                objectLibrarySetBounds(file->defs[i]->name,(GroupBounds*)file->defs[i]->min);
++        }
++        libfile->bounds_checksum = file->bounds_checksum;
++    }
++    return 1;
++}
++
+ void objectLibraryWriteBoundsFileIfDifferent(GroupFile *file)
+ {
+     int            i;
+@@ -899,6 +926,8 @@ void objectLibraryWriteBoundsFileIfDifferent(GroupFile *file)
+         cryptAdler32Update((void*)def->name, (int)strlen(def->name));
+     }
+     file->bounds_checksum = cryptAdler32Final();
++    if (armportTrustedBounds(file))
++        return;
+     if (!objectLibraryLoadBoundsFile(file->fullname,file->bounds_checksum))
+         objectLibraryWriteBoundsFile(file);
+ }

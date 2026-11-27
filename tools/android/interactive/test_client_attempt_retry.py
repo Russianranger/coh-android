@@ -138,6 +138,40 @@ class RetryTests(unittest.TestCase):
             self.guard.prepare(None)
         self.owner.launch_client_attempt.assert_not_called()
 
+    def test_zone_started_at_enter_game_is_not_a_retained_service(self):
+        """0.13.59 (zone-trip runtime 42410700974): with the game's own zone travel the
+        reopen has no MapServer before Enter Game, and the retry guard refused to start."""
+        self.server.map_process = None
+        # Legacy Atlas-first sessions still need their Atlas server.
+        with self.assertRaisesRegex(retry.base.DiagnosticError, 'still-live current owned native services'):
+            retry.ClientAttemptRetry(self.owner, 99., 900.)
+        self.server.initial_zone_pending = lambda: True
+        self.server.sample_progress = Mock(side_effect=AssertionError('no zone server to sample'))
+        guard = retry.ClientAttemptRetry(self.owner, 99., 900.)
+        self.assertEqual(set(guard.identity['processes']), {'postgres', 'dbserver', 'display'})
+        self.assertTrue(guard.prepare(None))
+        self.assertTrue(guard.attempts[0]['zone_server_deferred_to_enter_game'])
+        self.assertIsNone(guard.attempts[0]['atlas_progress'])
+        self.assertEqual(set(guard.record['retained_services_elapsed_seconds']), {'postgres', 'dbserver', 'display'})
+        message = [call.kwargs['message'] for call in self.owner.ctx.event.call_args_list
+                   if call.args and call.args[0] == 'client_retry_started']
+        self.assertEqual(message, ['Retrying the client with the current database server still running; '
+                                   'the zone starts at Enter Game'])
+        self.owner.launch_client_attempt.assert_called_once_with(label='actual-coh-client-retry')
+
+    def test_a_zone_started_since_the_deferred_identity_forbids_the_retry(self):
+        self.server.map_process = None
+        self.server.initial_zone_pending = lambda: True
+        guard = retry.ClientAttemptRetry(self.owner, 99., 900.)
+        self.server.map_process = live(3)
+        with self.assertRaisesRegex(retry.base.DiagnosticError, 'services changed'):
+            guard.prepare(None)
+        self.server.map_process = None
+        self.server.initial_zone_pending = lambda: False
+        with self.assertRaisesRegex(retry.base.DiagnosticError, 'still-live current owned native services'):
+            guard.prepare(None)
+        self.owner.launch_client_attempt.assert_not_called()
+
     def test_new_attempt_rejects_previous_or_changing_native_pid(self):
         self.assertTrue(self.guard.prepare(None))
         with self.assertRaisesRegex(retry.base.DiagnosticError, 'previous native client PID'):
