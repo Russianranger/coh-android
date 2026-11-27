@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build COH Atlas Gameplay 0.13.89 with the ARM64 client option.
+"""Build COH Atlas Gameplay 0.13.90 with the ARM64 client option.
 
 User approval (2026-10-26, Claude lead session): build and sign this APK for the
 M5 Thor play test. It is an in-place update of the installed 0.13.36 app: same
@@ -16,7 +16,7 @@ Inputs are pinned:
 Changes against the donor:
 - classes.dex is recompiled from this repository's app sources (0.13.36
   sources plus the reviewed M4 ARM64-option diff);
-- version metadata becomes 0.13.89 / 104, and the binary manifest is checked
+- version metadata becomes 0.13.90 / 105, and the binary manifest is checked
   to differ only in its version fields;
 - stage_app_assets adds the ARM64 client, its guest helpers and the manifest
   entries and the explicitly listed guest helpers;
@@ -46,8 +46,8 @@ import server_pipeline
 ROOT = Path(__file__).resolve().parents[2]
 APP_ID = 'io.github.russianranger.cohclientinteractive'
 ANDROID = '{http://schemas.android.com/apk/res/android}'
-VERSION_NAME, VERSION_CODE = '0.13.89', 104
-APK_NAME = 'COH-Atlas-Gameplay-0.13.89.apk'
+VERSION_NAME, VERSION_CODE = '0.13.90', 105
+APK_NAME = 'COH-Atlas-Gameplay-0.13.90.apk'
 DONOR_NAME = 'COH-Atlas-Gameplay-0.13.36.apk'
 DONOR_RELEASE = 'coh-atlas-gameplay-v0.13.36'
 DONOR_ASSET_ID = 635975286
@@ -114,7 +114,9 @@ REVIEWED_JAVA_CHANGES = frozenset({
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSurface.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/InteractiveRfbClient.java'})
 # Overlay menu and controller mapping (ported from the owner's TRASC launcher); Java only, no resources.
+# 0.13.90: ClientCrash.java (the app's own crash trace and Android's exit records for recovered exports).
 ADDED_JAVA_SOURCES = frozenset({
+    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientCrash.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientOverlayPosition.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ControllerBridge.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ControllerDialog.java',

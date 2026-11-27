@@ -931,6 +931,7 @@ public final class ClientRuntime {
             operationDir = new File(work, "reports/" + runId);
             if(!operationDir.mkdirs() && !operationDir.isDirectory())throw new IOException("Cannot allocate private operation report storage");
             startedUptime = SystemClock.uptimeMillis();
+            openLiveLog(false);
             // A replacement report is not authoritative until its ZIP is committed.
             // Keep the previous report discoverable even if this attempt is interrupted.
             recordLifecycle("operation_" + kind + "_started");
@@ -940,7 +941,7 @@ public final class ClientRuntime {
         }
     }
     private void endOperation() {
-        try { finished = true; inputReady = false; automaticTravel=false; inputWorker.shutdownNow(); checkpointWorker.shutdown(); }
+        try { finished = true; inputReady = false; automaticTravel=false; inputWorker.shutdownNow(); checkpointWorker.shutdown(); closeLiveLog(); }
         finally { synchronized (ClientRuntime.class) {
             if (operationOwned) { operationActive = false; operationOwned = false; }
         } }
@@ -3607,7 +3608,38 @@ public final class ClientRuntime {
         text = clean(text); if (text.length() > 8192) text = text.substring(0, 8192);
         log.append(text).append('\n');
         if (log.length() > MAX_LOG) log.delete(0, log.length() - (int) MAX_LOG);
+        liveLogLine(text);
         listener.onLog(text);
+    }
+    // 0.13.90: the log also goes to the operation's own folder as it is written. Until now it lived in
+    // memory until the report was made, so an app that Android ended (Thor 0.13.89, 2026-11-27) left a
+    // recovered export without one line of what the guest and the app had last said. The recovered
+    // export already takes operation.log from this folder when it is there. Evidence only: a write
+    // that fails closes the file and the session goes on.
+    private java.io.Writer liveLog; private long liveLogChars;
+    // Characters: at three UTF-8 bytes each the file stays under the recovered export's 4 MiB for a log.
+    private static final long LIVE_LOG_LIMIT = 1200L * 1024;
+    private synchronized void openLiveLog(boolean dropped) {
+        closeLiveLog();
+        File directory = operationDir;
+        if (directory == null) return;
+        try {
+            liveLog = new java.io.OutputStreamWriter(new java.io.FileOutputStream(new File(directory, "operation.log"), false), StandardCharsets.UTF_8);
+            liveLogChars = 0;
+            if (dropped) { liveLog.write("[earlier lines were dropped: the live log reached its limit]\n"); liveLog.flush(); }
+        } catch (Exception | OutOfMemoryError unavailable) { closeLiveLog(); }
+    }
+    private synchronized void liveLogLine(String text) {
+        if (liveLog == null) return;
+        try {
+            if (liveLogChars + text.length() + 1 > LIVE_LOG_LIMIT) { openLiveLog(true); if (liveLog == null) return; }
+            liveLog.write(text); liveLog.write('\n'); liveLog.flush();
+            liveLogChars += text.length() + 1;
+        } catch (Exception | OutOfMemoryError unavailable) { closeLiveLog(); }
+    }
+    private synchronized void closeLiveLog() {
+        java.io.Writer open = liveLog; liveLog = null;
+        if (open != null) try { open.close(); } catch (Exception ignored) { }
     }
     private void stage(String name, String detail) { listener.onStage(name, detail); line(name + ": " + detail); }
     private void observeFailedGuestResult(JSONObject event) {

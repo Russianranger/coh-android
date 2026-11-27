@@ -97,7 +97,7 @@ public final class ClientService extends Service {
         @Override public void onReceive(Context context,Intent intent){ lifecycle("screen_event="+intent.getAction()); if(Intent.ACTION_SCREEN_OFF.equals(intent.getAction()))discardPendingInputs(); }
     };
     @Override public void onCreate(){
-        super.onCreate();main.post(sessionDeadlineTick);
+        super.onCreate();ClientCrash.install(this);main.post(sessionDeadlineTick);
         NotificationManager manager=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         manager.createNotificationChannel(new NotificationChannel(CHANNEL,"CoH saved character",NotificationManager.IMPORTANCE_LOW));
         ClientRuntime.initializeReportStorage();

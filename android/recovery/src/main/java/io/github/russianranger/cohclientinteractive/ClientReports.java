@@ -48,6 +48,14 @@ public final class ClientReports {
         if (identityReader != null && identityReader != reader) throw new IllegalStateException("File identity reader already initialized");
         identityReader = reader;
     }
+    /** 0.13.90: what the app can say, at the next start, about an operation that never finished
+     * (Android's exit record of the process and its own crash trace). Optional evidence: collected
+     * once, when the interrupted checkpoint is first retained, and never required for the carrier. */
+    public interface InterruptionEvidence { byte[] collect() throws Exception; }
+    public static final String INTERRUPTION_FILE = "android-interruption.json";
+    public static final int MAX_INTERRUPTION_BYTES = 128 * 1024;
+    private static volatile InterruptionEvidence interruptionEvidence;
+    public static synchronized void setInterruptionEvidence(InterruptionEvidence source) { interruptionEvidence = source; }
     interface SourceOpener { SeekableByteChannel open(Path file) throws IOException; }
     private static volatile SourceOpener sourceOpener;
     static synchronized void setSourceOpener(SourceOpener opener) {sourceOpener=opener;}
@@ -478,9 +486,20 @@ public final class ClientReports {
                 Collections.<String, Path>emptyMap(), null, null,run.getFileName().toString());
         FileIdentity compact = identity(target);
         String[] active = {null};
+        // The compact carrier exists; what ended the process is asked for once, after it.
+        Path interruption = run.resolve(INTERRUPTION_FILE);
+        InterruptionEvidence evidence = interruptionEvidence;
+        if (evidence != null && !Files.exists(interruption, LinkOption.NOFOLLOW_LINKS)) {
+            try {
+                byte[] collected = evidence.collect();
+                if (collected != null && collected.length > 0 && collected.length <= MAX_INTERRUPTION_BYTES)
+                    atomicBytes(interruption, collected);
+            } catch (Exception | OutOfMemoryError unavailable) { /* Optional: the carrier does not depend on it. */ }
+        }
         try {
             recoveryCaptures(run, sources, omitted);
             terminalSource(sources, omitted, "operation.log", run.resolve("operation.log"), 4L * 1024 * 1024);
+            terminalSource(sources, omitted, INTERRUPTION_FILE, interruption, MAX_INTERRUPTION_BYTES);
             writeRecoveryArchive(target, null, null, note, omitted, "complete", null, sources, compact, active,run.getFileName().toString());
         } catch (Exception | OutOfMemoryError unavailable) {
             for (String name : sources.keySet()) if (!omitted.contains(name)) addOmission(omitted,name);
