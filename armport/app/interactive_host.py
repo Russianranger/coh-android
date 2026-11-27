@@ -3,6 +3,7 @@
 import argparse
 import copy
 import datetime
+import filecmp
 import hashlib
 import importlib.util
 import json
@@ -253,6 +254,31 @@ def earlier_content_folder(target, source=None):
     return {'earlier': history[-2], 'current': history[-1]}
 
 
+def exchange_staged_files(assets, other):
+    """Exchange, by rename, every file whose bytes differ between two staged folders; returns their names.
+
+    The update probe's first session must see the earlier version's content, and every other
+    file must stay the very file the reopen sees: several guest steps key their reuse on a
+    source file's inode and time. With a second folder bound instead (run 45947520586) the
+    reopen verified the world archive again, a state the retained host checks do not know.
+    Calling it again with the same folders puts everything back.
+    """
+    assets, other = Path(assets), Path(other)
+    def listed(root):
+        return {path.relative_to(root).as_posix() for path in root.rglob('*')
+                if path.is_file() and not path.is_symlink()}
+    # A file only one folder holds (something a later step added to the first) is left alone.
+    differing = [name for name in sorted(listed(assets) & listed(other))
+                 if not filecmp.cmp(assets / name, other / name, shallow=False)]
+    for name in differing:
+        aside = other / (name + '.exchange')
+        require(not os.path.lexists(aside), 'Update probe: an exchange was left unfinished')
+        os.replace(assets / name, aside)
+        os.replace(other / name, assets / name)
+        os.replace(aside, other / name)
+    return differing
+
+
 def shared_tree_records(report, limit=16):
     """Every shared server data record of a session report (each zone tree has one)."""
     found, pending = [], [report]
@@ -282,6 +308,9 @@ def update_probe_validate(created, reopened, identities):
                  'removed': record['removed'], 'link_seconds': record.get('link_seconds')}
                 for record in shared_tree_records(report)]
     before, after = rows(created), rows(reopened)
+    summary = {'format': 1, 'content': identities, 'creation': before[:3], 'reopen': after[:3]}
+    # Printed before the checks: a refused probe shows what the sessions reported.
+    print('ARMPORT_UPDATE_PROBE_V1 ' + json.dumps(summary, separators=(',', ':'))[:3800], flush=True)
     require(any(kind == 'content_folders' for row in before for kind, _reused, _files in row['trees']),
             'Update probe: the first session made no content tree')
     replaced = [row for row in after
@@ -290,8 +319,6 @@ def update_probe_validate(created, reopened, identities):
     require(replaced, 'Update probe: the reopen did not replace the earlier content\'s tree')
     require(all(any(kind == 'untouched_folders' and reused for kind, reused, _files in row['trees'])
                 for row in replaced), 'Update probe: the untouched folders were linked again')
-    summary = {'format': 1, 'content': identities, 'creation': before[:3], 'reopen': after[:3]}
-    print('ARMPORT_UPDATE_PROBE_V1 ' + json.dumps(summary, separators=(',', ':'))[:3800], flush=True)
     return summary
 
 
@@ -1841,13 +1868,19 @@ def main():
         if 'creation' in start_options_sessions():
             for option in START_OPTIONS:
                 first_command.insert(first_command.index('/usr/bin/python3'), option)
+        exchanged = None
         if earlier_assets is not None:
-            # The first session's guest sees the earlier app's folder at /opt/coh; nothing else differs.
-            bind, earlier_bind = str(assets.resolve()) + ':/opt/coh', str(earlier_assets.resolve()) + ':/opt/coh'
-            require(first_command.count(bind) == 1, 'Update probe: the assets folder is not bound once')
-            first_command[first_command.index(bind)] = earlier_bind
+            # The first session's guest sees the earlier app's content archive and the manifest that
+            # pins it, in the same folder; every other file is the one the reopen will see.
+            exchanged = exchange_staged_files(assets, earlier_assets)
+            print('ARMPORT_UPDATE_FILES_V1 ' + json.dumps(exchanged[:16], separators=(',', ':')), flush=True)
+            require({stage_app_assets.SINGLE_PLAYER_ARCHIVE, 'runtime-manifest.json'} <= set(exchanged)
+                    and len(exchanged) <= 8, 'Update probe: the staged folders differ in other files than the content')
         created = run_session(first_command, args.work, args.evidence / 'creation', args.proot,
                               first, first_manifests[0], first_manifests[1], deadline)
+        if earlier_assets is not None:
+            require(exchange_staged_files(assets, earlier_assets) == exchanged,
+                    'Update probe: the staged folders changed during the first session')
         before = reopen.persistent_profile_identity(args.work)
         reopen.archive_completed_reports(args.work / 'state', first)
         reopen.reset_session_requests(args.work / 'state')

@@ -55,6 +55,31 @@ class UpdateProbe(unittest.TestCase):
         line = next(line for line in workflow.splitlines() if line.startswith('  COH_SINGLE_PLAYER_PROBE:'))
         self.assertIn("inputs.single_player_probe == 'update'", line)       # a Primalist is made, with both options
 
+    def test_only_the_differing_files_change_places_and_come_back(self):
+        with tempfile.TemporaryDirectory() as folder:
+            first, second = Path(folder) / 'assets', Path(folder) / 'earlier'
+            for root, content_bytes in ((first, b'new'), (second, b'old')):
+                (root / 'sub').mkdir(parents=True)
+                (root / 'world.zip').write_bytes(b'w' * 4096)
+                (root / 'sub/helper.py').write_bytes(b'same')
+                (root / stage_app_assets.SINGLE_PLAYER_ARCHIVE).write_bytes(content_bytes)
+                (root / 'runtime-manifest.json').write_bytes(b'{"pin":"' + content_bytes + b'"}')
+            (first / 'added-later.json').write_bytes(b'{}')
+            kept = {name: (first / name).stat().st_ino for name in ('world.zip', 'sub/helper.py', 'added-later.json')}
+            moved = host.exchange_staged_files(first, second)
+            self.assertEqual(moved, ['runtime-manifest.json', stage_app_assets.SINGLE_PLAYER_ARCHIVE])
+            self.assertEqual((first / stage_app_assets.SINGLE_PLAYER_ARCHIVE).read_bytes(), b'old')
+            self.assertEqual((first / 'runtime-manifest.json').read_bytes(), b'{"pin":"old"}')
+            self.assertEqual((second / stage_app_assets.SINGLE_PLAYER_ARCHIVE).read_bytes(), b'new')
+            # every other file is the very file the next session sees
+            self.assertEqual({name: (first / name).stat().st_ino for name in kept}, kept)
+            self.assertEqual(host.exchange_staged_files(first, second), moved)
+            self.assertEqual((first / stage_app_assets.SINGLE_PLAYER_ARCHIVE).read_bytes(), b'new')
+            self.assertEqual((first / 'runtime-manifest.json').read_bytes(), b'{"pin":"new"}')
+            self.assertEqual(sorted(path.name for path in second.rglob('*.exchange')), [])
+        source = (ROOT / 'armport/app/interactive_host.py').read_text()
+        self.assertNotIn("earlier_assets.resolve()) + ':/opt/coh'", source)      # one folder is bound, always
+
     def test_the_earlier_folder_is_exactly_what_the_previous_version_shipped(self):
         with tempfile.TemporaryDirectory() as folder:
             target = Path(folder) / 'earlier'
