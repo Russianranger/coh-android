@@ -28,6 +28,15 @@ ENABLE_ENVIRONMENT = 'COH_PRIMALIST'
 MAX_ARCHIVE = 16 * 1024 * 1024
 MAX_FILES = 256
 MAX_FILE = 4 * 1024 * 1024
+PENDING_SUFFIX = '.single-player-pending'
+# Every content identity an app version has shipped, oldest first; the last is this version's
+# (a test compares it with the manifest). A phone that was updated holds server data trees made
+# with an earlier one: the folders the content does not touch are the same in all of them
+# (local_character_server.shared_tree_plan), so the list says which trees may still serve those.
+IDENTITY_HISTORY = (
+    '3fa56ed5affbf14728d2ccb53c21a3ca17bc030352084ddf62338ee1deba1485',     # 0.13.85 to 0.13.87
+    '2215c55684773c9956b8fa3621d1524ee190c8f4b9b0c7cfb996ee295cb8d78b',     # 0.13.88: icon named .tga
+)
 TOP_LEVEL = frozenset({'defs', 'menu', 'texts'})
 # Modification time of every installed copy: not the imported text's normalized time, so the
 # game's own freshness check (a server that does not trust its bins) rebuilds from them too.
@@ -126,7 +135,7 @@ def write_copy(path, data, *, read_only=False):
         info = None
     require(info is None or stat.S_ISLNK(info.st_mode) or stat.S_ISREG(info.st_mode),
             'Single-player content target is not a file: ' + path.name)
-    pending = path.with_name('.' + path.name + '.single-player-pending')
+    pending = path.with_name('.' + path.name + PENDING_SUFFIX)
     pending.unlink(missing_ok=True)
     descriptor = os.open(pending, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
     with os.fdopen(descriptor, 'wb') as output:
@@ -134,6 +143,22 @@ def write_copy(path, data, *, read_only=False):
     os.utime(pending, (FILE_TIME, FILE_TIME))
     pending.chmod(0o400 if read_only else 0o600)
     os.replace(pending, path)
+
+
+def own_copy(name, info):
+    """Whether a regular file in a shared server data tree is one this module wrote.
+
+    A shared tree holds links to the imported game data and, with the content, the content's
+    own files: private single-link copies written by write_copy (read-only, the content's fixed
+    time) or, after a stopped write, its pending file. Neither is anyone's data: both come from
+    the app's archive and are written again when the tree is built.
+    """
+    if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_uid != os.getuid() \
+            or info.st_size > MAX_FILE:
+        return False
+    if name.startswith('.') and name.endswith(PENDING_SUFFIX):
+        return True
+    return stat.S_IMODE(info.st_mode) == 0o400 and int(info.st_mtime) == FILE_TIME
 
 
 def install_new(content, data_root, *, skip=(), only=None, read_only=False):

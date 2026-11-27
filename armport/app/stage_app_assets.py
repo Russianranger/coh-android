@@ -313,7 +313,7 @@ def navigation_maps(directory, run_json):
 def stage(source, armport, output, repository_commit, external=None, *,
           server_archive=None, server_variant=None, server_run_id=None, upstream_root=ROOT,
           server_option=False, dbserver=None, dbserver_ci_runtime=False, zoning=False, zone_graphs=None,
-          navigation=None):
+          navigation=None, content_root=None):
     """external: payloads the app installs from its external asset pack (0.13.x
     apps). They are listed in the runtime manifest but not packaged; each must
     match the pack manifest's pin and is neither required on disk nor copied."""
@@ -391,7 +391,8 @@ def stage(source, armport, output, repository_commit, external=None, *,
                         'The donor already carries a navigation map descriptor')
         generated.update(descriptor_payload)
         zone_payloads = zone_payloads + tuple(descriptor_payload)
-    content_payload = single_player_content()
+    # content_root: CI's update probe stages a second folder with an earlier version's content.
+    content_payload = single_player_content(content_root or SINGLE_PLAYER_CONTENT)
     package.require(not set(content_payload) & (set(runtime['files']) | set(generated)),
                     'The donor already carries single-player content')
     generated.update(content_payload)

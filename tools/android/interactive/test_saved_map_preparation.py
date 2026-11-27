@@ -139,8 +139,11 @@ class SavedMapPreparationTests(unittest.TestCase):
             with self.assertRaisesRegex(server.base.DiagnosticError, 'missing graph'):
                 value.prepare_atlas_runtime()
         self.assertTrue(value.atlas_map_runtime.is_dir())
-        with self.assertRaisesRegex(server.base.DiagnosticError, 'did not complete'):
-            value.prepare_atlas_runtime()
+        # The later attempts name the first failure (Thor 20261127-035141: only "did not complete" reached the status line).
+        for _ in range(2):
+            with self.assertRaisesRegex(server.base.DiagnosticError,
+                                        r'did not complete \(missing graph\); preserve data and export'):
+                value.prepare_atlas_runtime()
         self.assertFalse(value.creation_report['atlas_preparation_deferred']['atlas_graph_prepared'])
 
     def test_deferred_atlas_cache_return_uses_its_owned_runtime(self):

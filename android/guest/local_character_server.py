@@ -2663,9 +2663,21 @@ class LocalCharacterServer(login.LocalLoginServer):
         if not getattr(self, 'atlas_preparation_deferred', False):
             return self.runtime
         if getattr(self, 'atlas_map_runtime', None) is not None:
+            # Name the first failure: on the Thor (20261127-035141) the reason was in one
+            # early-start field only and both later attempts said just "did not complete".
+            first = getattr(self, 'atlas_preparation_failure', None)
             require(getattr(self, 'atlas_runtime_prepared', False),
-                    'Earlier Atlas preparation did not complete; preserve data and export')
+                    'Earlier Atlas preparation did not complete' + (' (' + first + ')' if first else '')
+                    + '; preserve data and export')
             return self.atlas_map_runtime
+        try:
+            return self.prepare_atlas_runtime_once()
+        except Exception as failure:
+            if getattr(self, 'atlas_map_runtime', None) is not None:
+                self.atlas_preparation_failure = str(failure)[:300]
+            raise
+
+    def prepare_atlas_runtime_once(self):
         target = self.runtime.with_name(self.runtime.name + '-atlas-park')
         require(not target.exists() and not target.is_symlink(), 'Atlas session runtime already exists')
         target.mkdir(mode=0o700)
@@ -3671,6 +3683,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         started = time.monotonic()
         roots = list(identity['shared_server_data']['shared_top_level'])
         removed = {'unsealed_trees': 0, 'other_identity_trees': 0}
+        self.restore_shared_seals(removed)
         plan = self.shared_tree_plan(identity, roots)
         providers, trees, stats, reused = {}, [], None, True
         for group in plan['groups']:
@@ -3774,13 +3787,22 @@ class LocalCharacterServer(login.LocalLoginServer):
         if sealed(whole['key']):
             return {'groups': [whole], 'known': known}
         other_whole = full(plain if active else with_content)
-        any_tree = any(sealed(key) for key in known)
+        # A tree of all folders made with an earlier version's content (0.13.89): an update that
+        # changes the content must not cost the 118,000 file links of the folders it never touched.
+        import single_player_content
+        earlier = next((key for key in (full(dict(plain, single_player_content=value))
+                                        for value in reversed(single_player_content.IDENTITY_HISTORY)
+                                        if value != archive.identity) if sealed(key)), None)
+        any_tree = any(sealed(key) for key in known) or earlier is not None
         if not active and not any_tree:
             return {'groups': [whole], 'known': known}        # nothing kept yet: one tree, as before
         if sealed(full(plain)):
             rest = {'key': full(plain), 'roots': roots, 'kind': 'all_folders_without_content', 'use': untouched}
         elif sealed(other_whole):
             rest = {'key': other_whole, 'roots': roots, 'kind': 'all_folders_other_content_state', 'use': untouched}
+        elif earlier is not None:
+            rest = {'key': earlier, 'roots': roots, 'kind': 'all_folders_earlier_content', 'use': untouched}
+            known = known | {earlier}
         else:
             rest = {'key': part(plain, untouched), 'roots': untouched, 'kind': 'untouched_folders'}
         own = {'key': part(mine, touched), 'roots': touched,
@@ -3834,21 +3856,94 @@ class LocalCharacterServer(login.LocalLoginServer):
                 'stats': stats}, sort_keys=True) + '\n')
         return shared, reused, stats
 
+    def inspect_shared_tree(self, root):
+        """Count a shared tree's folders, links and content files; refuse anything else. Changes nothing."""
+        import single_player_content
+        counts, folders = {'directories': 0, 'links': 0, 'content_files': 0}, []
+        for current, directories, files in os.walk(root, followlinks=False):
+            self.ctx.check()
+            info = os.lstat(current)
+            require(stat.S_ISDIR(info.st_mode) and info.st_uid == os.getuid(),
+                    'Shared server data tree holds a folder that is not ours')
+            folders.append(current)
+            counts['directories'] += 1
+            for name in files:
+                leaf = os.path.join(current, name)
+                info = os.lstat(leaf)
+                if stat.S_ISLNK(info.st_mode):
+                    counts['links'] += 1
+                else:
+                    # The content's files are regular files (0.13.85). remove_shared_tree refused
+                    # them until 0.13.88, so the first update that changed the content could not
+                    # replace the tree and no zone started (Thor export 20261127-035141).
+                    require(single_player_content.own_copy(name, info),
+                            'Shared server data tree holds a regular file: ' + leaf)
+                    counts['content_files'] += 1
+            for name in directories:
+                require(not os.path.islink(os.path.join(current, name)),
+                        'Shared server data tree holds a linked folder')
+        return counts, folders
+
+    def restore_shared_seals(self, removed):
+        """Before the trees are chosen: a marker stands only beside a tree that can be used.
+
+        A marker whose tree was opened and cannot be sealed again (or is gone) is removed, so
+        the plan does not count on that tree: it is then an unsealed tree like one from a
+        stopped build, removed when the next tree is built.
+        """
+        for marker in sorted(self.owner.root.glob(SHARED_TREE_PREFIX + '*.json')):
+            tree = marker.with_name(marker.name[:-len('.json')])
+            try:
+                info = marker.lstat()
+                if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_size > 4096:
+                    continue                    # shared_tree refuses it if it is ever asked for
+                record = json.loads(marker.read_text())
+                stats = record.get('stats') if isinstance(record, dict) else None
+            except (OSError, ValueError):
+                continue
+            if tree.is_symlink() or (tree.exists() and not tree.is_dir()):
+                continue                        # never ours; leave it alone
+            if not isinstance(stats, dict) or not self.shared_tree_sealed(tree, stats, removed):
+                marker.unlink()
+
+    def shared_tree_sealed(self, shared, stats, removed):
+        """Whether a marked tree can be used as it is, or after its folders are made read-only again.
+
+        A sealed tree's folders are read-only. A removal that was stopped half-way (0.13.88 on a
+        tree with content files) leaves some of them writable and everything else as it was:
+        when the tree still holds exactly what its marker counted, it is sealed again.
+        """
+        try:
+            info = shared.lstat()
+        except FileNotFoundError:
+            return False
+        require(stat.S_ISDIR(info.st_mode) and info.st_uid == os.getuid(),
+                'Shared server data tree is not an owned directory')
+        if stat.S_IMODE(info.st_mode) == 0o500:
+            return True
+        counts, folders = self.inspect_shared_tree(shared)
+        if not (counts['directories'] == stats.get('directories')
+                and counts['links'] == stats.get('linked_immutable_files')
+                and counts['content_files'] == (stats.get('single_player_files') or 0)):
+            return False
+        for folder in folders:
+            os.chmod(folder, 0o500)
+        removed['opened_trees_sealed_again'] = removed.get('opened_trees_sealed_again', 0) + 1
+        return True
+
     def remove_shared_tree(self, path):
-        """Remove a shared tree: it may hold only owned directories and links, never data."""
+        """Remove a shared tree: owned folders, links and the content's own files, never data.
+
+        Everything is checked before anything is changed, so a refused tree stays as it was.
+        """
         root = Path(path)
         info = root.lstat()
         require(stat.S_ISDIR(info.st_mode) and info.st_uid == os.getuid()
                 and root.parent == self.owner.root and root.name.startswith(SHARED_TREE_PREFIX),
                 'Refusing to remove an unexpected shared server data path')
-        for current, directories, files in os.walk(root, followlinks=False):
-            self.ctx.check()
-            os.chmod(current, 0o700)
-            for name in files:
-                leaf = Path(current) / name
-                require(leaf.is_symlink(), 'Shared server data tree holds a regular file: ' + str(leaf))
-            for name in directories:
-                require(not (Path(current) / name).is_symlink(), 'Shared server data tree holds a linked folder')
+        _counts, folders = self.inspect_shared_tree(root)
+        for folder in folders:
+            os.chmod(folder, 0o700)
         shutil.rmtree(root)
 
     def start(self):

@@ -199,6 +199,102 @@ CREATOR_ATTEMPTS = 12
 HEROES_PROBE_SECONDS = 3000
 
 
+UPDATE_PROBE_ENV = 'COH_UPDATE_PROBE'
+EARLIER_CONTENT_EDIT = ('defs/classes/pc_primalist.def', b'"archetypeicon_primalist.tga"',
+                        b'"archetypeicon_primalist.texture"',
+                        'Primalist zip localdata/Defs/classes/PC_Primalist.def')
+
+
+def update_probe_requested():
+    """0.13.89: the first session runs with the content the previous app version shipped.
+
+    An update that changes the single-player content meets data trees made with the old one. No
+    CI run had ever done that; on the Thor 0.13.88 could not replace the old tree and no zone
+    started (export 20261127-035141). The probe makes and saves a Primalist with the earlier
+    content and reopens it with this version's, on the same kept state.
+    """
+    value = os.environ.get(UPDATE_PROBE_ENV, '')
+    require(value in ('', '0', '1'), UPDATE_PROBE_ENV + ' must be empty, 0 or 1')
+    return value == '1'
+
+
+def earlier_content_folder(target, source=None):
+    """Write the content folder as the previous version shipped it; returns both identities.
+
+    The versions differ in one line of one file (EARLIER_CONTENT_EDIT), so the earlier folder is
+    this one with that line and its manifest record put back; the result must be exactly the
+    identity that version shipped (single_player_content.IDENTITY_HISTORY), or the probe stops.
+    """
+    source = Path(source or stage_app_assets.SINGLE_PLAYER_CONTENT)
+    sys.path.insert(0, str(ROOT / 'android/guest'))
+    try:
+        import single_player_content
+    finally:
+        sys.path.pop(0)
+    history = single_player_content.IDENTITY_HISTORY
+    manifest = json.loads((source / 'manifest.json').read_text())
+    require(len(history) >= 2 and manifest.get('files_sha256') == history[-1],
+            'Update probe: this content is not the last of the identity history')
+    name, new, old, origin = EARLIER_CONTENT_EDIT
+    require(not Path(target).exists(), 'Update probe: the earlier content folder already exists')
+    shutil.copytree(source, target)
+    path = Path(target) / 'data' / name
+    data = path.read_bytes()
+    require(data.count(new) == 1, 'Update probe: the changed line is not in this content')
+    data = data.replace(new, old)
+    path.write_bytes(data)
+    record = manifest['files'][name]
+    record.update(bytes=len(data), sha256=hashlib.sha256(data).hexdigest(), origin=origin)
+    manifest['files_sha256'] = hashlib.sha256(json.dumps(manifest['files'], sort_keys=True,
+                                                         separators=(',', ':')).encode()).hexdigest()
+    require(manifest['files_sha256'] == history[-2],
+            'Update probe: the rebuilt folder is not the content the previous version shipped')
+    (Path(target) / 'manifest.json').write_text(json.dumps(manifest, indent=1, sort_keys=True) + '\n')
+    return {'earlier': history[-2], 'current': history[-1]}
+
+
+def shared_tree_records(report, limit=16):
+    """Every shared server data record of a session report (each zone tree has one)."""
+    found, pending = [], [report]
+    while pending and len(found) < limit:
+        value = pending.pop()
+        if isinstance(value, dict):
+            if isinstance(value.get('shared_trees'), list) and isinstance(value.get('removed'), dict):
+                found.append(value)
+            pending.extend(value.values())
+        elif isinstance(value, list):
+            pending.extend(value[:64])
+    return found
+
+
+def update_probe_validate(created, reopened, identities):
+    """The reopen ran with the new content over the old session's trees, and replaced the old content's tree."""
+    def content(report):
+        value = report.get('single_player_content')
+        return value.get('identity') if isinstance(value, dict) else None
+    require(content(created) == identities['earlier'],
+            'Update probe: the first session did not run with the earlier content')
+    require(content(reopened) == identities['current'],
+            'Update probe: the reopen did not run with this version\'s content')
+    def rows(report):
+        return [{'trees': [(row.get('kind'), row.get('reused'), row.get('files')) for row in record['shared_trees']
+                           if isinstance(row, dict)][:4],
+                 'removed': record['removed'], 'link_seconds': record.get('link_seconds')}
+                for record in shared_tree_records(report)]
+    before, after = rows(created), rows(reopened)
+    require(any(kind == 'content_folders' for row in before for kind, _reused, _files in row['trees']),
+            'Update probe: the first session made no content tree')
+    replaced = [row for row in after
+                if row['removed'].get('other_identity_trees', 0) >= 1
+                and ('content_folders', False) in [(kind, reused) for kind, reused, _files in row['trees']]]
+    require(replaced, 'Update probe: the reopen did not replace the earlier content\'s tree')
+    require(all(any(kind == 'untouched_folders' and reused for kind, reused, _files in row['trees'])
+                for row in replaced), 'Update probe: the untouched folders were linked again')
+    summary = {'format': 1, 'content': identities, 'creation': before[:3], 'reopen': after[:3]}
+    print('ARMPORT_UPDATE_PROBE_V1 ' + json.dumps(summary, separators=(',', ':'))[:3800], flush=True)
+    return summary
+
+
 def heroes_probe_requested():
     value = os.environ.get(HEROES_PROBE_ENV, '')
     require(value in ('', '0', '1'), HEROES_PROBE_ENV + ' must be empty, 0 or 1')
@@ -1639,28 +1735,46 @@ def main():
             server_run_id=args.server_run_id, upstream_root=baseline,
             dbserver=args.external_maps_dbserver, dbserver_ci_runtime=args.external_maps_dbserver is not None,
             zoning=stock_travel_requested())
-        runtime_manifest = json.loads((assets / 'runtime-manifest.json').read_text())
+        def staged_manifests(assets):
+            """The staged folder's manifests with the host's own records added."""
+            runtime_manifest = json.loads((assets / 'runtime-manifest.json').read_text())
+            client_manifest = json.loads((assets / 'client-manifest.json').read_text())
+            if args.server_archive:
+                binding = json.loads((assets / 'armport-server-metrics-binding.json').read_text())
+                runtime_manifest['armport_server_metrics_build'] = json.loads(binding['build_manifest_utf8'])
+            # stage() verified this archive against the retained donor's exact hash.
+            with zipfile.ZipFile(assets / 'client-runtime.zip') as archive:
+                native = json.loads(archive.read('client-package.json'))
+            runtime_manifest['armport_server_native_closure'] = {
+                key: native[key] for key in ('source_commit', 'data_commit', 'files')}
+            world_tool = character.host.assets_tool.world_tools()
+            world = json.loads((assets / world_tool.MANIFEST).read_text())
+            runtime_manifest['armport_world_manifest'] = world
+            runtime_manifest['armport_world_contract'] = dict(
+                scope=world['scope'], manifest_pin=runtime_manifest['files'][world_tool.MANIFEST],
+                archive_pin=runtime_manifest['files'][world_tool.ARCHIVE],
+                file_count=world['file_count'], payload_bytes=world['payload_bytes'],
+                files_sha256=hashlib.sha256(json.dumps(world['files'], sort_keys=True,
+                    separators=(',', ':')).encode()).hexdigest())
+            return runtime_manifest, client_manifest
+        runtime_manifest, client_manifest = staged_manifests(assets)
         if args.external_maps_dbserver is not None:
             result['external_maps_dbserver'] = runtime_manifest[stage_app_assets.EXTERNAL_MAPS_KEY]
-        client_manifest = json.loads((assets / 'client-manifest.json').read_text())
         if args.server_archive:
-            binding = json.loads((assets / 'armport-server-metrics-binding.json').read_text())
-            runtime_manifest['armport_server_metrics_build'] = json.loads(binding['build_manifest_utf8'])
             result['armport_server_metrics'] = runtime_manifest['armport_server_metrics']
-        # stage() verified this archive against the retained donor's exact hash.
-        with zipfile.ZipFile(assets / 'client-runtime.zip') as archive:
-            native = json.loads(archive.read('client-package.json'))
-        runtime_manifest['armport_server_native_closure'] = {
-            key: native[key] for key in ('source_commit', 'data_commit', 'files')}
-        world_tool = character.host.assets_tool.world_tools()
-        world = json.loads((assets / world_tool.MANIFEST).read_text())
-        runtime_manifest['armport_world_manifest'] = world
-        runtime_manifest['armport_world_contract'] = dict(
-            scope=world['scope'], manifest_pin=runtime_manifest['files'][world_tool.MANIFEST],
-            archive_pin=runtime_manifest['files'][world_tool.ARCHIVE],
-            file_count=world['file_count'], payload_bytes=world['payload_bytes'],
-            files_sha256=hashlib.sha256(json.dumps(world['files'], sort_keys=True,
-                separators=(',', ':')).encode()).hexdigest())
+        first_manifests, earlier_assets, update_identities = (runtime_manifest, client_manifest), None, None
+        if update_probe_requested():
+            require(primalist_creation_requested() and shared_server_requested(),
+                    'The update probe needs the Primalist probe and the shared server data')
+            update_identities = earlier_content_folder(args.work / 'earlier-content')
+            earlier_assets = args.work / 'armport-assets-earlier'
+            stage_app_assets.stage(donor / 'runtime', args.armport,
+                earlier_assets, args.repository_commit, server_archive=args.server_archive,
+                server_variant='retained_progress' if args.server_archive else None,
+                server_run_id=args.server_run_id, upstream_root=baseline,
+                dbserver=args.external_maps_dbserver, dbserver_ci_runtime=args.external_maps_dbserver is not None,
+                zoning=stock_travel_requested(), content_root=args.work / 'earlier-content')
+            first_manifests = staged_manifests(earlier_assets)
         # The imported data uses the existing Java importer and exact donor contract.
         data = character.host.import_game_data(donor / 'atlas', args.archive, args.work, args.evidence)
         first, second = secrets.token_hex(16), secrets.token_hex(16)
@@ -1727,8 +1841,13 @@ def main():
         if 'creation' in start_options_sessions():
             for option in START_OPTIONS:
                 first_command.insert(first_command.index('/usr/bin/python3'), option)
+        if earlier_assets is not None:
+            # The first session's guest sees the earlier app's folder at /opt/coh; nothing else differs.
+            bind, earlier_bind = str(assets.resolve()) + ':/opt/coh', str(earlier_assets.resolve()) + ':/opt/coh'
+            require(first_command.count(bind) == 1, 'Update probe: the assets folder is not bound once')
+            first_command[first_command.index(bind)] = earlier_bind
         created = run_session(first_command, args.work, args.evidence / 'creation', args.proot,
-                              first, runtime_manifest, client_manifest, deadline)
+                              first, first_manifests[0], first_manifests[1], deadline)
         before = reopen.persistent_profile_identity(args.work)
         reopen.archive_completed_reports(args.work / 'state', first)
         reopen.reset_session_requests(args.work / 'state')
@@ -1746,6 +1865,8 @@ def main():
                                second, runtime_manifest, client_manifest, deadline, reopening=True)
         after = reopen.persistent_profile_identity(args.work)
         reopen.validate_continuity(created, reopened, before, after)
+        if update_identities is not None:
+            result['update_probe'] = update_probe_validate(created, reopened, update_identities)
         if heroes_probe_requested():
             require(stock_travel_requested(), "The heroes probe needs the game's own zone travel")
             first_hero = character.CHARACTER
@@ -1782,7 +1903,7 @@ def main():
                     'Game audio reached no protocol sink: ' + json.dumps(audio))
         if args.server_archive:
             result['server_metrics_native_execution'] = {
-                'creation': server_pipeline.guest_admission(created, runtime_manifest),
+                'creation': server_pipeline.guest_admission(created, first_manifests[0]),
                 'reopen': server_pipeline.guest_admission(reopened, runtime_manifest)}
         result.update(passed=True, same_persistent_profile=True, same_character_id=True,
                       creation_session_id=first, reopen_session_id=second)

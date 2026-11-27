@@ -241,6 +241,141 @@ class Archive(unittest.TestCase):
         self.assertTrue(old.is_dir())
         self.assertEqual(plain['removed']['other_identity_trees'], 0)
 
+    def earlier_content(self, value):
+        """The same files under the identity 0.13.85 to 0.13.87 shipped (what an updated phone holds)."""
+        current = self.shared_content
+        self.assertEqual(content.IDENTITY_HISTORY[-1], current.identity)
+        value.single_player_content = content.Content(content.IDENTITY_HISTORY[0], current.files, current.archive)
+        value.__dict__.pop('_shared_content_archive', None)
+        return value.single_player_content
+
+    def current_content(self, value):
+        value.single_player_content = self.shared_content
+        value.__dict__.pop('_shared_content_archive', None)
+
+    def modes(self, tree):
+        import os, stat
+        return {stat.S_IMODE(os.lstat(current).st_mode) for current, _d, _f in os.walk(tree)}
+
+    def test_the_identity_history_ends_with_this_version_s_content(self):
+        manifest = json.loads((FOLDER / 'manifest.json').read_text())
+        self.assertEqual(content.IDENTITY_HISTORY[-1], manifest['files_sha256'],
+                         'the content changed: append its new identity to IDENTITY_HISTORY, keep the old ones')
+        self.assertEqual(len(set(content.IDENTITY_HISTORY)), len(content.IDENTITY_HISTORY))
+        self.assertTrue(all(len(value) == 64 for value in content.IDENTITY_HISTORY))
+
+    def test_an_update_that_changes_the_content_keeps_the_untouched_folders_of_the_old_whole_tree(self):
+        """Thor 20261127-035141 (0.13.88 over 0.13.87): the phone held one tree of all folders made
+        with the earlier content. 0.13.88 wanted it gone, refused its content files ("Shared server
+        data tree holds a regular file: .../texts/english/menumessages.ms") and no zone started."""
+        import hashlib, os, character_server_data_cache as cache
+        value, runtime, identity = self.shared_setup(content_on=True)
+        earlier = self.earlier_content(value)
+        old_identity = dict(identity, single_player_content=earlier.identity)
+        key = hashlib.sha256(cache.canonical(old_identity)).hexdigest()[:24]
+        old = value.shared_tree({'key': key, 'roots': ['fx', 'menu', 'texts'], 'kind': 'all_folders'}, {key},
+                                {'unsealed_trees': 0, 'other_identity_trees': 0})[0]
+        regular = [path for path in old.rglob('*') if path.is_file() and not path.is_symlink()]
+        self.assertEqual(len(regular), len(earlier.selected(only=('menu', 'texts'))))     # what 0.13.88 refused
+        self.assertEqual(self.modes(old), {0o500})
+        # What the failed start of 0.13.88 left behind: the folders it walked before the refusal are writable.
+        os.chmod(old, 0o700); os.chmod(old / 'texts', 0o700)
+        self.current_content(value)
+        result, served, has_content = self.shared_link(content_on=True)
+        self.assertTrue(has_content)
+        self.assertEqual([(row['kind'], row['reused'], row['roots']) for row in result['shared_trees']],
+                         [('content_folders', False, 2), ('all_folders_earlier_content', True, 3)])
+        self.assertEqual(served['fx'], old.name)                               # 118,000 links not made again
+        self.assertNotEqual(served['menu'], old.name); self.assertEqual(served['menu'], served['texts'])
+        self.assertEqual(result['removed'], {'unsealed_trees': 0, 'other_identity_trees': 0, 'opened_trees_sealed_again': 1})
+        self.assertEqual(self.modes(old), {0o500})
+        again, served_again, _ = self.shared_link(content_on=True)
+        self.assertEqual((again['reused_shared_tree'], served_again, again['removed']),
+                         (True, served, {'unsealed_trees': 0, 'other_identity_trees': 0}))
+        # Without the Primalist the same old tree serves the untouched folders too.
+        plain, plain_served, plain_content = self.shared_link(content_on=False)
+        self.assertEqual((plain_served['fx'], plain_content), (old.name, False))
+        self.assertEqual([row['kind'] for row in plain['shared_trees']],
+                         ['content_folders_without_content', 'all_folders_earlier_content'])
+        self.assertEqual(plain['removed']['other_identity_trees'], 0)
+
+    def test_an_opened_old_tree_that_lost_a_file_is_not_built_again_under_its_old_name(self):
+        """A tree is only ever built by a session of its own content state: a damaged tree of the
+        earlier content is dropped, never refilled with this version's files under the old key."""
+        import hashlib, os, character_server_data_cache as cache
+        value, runtime, identity = self.shared_setup(content_on=True)
+        earlier = self.earlier_content(value)
+        key = hashlib.sha256(cache.canonical(dict(identity, single_player_content=earlier.identity))).hexdigest()[:24]
+        old = value.shared_tree({'key': key, 'roots': ['fx', 'menu', 'texts'], 'kind': 'all_folders'}, {key},
+                                {'unsealed_trees': 0, 'other_identity_trees': 0})[0]
+        os.chmod(old, 0o700); os.chmod(old / 'fx', 0o700); (old / 'fx/a.fx').unlink()
+        self.current_content(value)
+        result, served, has_content = self.shared_link(content_on=True)
+        self.assertTrue(has_content)
+        self.assertEqual([(row['kind'], row['reused']) for row in result['shared_trees']],
+                         [('content_folders', False), ('untouched_folders', False)])
+        self.assertFalse(old.exists()); self.assertFalse((value.owner.root / (old.name + '.json')).exists())
+        self.assertEqual(result['removed'], {'unsealed_trees': 0, 'other_identity_trees': 1})
+        self.assertNotIn(old.name, served.values())
+
+    def test_a_content_tree_of_an_earlier_version_is_removed_with_its_content_files(self):
+        value, runtime, identity = self.shared_setup(content_on=True)
+        earlier = self.earlier_content(value)
+        first = value.link_shared_server_data(runtime, dict(identity, single_player_content=earlier.identity))
+        own = value.owner.root / first['shared_trees'][0]['tree']
+        self.assertEqual(first['shared_trees'][0]['kind'], 'content_folders')
+        self.assertTrue(any(path.is_file() and not path.is_symlink() for path in own.rglob('*')))
+        (own / 'texts').chmod(0o700)                                    # a write stopped half-way leaves its pending file
+        (own / 'texts/.x.ms.single-player-pending').write_bytes(b'half'); (own / 'texts').chmod(0o500)
+        self.current_content(value)
+        result, served, has_content = self.shared_link(content_on=True)
+        self.assertTrue(has_content)
+        self.assertEqual(result['removed']['other_identity_trees'], 1)
+        self.assertFalse(own.exists()); self.assertFalse((value.owner.root / (own.name + '.json')).exists())
+        self.assertEqual([(row['kind'], row['reused']) for row in result['shared_trees']],
+                         [('content_folders', False), ('untouched_folders', True)])
+        # The import was never touched.
+        self.assertTrue(all(path.read_text() == 'imported' for path in (self.root / 'import').rglob('*') if path.is_file()))
+
+    def test_an_opened_tree_that_no_longer_matches_its_marker_is_built_again(self):
+        import os
+        plain, served, _ = self.shared_link(content_on=False)
+        tree = self.shared_value.owner.root / plain['shared_tree']
+        os.chmod(tree, 0o700); os.chmod(tree / 'fx', 0o700); (tree / 'fx/a.fx').unlink(); os.chmod(tree / 'fx', 0o500)
+        again, served_again, _ = self.shared_link(content_on=False)
+        self.assertEqual((again['reused_shared_tree'], served_again, again['removed']['unsealed_trees']), (False, served, 1))
+        self.assertTrue((tree / 'fx/a.fx').is_symlink()); self.assertEqual(self.modes(tree), {0o500})
+        self.assertNotIn('opened_trees_sealed_again', again['removed'])
+        # A marker whose tree is gone: built again as well.
+        value = self.shared_value
+        value.remove_shared_tree(tree)
+        last, served_last, _ = self.shared_link(content_on=False)
+        self.assertEqual((last['reused_shared_tree'], served_last), (False, served))
+
+    def test_a_file_that_is_nobody_s_copy_still_stops_the_removal_and_nothing_is_changed(self):
+        import os
+        value, runtime, identity = self.shared_setup(content_on=False)
+        stranger = value.owner.root / 'shared-server-data-0123456789abcdef01234567'
+        (stranger / 'fx/deep').mkdir(parents=True)
+        (stranger / 'fx/link').symlink_to(self.root / 'import/fx/a.fx')
+        for mode, when in ((0o600, content.FILE_TIME), (0o400, content.FILE_TIME + 5)):
+            (stranger / 'fx/deep/kept.txt').write_text('someone wrote this')
+            os.utime(stranger / 'fx/deep/kept.txt', (when, when)); (stranger / 'fx/deep/kept.txt').chmod(mode)
+            for folder in (stranger / 'fx/deep', stranger / 'fx', stranger):
+                folder.chmod(0o500)
+            (value.owner.root / (stranger.name + '.json')).write_text('{}')
+            with self.assertRaisesRegex(Exception, 'holds a regular file: .*kept.txt'):
+                value.link_shared_server_data(runtime, identity)
+            self.assertEqual((stranger / 'fx/deep/kept.txt').read_text(), 'someone wrote this')
+            self.assertEqual(self.modes(stranger), {0o500})             # refused before anything was opened
+            (stranger / 'fx/deep').chmod(0o700); (stranger / 'fx/deep/kept.txt').chmod(0o600)
+            (stranger / 'fx/deep/kept.txt').unlink()
+        # A hard link is not a private copy either.
+        (stranger / 'fx/deep/twice').write_text('x'); os.link(stranger / 'fx/deep/twice', self.root / 'elsewhere')
+        os.utime(stranger / 'fx/deep/twice', (content.FILE_TIME, content.FILE_TIME)); (stranger / 'fx/deep/twice').chmod(0o400)
+        with self.assertRaisesRegex(Exception, 'holds a regular file'):
+            value.remove_shared_tree(stranger)
+
     def test_a_tree_of_another_source_is_still_removed(self):
         value, runtime, identity = self.shared_setup(content_on=False)
         stranger = value.owner.root / 'shared-server-data-0123456789abcdef01234567'
