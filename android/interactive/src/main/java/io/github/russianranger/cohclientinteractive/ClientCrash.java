@@ -146,7 +146,7 @@ final class ClientCrash {
         Object parsed = JSONObject.NULL;
         if (crash != null) try { parsed = new JSONObject(crash); } catch (Exception invalid) { parsed = "unreadable"; }
         result.put("last_crash", parsed);
-        JSONObject exits = new JSONObject().put("maximum_records", 4).put("own_processes_only", true)
+        JSONObject exits = new JSONObject().put("maximum_records", ClientRuntime.EXIT_HISTORY_RECORDS).put("own_processes_only", true)
                 .put("trace_streams_requested", true);
         if (Build.VERSION.SDK_INT < 30) exits.put("status", "unsupported_api");
         else try { ExitRecords.collect(context, exits); } catch (Exception unavailable) {
@@ -174,10 +174,10 @@ final class ClientCrash {
             android.app.ActivityManager manager = (android.app.ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
             if (manager == null) { result.put("status", "unavailable"); return; }
             String ownPackage = context.getPackageName();
-            List<android.app.ApplicationExitInfo> history = manager.getHistoricalProcessExitReasons(ownPackage, 0, 4);
+            List<android.app.ApplicationExitInfo> history = manager.getHistoricalProcessExitReasons(ownPackage, 0, ClientRuntime.EXIT_HISTORY_RECORDS);
             JSONArray records = new JSONArray();
             boolean traceTaken = false;
-            if (history != null) for (int i = 0; i < Math.min(history.size(), 4); i++) {
+            if (history != null) for (int i = 0; i < Math.min(history.size(), ClientRuntime.EXIT_HISTORY_RECORDS); i++) {
                 android.app.ApplicationExitInfo info = history.get(i);
                 if (info == null) continue;
                 String description = info.getDescription();

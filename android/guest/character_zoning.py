@@ -968,6 +968,15 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         sample.update(utc_ms=int(time.time() * 1000), zone_servers=sorted(self.maps),
                       client_connected=bool(self.creation_report.get('connected_on_atlas')))
         report['samples'].append(sample)
+        # 0.13.90: the same sample as an output line. The report is only written at the end and when a
+        # zone becomes ready; the app writes every line to its log as it arrives, so a launch that
+        # Android ends leaves its memory figures behind (Thor 0.13.89: the app was ended twenty
+        # seconds after the last figure the recovered report held).
+        try:
+            self.ctx.event('guest_memory_sample', format=1, session_id=self.owner.args.session_id,
+                           is_success_proof=False, **sample)
+        except (AttributeError, OSError, ValueError):
+            pass
 
     def tick_priorities(self, now):
         """A few read-only samples in play: does Wine run the client at a higher nice?"""

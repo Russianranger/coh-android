@@ -123,6 +123,63 @@ class ClientCrashJavaTests(unittest.TestCase):
         recovery = (ROOT/'android/recovery/src/main/java/io/github/russianranger/cohclientinteractive/ClientReports.java').read_text()
         self.assertIn('terminalSource(sources, omitted, "operation.log", run.resolve("operation.log"), 4L * 1024 * 1024);', recovery)
 
+    def test_exit_records_reach_back_sixteen_endings(self):
+        crash = (JAVA/'ClientCrash.java').read_text()
+        runtime = (JAVA/'ClientRuntime.java').read_text()
+        self.assertIn('static final int EXIT_HISTORY_RECORDS = 16;', runtime)
+        self.assertEqual(crash.count('ClientRuntime.EXIT_HISTORY_RECORDS'), 3)   # declared, asked for, read
+        self.assertNotIn('getHistoricalProcessExitReasons(ownPackage, 0, 4)', crash)
+        self.assertNotIn('getHistoricalProcessExitReasons(ownPackage,0,4)', runtime)
+
+    def test_memory_warnings_and_the_hero_choice_reach_the_checkpoint(self):
+        """recordLifecycle and the warning's text, run as shipped."""
+        runtime = (JAVA/'ClientRuntime.java').read_text()
+        service = (JAVA/'ClientService.java').read_text()
+        trim = method(service, '@Override public void onTrimMemory(int level)')
+        self.assertIn('super.onTrimMemory(level);', trim)
+        self.assertIn('lifecycle(trimMemoryEvent(level,ClientRuntime.systemMemorySample(this)));', trim)
+        self.assertIn('level==lastTrimLevel&&now-lastTrimUptime<10000', trim)
+        self.assertIn('catch(RuntimeException ignored)', trim)
+        source = r'''
+import java.util.*;
+public class LifecycleHost {
+ static final class SystemClock { static long uptimeMillis() { return 42; } }
+ final List<Map<String,Object>> lifecycle = new ArrayList<>();
+ String session = "s"; int checkpoints;
+ static String clean(String value) { return value; }
+ void checkpoint() { checkpoints++; }
+''' + method(runtime, 'public synchronized void recordLifecycle(String event)') + method(
+            service, 'static String trimMemoryEvent(int level,java.util.Map<String,Object> memory)') + r'''
+ public static void main(String[] a) {
+  LifecycleHost host = new LifecycleHost();
+  String[] kept = {"local_login_observed", "session_hero character_id=1 created=false", "initial_zone_starting map_id=71",
+    "initial_zone_ready map_id=71", "character_connected_observed", "zoning_idle epoch=0", "activity_visible=false"};
+  String[] plain = {"held_input_released", "text_entry_dispatch", "interaction_ready", "screen_event=x", "session_heroes"};
+  for (String event : kept) host.recordLifecycle(event);
+  if (host.checkpoints != kept.length) throw new AssertionError("kept " + host.checkpoints);
+  for (String event : plain) host.recordLifecycle(event);
+  if (host.checkpoints != kept.length) throw new AssertionError("a plain event wrote a checkpoint");
+  Map<String,Object> memory = new LinkedHashMap<>();
+  memory.put("system_memory_available_bytes", 7944564736L); memory.put("system_memory_low", false);
+  String warned = trimMemoryEvent(15, memory);
+  host.recordLifecycle(warned);
+  if (host.checkpoints != kept.length + 1) throw new AssertionError("the memory warning wrote no checkpoint");
+  System.out.println(warned);
+  System.out.println(trimMemoryEvent(80, new LinkedHashMap<String,Object>()));
+  for (int i = 0; i < 600; i++) host.recordLifecycle("zoning_idle epoch=" + i);
+  System.out.println(host.lifecycle.size());
+ }
+}
+'''
+        with tempfile.TemporaryDirectory(prefix='coh-lifecycle-') as temp:
+            (Path(temp)/'LifecycleHost.java').write_text(source)
+            subprocess.run(['java', '-m', 'jdk.compiler/com.sun.tools.javac.Main', '-d', temp, str(Path(temp)/'LifecycleHost.java')],
+                           check=True, capture_output=True, text=True)
+            lines = subprocess.run(['java', '-cp', temp, 'LifecycleHost'], check=True, capture_output=True, text=True,
+                                   timeout=30).stdout.splitlines()
+        self.assertEqual(lines, ['trim_memory level=15 available_mib=7576 low=false',
+                                 'trim_memory level=80 available_mib=unknown low=null', '512'])
+
 
 if __name__ == '__main__':
     unittest.main()

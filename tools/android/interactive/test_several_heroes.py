@@ -339,5 +339,39 @@ class SeveralHeroesTests(unittest.TestCase):
         self.assertEqual((server.CHARACTER, server.HERO_ID), ('Second Hero', 2))
 
 
+class MemorySampleLineTests(unittest.TestCase):
+    """0.13.90: every memory sample is also an output line (the app logs lines as they arrive)."""
+
+    def subject(self):
+        events = []
+        ctx = SimpleNamespace(event=lambda kind, **fields: events.append((kind, fields)))
+        return SimpleNamespace(
+            zoning_report={'memory_trace': {'samples': []}}, memory_trace_next=0, maps={71: {}, 1: {}},
+            creation_report={}, ctx=ctx, owner=SimpleNamespace(args=SimpleNamespace(session_id='s' * 32))), events
+
+    def test_a_sample_is_recorded_and_sent(self):
+        subject, events = self.subject()
+        figures = {'MemTotal': 15255, 'MemAvailable': 8076, 'SwapFree': 3342, 'pressure': 'some avg10=0.20'}
+        with patch.object(zoning.scheduler, 'memory_snapshot', return_value=dict(figures)):
+            zoning.LocalCharacterZoningServer.tick_memory_trace(subject, 100.0)
+            zoning.LocalCharacterZoningServer.tick_memory_trace(subject, 105.0)      # inside the interval
+            zoning.LocalCharacterZoningServer.tick_memory_trace(subject, 100.0 + zoning.MEMORY_TRACE_INTERVAL_SECONDS)
+        samples = subject.zoning_report['memory_trace']['samples']
+        self.assertEqual(len(samples), 2)
+        self.assertEqual([kind for kind, _ in events], ['guest_memory_sample'] * 2)
+        sent = events[0][1]
+        self.assertEqual({key: sent[key] for key in figures}, figures)
+        self.assertEqual((sent['zone_servers'], sent['client_connected'], sent['session_id'], sent['is_success_proof']),
+                         ([1, 71], False, 's' * 32, False))
+        self.assertEqual(sent['utc_ms'], samples[0]['utc_ms'])
+
+    def test_a_missing_output_channel_does_not_stop_the_sample(self):
+        subject, _ = self.subject()
+        subject.ctx = SimpleNamespace()
+        with patch.object(zoning.scheduler, 'memory_snapshot', return_value={'MemAvailable': 1}):
+            zoning.LocalCharacterZoningServer.tick_memory_trace(subject, 1.0)
+        self.assertEqual(len(subject.zoning_report['memory_trace']['samples']), 1)
+
+
 if __name__ == '__main__':
     unittest.main()

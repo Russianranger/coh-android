@@ -229,6 +229,25 @@ public final class ClientService extends Service {
         publish();notifyStatus();return true;
     }
     private void lifecycle(String event){ClientRuntime r=runtime;if(r!=null&&busy)r.recordLifecycle(event);}
+    /** 0.13.90: Android's memory warnings go into the launch record with the device's free memory, so a
+     *  launch that Android ends shows whether Android had asked for memory first. The same level is
+     *  recorded at most every ten seconds. */
+    private int lastTrimLevel=-1;private long lastTrimUptime;
+    @Override public void onTrimMemory(int level){
+        super.onTrimMemory(level);
+        try{
+            long now=android.os.SystemClock.uptimeMillis();
+            if(level==lastTrimLevel&&now-lastTrimUptime<10000)return;
+            lastTrimLevel=level;lastTrimUptime=now;
+            lifecycle(trimMemoryEvent(level,ClientRuntime.systemMemorySample(this)));
+        }catch(RuntimeException ignored){ /* Evidence only. */ }
+    }
+    static String trimMemoryEvent(int level,java.util.Map<String,Object> memory){
+        Object available=memory.get("system_memory_available_bytes");
+        return "trim_memory level="+level+" available_mib="
+                +(available instanceof Number?String.valueOf(((Number)available).longValue()>>20):"unknown")
+                +" low="+memory.get("system_memory_low");
+    }
     private void refreshProfileState(){profileState=ClientRuntime.characterProfileState(this);profileNote=ClientRuntime.profileRecoveryMessage(profileState);}
     /** 0.13.85: swap the saved hero with the other hero slot (folder renames only), then show the new state. */
     public String switchHero(){

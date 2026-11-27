@@ -333,7 +333,11 @@ jobs:
             neither Android's reason nor a crash trace, so the cause is not known yet. From this
             version a recovered export carries android-interruption.json (Android's exit records
             and the app's own crash trace, if its code crashed) and operation.log (every line up
-            to the moment the app ended).
+            to the moment the app ended, with the game side's free memory every ten seconds).
+          - Every export now holds Android's last 16 exit records with Android's own description
+            (four before), so the record of the close on 0.13.89 is still read after the update.
+            Android's memory warnings, the login, the chosen hero and its zone's start are kept in
+            the launch record as they happen.
           - This version does not claim to fix that close. Choosing a saved hero from another zone
             than the prepared one has not run in CI either.
           From 0.13.89 (seen on the Thor 2026-11-27: the saved game opened, the Primalist was played

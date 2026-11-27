@@ -2580,9 +2580,13 @@ public final class ClientRuntime {
         entry.put("event", clean(event)); entry.put("uptime_ms", SystemClock.uptimeMillis());
         if (session != null) entry.put("session_id", session);
         lifecycle.add(entry);
+        // 0.13.90: the login, the hero the player chose, its zone's start and Android's memory warnings
+        // are kept too, so the record of an app that Android ended shows how far the launch had come.
         if(event.startsWith("operation_") || event.startsWith("character_") || event.startsWith("zoning_")
                 || event.startsWith("ordinary_character_") || event.startsWith("interaction_finish")
-                || event.startsWith("activity_visible="))checkpoint();
+                || event.startsWith("activity_visible=") || event.startsWith("local_login_observed")
+                || event.startsWith("session_hero ") || event.startsWith("initial_zone_")
+                || event.startsWith("trim_memory "))checkpoint();
     }
     private static final ClientReports.IdentityReader REPORT_IDENTITIES=file->{
         try {
@@ -3224,8 +3228,11 @@ public final class ClientRuntime {
         return "127.0.0.1 " + String.join(" ", new LinkedHashSet<>(Arrays.asList("localhost", hostname, labels[0]))) + "\n";
     }
 
+    /** 0.13.90: Android keeps 16 records for an app. Four were too few: the record of a process that
+     *  Android ended is read at a later launch, after restarts and an update have added their own. */
+    static final int EXIT_HISTORY_RECORDS = 16;
     private static JSONObject historicalProcessExits(Context context) throws Exception {
-        JSONObject result=new JSONObject().put("maximum_records",4).put("records",new JSONArray())
+        JSONObject result=new JSONObject().put("maximum_records",EXIT_HISTORY_RECORDS).put("records",new JSONArray())
                 .put("own_processes_only",true).put("trace_streams_requested",false);
         if(Build.VERSION.SDK_INT<30)return result.put("status","unsupported_api");
         try { return ProcessExitHistory.collect(context,result); }
@@ -3245,18 +3252,21 @@ public final class ClientRuntime {
             android.app.ActivityManager manager=(android.app.ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
             if(manager==null)return result.put("status","unavailable");
             String ownPackage=context.getPackageName();
-            List<android.app.ApplicationExitInfo> history=manager.getHistoricalProcessExitReasons(ownPackage,0,4);
+            List<android.app.ApplicationExitInfo> history=manager.getHistoricalProcessExitReasons(ownPackage,0,EXIT_HISTORY_RECORDS);
             JSONArray records=new JSONArray();
-            if(history!=null)for(int i=0;i<Math.min(history.size(),4);i++) {
+            if(history!=null)for(int i=0;i<Math.min(history.size(),EXIT_HISTORY_RECORDS);i++) {
                 android.app.ApplicationExitInfo info=history.get(i);
                 if(info==null)continue;
                 String processName=info.getProcessName();
                 if(processName==null||!(processName.equals(ownPackage)||processName.startsWith(ownPackage+":")))continue;
+                // Android's own words for the ending (which killer, which limit), bounded.
+                String description=info.getDescription();
                 records.put(new JSONObject().put("timestamp_utc_ms",info.getTimestamp())
                         .put("reason",info.getReason()).put("status",info.getStatus())
                         .put("importance",info.getImportance()).put("pss_kib",info.getPss())
                         .put("rss_kib",info.getRss()).put("pid",info.getPid())
-                        .put("process_name",processName.substring(0,Math.min(processName.length(),160))));
+                        .put("process_name",processName.substring(0,Math.min(processName.length(),160)))
+                        .put("description",description==null?JSONObject.NULL:description.substring(0,Math.min(description.length(),240))));
             }
             return result.put("status","available").put("records",records);
         }
