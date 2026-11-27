@@ -623,6 +623,113 @@ The workspace has PostgreSQL 16 (`pg_ctlcluster 16 main start`, then the two
 `runuser -u postgres --`): `test_character_profile_eligibility` runs all its
 real-database cases locally with the build workflow's environment line.
 
+## 0.13.89 (104): the zone starts again after an update that changes the Primalist's files
+
+Thor test of 0.13.88, 2026-11-26 21:53 CST (owner): "Tried launch A - stated
+map failed to load when trying to select Prima". Exports `20261127-035125`
+(setup) and `-035141` (launch A).
+
+What the export shows:
+
+- Eligibility passed (`eligible`, `hero_count` 2, `primalist_class_number`
+  56412): the 0.13.88 fix for a saved Primalist worked on the phone.
+- The early start of Atlas Park failed after 63.9 s:
+  `initial_zone.early_start.failure` = "Shared server data tree holds a
+  regular file: /state/diagnostic/shared-server-data-0209cdcf4dd35a9b06cd6bf5/
+  texts/english/menumessages.ms". Both Enter Game attempts then failed with
+  "Earlier Atlas preparation did not complete; preserve data and export"
+  (the half-made Atlas tree is never retried), and the game showed "Map
+  failed to start".
+- Cause: 0.13.88 changed the content identity (the icon's name in
+  `pc_primalist.def`; `3fa56ed5…` to `2215c556…`). The phone's only shared
+  tree, `0209cdcf…` (all 15 folders, 128,765 files, made by 0.13.85 with the
+  old content; reused by 0.13.87 in export 160620), was not among the keys
+  `shared_tree_plan` knows for the new identity, so `shared_tree` went to
+  remove it. `remove_shared_tree` allowed links only, and a tree with the
+  content holds the content's own files as regular files (0.13.85,
+  `write_copy`). Its walk had made the root and some folders writable before
+  it met the first one. Deterministic: every launch of 0.13.88 fails there.
+- No CI run could find it: each starts on an empty machine, so no run had
+  met a tree of another content identity. The first content change since the
+  Primalist shipped was 0.13.88's.
+
+Changes:
+
+- `single_player_content.IDENTITY_HISTORY` lists every content identity
+  shipped (a test ties its last entry to the manifest). `shared_tree_plan`
+  takes a sealed tree of all folders made with an earlier content for the
+  folders the content does not touch (`all_folders_earlier_content`), as it
+  already did for the tree without the content: the update makes 10,715
+  links, not 128,765.
+- `inspect_shared_tree` walks a tree and changes nothing: owned real
+  folders, links, and the content's own files (`single_player_content.
+  own_copy`: single-link, owned, read-only with the content's fixed time, or
+  a pending file of a stopped write). `remove_shared_tree` checks first, then
+  opens and removes; a tree it refuses stays as it was.
+- `restore_shared_seals` runs before the plan: a marked tree whose root is
+  not read-only is sealed again when it holds exactly what its marker
+  counted (`directories`, `linked_immutable_files`, `single_player_files`);
+  otherwise the marker is dropped and the tree is an unsealed one. A borrowed
+  tree is therefore never built again under a key of another content state.
+- `prepare_atlas_runtime` keeps the first failure and later attempts say
+  "Earlier Atlas preparation did not complete (<first failure>)".
+
+Tests (`armport/tests/test_single_player_content.py`, on the real staging
+code): the phone's state (a whole tree of the earlier content, root and one
+folder opened) is sealed again and serves the untouched folders; a content
+tree of the earlier version is removed with its content files and a pending
+file; an opened tree that lost a link is dropped, not refilled; a file that
+is nobody's copy (wrong mode, wrong time, or a hard link) still stops the
+removal with every folder mode unchanged. Three of them fail on 0.13.88 with
+the phone's message. `tools/android/interactive/test_saved_map_preparation`
+covers the named first failure.
+
+CI's update probe (`single_player_probe=update`, `COH_UPDATE_PROBE`):
+`interactive_host.earlier_content_folder` rebuilds the content folder of
+0.13.87 from this one (one line of one file; the result must be the identity
+that version shipped), `stage_app_assets.stage(content_root=)` stages a second
+assets folder with it, and `exchange_staged_files` exchanges by rename the two
+files that differ (the content archive and the runtime manifest that pins it)
+before the creation session and puts them back after it; the reopen runs with
+this version's on the same kept state. One folder is bound in both sessions:
+the first try (45947520586 at `297d58521`) bound the second folder, both guest
+sessions finished, and the host refused the reopen ("World preparation metrics
+differ from complete fresh/reused staging") because the guest had verified the
+world archive again, being another file than its receipt named.
+`update_probe_validate` requires the two identities, a replaced content tree
+(`removed.other_identity_trees`) and reused untouched folders;
+`ARMPORT_UPDATE_PROBE_V1` carries the trees. It replaces the Primalist probe
+in the chain (it makes and reopens a Primalist too).
+
+CI at `ba4f0bc5d` (build 45951872879; `297d58521` was build 45938386864):
+
+| Run | Form | Zone server new / reopened | Trip |
+| --- | --- | --- | --- |
+| 45962174259 | spare + update probe: Primalist made with the 0.13.87 content, reopened with this one's (`class_primalist` twice) | 214.0 s / 167.8 s | 10.3 s |
+| 45966947122 | trusted (APK source) | 368.0 s / 23.6 s | |
+| 45971549887 | heroes probe | 197.5 s / 86.1 s | 80.2 s |
+| 45979451178 | spare | 167.7 s / 23.5 s | 9.3 s |
+
+`ARMPORT_UPDATE_PROBE_V1` in 45962174259: creation built `content_folders`
+(10,715 files) and `untouched_folders` (118,050) in 97.1 s; the reopen removed
+one tree of another identity, built `content_folders` again and reused
+`untouched_folders`, 12.9 s. `ARMPORT_UPDATE_FILES_V1` names the two exchanged
+files. The reopen's zone server compiled the class and power lists again
+(167.8 s; request to ready 330 s).
+
+APK 45984057354 at `ba4f0bc5d`: 93,954,562 bytes, sha256
+`6be15dfb2dd28d48bc104222b0d98d314a94f5384ea4f132dbe7b4e915298e50`, signer
+unchanged, downloaded and hashed; 53 guest files equal the commit;
+`local_character_server.py` and `single_player_content.py` in the file hold
+`restore_shared_seals`, `inspect_shared_tree`, `IDENTITY_HISTORY`; the content
+archive in the file has `files_sha256` `2215c556…`. Sheet:
+`THOR-TEST-0.13.89.md`.
+
+Not shown: the phone's exact state in a real session (one tree of all folders,
+half opened; unit tests only), the app-side fixes of 0.13.88 on Android,
+mission-map navigation on the Thor, a chosen hero saved in another zone, a
+villain second hero.
+
 ## 0.13.88 (103): a saved Primalist opens again; a hero made in the character list is accepted
 
 Thor test of 0.13.87, 2026-11-26 (owner): "I was able to create a second
