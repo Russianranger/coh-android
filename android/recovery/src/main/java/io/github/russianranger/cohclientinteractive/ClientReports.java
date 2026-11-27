@@ -53,7 +53,7 @@ public final class ClientReports {
      * once, when the interrupted checkpoint is first retained, and never required for the carrier. */
     public interface InterruptionEvidence { byte[] collect() throws Exception; }
     public static final String INTERRUPTION_FILE = "android-interruption.json";
-    public static final int MAX_INTERRUPTION_BYTES = 128 * 1024;
+    public static final int MAX_INTERRUPTION_BYTES = 768 * 1024;
     private static volatile InterruptionEvidence interruptionEvidence;
     public static synchronized void setInterruptionEvidence(InterruptionEvidence source) { interruptionEvidence = source; }
     interface SourceOpener { SeekableByteChannel open(Path file) throws IOException; }

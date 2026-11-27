@@ -27,6 +27,7 @@ final class ClientCrash {
     static final String FILE = "android-crash.json";
     static final int MAX_BYTES = 48 * 1024;
     static final int MAX_FRAMES = 48;
+    static final int MAX_TRACE_TEXT = 256 * 1024, MAX_TRACE_BINARY = 96 * 1024;
     private static boolean installed;
     private ClientCrash() {}
 
@@ -146,13 +147,23 @@ final class ClientCrash {
         if (crash != null) try { parsed = new JSONObject(crash); } catch (Exception invalid) { parsed = "unreadable"; }
         result.put("last_crash", parsed);
         JSONObject exits = new JSONObject().put("maximum_records", 4).put("own_processes_only", true)
-                .put("trace_streams_requested", false);
+                .put("trace_streams_requested", true);
         if (Build.VERSION.SDK_INT < 30) exits.put("status", "unsupported_api");
         else try { ExitRecords.collect(context, exits); } catch (Exception unavailable) {
             exits.put("status", "unavailable").put("error", unavailable.getClass().getSimpleName());
         }
         result.put("exit_history", exits);
         byte[] bytes = result.toString().getBytes(StandardCharsets.UTF_8);
+        if (bytes.length > ClientReports.MAX_INTERRUPTION_BYTES) {
+            // The reason codes matter more than a trace that does not fit.
+            JSONArray records = exits.optJSONArray("records");
+            if (records != null) for (int i = 0; i < records.length(); i++) {
+                JSONObject record = records.optJSONObject(i);
+                if (record != null && (record.remove("trace_text") != null | record.remove("trace_base64") != null))
+                    record.put("trace", "dropped_over_limit");
+            }
+            bytes = result.toString().getBytes(StandardCharsets.UTF_8);
+        }
         if (bytes.length > ClientReports.MAX_INTERRUPTION_BYTES) throw new java.io.IOException("Interruption evidence exceeds limit");
         return bytes;
     }
@@ -165,18 +176,39 @@ final class ClientCrash {
             String ownPackage = context.getPackageName();
             List<android.app.ApplicationExitInfo> history = manager.getHistoricalProcessExitReasons(ownPackage, 0, 4);
             JSONArray records = new JSONArray();
+            boolean traceTaken = false;
             if (history != null) for (int i = 0; i < Math.min(history.size(), 4); i++) {
                 android.app.ApplicationExitInfo info = history.get(i);
                 if (info == null) continue;
                 String description = info.getDescription();
                 if (description != null && description.length() > 240) description = description.substring(0, 240);
                 String process = info.getProcessName();
-                records.put(new JSONObject().put("timestamp_utc_ms", info.getTimestamp())
+                JSONObject record = new JSONObject().put("timestamp_utc_ms", info.getTimestamp())
                         .put("reason", info.getReason()).put("reason_name", reasonName(info.getReason()))
                         .put("status", info.getStatus()).put("importance", info.getImportance())
                         .put("pss_kib", info.getPss()).put("rss_kib", info.getRss()).put("pid", info.getPid())
                         .put("process_name", process == null ? JSONObject.NULL : process.substring(0, Math.min(process.length(), 160)))
-                        .put("description", description == null ? JSONObject.NULL : description));
+                        .put("description", description == null ? JSONObject.NULL : description);
+                // Android keeps a trace for two endings only: the thread dump of an app that stopped
+                // answering (text, this process first) and the tombstone of a native crash (binary).
+                // One trace, the newest, bounded; a Java crash has none here (android-crash.json).
+                if (!traceTaken && (info.getReason() == 6 || info.getReason() == 5)) {
+                    traceTaken = true;
+                    try (InputStream in = info.getTraceInputStream()) {
+                        if (in == null) record.put("trace", "none");
+                        else {
+                            int limit = info.getReason() == 6 ? MAX_TRACE_TEXT : MAX_TRACE_BINARY;
+                            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                            byte[] block = new byte[8192];
+                            for (int n; bytes.size() < limit && (n = in.read(block, 0, Math.min(block.length, limit - bytes.size()))) != -1; )
+                                bytes.write(block, 0, n);
+                            record.put("trace_bytes_kept", bytes.size()).put("trace_truncated", in.read() != -1);
+                            if (info.getReason() == 6) record.put("trace_text", new String(bytes.toByteArray(), StandardCharsets.UTF_8));
+                            else record.put("trace_base64", android.util.Base64.encodeToString(bytes.toByteArray(), android.util.Base64.NO_WRAP));
+                        }
+                    } catch (Exception | OutOfMemoryError unreadable) { record.put("trace", "unreadable:" + unreadable.getClass().getSimpleName()); }
+                }
+                records.put(record);
             }
             result.put("status", "available").put("records", records);
         }

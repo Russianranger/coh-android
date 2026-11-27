@@ -100,6 +100,12 @@ class ClientCrashJavaTests(unittest.TestCase):
         for text in ('"last_crash"', '"exit_history"', 'Build.VERSION.SDK_INT < 30', '"is_success_proof", false'):
             self.assertIn(text, evidence)
         self.assertIn('.put("description"', crash)
+        # the newest ANR thread dump or native tombstone travels too, once and bounded
+        for text in ('info.getTraceInputStream()', 'MAX_TRACE_TEXT = 256 * 1024, MAX_TRACE_BINARY = 96 * 1024',
+                     'if (!traceTaken && (info.getReason() == 6 || info.getReason() == 5))', '"trace_truncated"'):
+            self.assertIn(text, crash)
+        recovery = (ROOT/'android/recovery/src/main/java/io/github/russianranger/cohclientinteractive/ClientReports.java').read_text()
+        self.assertIn('MAX_INTERRUPTION_BYTES = 768 * 1024;', recovery)      # the dump as JSON text fits
         self.assertIn('.put("reason_name", reasonName(info.getReason()))', crash)
 
     def test_the_operation_log_is_written_as_it_grows(self):
