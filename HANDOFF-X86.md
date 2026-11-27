@@ -623,6 +623,118 @@ The workspace has PostgreSQL 16 (`pg_ctlcluster 16 main start`, then the two
 `runuser -u postgres --`): `test_character_profile_eligibility` runs all its
 real-database cases locally with the build workflow's environment line.
 
+## 0.13.90 (105): evidence for an app that Android ends (no fix for the close)
+
+Thor test of 0.13.89, 2026-11-27 13:10 CST (owner): "Prima opened without
+issue, i was able to see the fps options. Ralakar on the otherhand crashed
+the app to android home when trying to enter world with him". Exports
+`20261127-190208` (setup), `-190231` (Prima), `-190853` (recovery checkpoint)
+and `-190904` (the previous guest's `latest-report.json`).
+
+What the exports show:
+
+- Prima (190231) passed: `removed.opened_trees_sealed_again` 1, the two
+  content folders built again (10,715 links, 104 s), 13 folders reused; zone
+  server 134.7 s; in the world 420.6 s after Play; save verified. The FPS
+  buttons were enabled (owner). The 0.13.89 fix holds on the phone.
+- Ralakar (190853, 190904): session start 19:05:29 UTC. Expected hero Prima
+  (played last), so Atlas Park (map 1) was the early zone. The guest saw the
+  login at 19:07:40.39 and Atlas `map_ready_observed` at 19:07:40.46. Ralakar
+  is saved on Mercy Island (map 71): `admit_zone_request` takes its activated
+  branch and starts map 71 beside the loaded Atlas. The app's last checkpoint
+  is the 120 s sample (19:07:29.1; `system_memory_available_bytes` 7.9 GB,
+  threshold 226 MB, `system_memory_low` false); the app was open again at
+  19:07:59. The process ended in between.
+- The cause is not in the exports. A recovered export of 0.13.89 held no
+  `android_process_exit_history` and no trace. The guest report is persisted
+  only at map-ready (`persist_startup_observation`), so it cannot bound the
+  time further. The app's handlers on this path (`client_login_ready`,
+  `session_hero`, `character_initial_zone`) run inside `catch (Exception)`,
+  and nothing in the app ends its own process.
+- Two candidates. (1) Android stopped the app for memory: the close at the
+  character list on 0.13.85 (2026-11-26 01:09:46 UTC) was exit reason 3
+  `LOW_MEMORY` at importance 100 with about 11 GB free at setup, so free
+  memory seconds earlier does not exclude it. (2) An `Error` or an unguarded
+  thread in the app's code.
+- Never run before: a saved hero chosen from another zone than the prepared
+  one. `test_several_heroes` covers the decision; CI's two heroes are both in
+  Atlas Park. The activated branch worked on the Thor for a new hero (0.13.87,
+  export 160620).
+
+Changes (all evidence; `is_success_proof` false everywhere):
+
+- `ClientCrash` (new): `install` in `ClientService` and `ClientActivity`
+  keeps Android's own handler and first writes `android-crash.json` (thread,
+  exception chain, 48 frames per cause, under 48 KiB). `evidence()` builds
+  `android-interruption.json` for a recovered export: `last_crash`,
+  `exit_history.records` (`reason`, `reason_name`, `status`, `importance`,
+  `description`, `pss_kib`, `rss_kib`, `timestamp_utc_ms`) and, for the newest ANR (6)
+  or native crash (5), Android's own trace (text to 256 KiB, binary to 96 KiB
+  as base64, `trace_truncated`).
+- `ClientReports.InterruptionEvidence`: a recovered export carries
+  `android-interruption.json` (to 768 KiB) and `operation.log` (to 4 MiB).
+- `ClientRuntime.line` writes `operation.log` as it grows (`openLiveLog`,
+  `liveLogLine`, `LIVE_LOG_LIMIT` 1200 KiB of characters, flushed per line),
+  so the log survives the process.
+- `ClientRuntime.EXIT_HISTORY_RECORDS` = 16 (4 before) in every export's
+  `android_process_exit_history`, each with Android's `description` (to 240
+  characters). Android keeps 16 records per app, and four might not have
+  reached back to the close on 0.13.89 after an update and some restarts.
+- `ClientService.onTrimMemory` writes lifecycle `trim_memory level=…
+  available_mib=… low=…` (the same level at most once in 10 s).
+- `recordLifecycle` writes a checkpoint also at `local_login_observed`,
+  `session_hero …`, `initial_zone_…` and `trim_memory …`.
+- `character_zoning.tick_memory_trace` prints each 10 s sample as a
+  `guest_memory_sample` event (MemAvailable, Cached, swap, PSI), which lands
+  in the live `operation.log`.
+
+Tests: `test_client_crash_java` (5; record, handler order, live log, 16
+records, checkpoint triggers and `trimMemoryEvent` run as shipped),
+`test_process_exit_history` (4), `test_client_report_recovery_java`,
+`test_several_heroes` (14, `MemorySampleLineTests`), `test_startup_ci_chain`.
+Local: armport/tests 734 OK, tools/android 203 OK, app Java compiles against
+android-33 (167 classes).
+
+Not shown anywhere: all of the app-side evidence. The Android app does not
+run in CI; `ApplicationExitInfo`, `onTrimMemory`, the uncaught-exception
+handler and the recovered export's two new files are exercised by javac
+harnesses with stubs and by the Thor only.
+
+Not done, on purpose: stopping the idle loaded zone when another hero's zone
+is asked for (no CI coverage, and the cause is not known); a CI probe for a
+saved hero chosen from another zone (needs a scripted hero saved outside
+Atlas Park; CI cannot reproduce an Android process death either way).
+
+Stopped runs: runtime 46057798110 (first try, cancelled for the trace
+change), build 46058321213 at `ba23f4bde` with runtime 46068309251 (cancelled
+before the APK step for the 16 records and memory records; nothing was
+published from it).
+
+CI at `1b4ade867` (build 46069408779):
+
+| Run | Form | Zone server new / reopened |
+| --- | --- | --- |
+| 46079013570 | trusted (APK source) | 361.0 s / 23.7 s |
+
+One runtime run only: the change on the game side is one output line, and
+the rest is app code that CI cannot run. The job log prints selected marks,
+not the guest's event lines, so `guest_memory_sample` is not visible there;
+the run passing shows that sending it disturbs nothing.
+
+APK 46082470173 at `1b4ade867`: 93,958,658 bytes, sha256
+`fd3774d3dd1c215421e2b93866e2b940430ded5bcacb38a3640f8826c361031d`, signer
+unchanged, downloaded and hashed; 53 guest files equal the commit;
+`character_zoning.py` in the file holds `guest_memory_sample`; the dex holds
+`ClientCrash`, `ClientCrash$ExitRecords`, `ClientReports$InterruptionEvidence`,
+`android-interruption.json`, `android-crash.json`, `trim_memory level=`,
+`getTraceInputStream`, `onTrimMemory`. Sheet: `THOR-TEST-0.13.90.md`.
+
+Next, from the owner's export: the exit record at about 2026-11-27 19:07:45
+UTC (`reason`, `description`). `LOW_MEMORY`: stop the idle loaded zone before
+the chosen hero's zone starts, or do not start the early zone when more than
+one hero is saved; with CI coverage first. `CRASH` / `CRASH_NATIVE` / `ANR`:
+the trace names the code.
+
 ## 0.13.89 (104): the zone starts again after an update that changes the Primalist's files
 
 Thor test of 0.13.88, 2026-11-26 21:53 CST (owner): "Tried launch A - stated
